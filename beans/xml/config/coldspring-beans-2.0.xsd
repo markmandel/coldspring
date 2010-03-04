@@ -24,10 +24,10 @@
 	of the documentation and schema code was lifted.
 		
 	This defines a simple and consistent way of creating a namespace
-	of JavaBeans objects, managed by a ColdSpring BeanFactory.
+	of ColdFusion Components, managed by a ColdSpring BeanFactory.
 
 	Each "bean" element in this document defines a ColdFusion Component Bean.
-	Typically the bean class is specified, along with JavaBean properties
+	Typically the bean class is specified, along with properties
 	and/or constructor arguments.
 
 	A bean instance can be a "singleton" (shared instance) or a "prototype"
