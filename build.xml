@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2010 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --> 
+<project name="narwhal" default="deploy">
+	
+	<!-- GENERAL PROPERTIES -->
+	<property name="src" location="./" />
+	
+	<property name="coldspring.server" value="www.coldspringframework.org"/>
+	<property name="coldspring.server.schema" value="/Application/schema"/>
+
+	<!-- ================================= 
+          target: deploy              
+         ================================= -->
+    <target name="deploy" depends="" description="Deploy the current build of ColdSpring">
+    	<antcall target="upload-schemas"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: uploadSchemas                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="upload-schemas" description="upload schemas to the ColdSpring website">
+		<input addproperty="schema-upload.do" message="Should we upload the XSDs?" validargs="Y,N" />
+		<antcall target="upload-schemas-${schema-upload.do}" />
+    </target>
+    
+	<target name="upload-schemas-Y">
+		<echo message="Uploading Schemas to ${coldspring.server}"/>
+		<input addproperty="upload.schema.user" message="What is the FTP Username?"></input>
+		<input addproperty="upload.schema.password" message="What is the FTP Password?"></input>
+		
+		<ftp server="${coldspring.server}" userid="${upload.schema.user}" password="${upload.schema.password}" 
+			 remotedir="${coldspring.server.schema}">
+			<fileset file="${src}/beans/xml/config/coldspring-beans-2.0.xsd"/>
+		</ftp>
+    </target>	
+	<target name="upload-schemas-N"/>
+	
+</project>

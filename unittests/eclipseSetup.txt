@@ -1,0 +1,7 @@
+MXUnit properties for the project:
+
+URL:
+http://{cfServer}/unittests/RemoteFacade.cfc
+
+Component Root:
+coldspring
