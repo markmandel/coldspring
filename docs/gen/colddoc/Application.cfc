@@ -10,23 +10,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  --->
-<cfoutput>
+
+<cfcomponent hint="The application.cfc" output="false">
+
 <cfscript>
-
-	base = expandPath("/coldspring");
-	path = expandPath("../../api/coldspring");
-
-	colddoc = createObject("component", "colddoc.ColdDoc").init();
-	strategy = createObject("component", "colddoc.strategy.api.HTMLAPIStrategy").init(path, "ColdSpring 2.0 - Narwhal");
-	colddoc.setStrategy(strategy);
-
-	colddoc.generate(base, "coldspring");
+	this.name = "ColdSpring Documentation";
+	this.sessionmanagement = false;
+	this.mappings["/coldspring"] = expandPath("/");
 </cfscript>
-</cfoutput>
-<h1>Done!</h1>
 
-<p>
-<cfoutput>#now()#</cfoutput>
-</p>
-
-<a href="../../api/coldspring">Documentation</a>
+</cfcomponent>

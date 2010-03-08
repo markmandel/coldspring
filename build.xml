@@ -15,11 +15,14 @@
 	
 	<!-- GENERAL PROPERTIES -->
 	<property name="src" location="./" />
+	<property name="tmp" location="/tmp" />
 	<property name="coldspring.version" value="2.0" />
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
+	<property name="coldspring.local" value="http://cf9:94"/>
 	<property name="docs" location="${src}/docs"/>
 	<property name="docs.xsddoc" location="${docs}/xsd"/>
+	<property name="docs.api" location="${docs}/api"/>
 	<property name="xsddoc" location="${docs}/gen/xsddoc"/>
 	<property name="xsddoc.lib" location="${xsddoc}/lib"/>
 	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
@@ -30,6 +33,7 @@
     <target name="deploy" depends="" description="Deploy the current build of ColdSpring">
     	<antcall target="upload-schemas"/>
     	<antcall target="xsddoc"/>
+    	<antcall target="colddoc"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -53,6 +57,20 @@
 	<target name="upload-schemas-N"/>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
+          target: colddoc                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="colddoc" depends="colddoc-clean">
+    	<get src="${coldspring.local}/docs/gen/colddoc/run.cfm" dest="${tmp}/colddoc.html" />
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: colddoc-clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="colddoc-clean">
+    	<delete dir="${docs.api}/coldspring"/>    
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
           target: xsddoc                      
           Generates each of the xsddoc generation
          - - - - - - - - - - - - - - - - - -->
@@ -65,14 +83,13 @@
 			<param name="xsdout" value="beans"/>
     		<param name="xsdtitle" value="ColdSpring ${coldspring.version} Beans Schema"/>
 		</antcall>
-    </target>
-
+    </target>	
+	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: xsddoc-clean                      
-          Cleans up the 
          - - - - - - - - - - - - - - - - - -->
     <target name="xsddoc-clean">
-		<deltree dir="${docs.xsddoc}/beans"/>
+		<delete dir="${docs.xsddoc}/beans"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
