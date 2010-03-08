@@ -15,15 +15,21 @@
 	
 	<!-- GENERAL PROPERTIES -->
 	<property name="src" location="./" />
-	
+	<property name="coldspring.version" value="2.0" />
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
+	<property name="docs" location="${src}/docs"/>
+	<property name="docs.xsddoc" location="${docs}/xsd"/>
+	<property name="xsddoc" location="${docs}/gen/xsddoc"/>
+	<property name="xsddoc.lib" location="${xsddoc}/lib"/>
+	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
 
 	<!-- ================================= 
           target: deploy              
          ================================= -->
     <target name="deploy" depends="" description="Deploy the current build of ColdSpring">
     	<antcall target="upload-schemas"/>
+    	<antcall target="xsddoc"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -41,9 +47,82 @@
 		
 		<ftp server="${coldspring.server}" userid="${upload.schema.user}" password="${upload.schema.password}" 
 			 remotedir="${coldspring.server.schema}">
-			<fileset file="${src}/beans/xml/config/coldspring-beans-2.0.xsd"/>
+			<fileset file="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
 		</ftp>
     </target>	
 	<target name="upload-schemas-N"/>
 	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: xsddoc                      
+          Generates each of the xsddoc generation
+         - - - - - - - - - - - - - - - - - -->
+    <target name="xsddoc" depends="xsddoc-clean">
+		<mkdir dir="${docs.xsddoc}/beans"/>
+    	
+    	<!-- beans documentation -->
+    	<antcall target="xsddoc-gen">
+			<param name="xsdfile" value="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
+			<param name="xsdout" value="beans"/>
+    		<param name="xsdtitle" value="ColdSpring ${coldspring.version} Beans Schema"/>
+		</antcall>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: xsddoc-clean                      
+          Cleans up the 
+         - - - - - - - - - - - - - - - - - -->
+    <target name="xsddoc-clean">
+		<deltree dir="${docs.xsddoc}/beans"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: xsddoc-gen                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="xsddoc-gen">
+		<property name="cp" value="${xsddoc.lib}/xml-apis.jar;${xsddoc.lib}/xercesImpl.jar;${xsddoc.lib}/docflex-xml-re.jar"/>
+		<!--
+		   Execute the DocFlex/XML generator.
+		
+		   IMPORTANT: The 'maxmemory' attribute sets the maximum heap size
+		   available to Java VM when running DocFlex/XML. 
+		   Check this attribute when you need to process large quantities of data
+		   (e.g. when you generate documentation by XML schemas with a great number
+		   of component definitions).
+		
+		   The 'fork' attribute forces Ant to launch a separate instance of JVM.
+		   This is needed to ensure that the memory specified in the 'maxmemory' 
+		   attribute will be allocated indeed. However, you may remain using Ant's 
+		   JVM instance, if you have already specified for it that much of memory.
+		-->
+		<java classname="com.docflex.xml.Generator" classpath="${cp}" maxmemory="512m" fork="true">
+		
+			<!-- specify the template -->
+			<arg value="-template"/>
+			   <arg value="${xsddoc.templates}/XSDDoc/FramedDoc.tpl"/>
+			
+			   <!-- specify the output format -->
+			<arg value="-format"/>
+			<arg value="HTML"/>
+			
+			<!-- specify the output directory -->
+			<arg value="-d"/>
+			<arg value="${docs.xsddoc}/${xsdout}"/>
+			
+			<!-- specify to not launch the generator GUI -->
+			<arg value="-nodialog"/>
+			
+			<!-- specify to not launch the default viewer for the output file -->
+			<arg value="-launchviewer=false"/>
+			
+			<!-- pass the template parameter (the documentation title, in this case) -->
+			<arg value="-p:docTitle=${xsdtitle}"/> 
+			<arg value="-p:html.renderLineBreaks=true"/>
+			<!-- 
+			  Specify the data source XML file to be processed by the specified template. 
+			  (In this case, it is the XML schema to be documented.)
+			-->
+			<arg value="${xsdfile}"/>
+		
+		</java>
+	</target>
 </project>

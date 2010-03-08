@@ -1,0 +1,1525 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DocFlex/XML XSDDoc, Version 2.2.0</title>
+
+<style type="text/css">
+
+body {
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+code {
+  white-space:nowrap;
+}
+
+.note {
+  font-size:90%;
+  padding: 4px;
+  border: solid 1px #999999;
+  background-color:#F3F3F3;
+}
+
+.mrg0 {
+  margin-top:0pt;
+  margin-bottom:0pt;
+}
+
+.brdr1 { border-left: 1px solid #CCCCCC; border-top: 1px solid #CCCCCC; border-right: 1px solid #999999; border-bottom: 1px solid #999999; }
+.brdr2 { border-left: 1px solid #999999; border-top: 1px solid #999999; border-right: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; padding: 5px 6px 5px 6px }
+.brdr3 { border-left: 1px solid #999999; border-top: 1px solid #999999; border-right: 1px solid #CCCCCC; padding: 5px 6px 0px 6px }
+.brdr4 { border-left: 1px solid #999999; border-right: 1px solid #CCCCCC; padding: 0px 6px 0px 6px }
+.brdr5 { border-left: 1px solid #999999; border-right: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; padding: 0px 6px 5px 6px }
+.row1 { background-color:#F3F3F3;}
+.row2 { background-color:#FFFFFF;}
+
+</style>
+</head>
+
+<body>
+
+<center>
+  <h1>DocFlex/XML XSDDoc, Version 2.2.0</h1>
+</center>
+
+<hr>
+
+<h2>Table Of Contents</h2>
+<ul>
+  <li><a href="#about">What is XSDDoc?</a></li>
+  <li><a href="#contents">Content Files</a></li>
+  <li><a href="#requirements">Technical Requirements</a></li>
+  <li><a href="#processing_modes">Licensing / Processing Modes</a>
+    <ul>
+      <li><a href="#limited_mode">Limited Mode</a></li>
+      <li><a href="#full_mode">Full Mode</a></li>
+      <li><a href="#trial_mode">Trial Mode</a></li>
+    </ul>
+  </li>
+  <li><a href="#installation">Installation</a></li>
+  <li><a href="#running_xsddoc">Running XSDDoc</a></li>
+  <li><a href="#getting_help">Getting Help</a></li>
+  <li><a href="#change_log">Change Log</a></li>
+</ul>
+
+<hr>
+
+<h2>
+  <a name="about"></a>
+  What is XSDDoc?
+</h2>
+
+"DocFlex/XML XSDDoc" is a 
+<a href="http://www.filigris.com/buy/licensing_pricing.php#templates.cta">commercial template application</a>
+of <a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a>
+that implements a high quality XML Schema Documentation Generator, which
+you can use to generate by any W3C XML schemas the following types of documentation:
+<ul>
+<li>
+  Framed multi-file (Javadoc-like) HTML documentation
+</li>
+<li>
+  Single-file HTML documentation
+</li>
+<li>
+  RTF documentation
+</li>
+</ul>
+
+Currently, the XSDDoc template set is bundled with both editions of
+<a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a>:
+<ol>
+<li>
+<a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-sdk">DocFlex/XML SDK</a> - the System Development Kit to design and run template applications
+</li>
+<li>
+<a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-re">DocFlex/XML RE</a> - the free Runtime Environment to run template applications
+</li>
+</ol>
+
+It is found in <code>'templates/XSDDoc/'</code> subdirectory of each edition.
+<p>
+As being a commercial product, XSDDoc requires separate licensing.
+According to your license, it can work in one of three modes: 
+<i><a href="#limited_mode">limited</a></i>, <i><a href="#full_mode">full</a></i> or
+<i><a href="#trial_mode">trial</a></i>. 
+For more details, please see <a href="#processing_modes">Licensing / Processing Modes</a>.
+
+<h2>
+  <a name="contents"></a>
+  Content Files
+</h2>
+
+The following files power <a href="#about">XSDDoc</a> (or are related to it):
+
+<p>
+<table cellspacing="0" cellpadding="0" border="0" class="brdr1">
+
+<tr class="row1">
+  <td class="brdr2">
+    <code>index.html</code>
+  </td>
+  <td class="brdr2">
+    this file
+  </td>
+</tr>
+
+<tr class="row2" valign="top">
+  <td class="brdr2">
+    <a name="FramedDoc.tpl"></a>
+    <code>FramedDoc.tpl</code>
+  </td>
+  <td class="brdr2">
+    The main template to generate framed HTML documentation.
+  </td>  
+</tr>
+
+<tr class="row1" valign="top">
+  <td class="brdr2">
+    <a name="PlainDoc.tpl"></a>
+    <code>PlainDoc.tpl</code>
+  </td>
+  <td class="brdr2">
+    The main template to generate single-file documentation (in HTML or RTF format).
+  </td>  
+</tr>
+
+<tr class="row2" valign="top">
+  <td class="brdr2">
+    <a name="lib_dir"></a>
+    <code>lib/</code>
+  </td>
+  <td class="brdr2">
+    The directory containing all subtemplates (and icon files) that power the
+    <a href="#about">XSDDoc</a> template application.
+  </td>
+</tr>
+
+<tr class="row1" valign="top">
+  <td class="brdr2">
+    <code>xmltype/</code>
+  </td>
+  <td class="brdr2">
+    The directory containing the XML schema for W3C XML Schemas:
+    <code>XMLSchema.xsd</code> and accompanying files. (All these files are available at
+    <a href="http://www.w3.org/2001/XMLSchema.xsd" target="_blank">http://www.w3.org/2001/XMLSchema.xsd</a>).
+    <p>
+    That XML schema serves as a critical part of the definition of the <code>'xsddoc'</code> metatype
+    (on which all <a href="#about">XSDDoc</a> templates are based).
+    Actually, the pathname to <code>XMLSchema.xsd</code> file is specified in <code>xsddoc.xmltype</code>.
+  </td>
+</tr>
+
+<tr class="row2" valign="top">
+  <td class="brdr2">
+    <code>
+      xsddoc.xmltype
+    </code>
+  </td>
+  <td class="brdr2">
+    The configuration file that defines the <code>'xsddoc'</code> XML type,
+    on which all <a href="#about">XSDDoc</a> templates are based.
+  </td>  
+</tr>
+
+</table>
+
+<p>
+<i>Note: All files and directories are located in <code>'templates/XSDDoc/'</code> subdirectory of each edition of
+<a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a>.</i>
+
+<h2>
+  <a name="requirements"></a>
+  Technical Requirements
+</h2>
+
+Since <a href="#about">XSDDoc</a> is just a set of templates (which are plain-text files),
+to be executed it always requires the template interpreter / output generator included in
+one of the <a href="http://www.filigris.com/products/docflex_xml/#editions">editions</a>
+of <a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a>.
+<p>
+Please note, some general functionality used in a given version of <a href="#about">XSDDoc</a> templates
+may be available only since a specific version of 
+<a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a>.
+In particular, the <a href="#about">XSDDoc</a> version <b>2.2.0</b> requires 
+<a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a> version <b>1.8.0</b> or later.
+
+<h2>
+  <a name="processing_modes"></a>
+  Licensing / Processing Modes
+</h2>
+
+<a href="#about">XSDDoc</a> is a 
+<a href="http://www.filigris.com/buy/licensing_pricing.php#templates.cta">commercial template application</a>
+developed by FILIGRIS WORKS. It is a subject of separate licensing.
+<p>
+Depending on your license for "<a href="#about">DocFlex/XML XSDDoc</a>",
+the template set may work (be interpreted) in one of the three different modes:
+<i><a href="#limited_mode">limited</a></i>,
+<i><a href="#full_mode">full</a></i> or
+<i><a href="#trial_mode">trial</a></i>.
+<p>
+<table cellspacing="0" cellpadding="0">
+  <tr valign="top">
+    <td><b>Note:</b>&nbsp;&nbsp;</td>
+    <td>
+      These are the processing modes of only the <a href="#about">XSDDoc</a> template application
+      -- not the particular edition of DocFlex/XML (SDK or RE), which has its own processing mode(s).
+      For more details, please see:
+      <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#templates.cta">http://www.filigris.com/buy/licensing_pricing.php | Commercial Template Applications</a>
+    </td>
+  </tr>
+</table>
+</p>
+
+<h3>
+  <a name="limited_mode"></a>
+  Limited Mode
+</h3>
+
+The Limited Mode is covered by the
+<a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#limited_free_license">Limited Free License</a>,
+which is activated by default when no other licenses for "<a href="#about">DocFlex/XML XSDDoc</a>" 
+template application have been found.
+<p>
+In this mode, you can:
+<ul>
+<li>
+  Use the <a href="#FramedDoc.tpl">FramedDoc.tpl</a> main template 
+  to generate some general type of multi-framed HTML (Javadoc-like) documentation
+  by your XML schema project.
+</li>
+<li>
+  Freely use and distribute the produced documentation as you need (however, without
+  possibility to change anything in the generated HTML files manually!)
+</li>
+<li>
+  There is no limitation on the number of processed/documented XML schema files or XML schema components.
+</li>
+<li>
+  If you are using
+  <a href="http://www.oasis-open.org/committees/download.php/14809/xml-catalogs.html" target="_blank">OASIS XML Catalogs</a>
+  in your XML schema project (to reference different schema files from each other),
+  you can specify the catalog files to the DocFlex/XML generator as well (to have the entire project processed correctly).
+</li>
+</ul>
+<p>
+The limitations:
+<ul>
+<li>
+  Most of parameters of <a href="#FramedDoc.tpl">FramedDoc.tpl</a> template will be locked (disabled).
+  Therefore, you will have few possibilities to customize the generated documentation.
+</li>
+<li>
+  Although, you may freely use the output HTML files for any purposes (including commercial ones),
+  you are not allowed to change anything in them (especially, removing advertisement text
+  at the end of each file).
+</li>
+<li>
+  The <a href="#PlainDoc.tpl">PlainDoc.tpl</a> main template will be completely locked.
+  So, you cannot generate either single-file HTML or RTF documentation.
+</li>
+</ul>
+
+<h3>
+  <a name="full_mode"></a>
+  Full Mode
+</h3>
+
+The Full Mode is activated in the presence of a
+<a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#commercial_license">Commercial</a> or
+<a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#academic_license">Academic</a>
+License for "<a href="#about">DocFlex/XML XSDDoc</a>" template application.
+This mode enables you:
+<ul>
+<li>
+  To use <a href="#FramedDoc.tpl">FramedDoc.tpl</a> main template 
+  to generate any kind of multi-framed HTML (Javadoc-like) documentation
+  by your XML schema projects.
+</li>
+<li>
+  To use <a href="#PlainDoc.tpl">PlainDoc.tpl</a> main template 
+  to generate both single-file HTML and RTF documentation.
+</li>
+<li>
+  The XHTML tags embedded in XML schema annotations will be fully rendered in RTF output
+  (including insertion of images specified with <code>&lt;img&gt;</code> tags).
+</li>
+<li>
+  All parameters of both <a href="#FramedDoc.tpl">FramedDoc.tpl</a> and
+  <a href="#PlainDoc.tpl">PlainDoc.tpl</a> main templates will be unlocked (more than 300 of them!),
+  which will give you an unprecedented control over the generated content.
+</li>
+<li>
+  No limitations on the number of processed/documented XML schema files or XML schema components as well as
+  the usage of 
+  <a href="http://www.oasis-open.org/committees/download.php/14809/xml-catalogs.html" target="_blank">OASIS XML Catalogs</a>.
+</li>
+<li>
+  No advertisement texts will be inserted (which is actually controlled by a template parameter).
+</li>
+<li>
+  The <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#commercial_license">Commercial License</a>
+  allows you without limitations to use, modify and distribute the generated documentation (any output files) 
+  according to your needs.
+  Under <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#academic_license">Academic License</a>,
+  any usage is possible for educational (non-commercial) purposes only.
+</li>
+</ul>
+
+So, the <a href="#full_mode">Full Mode</a> unlocks all functionality of this XML schema documentation generator
+(both implemented within the <a href="#about">XSDDoc</a> templates and supported by the DocFlex/XML template 
+iterpretor / output generators). No other licenses will be needed for this!
+<p>
+What is more, you can also modify/customize the <a href="#about">XSDDoc</a> templates themselves 
+(so as to add the functionality not implemented by us, change the generated content, look & feel and so on).
+For doing this, you will need an additional license for 
+"<a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-sdk">DocFlex/XML SDK</a>",
+which includes the Template Designer.
+<p>
+See also:
+<a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#multiple_licenses">http://www.filigris.com/buy/licensing_pricing.php | Multiple Licenses</a>
+
+<h3>
+  <a name="trial_mode"></a>
+  Trial Mode
+</h3>
+
+The Trial Mode is activated in the presence of a
+<a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#trial_license">Trial License</a>
+for "<a href="#about">DocFlex/XML XSDDoc</a>" template application. 
+In this mode, the templates are processed the same as in the <a href="#full_edition.full_mode">full mode</a>.
+However, there are following limitations:
+<ul>
+<li>
+  You may use <a href="#about">XSDDoc</a> templates working in the trial mode only during the limited period of time
+  provided by your
+  <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#trial_license">Trial License</a>.
+  <p>
+</li>
+<li>
+  Any output documents generated in trial mode will contain special
+  <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#trial_license.output.markers">trial markers</a>.
+  Such documents may be used only for evaluation of DocFlex software.
+  Any other usage is prohibited!
+</li>
+</ul>
+
+<h2>
+  <a name="installation"></a>
+  Installation
+</h2>
+
+Since <a href="#about">XSDDoc</a> is just a set of templates (which are plain text files),
+for its execution it always requires the template interpreter provided by
+<a href="http://www.filigris.com/products/docflex_xml/">DocFlex/XML</a>
+(and is rather depend on its version).
+Because of this, currently, <a href="#about">XSDDoc</a> is bundled with both editions of DocFlex/XML:
+<ol>
+<li><a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-sdk">DocFlex/XML SDK</a></li>
+<li><a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-re">DocFlex/XML RE</a></li>
+</ol>
+
+You do not need to download and install <a href="#about">XSDDoc</a> separately!
+<p>
+It will be already pre-installed in the <code>'templates/XSDDoc/'</code> directory of the main product.
+<p>
+(In the future, when other commercial templates applications will be developed,
+we may provide them as separately downloadable add-ons. 
+However, now it is just an early stage of such a development.)
+<p>
+The only thing you may need specifically to install is the
+<code>'docflex-xml-xsddoc2.license'</code> file, which contains your license 
+for "<a href="#about">DocFlex/XML XSDDoc</a>" template application.
+You will receive that file by e-mail. 
+<p>
+The license file should be stored in the <code>'templates/XSDDoc/'</code> directory
+along with the <code><a href="#FramedDoc.tpl">FramedDoc.tpl</a></code> and
+<code><a href="#PlainDoc.tpl">PlainDoc.tpl</a></code> main templates 
+(i.e. those called the first by the generator).
+<p>
+After that, the <code>'XSDDoc/'</code> directory will contain everything needed to
+run <a href="#about">XSDDoc</a>.
+<p>
+Actually, the "<a href="#about">DocFlex/XML XSDDoc</a>" template application 
+is completely autonomous.
+You can copy/move (or rename) the <code>'XSDDoc/'</code> directory to any other location
+and run the XSDDoc <a href="#FramedDoc.tpl">templates</a> directly from there.
+This may be particularly useful when you want to modify something in the original
+templates and derive your own version of <a href="#about">XSDDoc</a>.
+
+<h2>
+  <a name="running_xsddoc"></a>
+  Running XSDDoc
+</h2>
+
+To generate XML Schema documentation, please follow these steps:
+
+<ol>
+  <li>
+    Run <b><code>generator.bat</code></b> (found in the root directory of your
+    <a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-sdk">DocFlex/XML SDK</a> or
+    <a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-re">DocFlex/XML RE</a>
+    installation). You will see the generator dialog.
+    <p class="note">
+      While processing <a href="#about">XSDDoc</a> templates for big XML schemas, 
+      the generator may be particularly hungry for memory. Lack of memory may considerably
+      increase the generation time! 
+      To avoid this, make sure the maximum heap size available for JVM is 512Mb or even more 
+      (e.g. Java option <code>-Xmx512m</code> sets the maximum heap size to 512Mb).
+    </p>
+  </li>
+  <li>
+    In <b>"Template"</b> field, select <code><a href="#FramedDoc.tpl">FramedDoc.tpl</a></code> template.
+    <p class="note">
+      You can choose this template from <code>'templates/XSDDoc'</code> directory using File Chooser.
+    </p>
+  </li>
+  <li>
+    In <b>"XML File(s)"</b> field, specify one or many XSD files from which you want to generate
+    the XML schema documentation.
+    <p class="note">
+      Each XML file can be specified either by local path name or by URL 
+      (e.g. <code>http://www.w3.org/2001/XMLSchema.xsd</code>). 
+      In the case of a URL, the generator will try to download such a file directly from the Internet.
+      <br><br>
+      When multiple XML files are specified, make sure that each pathname or URL is enclosed in double quotes.
+    </p>
+  </li>
+  <li>
+    In <b>"Output format"</b> field, select <b>HTML</b> format.
+    <p class="note">
+      The <code><a href="#FramedDoc.tpl">FramedDoc.tpl</a></code> template is a frameset template 
+      which can generate only HTML output!
+    </p>
+  </li>
+  <li>
+    Click <b>"Run"</b> button to start generator.
+    <p class="note">
+      Once all source XML Schema files are loaded, the generator enters into the <b><i>estimation phase</i></b>.
+      Lots of heavy processing is being done during that, however, you will see only 
+      <i>"Scanning data source, please wait..."</i> message on the progress bar.
+      On large XML schemas this phase may take some time. Please wait!
+      After that, the generator will pass into the <b><i>generation phase</i></b>.
+      The progress bar will show what's being generated.
+      <br><br>
+      You can stop the generator at any time during any phase by clicking <b>"Cancel"</b> button.
+    </p>
+  </li>
+</ol>
+
+<h2>
+  <a name="getting_help"></a>
+  Getting Help
+</h2>
+
+The most detailed and up-to-date information about the <a href="#about">DocFlex/XML XSDDoc</a> can be found
+on the product homepage:
+<a href="http://www.filigris.com/products/docflex_xml/xsddoc/" target="_blank">www.filigris.com | DocFlex/XML | XSDDoc</a>.
+<p>
+We are always happy to hear any questions, suggestions, comments, etc.
+about this product.<br>
+Please, e-mail us to:
+<a href="mailto:support@docflex.com">support@docflex.com</a> or
+<a href="mailto:contact@filigris.com">contact@filigris.com</a>
+
+<h2>
+  <a name="change_log"></a>
+  Change Log
+</h2>
+
+<h3>
+  <a name="change_log_v2.2.0"></a>
+  Version 2.2.0
+</h3>
+
+<ul>
+<li><a name="change_log_v2.2.0_diagrams"></a><b>Content Model Diagrams</b>
+  <p>
+  A new <i>"Content Model Diagram"</i> section has been added in Component Documentation blocks.
+  It shows a graphic diagram representation of the content model of the given component.
+  The other XML schema components depicted on the diagrams will be hyperlinked
+  to the corresponding sections/blocks across the entire documentation.
+  <p>
+  The section is generated by the <code>lib/content/diagram.tpl</code> template.
+  The diagrams are inserted using an <i>Image Control</i> specified to generate the <i>"element image"</i>
+  of the current DSM element representing an XSD component.
+  The actual diagrams may come from any kind of diagramming engine implemented outside DocFlex/XML core,
+  however connected to it via the <i>Element Image Provider</i> interface.
+  Currently, this is provided only by the 
+  <a href="http://www.filigris.com/products/docflex_xml/integrations/xmlspy/" target="_blank">DocFlex/XML XMLSpy Integration</a>,
+  which uses <a href="http://www.altova.com/xmlspy/" target="_blank">Altova XMLSpy&reg;</a> to generate the diagrams
+  (see also <a href="#change_log_v2.2.0_xmlspy_integration">below</a>).
+  In the future, other diagramming engines may be used or implemented.
+  See also:
+  <a href="../../README.html#change_log_v1.8.0_element_images" target="_blank"><code>{docflex-xml}/README.html</code> | Change Log | Version 1.8.0 |
+  Template language / general functionality | Element Images</a>.
+  <p>
+  When diagrams are supported, the "Content Model Diagram" section may be generated for the following 
+  component types:
+  <p>
+  <ul>
+    <li>Elements</li>
+    <li>Complex Types</li>
+    <li>Element Groups</li>
+  </ul>
+  <p>
+  The generation is controlled by a new parameter group:
+  <i>"Details | Component Documentation | Content Model Diagram"</i>, where you can specify if that section
+  is included and how to generate diagram hyperlinks.
+  <p>
+</li>
+
+<li><a name="change_log_v2.2.0_xmlspy_integration"></a><b>XMLSpy Integration Support</b>
+  <p>
+  DocFlex/XML <a href="#about">XSDDoc</a> uses <a href="http://www.altova.com/xmlspy/" target="_blank">Altova XMLSpy&reg;</a>
+  as a ready available diagramming engine to generate <a href="#change_log_v2.2.0_diagrams">content model diagrams</a>
+  inserted in the XML schema documentation (see above).
+  For that purpose, XMLSpy is actually called via two levels of integration.
+  <p>
+  The first level, called 
+  "<a href="http://www.filigris.com/products/docflex_xml/integrations/xmlspy/" target="_blank">DocFlex/XML XMLSpy Integration</a>"
+  itself, is hardcoded in Java. This is a separate commercial product with its own licensing.
+  For more details, please see <a href="../../xmlspy/README.html" target="_blank"><code>{docflex-xml}/xmlspy/README.html</code></a>.
+  <p>
+  The second level is implemented as <code>lib/integrations/xmlspy.tpl</code> template.
+  That template does not insert any diagrams in the output. 
+  Rather, it is called only once by each of the main templates (<code>FramedDoc.tpl</code> and <code>PlainDoc.tpl</code>) 
+  during the initialization (along with the <code>lib/init.tpl</code> template).
+  <p>
+  The job of <code>xmlspy.tpl</code> is to launch XMLSpy and cause it to generate component diagrams
+  for all XML schemas to be documented.
+  The template does this using special FlexQuery functions exposed by the integration hardcoded part.
+  (You can find those functions in the Template Designer via
+  <i>Help | Assistant | Functions by Category | XMLSpy Integration Functions</i>.
+  Note that they will be available only when the XMLSpy Integration is properly installed.
+  See <a href="../../xmlspy/README.html#installation" target="_blank"><code>{docflex-xml}/xmlspy/README.html</code> | Installation</a>)
+  <p>
+  Once diagrams have been generated, they are used further by the hardcoded part of the integration again and eventually 
+  become accessible in any other templates via Image Controls as "element images" 
+  (see <a href="#change_log_v2.2.0_diagrams">above</a>).
+  <p>
+  The template level of the whole XMLSpy integration is needed because of two reasons:
+  <p>
+  <ol>
+    <li>
+      To control the integration via template parameters.
+    </li>
+    <li>
+      To collect and pass to the hardcoded part the information needed to associate the diagrams 
+      (and their hyperlinks) generated by XMLSpy with the DSM elements representing the XSD components in templates.
+      (The best way to do this in fact is with a template using the unique data querying capabilities of DocFlex/XML.)
+    </li>
+  </ol>
+  <p>
+  To control the XMLSpy integration, a new parameter group have been added: <i>"Integrations | XMLSpy"</i>
+  <p>
+</li>
+
+<li><a name="change_log_v2.2.0_redefs"></a><b>Naming of redefined components</b>
+  <p>
+  The documenting of redefined XML schemas has been reworked.
+  <p> 
+  In particular, before now, the components being redefined were renamed by adding <code>"$ORIGINAL"</code> suffix
+  (so as to distinguish the redefinition from the original components).
+  After that, such a suffix was visible everywhere (including in the reproduced XML source),
+  which might be looking confusing.
+  <p> 
+  Now, such a renaming never happens. The reproduced original XML source looks the same as the original one.
+  (However, all hyperlinks are correctly generated to the redefinitions instead of the original components.)
+  <p>
+  In the documentation itself (in various lists etc.), the original components are shown
+  with their original names only.
+  The redefinitions are represented with the component original names followed by
+  "(redefinition)" or "(redef)" string. For example:
+  <p>
+  <dl>
+    <dd>attributeGroup <i>"xhtml.a.attlist"</i> (redefinition)</dd>
+    <dt>or</dt>
+    <dd><code>xhtml.a.attlist (redef)</code></dd>
+  </dl>
+  <p>
+  Nested redefinitions are also supported. Their names will be extended with "(redef 2)", "(redef 3)" etc.
+  <p>
+  The new processing of redefinitions was implemented using "service attributes" general functionality
+  added since DocFlex/XML v1.8.0. See
+  <a href="../../README.html#change_log_v1.8.0_service_attributes" target="_blank"><code>{docflex-xml}/README.html</code> | Change Log | Version 1.8.0 |
+  Template language / general functionality | Service Attributes</a>.
+  <p>
+</li>
+
+<li><b>Displaying XML schema locations and hyperlinks to them</b>
+  <p>
+  New parameters have been added to control whether a relative or absolute XML schema file path
+  must be displayed in the documentation and whether to generate the hyperlink to the
+  source XML schema file. 
+  <p>
+  <i>Relative Path</i>
+  <blockquote>
+    Specify whether to display schema location as a relative pathname.
+    When this parameter is selected (true) and the schema file resides on the local system,
+    the file pathname will be converted to a relative one against the documentation destination directory.
+  </blockquote>
+
+  <i>Hyperlink</i>
+  <blockquote>
+    Specify whether to generate a hyperlink to the schema file.
+    When this parameter is selected (true), the schema location text will be hyperlinked to the actual schema file.
+    When the displayed schema location is a relative pathname, the hyperlink is generated relatively to the location
+    of the given document file.
+    Otherwise, the hyperlink is generated to an absolute URL either on the local system or remote one.
+  </blockquote>
+
+  Those parameters can be found by the following parameter paths:
+  <p>
+  <ul>
+    <li><i>Details | Overview Summary | Schema Summary | Schema Profile | Schema Location</i></li>
+    <li><i>Details | Namespace Overview | Schema Summary | Schema Profile | Schema Location</i></li>
+    <li><i>Details | Schema Overview | Schema Profile | Schema Location</i></li>
+  </ul>
+  <p>
+</li>
+
+<li><b>Processing of XHTML in annotations</b>
+  <p>
+  <ul>
+  <li>
+    <i><b>XHTML in selected XML schemas</b></i>
+    <p>
+    Your XML schema project may contain both XML schemas with annotations formatted using XHTML
+    and those with plain text annotations. In the case of plain text, the only formatting available are new lines.
+    When XHTML is processed, the new lines are ignored.
+    So, how can you generate documentation in which the both formatting approaches are used?
+    <p>
+    Now, you can do this by specifying which XML schemas use XHTML and which do not.
+    Two parameters have been added:
+    <p>
+    <i>Processing | Annotations | XHTML | For schemas | Include</i>
+    <blockquote>
+      Specify the list of XML schemas whose annotations may contain XHTML markup.
+    </blockquote>
+
+    <i>Processing | Annotations | XHTML | For schemas | Exclude</i>
+    <blockquote>
+      Specify the list of XML schemas whose annotations contain no XHTML markup (or it should ignored).
+    </blockquote>
+  </li>
+  <li>
+    <i><b>Extracting first sentence</b></i>
+    <p>
+    The automatic extraction of first sentences of the annotations formatted with XHTML
+    has been improved. For more details, see
+    <a href="../../README.html#change_log_v1.8.0_first_sentence" target="_blank"><code>{docflex-xml}/README.html</code> | Change Log | Version 1.8.0 |
+    Template interpreter / output generator | Extraction of first sentence from HTML formatted text</a>.
+    <p>
+  </li>
+  </ul>
+</li>
+
+<li><b>Formatting</b>
+  <p>
+  <ul>
+  <li>
+    <i><b>Extension of local element names</b></i>
+    <p>
+    The extensions of local element names now are shown entirely in grey color, including hyperlinks.
+    (Hyperlinks are indicated with underlining.)
+    This should make the generated documentation to look more tidy and easy to read.
+    <p>
+    Note: The generation of local element name extensions are controlled by
+    <i>"Show | Local Element Extensions"</i> parameter. See also:
+    <a href="#change_log_v2.1.0_localElementExt">Version 2.1.0 | Documenting of local elements | Showing extensions of local element names</a>.
+    <p>
+  </li>
+
+  <li>
+    <i><b>Layouts of component lists</b></i>
+    <p>
+    New parameters have been added to control how various lists of components are arranged.
+    A list may be represented either as a comma-delimited text flow, which is more compact 
+    but harder to read, or as a two-column table, which is easier to read but occupies more place. 
+    The following parameters allow you to choose between those two possibilities
+    depending on the schemas you document:
+    <p>
+    <ul>
+      <li><i>Details | Component Documentation | Lists of Related Components | List Layout</i></li>
+      <li><i>Details | Component Documentation | Usage / Definition Locations | List Layout</i></li>
+    </ul>
+    <p>
+  </li>
+  </ul>
+</li>
+
+<li><b>New parameters to control documentation content</b>
+  <p>
+  <ul>
+  <li><i>Details | Component Documentation | XML Representation Summary | Generate For</i></li>
+  <li><i>Details | Component Documentation | Lists of Related Components | Generate For</i></li>
+  <li><i>Details | Component Documentation | Usage / Definition Locations | Generate For</i></li>
+  <li><i>Details | Component Documentation | Annotation | Generate For</i>
+    <p>
+    These new parameter groups allow you to specify exactly for which components the 
+    "XML Representation Summary", "Lists of Related Components", "Usage / Definition Locations"
+    and "Annotation" section must be generated.
+    This may be separately selected for the following component types:
+    elements, complex types, simple types, element groups, global attributes, attribute groups.
+    <p>
+  </li>
+  <li><i>Details | Component Documentation | Attribute Detail | Generate For</i></li>
+  <li><i>Details | Component Documentation | Attribute Detail | Include</i>
+    <p>
+    Specify for which components the "Attribute Detail" section is generated (e.g. elements, complex types,
+    attribute groups) and which attribute definitions may be included in it 
+    (e.g. local attributes, references, wildcard, prohibitions, the attributes inherited from ancestor components). 
+    <p>
+  </li>
+  <li><i>Details | Component Documentation | Content Element Detail | Generate For</i></li>
+  <li><i>Details | Component Documentation | Content Element Detail | Include</i>
+    <p>
+    Specify for which components the "Content Element Detail" section is generated
+    (e.g. elements, complex types, element groups) and which element definitions may be included in it 
+    (e.g. local elements, references, wildcards, the elements inherited from ancestor components). 
+    <p>
+  </li>
+  <li><i>Details | Component Documentation | Type Definition Detail | Simple Content Derivation | Facets</i></li>
+  <li><i>Details | Component Documentation | Attribute Detail | Type Detail | Simple Content Derivation | Facets</i></li>
+  <li><i>Details | Component Documentation | Content Element Detail | Type Detail | Simple Content Derivation | Facets</i>
+    <p>
+    These parameters control whether to include Facet Documentation. 
+    <p>
+  </li>
+  </ul>
+</li>
+
+</ul>
+
+<h3>
+  <a name="change_log_v2.1.0"></a>
+  Version 2.1.0
+</h3>
+
+<ul>
+<li><b>Licensing / Processing Modes</b>
+  <p>
+  <ul>
+  <li>
+    <i><b>Full Mode</b></i>
+    <p>
+    The <a href="#full_mode">full</a> processing mode, which is activated under a
+    <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#commercial_license">Commercial</a> or
+    <a target="_blank" href="http://www.filigris.com/buy/licensing_pricing.php#academic_license">Academic</a>
+    License for "<a href="#about">XSDDoc</a>" template application, 
+    since this version unlocks all available functionality
+    of the XML schema documentation generator.
+    This includes what is both implemented in the templates themselves and supported 
+    by the DocFlex/XML template iterpretor / output generators.
+    <p>
+    No other licenses will be needed for this!
+    <p>
+    Previously, to use certain features supported by some output format generators (e.g. rendering in RTF
+    the XHTML markup embedded in XML schema annotations), an additional license covering the DocFlex/XML
+    generator was needed.
+    <p>
+    Now, <a href="http://www.filigris.com/products/docflex_xml/#docflex-xml-re">DocFlex/XML RE</a>,
+    which was continued from the early <i>"DocFlex/XML (Kit)"</i> edition,
+    provides free template interpretor / output generators.
+    <p>
+  </li>
+  <li>
+    <i><b>Limited Free Mode</b></i>
+    <p>
+    This mode, which is activated by default without any special licenses,
+    now enables only using of <a href="#FramedDoc.tpl">FramedDoc.tpl</a> main template.
+    <p>
+    So, you can generate with it for free some standard (however, absolutely complete) 
+    multi-file framed XML schema documentation in HTML format (with limited possibilities of customization).
+    <p>
+    No other types of documentation (including RTF) can be generated in the <a href="#limited_mode">limited mode</a>.
+  </li>
+  </ul>
+  <p>
+</li>
+
+<li>
+  <b>Full support of 
+  <a href="http://www.oasis-open.org/committees/download.php/14809/xml-catalogs.html" target="_blank">OASIS XML Catalogs v1.1</a></b>
+  <p>
+  XML catalogs are used in XML schema projects to avoid referencing XML schemas from each other
+  (via <code>&lt;xs:import&gt;</code>, <code>&lt;xs:include&gt;</code>, <code>&lt;xs:redefine&gt;</code> elements)
+  by direct file names. Instead, only some abstract URIs representing the schemas are used for that purpose.
+  The URIs are connected to the actual 
+  XML schema files in a special XML catalog file. This makes possible to break the entire XML schema into a number 
+  of XSD files (modules) and do not care further about their particular locations.
+  <p>
+  As an example of the XML schema project that uses the XML catalog see this link:
+  <a href="http://docs.oasis-open.org/dita/v1.1/OS/schema/ditaschema.zip">http://docs.oasis-open.org/dita/v1.1/OS/schema/ditaschema.zip</a>
+  <p>
+  Now, <a href="#about">XSDDoc</a> allows you to generate the complete documentation
+  by such XML schema projects as well !
+  <p>
+</li>
+<li>
+  <b>Tracking and documenting of substitution groups</b>
+  <p>
+  <ul>
+  <li>
+    <i><b>Inheriting of the element type from the substitution group head </b></i>
+    <p>
+    When an element is affiliated to a substitution group and the element type is not specified,
+    inheriting the type from the head element of the substitution group
+    (specified with <code>substitutionGroup</code> attribute).
+    <p>
+  </li>
+  <li>
+    <i><b>List of substitutable elements</b></i>
+    <p>
+    Generation of the list of elements which the given element may substitute for.
+    (That is, the given element may be used anywhere instead of the elements in the list.)
+    <p>
+    Controlled by the parameter: <i>"Details | Component Documentation | List of Related Components | Substitutable Elements"</i>
+    <p>
+  </li>
+  <li>
+    <i><b>List of substituting elements</b></i>
+    <p>
+    Generation of the list of elements which may substitute for the given element.
+    (These are the members of the substitution group headed by the given element.)
+    <p>
+    Controlled by the parameter: <i>"Details | Component Documentation | List of Related Components | Substituting Elements"</i>
+    <p>
+  </li>
+  <li>
+    <i><b>List of possible children by substitutions</b></i>
+    <p>
+    Generation of the list of all known elements that may be included in the given element by substitutions.
+    <p>
+    Controlled by the parameter: <i>"Details | Component Documentation | List of Related Components | Children By Substitutions"</i>
+    <p>
+  </li>
+  <li>
+    <i><b>List of possible parents by substitutions</b></i>
+    <p>
+    Generation of the list of all known elements that may include the given element by substitutions.
+    <p>
+    Controlled by the parameter: <i>"Details | Component Documentation | List of Related Components | Parents By Substitutions"</i>
+    <p>
+  </li>
+  <li>
+    <i><b>List of usage as head element of substitution group affiliations</b></i>
+    <p>
+    In the element's "Usage Locations", generation of the list of elements where the given element
+    is specified as the value of the <code>substitutionGroup</code> attribute.
+    <p>
+  </li>
+  </ul>
+  <p>
+  <b>Note:</b> All the lists are produced according to the values of <code>substitutionGroup</code> 
+  and <code>block</code> attributes of global element components (as well as considering 
+  <code>blockDefault</code> attribute of <code>&lt;xs:schema&gt;</code>).
+  <p>
+</li>
+<li>
+  <b>Documenting and highlighting of abstract global elements and complex types</b>
+  <p>
+  The <code>abstract</code> attributes specified on global element and complex type components
+  are documented now in the component profile sections.
+  Moreover, anywhere an abstract element or complex type is mentioned in the documentation,
+  its name will be highlighted with <i>italic</i> font.
+  <p>
+</li>
+<li>
+  <b>Documenting of <code>block</code> and <code>final</code> attributes of elements and complex/simple types</b>
+  <p>
+  Those attributes are documented now in profile sections of corresponding components (with possible explanations).
+  The <code>block</code> attributes are used also to calculate actual members of substitution groups.
+  <p>
+  The <code>blockDefault</code> and <code>finalDefault</code> attributes of <code>&lt;xs:schema&gt;</code>,
+  which provide the default values of the <code>block</code> and <code>final</code> attributes of elements and types,
+  are taken into account and documented in XML schema profile as well.
+  <p>
+</li>
+<li>
+  <b>Documenting of <code>nillable</code> attributes of elements</b>
+  <p>
+  (in profile sections of element documentation and content element details)
+  <p>
+</li>
+<li>
+  <b><i>"All Components"</i> frame and <i>"All Component Summary"</i> documentation have been added</b>
+  <p>
+  These files/blocks are organized the same as similar ones generated for particular XML schemas or namespaces,
+  however, now they list all documented XSD components (i.e. those for which separate <i>Component Documentation</i>
+  blocks have been generated).
+  <p>
+  Actually, the exact content of the <i>"All Component Summary"</i> document can be specified in
+  <i>"Details | All Component Summary"</i> parameter group.
+  <p>
+</li>
+<li>
+  <b>Tracking/documenting of namespaces and namespace prefixes</b>
+  <p>
+  <ul>
+  <li>
+    <i><b>Showing namespace prefixes</b></i>
+    <p>
+    A template parameter <i>"Show | Namespace Prefixes"</i> has been introduced to switch on/off 
+    showing namespace prefixes in the names of XML schema components being documented or mentioned 
+    in the documentation.
+    <p>
+    Any namespace prefixes used in the output documentation originate from the namespace URI/prefix
+    bindings declared in the source XSD files. For a particular XML name, its namespace prefix is 
+    generated according to the binding for the given namespace found the nearest to the documentation
+    context where that XML name appears.
+    <p>
+    Previously, such prefixes were generated in any case. However, sometimes the XML schema authors
+    may declare very long namespace prefixes (even without actually using them), which
+    would completely overwhelm the documentation. So, the showing of such prefixes needs
+    to be switched off in that case.
+    <p>
+  </li>
+  <li>
+    <i><b>Default namespace-qualified form of local elements and attributes</b></i>
+    <p>
+    The settings of <code>elementFormDefault</code> and <code>attributeFormDefault</code> attributes 
+    specified in the <code>&lt;xs:schema&gt;</code> element are documented now in the 
+    XML schema profile.
+    <p>
+    You may specify which information is included in the XML schema profile, for instance, in 
+    the parameter group <i>"Details | Schema Overview | Schema Profile"</i>.
+    <p>
+  </li>
+  <li>
+    <i><b>Local elements with namespace-unqualified form</b></i>
+    <p>
+    The local elements with the namespace-unqualified form are documented now as belonging to
+    <i>global namespace</i>.
+    Previously they were still linked to the namespace targeted by the parent schema
+    (where they are declared).
+    <p>
+  </li>
+  </ul>
+</li>
+<li>
+  <b>Documenting of local elements</b>
+  <p>
+  <ul>
+  <li>
+    <i><a name="change_log_v2.1.0_localElementExt"></a><b>Showing extensions of local element names</b></i>
+    <p>
+    A template parameter <i>"Show | Local Element Extensions"</i> has been introduced to control
+    the generation of the extensions of local element names.
+    <p>
+    The extended name of a local element is made of its normal name extended with some short info 
+    about the possible element location or its type. For example:
+    <blockquote>
+    <code>
+    configuration (in plugin in plugins in reporting)<br>
+    xs:complexType (type xs:localComplexType)
+    </code>
+    </blockquote>
+    here in the brackets are the local element name extensions.
+    <p>
+    The name extensions are needed to distinguish the element in the documentation from other local elements,
+    which share the same XML names, however have different content.
+    <p>
+    The name extensions may be not necessary for local element with unique names.
+    For instance, some XML schemas are designed (or generated) so that almost all element components
+    are declared locally, except only the root element. At that, all element names may be unique. 
+    So, the name extensions are not really needed and will only overload the documentation.
+    <p>
+    Before this version, the extensions of local element names were generated in any case.
+    Now, it is also possible to specify not generating them at all or generating them only for 
+    local elements with non-unique (repeating) names.
+    <p>
+  </li>
+  <li>
+    <i><b>Including all annotations of local elements</b></i>
+    <p>
+    A unique feature of this XML schema documentation generator (<a href="#about">XSDDoc</a>)
+    is the possibility to document local elements both <i>locally</i> and <i>globally</i>.
+    (For more details see parameter: <i>"Generate Details | Elements | Local Elements"</i>.)
+    <p>
+    In the case of global documenting, all local elements that share the same { namespace, name, type }
+    are documented as a single <i>quasi-global</i> element.
+    This is possible because many things that can be said about each particular local element component
+    covered by it are the same. Documenting them together as a single entity may actually reveal
+    more information.
+    <p>
+    However, there are a few things that may vary at each particular location. Annotations are among them.
+    <p>
+    Now, the unified <i>quasi-global</i> element documentation will list all annotations specified 
+    locally at each covered local element component. At that, when the annotation text actually repeats,
+    it will be printed only once with the list of all locations where such a text was specified.
+    <p>
+  </li>
+  </ul>
+</li>
+<li>
+  <b>Processing of annotations</b>
+  <p>
+  <ul>
+  <li>
+    <i><b>XHTML-like tags</b></i>
+    <p>
+    From the very start, <a href="#about">XSDDoc</a> has been able to recognize and process
+    the XHTML tags (elements) embedded in any XML schema annotations (so as to format with HTML
+    the annotation text and include images).
+    <p>
+    It was only required that any markup elements supposed to be XHTML were actually associated with
+    the XHTML namespace URI <code>http://www.w3.org/1999/xhtml</code> that must be specified with
+    <code>'xmlns'</code> attribute. (For more details, please see
+    <a href="http://www.filigris.com/products/docflex_xml/xsddoc/faq.php#xhtml.usage" target="_blank">DocFlex/XML | XSDDoc | FAQ | How to use XHTML?</a>)
+    <p>
+    Switching to XHTML namespace would be always correct from the point of overall XML integrity. 
+    However, since many people actually want to use HTML tags without bothering much about all those namespaces,
+    we have eased that requirement.
+    <p>
+    Now, you can use HTML tags directly without switching the context namespace to the true XHTML.
+    To have such tags to be processed as XHTML, you will need
+    <ol>
+    <li>
+      To select the parameter <i>"Processing | Tags | XHTML"</i> (set it <code>true</code>)
+    </li>
+    <li>
+      To set the parameter <i>"Processing | Tags | Other Tags"</i> to <code>"process as XHTML"</code>.
+    </li>
+    </ol>
+    <p>
+  </li>
+  <li>
+    <i><b>Encoding of HTML markup characters</b></i>
+    <p>
+    An additional parameter has been introduced related to HTML markup:
+    <i>"Processing | Annotations | Encode markup characters"</i>.
+    It controls whether to encode the HTML markup characters contained in the annotation text.
+    <p>
+    The purpose of this parameter is the following:
+    <p>
+    <ol>
+    <li>
+      Suppose you use XHTML elements to format your annotations and some annotation contains a text like this:
+      <blockquote><code>A &lt; B</code></blockquote>
+      You need to show the <code>'&lt;'</code> character as it is.
+      Since the whole annotation will be converted into HTML, that character needs to be encoded.
+      In that case, this parameter should be <b>selected</b>.
+      <p>
+    </li>
+    <li>
+      However, some XML schema authors do not rely on XHTML to format annotation 
+      (probably because few tools process it). Instead, they insert HTML markup directly 
+      into the annotation text, like the following:
+<blockquote>
+<pre>
+&lt;xs:annotation&gt;
+   &lt;xs:documentation&gt;
+      This is &amp;lt;b&amp;gt;keyword&amp;lt;/b&amp;gt;
+   &lt;/xs:documentation&gt;
+&lt;/xs:annotation&gt;
+</pre>
+</blockquote>
+      An XML parser will convert such an annotation text into the string:
+      <blockquote>
+        <code>This is &lt;b&gt;keyword&lt;/b&gt;</code>
+      </blockquote>
+      which could be immediately passed to an HTML viewer or added to HTML output. 
+      In that case, the HTML markup characters should not be encoded!
+      <p>
+      Therefore, if you have an XML schema like this, you should <b>unselect</b> this parameter.
+      (An example of such a schema you can find by this link:
+       <a href="http://maven.apache.org/xsd/maven-4.0.0.xsd" target="_blank">http://maven.apache.org/xsd/maven-4.0.0.xsd</a>)
+    </li>
+    </ol>
+    <p>
+  </li>
+  <li>
+    <i><b>Processing of &lt;xs:appinfo&gt; elements</b></i>
+    <p>
+    In fact, XML schema &lt;xs:annotation&gt; element does not allow inserting the annotation text directly into it.
+    Instead, XSD language defines its two possible children: &lt;xs:documentation&gt; and &lt;xs:appinfo&gt; elements.
+    <p>
+    It is the &lt;xs:documentation&gt; elements where you actually put the human-readable text.
+    <p>
+    The &lt;xs:appinfo&gt; elements are supposed to store the data or instructions intended for some software
+    that would process the XML schema.
+    Because of this, generally, it is unclear how &lt;xs:appinfo&gt; elements should be documented
+    (except of reproducing their XML source as is).
+    <p>
+    However, some people want to use &lt;xs:appinfo&gt; elements in the same way as &lt;xs:documentation&gt; elements 
+    and place the human-readable text there too.
+    For such people, we have supported a possibility to process the &lt;xs:appinfo&gt; elements in that way as well.
+    It is controlled by the new parameter: <i>"Processing | Annotations | &lt;xs:appinfo&gt;"</i>
+    <p>
+  </li>
+  </ul>
+</li>
+<li>
+  <b>Selective documenting of initially specified, imported, included and redefined XML schemas</b>
+  <p>
+  A new parameter group <i>"Generate Details | For Schemas"</i> has been supported that allows you to specify
+  which XML schemas (and their components) are to be documented.
+  <p>
+  The XML schema files you initially specify on the command line (or in the generator dialog) 
+  are the primary XML files to be processed by the <a href="#about">XSDDoc</a> template set.
+  <p>
+  However, those initial XML schemas may call from themselves some other XML schema files 
+  (via the <code>&lt;xs:import&gt;</code>, <code>&lt;xs:include&gt;</code> and 
+  <code>&lt;xs:redefine&gt;</code> elements) and they, in turn, yet more extra schemas.
+  All those extra XML schema files plus the schemas specified initially will constitute
+  the whole your XML schema project. Generally, all of them must be loaded and processed
+  in order to make sense of your initial XML schemas (that is, to interpret and document them).
+  Some of such imported extra XML schemas may be the standard ones used in other your projects
+  (in addition, they may be rather big).
+  <p>
+  Before this version, all the extra XML schemas involved in your project would be fully documented as well.
+  But what if you actually want to document only the explicitly specified XML schemas?
+  <p>
+  Now, you can do it using the new parameters in <i>"Generate Details | For Schemas"</i> group!
+  <p>
+</li>
+<li>
+  <b>Selective documenting of XML schema components</b>
+  <p>
+  Using <code><a href="#PlainDoc.tpl">PlainDoc.tpl</a></code> main template, you can document now
+  not only the whole XML schema but to generate separate documentation for several selected (or even single)
+  XML schema components (e.g. elements, global complex/simple types, groups, etc) specified by their local names.
+  <p>
+  For instance, the parameter <i>"Generate Details | Elements | Names"</i> available in 
+  <code><a href="#PlainDoc.tpl">PlainDoc.tpl</a></code>
+  allows you to specify directly the names of the elements to be documented in separate 
+  Element Documentation blocks. When the list of names is specified, only the element components
+  with the specified names will be documented.
+  <p>
+  The same is supported for other component types.
+  <p>
+</li>
+<li>
+  <b>Sorting of attributes in XML Representation Summary</b>
+  <p>
+  A new parameter <i>"Details | Component Documentation | XML Representation Summary | Sorting"</i>
+  (and even some general template language functionality for it) has been supported
+  to specify sorting of attributes shown in the XML Representation Summary of a component (e.g. element).
+  <p>
+  When the parameter selected (<code>true</code>), the attributes will be sorted 
+  in alphabetic order of their qualified names.
+  <p>
+  When unselected (<code>false</code>), the attributes will follow according 
+  to some <i>natural order</i> determined by how and where the attributes have been defined.
+  In a simplest case, when all attributes are defined within the same component,
+  that will be exactly the order of their definitions. When the given component 
+  (whose attributes are represented) is based on other components, some of such ancestor components
+  may define particular attributes (and even block some of those defined within their own ancestors).
+  In that case, the result attribute ordering will appear from the subsequent interpretation of 
+  all involved components.
+  <p>
+</li>
+<li>
+  <b>Control over the generated content</b>
+  <p>
+  Thanks to DocFlex template technology, overall, it was possible to support more than <b>300 template parameters</b>
+  (working the same as "options" of an ordinary documentation generator), which gives you an unprecedented
+  control over the content, look & feel of the generated XML schema documentation!
+</li>
+</ul>
+
+<h3>
+  <a name="change_log_v2.0.0"></a>
+  Version 2.0.0
+</h3>
+
+<ul>
+
+<li><b>&ldquo;<a href="#about">XSDDoc</a>&rdquo;, the commercial product</b>
+<p>
+Since this version, <a href="#about">XSDDoc</a> becomes a
+<a href="http://www.filigris.com/buy/licensing_pricing.php#templates.cta">commercial template application</a>,
+that is a separate commercial product with individual licensing and its own version numbering.
+<p>
+</li>
+
+<li><a name="change_log_v2.0.0_new_params"></a><b>The new parameter interface</b>
+<p>
+The system of parameters that control <a href="#about">XSDDoc</a> has been entirely reworked. The total number
+of parameters now exceeds 170. This will allow you to control almost every aspect of the generated XML Schema 
+documentation and vary its content (and some formatting) within a great range of details, starting from 
+a few summaries and overviews up to the most comprehensive documentation containing every feature possible.
+<p>
+On the other hand, such a large number of parameters should not hinder you because all of them have
+the default values, some of which are calculated dynamically from the values of other parameters.
+<p>
+What is more, thanks to the new capabilities of the Template Parameter Inspector introduced in the
+latest DocFlex/XML v1.7.0, all parameters of <a href="#about">XSDDoc</a> are organized in the form of
+a hierarchical tree (with dynamically collapsed/expanded nodes) that is both compact and easy to use.
+<p>
+</li>
+
+<li><b>Improved documenting of local elements</b>
+<p>
+Before this version, the local elements (i.e. the element components defined locally within complex types and groups)
+were documented in the same way as the global ones. The emphasis was to treat each pair 
+<i>{ local element name : type }</i> as a <i>quasi-global</i> element so as to collect and 
+document about such a pair all the information possible.
+<p>
+That approach worked well for many big XML schemas (e.g. like "XML Schema for XML Schemas" found at
+<a href="http://www.w3.org/2001/XMLSchema.xsd" target="_blank">http://www.w3.org/2001/XMLSchema.xsd</a>)
+and helped to reveal lots of information about the XML elements defined by the schema.
+<p>
+However, for certain types of XML schema design, documenting of local elements along with the global ones is not good
+and, rather than clearing things up, may produce a mess.
+This is especially true when the XML schema authors avoid defining element attributes.
+Instead, in order to store the elementary data normally supposed for attributes, 
+they define lots of local elements with primitive simple types. As a result, such an XML schema contains 
+great a lot of insignificant local element components. When all of them are documented separately 
+(and appear in all element component lists) they may overwhelm anything else.
+In that case, such local elements need to be documented locally, exactly where they are defined!
+<p>
+<a href="#about">XSDDoc</a> now supports this.
+The local elements can be documented simultaneously in two ways: locally and globally.
+The local documenting means that the element component is documented together with its parent component (where it is defined). 
+The details about the element will appear in the <i>"Content Element Detail"</i> section of the Component Documentation 
+generated for its parent component.
+<p>
+That was before this <a href="#about">XSDDoc</a> version, of course. However, now a lot more details (almost all)
+about each element can be included in the <i>"Content Element Detail"</i> section as well. Which exactly details are 
+generated is controlled by the parameter group: <i>"Details | Component Documentation | Content Element Detail"</i>.
+<p>
+What is more, the parameter <i>"Generate Details | Elements | Local Elements"</i> allows you to
+specify whether to document local elements separately (globally) and which of them. 
+For instance, if this parameter is set to <i>"with complex type only"</i>, then the local elements 
+with simple types (which normally substitute attributes) will be documented only locally.
+That will allow you to avoid the mess mentioned above.
+<p>
+</li>
+
+<li><b>Documenting of simple content</b>
+<p>
+Now, for all situations when a simple content (i.e. simple datatype) is used or defined:
+<p>
+<ul>
+<li>
+The value of an attribute
+</li>
+<li>
+The value of an element with simple content
+</li>
+<li>
+The simple content defined by a simple or complex type
+</li>
+</ul>
+<p>
+the following details can be generated:
+<p>
+<ol>
+<li>
+  The <i>datatype model</i>, which shows how the simple content datatype 
+  is related to the XSD basic simple types.
+  <p1>
+</li>
+<li>
+  The list of all <i>actual facets</i> that restrict a possible value allowed for that simple content
+  (along with the annotations found for each facet).
+  <p>
+  The list of actual facets is produced as the following.
+  <p>
+  First, the initial facets are collected by all types starting from the type assigned to the component throughout 
+  the chain of all its ancestor types (both global and anonymous) until the top ancestor passed or a derivation 
+  by list or union reached. Further, the produced sequence of facets is filtered so as the facets collected earliest 
+  (that is defined in lower descendant types) remain and those overridden by them are removed. In particular:
+  <p>
+  <ol>
+    <li>
+      All <code>xs:pattern</code> facets will remain, because the allowed value must match all of them.
+    </li>
+    <li>
+      The <code>xs:enumeration</code> facets will remain only those that are defined in the same type,
+      which is either the component's type itself or the one nearest to it.
+    </li>
+    <li>
+      All other facets will override the same facets defined in the ancestor types.
+    </li>
+  </ol>
+  <p>
+</li>
+<li>
+  The default value specified for the given simple content (i.e. the default value of the element/attribute)
+</li>
+<li>
+  The fixed value
+</li>
+</ol>
+<p>
+</li>
+
+<li><b>Support of multi-language annotations</b>
+<p>
+When you need to annotate your XML schemas simultaneously in several languages,
+you should use several sibling <code>&lt;xs:documentation&gt;</code> elements with
+different <code>xml:lang</code> attributes. For example:
+<blockquote>
+<pre>
+&lt;xs:element name="author" type="author"&gt;
+  &lt;xs:annotation&gt;
+    &lt;xs:documentation <u>xml:lang</u>="en"&gt;
+      The author of a book.
+    &lt;/xs:documentation&gt;
+    &lt;xs:documentation <u>xml:lang</u>="fr"&gt;
+      Designe l'auteur d'un livre.
+    &lt;/xs:documentation&gt;
+  &lt;/xs:annotation&gt;
+&lt;/xs:element&gt;
+</pre>
+</blockquote>
+
+Now, <a href="#about">XSDDoc</a> will allow you to use such multi-language annotations
+to generate different variants of the same XML schema documentation for different target languages.
+<p>
+When you specify the target language code in the <i>"Processing | Annotations | Language"</i>
+template <a href="#change_log_v2.0.0_new_params">parameter</a>, 
+only those <code>&lt;xs:documentation&gt;</code> elements will be processed, 
+which contain the <code>xml:lang</code> attribute assigned with that code.
+</li>
+
+</ul>
+
+<h3>
+  <a name="change_log_v1.6.8"></a>
+  Version 1.6.8
+</h3>
+
+<ul>
+  <li>
+    The <code>&lt;xs:any&gt;</code> and <code>&lt;xs:anyAttribute&gt;</code>
+    wildcards are fully documented now (the same like other elements and attributes).
+    <p>
+  </li>
+  <li>
+    Fixed a problem when a schema with a specified default namespace
+    (e.g. assigned with the <code>xmlns</code> attribute in <code>&lt;xs:schema&gt;</code>
+    element) includes another schema using a <code>&lt;xs:include&gt;</code> or 
+    <code>&lt;xs:redefine&gt;</code> directive and the included schema has no default
+    namespace specified. Such a situation happens in case of so-called "chameleon design",
+    when the included/redefined schema is assumed to adopt the default namespace of
+    the calling schema. Before v1.6.8, the XSDDoc did not process it accordingly,
+    which caused generating a wrong documentation. Now, it is fixed!
+    <p>
+  </li>
+</ul>
+
+<h3>
+  <a name="change_log_v1.6.7"></a>
+  Version 1.6.7
+</h3>
+
+<ul>
+  <li>
+    Fixed repeated documenting of the same schemas which were both specified on the 
+    generator command line and loaded from other schemas with one of the <code>&lt;xs:import&gt;</code>,
+    <code>&lt;xs:include&gt;</code>, <code>&lt;xs:redefine&gt;</code> directives.
+    <p>
+  </li>
+  <li>
+    In the <i>"Usage / Definition Locations"</i> section of component documentation, 
+    now the links (page numbers) are generated to the local details about that component 
+    (within other component where it is used/defined).
+    <p>
+  </li>
+</ul>
+
+<h3>
+  Version 1.6.3
+  <a name="change_log_v1.6.3"></a>
+</h3>
+
+<ul>
+  <li>
+    A bug has been fixed. There was a wrong query in <code><a href="#lib_dir">lib</a>/init.tpl</code> template, 
+    which caused the attributes specified within a child element defined locally within 
+    another element to be documented also as the attributes of the parent element.
+    <p>
+  </li>
+  <li>
+    Each reproduced XML source fragment (e.g. the definition of a component) 
+    now is hyperlinked to the location of that fragment within the reproduced full 
+    XML schema source. The link is placed in the "XML Source" heading.
+    <p>
+  </li>
+  <li>
+    Since XHTML formatting in annotations may occupy a lot of space in the reproduced XML source, 
+    it may just overwhelm anything else. So, now, a group of parameters has been introduced in
+    <code><a href="#PlainDoc.tpl">PlainDoc.tpl</a></code> and 
+    <code><a href="#FramedDoc.tpl">FramedDoc.tpl</a></code> templates to remove 
+    <code>&lt;xs:annotation&gt;</code> elements from the reproduced XML source
+    (see in parameter inspector <i>"Sections | XML Source | Remove Annotation"</i>).
+    This can by controlled specifically for different types of XML source fragments 
+    (e.g. for components the annotation can be removed, but the full XML schema source 
+    will be reproduced as is).
+    <p>
+  </li>
+  <li>
+    The XHTML markup specified in XML schema annotations is now also reproduced in 
+    the brief descriptions (first sentences) placed in summary tables (e.g. Element Summary).
+    <p>
+  </li>
+  <li>
+    A new template parameter <i>"Include images"</i> (see <i>"Sections | Annotation | Include images"</i>
+    in the parameter inspector dialog) has been added to control whether to include images specified 
+    (with the XHTML <code>&lt;img&gt;</code> tags) in XML schema annotations.
+    <p>
+  </li>
+</ul>
+
+<h3>
+  Version 1.6
+  <a name="change_log_v1.6"></a>
+</h3>
+
+<ul>
+<li>
+  <b>Support of XHTML tags within XML Schema annotations</b>
+  <p>
+  The XSDDoc templates are upgraded now to support 
+  the XML Schema annotations (the content of <code>&lt;xs:annotation&gt;</code> elements) 
+  preformatted with XHTML tags, including possibility to insert images 
+  (using <code>&lt;xhtml:img&gt;</code> tag).
+  <p>
+  The processing of XHTML tags is programmed entirely within <code>annotation.tpl</code> 
+  subtemplate (located at <code>templates/xsddoc/misc/</code> directory). 
+  All XHTML tags are converted to the normal HTML tags (actually, just 
+  <code>'xhtml'</code> namespace prefix is removed from the tag names).
+  Further, everything is processed by the generator itself.
+  <p>
+  In the case of <b>HTML output</b>, each annotation text together with HTML tags is inserted
+  as is into the generated output file. Additionally, the image files specified in 
+  <code>&lt;xhtml:img&gt;</code> tags can be copied automatically to the documentation 
+  destination directory. This is also programmed in <code>annotation.tpl</code> subtemplate
+  and controlled by <i>"Formatting | Annotation | Copy images"</i> parameter of both
+  <code><a href="#PlainDoc.tpl">PlainDoc.tpl</a></code> and 
+  <code><a href="#FramedDoc.tpl">FramedDoc.tpl</a></code> main templates.
+  <p>
+  In the case of <b>RTF output</b> 
+  (generated with <code><a href="#PlainDoc.tpl">PlainDoc.tpl</a></code> template), 
+  all HTML tags embedded in annotations are parsed and interpreted with the appropriate 
+  RTF formatting features. Almost all HTML tags (and their attributes) practically 
+  usable in documentation comments are processed in that way. Here's the list 
+  of all supported HTML tags:
+  <p>
+  <table border="1" cellspacing="1" cellpadding="5">
+  <tr valign="top">
+    <td><b>Text</b></td>
+    <td>
+      &lt;b&gt;, &lt;strong&gt;, &lt;i&gt;, &lt;em&gt;, &lt;code&gt;, &lt;tt&gt;, &lt;u&gt;,
+      &lt;s&gt;, &lt;strike&gt;, &lt;sub&gt;, &lt;sup&gt;, &lt;font&gt;, &lt;br&gt;
+    </td>
+  </tr>
+  <tr valign="top">
+    <td><b>Paragraphs</b></td>
+    <td>
+      &lt;p&gt;, &lt;center&gt;, &lt;div&gt;, &lt;pre&gt;, &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;,
+      &lt;h4&gt;, &lt;h5&gt;, &lt;h6&gt;, &lt;blockquote&gt;
+    </td>
+  </tr>
+  <tr valign="top">
+    <td><b>Lists</b></td>
+    <td>
+      &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;
+    </td>
+  </tr>
+  <tr valign="top">
+    <td><b>Table</b></td>
+    <td>
+      &lt;table&gt;, &lt;tr&gt;, &lt;td&gt;, &lt;th&gt;
+    </td>
+  </tr>
+  <tr valign="top">
+    <td><b>Other</b></td>
+    <td>
+      &lt;hr&gt;, &lt;img&gt;, &lt;a&gt;...&lt;/a&gt;
+    </td>
+  </tr>
+</table>
+</li>
+</ul>
+
+<h3>
+  Version 1.5
+  <a name="change_log_v1.5"></a>
+</h3>
+
+<ul>
+  <li>
+    The first real-world and very powerful template application has been developed
+    basing on this new functionality -- the "<a href="#about">XSDDoc</a>" set of templates
+    that implements a superior quality XML schema documentation generator!
+  </li>
+</ul>
+
+<hr>
+<span style="font-family: Verdana, helvetica;font-size: 13px;">
+Copyright&copy; 2009 Filigris Works, Leonid Rudy Softwareprodukte. All rights reserved.<br>
+To contact us, please visit
+<a href="http://www.filigris.com" target="_blank">www.filigris.com</a> or
+e-mail to: <a href="mailto:contact@filigris.com">contact@filigris.com</a>
+</span>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<DOCFLEX_TEMPLATE VER='1.13'>
+CREATED='2004-06-21 01:50:00'
+LAST_UPDATE='2009-10-30 06:36:29'
+DESIGNER_TOOL='DocFlex SDK 1.x'
+DESIGNER_LICENSE_TYPE='Filigris Works Team'
+APP_ID='docflex-xml-xsddoc2'
+APP_NAME='DocFlex/XML XSDDoc'
+APP_VER='2.2.0'
+APP_AUTHOR='Copyright \u00a9 2005-2009 Filigris Works,\nLeonid Rudy Softwareprodukte. All rights reserved.'
+TEMPLATE_TYPE='DocumentTemplate'
+DSM_TYPE_ID='xsddoc'
+ROOT_ET='#DOCUMENTS'
+<TEMPLATE_PARAMS>
+	PARAM={
+		param.name='docTitle';
+		param.title='Documentation Title';
+		param.type='string';
+	}
+	PARAM={
+		param.name='gen.doc.for.schemas';
+		param.title='For Schemas';
+		param.title.style.italic='true';
+		param.grouping='true';
+		param.grouping.defaultState='collapsed';
+	}
+	PARAM={
+		param.name='gen.doc.for.schemas.initial';
+		param.title='Initial';
+		param.title.style.italic='true';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.for.schemas.imported';
+		param.title='Imported';
+		param.title.style.italic='true';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.for.schemas.included';
+		param.title='Included';
+		param.title.style.italic='true';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.for.schemas.redefined';
+		param.title='Redefined';
+		param.title.style.italic='true';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.overview';
+		param.title='Overview Summary';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.allcomps';
+		param.title='All Component Summary';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.namespace';
+		param.title='Namespace Overviews';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.schema';
+		param.title='Schema Overviews';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='gen.doc.xmlnsBindings';
+		param.title='XML Namespace Bindings';
+		param.type='boolean';
+	}
+</TEMPLATE_PARAMS>
+FMT={
+	doc.lengthUnits='pt';
+}
+<STYLES>
+	CHAR_STYLE={
+		style.name='Default Paragraph Font';
+		style.id='cs1';
+		style.default='true';
+	}
+	PAR_STYLE={
+		style.name='Frame Heading';
+		style.id='s1';
+		text.font.size='9';
+		text.font.style.bold='true';
+		par.margin.top='7';
+		par.margin.bottom='3';
+		par.option.nowrap='true';
+	}
+	PAR_STYLE={
+		style.name='Frame Item';
+		style.id='s2';
+		text.font.size='9';
+		par.option.nowrap='true';
+	}
+	PAR_STYLE={
+		style.name='Frame Title 1';
+		style.id='s3';
+		text.font.size='10';
+		text.font.style.bold='true';
+		par.margin.bottom='4';
+		par.option.nowrap='true';
+	}
+	CHAR_STYLE={
+		style.name='Hyperlink';
+		style.id='cs2';
+		text.decor.underline='true';
+		text.color.foreground='#0000FF';
+	}
+	PAR_STYLE={
+		style.name='Normal';
+		style.id='s4';
+		style.default='true';
+	}
+</STYLES>
+<ROOT>
+	<FOLDER>
+		<BODY>
+			<AREA_SEC>
+				COND='getBooleanParam("gen.doc.overview")'
+				FMT={
+					text.option.nbsps='true';
+					par.style='s2';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								<DOC_HLINK>
+									TARGET_FRAME_EXPR='"detailFrame"'
+									HKEYS={
+										'"overview-summary"';
+									}
+								</DOC_HLINK>
+								TEXT='Overview'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("gen.doc.allcomps")'
+				FMT={
+					text.option.nbsps='true';
+					par.style='s2';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								<URL_HLINK>
+									ALT_HLINK
+									TARGET_FRAME_EXPR='"listFrame"'
+									URL_EXPR='documentByTemplate ("all-components-frame")'
+								</URL_HLINK>
+								<URL_HLINK>
+									ALT_HLINK
+									TARGET_FRAME_EXPR='"detailFrame"'
+									URL_EXPR='documentByTemplate ("all-components-summary")'
+								</URL_HLINK>
+								TEXT='All Components'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("gen.doc.xmlnsBindings")'
+				FMT={
+					par.style='s2';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								<DOC_HLINK>
+									TARGET_FRAME_EXPR='"detailFrame"'
+									HKEYS={
+										'"xmlns-bindings"';
+									}
+								</DOC_HLINK>
+								TEXT='Namespace Bindings'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<ELEMENT_ITER>
+				DESCR='iterates by namespaces'
+				COND='getBooleanParam("gen.doc.namespace")\n&&\n(\n  sectionBlock.outputSecCount > 0\n  ||\n  { \n    checkElementMap ("namespaces", @namespaceCount, null, null);\n    namespaceCount.toInt() > 1 \n  } \n  || \n  getBooleanParam("gen.doc.schema")\n)'
+				TARGET_ET='#CUSTOM'
+				SCOPE='custom'
+				ELEMENT_ENUM_EXPR='CustomElements (getElementMapKeys("namespaces"))'
+				SORTING='by-value'
+				SORTING_KEY={lpath='.',ascending}
+				<BODY>
+					<AREA_SEC>
+						FMT={
+							par.style='s2';
+							par.option.nowrap='true';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								<CTRLS>
+									<DATA_CTRL>
+										<DOC_HLINK>
+											TITLE_EXPR='contextElement.value != ""\n  ? \'Namespace "\' + contextElement.value.toString() + \'"\'\n  : "Global Namespace"'
+											TARGET_FRAME_EXPR='"listFrame"'
+											HKEYS={
+												'contextElement.value';
+												'"summary"';
+											}
+										</DOC_HLINK>
+										<DOC_HLINK>
+											ALT_HLINK
+											TITLE_EXPR='contextElement.value != ""\n  ? \'Namespace "\' + contextElement.value.toString() + \'"\'\n  : "Global Namespace"'
+											TARGET_FRAME_EXPR='"detailFrame"'
+											HKEYS={
+												'contextElement.value';
+												'"detail"';
+											}
+										</DOC_HLINK>
+										FORMULA='contextElement.value != "" ? contextElement.value : "{global namespace}"'
+									</DATA_CTRL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</AREA_SEC>
+				</BODY>
+				<HEADER>
+					<AREA_SEC>
+						FMT={
+							par.style='s1';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								<CTRLS>
+									<LABEL>
+										TEXT='Namespaces'
+									</LABEL>
+									<DATA_CTRL>
+										FORMULA='"(" + iterator.numItems + ")"'
+									</DATA_CTRL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</AREA_SEC>
+				</HEADER>
+			</ELEMENT_ITER>
+			<ELEMENT_ITER>
+				COND='getBooleanParam("gen.doc.schema")\n&&\n(sectionBlock.outputSecCount > 0 ||\n countElementsByLPath("#DOCUMENT/xs:schema") > 1)'
+				TARGET_ET='xs:schema'
+				SCOPE='advanced-location-rules'
+				RULES={
+					'* -> #DOCUMENT[hasAttr ("initial") &&\ngetBooleanParam("gen.doc.for.schemas.initial")\n||\nhasAttr ("imported") &&\ngetBooleanParam("gen.doc.for.schemas.imported")\n||\nhasAttr ("included") &&\ngetBooleanParam("gen.doc.for.schemas.included")\n||\nhasAttr ("redefined") &&\ngetBooleanParam("gen.doc.for.schemas.redefined")]/xs:schema';
+				}
+				SORTING='by-expr'
+				SORTING_KEY={expr='getXMLDocument().getAttrStringValue("xmlName")',ascending}
+				<BODY>
+					<AREA_SEC>
+						FMT={
+							par.style='s2';
+							par.option.nowrap='true';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								<CTRLS>
+									<DATA_CTRL>
+										<DOC_HLINK>
+											TITLE_EXPR='\'XML Schema "\' + getXMLDocument().getAttrValue("xmlName") + \'"\''
+											TARGET_FRAME_EXPR='"listFrame"'
+											HKEYS={
+												'contextElement.id';
+												'"summary"';
+											}
+										</DOC_HLINK>
+										<DOC_HLINK>
+											ALT_HLINK
+											TITLE_EXPR='\'XML Schema "\' + getXMLDocument().getAttrValue("xmlName") + \'"\''
+											TARGET_FRAME_EXPR='"detailFrame"'
+											HKEYS={
+												'contextElement.id';
+												'"detail"';
+											}
+										</DOC_HLINK>
+										FORMULA='getXMLDocument().getAttrStringValue("xmlName")'
+									</DATA_CTRL>
+									<PANEL>
+										COND='hyperTargetExists (\n  ArgumentList (getXMLDocument().id, "xml-source")\n)'
+										FMT={
+											ctrl.size.width='69.8';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='none';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<LABEL>
+														TEXT='['
+													</LABEL>
+													<LABEL>
+														<DOC_HLINK>
+															TITLE_EXPR='"see XML source"'
+															TARGET_FRAME_EXPR='"detailFrame"'
+															HKEYS={
+																'getXMLDocument().id';
+																'"xml-source"';
+															}
+														</DOC_HLINK>
+														TEXT='src'
+													</LABEL>
+													<LABEL>
+														TEXT=']'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</AREA_SEC>
+				</BODY>
+				<HEADER>
+					<AREA_SEC>
+						FMT={
+							par.style='s1';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								<CTRLS>
+									<LABEL>
+										TEXT='Schemas'
+									</LABEL>
+									<DATA_CTRL>
+										FORMULA='"(" + iterator.numItems + ")"'
+									</DATA_CTRL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</AREA_SEC>
+				</HEADER>
+			</ELEMENT_ITER>
+		</BODY>
+		<HEADER>
+			<AREA_SEC>
+				FMT={
+					par.style='s3';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='none';
+							par.margin.bottom='6';
+						}
+						<CTRLS>
+							<DATA_CTRL>
+								FMT={
+									txtfl.option.renderEmbeddedHTML='true';
+								}
+								FORMULA='getStringParam("docTitle")'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</HEADER>
+	</FOLDER>
+</ROOT>
+CHECKSUM='prl5uoqL0szZPEi5fxBFQHM0JnV5p3XzSB1MyE5cGRo'
+</DOCFLEX_TEMPLATE>

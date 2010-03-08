@@ -1,0 +1,1911 @@
+<DOCFLEX_TEMPLATE VER='1.13'>
+CREATED='2005-10-13 03:37:00'
+LAST_UPDATE='2009-10-30 06:36:30'
+DESIGNER_TOOL='DocFlex SDK 1.x'
+DESIGNER_LICENSE_TYPE='Filigris Works Team'
+APP_ID='docflex-xml-xsddoc2'
+APP_NAME='DocFlex/XML XSDDoc'
+APP_VER='2.2.0'
+APP_AUTHOR='Copyright \u00a9 2005-2009 Filigris Works,\nLeonid Rudy Softwareprodukte. All rights reserved.'
+TEMPLATE_TYPE='DocumentTemplate'
+DSM_TYPE_ID='xsddoc'
+ROOT_ET='xs:%element'
+<TEMPLATE_PARAMS>
+	PARAM={
+		param.name='nsURI';
+		param.title='element namespace URI';
+		param.description='The namespace to which this element belongs';
+		param.type='string';
+	}
+	PARAM={
+		param.name='scope';
+		param.description='Indicates the scope of the main document for which this template is called:\n"any" - unspecified;\n"namespace" - namespace overview;\n"schema" - schema overview';
+		param.type='enum';
+		param.enum.values='any;namespace;schema';
+	}
+	PARAM={
+		param.name='usageMapKey';
+		param.description='The key for "element-usage" map to find items associated with this element';
+		param.type='Object';
+		param.default.expr='instanceOf ("xs:%localElement") &&\n  (typeQName = getAttrQNameValue("type")) != null ?\n{\n  HashKey (\n    getStringParam("nsURI"),\n    getAttrStringValue("name"),\n    typeQName\n  )\n} : contextElement.id';
+	}
+	PARAM={
+		param.name='usageCount';
+		param.title='number of usage locations';
+		param.description='number of locations where this element is used (by reference)\nor declared locally';
+		param.type='integer';
+		param.default.expr='countElementsByKey ("element-usage", getParam("usageMapKey"))';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='elementType';
+		param.title='element type component';
+		param.description='this is either global or anonymous type or null (when type cannot be resolved)';
+		param.type='Object';
+		param.default.expr='findElementByKey ("element-types", contextElement.id)';
+	}
+	PARAM={
+		param.name='elementTypeQName';
+		param.title='element type qualified name';
+		param.description='for an anonymous this will be null';
+		param.type='Object';
+		param.default.expr='elementType = getParam("elementType").toElement();\n\nelementType.instanceOf("#CUSTOM")\n?\n  adaptQName (elementType.value.toQName(), rootElement)\n: \n  QName (\n    getAttrStringValue (\n      elementType.findAncestor ("xs:schema"),\n      "targetNamespace"\n    ),\n    elementType.getAttrStringValue("name"),\n    Enum (rootElement, elementType)\n  )';
+	}
+	PARAM={
+		param.name='contentModelKey';
+		param.title='"content-model-attributes", "content-model-elements" map key';
+		param.description='The key for "content-model-attributes" and "content-model-elements" maps to find items associated with this element';
+		param.type='Object';
+		param.default.expr='getParam("elementType").toElement().id';
+	}
+	PARAM={
+		param.name='attributeCount';
+		param.title='number of all attributes';
+		param.description='total number of attributes declared for this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-attributes", \n  getParam("contentModelKey"),\n  BooleanQuery (\n   ! instanceOf ("xs:anyAttribute") &&\n   getAttrValue("use") != "prohibited"\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='attributeWildcardCount';
+		param.title='number of all attr. wildcards';
+		param.description='total number of attribute wildcards declared for this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-attributes", \n  getParam("contentModelKey"),\n  BooleanQuery (instanceOf ("xs:anyAttribute"))\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownAttributeCount';
+		param.title='number of attributes defined in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-attributes", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    ! instanceOf ("xs:anyAttribute") &&\n    getAttrValue("use") != "prohibited" &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:attributeGroup").id\n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownAttributeWildcardCount';
+		param.title='number of attr. wildcards defined in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-attributes", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    instanceOf ("xs:anyAttribute") &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:attributeGroup").id\n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownAttributeProhibitionCount';
+		param.title='number of attr. prohibitions specified in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-attributes", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    getAttrValue("use") == "prohibited" &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:attributeGroup").id\n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='elementCount';
+		param.title='number of all content elements';
+		param.description='total number of content elements declared for this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (! instanceOf ("xs:any"))\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='elementWildcardCount';
+		param.title='number of all element wildcards';
+		param.description='total number of element wildcards declared for this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (instanceOf ("xs:any"))\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownElementCount';
+		param.title='number of elements defined in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    ! instanceOf ("xs:any") &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:group").id \n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownElementWildcardCount';
+		param.title='number of element wildcards defined in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    instanceOf ("xs:any") &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:group").id \n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='fmt.page.refs';
+		param.title='Generate page references';
+		param.type='boolean';
+		param.default.value='true';
+	}
+	PARAM={
+		param.name='doc.comp.profile.namespace';
+		param.title='Namespace';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.type';
+		param.title='Type';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.content';
+		param.title='Content';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.abstract';
+		param.title='Abstract';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.block';
+		param.title='Block';
+		param.grouping='true';
+		param.type='enum';
+		param.enum.values='any;non_default;none';
+	}
+	PARAM={
+		param.name='doc.comp.profile.block.value';
+		param.title='Value';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.block.meaning';
+		param.title='Meaning';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.final';
+		param.title='Final';
+		param.grouping='true';
+		param.type='enum';
+		param.enum.values='any;non_default;none';
+	}
+	PARAM={
+		param.name='doc.comp.profile.final.value';
+		param.title='Value';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.final.meaning';
+		param.title='Meaning';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.subst';
+		param.title='Subst.Gr';
+		param.grouping='true';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.subst.members';
+		param.title='Members';
+		param.featureType='pro';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.subst.heads';
+		param.title='Heads';
+		param.featureType='pro';
+		param.type='boolean';
+		param.default.value='true';
+	}
+	PARAM={
+		param.name='doc.comp.profile.nillable';
+		param.title='Nillable';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.defined';
+		param.title='Defined';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.includes';
+		param.title='Includes';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.used';
+		param.title='Used';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='show.localElementExt';
+		param.title='Local Element Extensions';
+		param.featureType='pro';
+		param.type='boolean';
+		param.default.value='true';
+	}
+</TEMPLATE_PARAMS>
+FMT={
+	doc.lengthUnits='pt';
+	doc.hlink.style.link='cs4';
+}
+<STYLES>
+	CHAR_STYLE={
+		style.name='Code';
+		style.id='cs1';
+		text.font.name='Courier New';
+		text.font.size='9';
+	}
+	CHAR_STYLE={
+		style.name='Code Smaller';
+		style.id='cs2';
+		text.font.name='Courier New';
+		text.font.size='8';
+	}
+	CHAR_STYLE={
+		style.name='Default Paragraph Font';
+		style.id='cs3';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Hyperlink';
+		style.id='cs4';
+		text.decor.underline='true';
+		text.color.foreground='#0000FF';
+	}
+	PAR_STYLE={
+		style.name='Normal';
+		style.id='s1';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Page Number Small';
+		style.id='cs5';
+		text.font.name='Courier New';
+		text.font.size='8';
+	}
+	CHAR_STYLE={
+		style.name='Property Note';
+		style.id='cs6';
+		text.font.name='Tahoma';
+		text.font.size='8';
+		text.font.style.italic='true';
+	}
+	CHAR_STYLE={
+		style.name='Property Title Font';
+		style.id='cs7';
+		text.font.size='8';
+		text.font.style.bold='true';
+		par.lineHeight='11';
+		par.margin.right='7';
+	}
+	CHAR_STYLE={
+		style.name='Property Value Font';
+		style.id='cs8';
+		text.font.name='Verdana';
+		text.font.size='8';
+		par.lineHeight='11';
+	}
+</STYLES>
+<ROOT>
+	<AREA_SEC>
+		COND='getBooleanParam("doc.comp.profile.namespace")'
+		FMT={
+			trow.align.vert='Top';
+		}
+		<AREA>
+			<CTRL_GROUP>
+				<CTRLS>
+					<LABEL>
+						FMT={
+							text.style='cs7';
+						}
+						TEXT='Namespace:'
+					</LABEL>
+					<DELIMITER>
+						FMT={
+							text.style='cs1';
+						}
+					</DELIMITER>
+					<DATA_CTRL>
+						FMT={
+							text.style='cs2';
+						}
+						<DOC_HLINK>
+							HKEYS={
+								'getStringParam("nsURI")';
+								'"detail"';
+							}
+						</DOC_HLINK>
+						FORMULA='(ns = getParam("nsURI")) != "" ? ns : "{global namespace}"'
+					</DATA_CTRL>
+				</CTRLS>
+			</CTRL_GROUP>
+		</AREA>
+	</AREA_SEC>
+	<AREA_SEC>
+		COND='getBooleanParam("doc.comp.profile.type")'
+		FMT={
+			trow.align.vert='Top';
+		}
+		<AREA>
+			<CTRL_GROUP>
+				<CTRLS>
+					<LABEL>
+						FMT={
+							text.style='cs7';
+						}
+						TEXT='Type:'
+					</LABEL>
+					<DELIMITER>
+						FMT={
+							text.style='cs1';
+						}
+					</DELIMITER>
+					<SS_CALL_CTRL>
+						FMT={
+							text.style='cs8';
+						}
+						SS_NAME='Type Info'
+						PASSED_ELEMENT_EXPR='getParam("elementType").toElement()'
+						PASSED_ELEMENT_MATCHING_ETS={'#CUSTOM';'xs:%complexType';'xs:%simpleType'}
+					</SS_CALL_CTRL>
+					<PANEL>
+						DESCR='when the type is inherited from the substitution group head element'
+						COND='instanceOf ("xs:element") && getAttrValue("type") == null\n&& ! hasChild ("xs:complexType | xs:simpleType")'
+						CONTEXT_ELEMENT_EXPR='findElementByKey (\n  "global-elements",\n  getAttrQNameValue("substitutionGroup")\n)'
+						MATCHING_ET='xs:element'
+						FMT={
+							ctrl.size.width='210.8';
+							ctrl.size.height='38.3';
+							text.style='cs8';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								<CTRLS>
+									<DELIMITER>
+										FMT={
+											txtfl.delimiter.type='text';
+											txtfl.delimiter.text=', ';
+										}
+									</DELIMITER>
+									<LABEL>
+										TEXT='inherited from'
+									</LABEL>
+									<SS_CALL_CTRL>
+										FMT={
+											text.style='cs2';
+										}
+										SS_NAME='XMLName'
+									</SS_CALL_CTRL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</PANEL>
+				</CTRLS>
+			</CTRL_GROUP>
+		</AREA>
+	</AREA_SEC>
+	<AREA_SEC>
+		COND='getBooleanParam("doc.comp.profile.content")'
+		FMT={
+			trow.align.vert='Top';
+		}
+		<AREA>
+			<CTRL_GROUP>
+				<CTRLS>
+					<LABEL>
+						FMT={
+							text.style='cs7';
+						}
+						TEXT='Content:'
+					</LABEL>
+					<DELIMITER>
+						FMT={
+							text.style='cs1';
+						}
+					</DELIMITER>
+					<PANEL>
+						FMT={
+							ctrl.size.width='434.3';
+							text.style='cs8';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								FMT={
+									txtfl.delimiter.type='text';
+									txtfl.delimiter.text=', ';
+								}
+								<CTRLS>
+									<TEMPLATE_CALL_CTRL>
+										TEMPLATE_FILE='../content/contentType.tpl'
+									</TEMPLATE_CALL_CTRL>
+									<PANEL>
+										COND='getIntParam("attributeCount") > 0'
+										FMT={
+											ctrl.size.width='200.3';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DATA_CTRL>
+														FORMULA='getIntParam("attributeCount")'
+													</DATA_CTRL>
+													<LABEL>
+														COND='getIntParam("attributeCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-detail"';
+															}
+														</DOC_HLINK>
+														TEXT='attribute'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("attributeCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-detail"';
+															}
+														</DOC_HLINK>
+														TEXT='attributes'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("attributeWildcardCount") > 0'
+										FMT={
+											ctrl.size.width='83.3';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<LABEL>
+														TEXT='attr.'
+													</LABEL>
+													<LABEL>
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-wildcard"';
+															}
+														</DOC_HLINK>
+														TEXT='wildcard'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("elementCount") > 0'
+										FMT={
+											ctrl.size.width='198.8';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DATA_CTRL>
+														FORMULA='getIntParam("elementCount")'
+													</DATA_CTRL>
+													<LABEL>
+														COND='getIntParam("elementCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-detail"';
+															}
+														</DOC_HLINK>
+														TEXT='element'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("elementCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-detail"';
+															}
+														</DOC_HLINK>
+														TEXT='elements'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("elementWildcardCount") > 0'
+										FMT={
+											ctrl.size.width='253.5';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DATA_CTRL>
+														COND='getIntParam("elementWildcardCount") > 1'
+														FORMULA='getIntParam("elementWildcardCount")'
+													</DATA_CTRL>
+													<LABEL>
+														TEXT='elem.'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("elementWildcardCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-wildcard"';
+															}
+														</DOC_HLINK>
+														TEXT='wildcard'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("elementWildcardCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-wildcard"';
+															}
+														</DOC_HLINK>
+														TEXT='wildcards'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</PANEL>
+				</CTRLS>
+			</CTRL_GROUP>
+		</AREA>
+	</AREA_SEC>
+	<FOLDER>
+		DESCR='case of global element'
+		MATCHING_ET='xs:element'
+		<BODY>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.abstract")\n&&\ngetAttrBooleanValue("abstract")'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Abstract:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<LABEL>
+								FMT={
+									text.style='cs6';
+								}
+								TEXT='(may not be used directly in instance XML documents)'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='! hasParamValue("doc.comp.profile.block", "none")\n&&\n(\n  getAttrValue("block") != null\n  ||\n  hasParamValue("doc.comp.profile.block", "any") &&\n    findAncestor("xs:schema").getAttrValue ("blockDefault") != null\n)'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Block:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<TEMPLATE_CALL_CTRL>
+								FMT={
+									text.style='cs8';
+								}
+								TEMPLATE_FILE='elementBlockAttrInfo.tpl'
+								PASSED_PARAMS={
+									'profile.block.value','getBooleanParam("doc.comp.profile.block.value")';
+									'profile.block.meaning','getBooleanParam("doc.comp.profile.block.meaning")';
+								}
+							</TEMPLATE_CALL_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='! hasParamValue("doc.comp.profile.final", "none")\n&&\n(\n  getAttrValue("final") != null\n  ||\n  hasParamValue("doc.comp.profile.final", "any") &&\n    findAncestor("xs:schema").getAttrValue ("finalDefault") != null\n)'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Final:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<TEMPLATE_CALL_CTRL>
+								FMT={
+									text.style='cs8';
+								}
+								TEMPLATE_FILE='elementFinalAttrInfo.tpl'
+								PASSED_PARAMS={
+									'profile.final.value','getBooleanParam("doc.comp.profile.final.value")';
+									'profile.final.meaning','getBooleanParam("doc.comp.profile.final.meaning")';
+								}
+							</TEMPLATE_CALL_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.subst")\n&&\n(\n  checkElementsByKey (\n    "substitution-group-members", contextElement.id\n  ) \n  ||\n  getAttrValue("substitutionGroup") != ""\n)'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Subst.Gr:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<TEMPLATE_CALL_CTRL>
+								FMT={
+									text.style='cs8';
+								}
+								TEMPLATE_FILE='substitutionGroupInfo.tpl'
+								PASSED_PARAMS={
+									'list.members','getBooleanParam("doc.comp.profile.subst.members")';
+									'list.heads','getBooleanParam("doc.comp.profile.subst.heads")';
+								}
+							</TEMPLATE_CALL_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.nillable")\n&&\ngetAttrBooleanValue("nillable")'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Nillable:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<LABEL>
+								FMT={
+									text.style='cs6';
+								}
+								TEXT='(can be declared as nil using xsi:nil attribute in instance XML documents)'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				DESCR='in case of global element'
+				COND='getBooleanParam("doc.comp.profile.defined")'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+								}
+								TEXT='Defined:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<PANEL>
+								FMT={
+									ctrl.size.width='315.8';
+									ctrl.size.height='119.3';
+									text.style='cs8';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											row.indent.block='true';
+										}
+										<CTRLS>
+											<LABEL>
+												TEXT='globally'
+											</LABEL>
+											<PANEL>
+												COND='! hasParamValue("scope", "schema")'
+												FMT={
+													ctrl.size.width='203.3';
+													ctrl.size.height='38.3';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																TEXT='in'
+															</LABEL>
+															<DATA_CTRL>
+																<DOC_HLINK>
+																	HKEYS={
+																		'getXMLDocument().id';
+																		'"detail"';
+																	}
+																</DOC_HLINK>
+																FORMULA='getXMLDocument().getAttrStringValue("xmlName")'
+															</DATA_CTRL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<PANEL>
+												COND='hyperTargetExists (ArgumentList (\n  contextElement.id,\n  Array ("xml-source", "xml-source-location")\n))'
+												FMT={
+													ctrl.size.width='286.5';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<DELIMITER>
+																FMT={
+																	txtfl.delimiter.type='text';
+																	txtfl.delimiter.text='; ';
+																}
+															</DELIMITER>
+															<LABEL>
+																TEXT='see'
+															</LABEL>
+															<LABEL>
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'Array ("xml-source", "xml-source-location")',array;
+																	}
+																</DOC_HLINK>
+																TEXT='XML source'
+															</LABEL>
+															<PANEL>
+																COND='output.format.supportsPageRefs && \ngetBooleanParam("fmt.page.refs")'
+																FMT={
+																	ctrl.size.width='184.5';
+																	ctrl.size.height='38.3';
+																	txtfl.delimiter.type='none';
+																}
+																<AREA>
+																	<CTRL_GROUP>
+																		<CTRLS>
+																			<DELIMITER>
+																				FMT={
+																					txtfl.delimiter.type='nbsp';
+																				}
+																			</DELIMITER>
+																			<LABEL>
+																				FMT={
+																					text.style='cs5';
+																				}
+																				TEXT='['
+																			</LABEL>
+																			<DATA_CTRL>
+																				FMT={
+																					ctrl.option.noHLinkFmt='true';
+																					text.style='cs5';
+																					text.hlink.fmt='none';
+																				}
+																				<DOC_HLINK>
+																					HKEYS={
+																						'contextElement.id';
+																						'Array ("xml-source", "xml-source-location")',array;
+																					}
+																				</DOC_HLINK>
+																				DOCFIELD='page-htarget'
+																			</DATA_CTRL>
+																			<LABEL>
+																				FMT={
+																					text.style='cs5';
+																				}
+																				TEXT=']'
+																			</LABEL>
+																		</CTRLS>
+																	</CTRL_GROUP>
+																</AREA>
+															</PANEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+	<FOLDER>
+		DESCR='case of local element'
+		MATCHING_ET='xs:%localElement'
+		<BODY>
+			<AREA_SEC>
+				COND='! hasParamValue("doc.comp.profile.block", "none")\n&&\n{\n  blockValue = getAttrValue("block");\n\n  // When this is a pseudo-global element (identified by\n  // {namespace:name:type}) defined locally at > 1 locations,\n  // check if the value of \'block\' attribute is the same\n  // at all locations.\n\n  getIntParam("usageCount") > 1\n  &&\n  countElementsByKey (\n    "element-usage",\n    getParam("usageMapKey"),\n    BooleanQuery (\n      getAttrValue("block") == blockValue\n    )\n  ) != getIntParam("usageCount") ? {\n\n    setVar ("variesByLocation", true);\n    true\n\n  } : {\n\n    blockValue != null\n    ||\n    hasParamValue("doc.comp.profile.block", "any") &&\n      findAncestor("xs:schema").getAttrValue ("blockDefault") != null ?\n    {\n      setVar ("variesByLocation", false);\n      true;\n    } : false\n  }\n}'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Block:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<TEMPLATE_CALL_CTRL>
+								FMT={
+									text.style='cs8';
+								}
+								TEMPLATE_FILE='elementBlockAttrInfo.tpl'
+								PASSED_PARAMS={
+									'variesByLocation','getBooleanVar ("variesByLocation")';
+									'profile.block.value','getBooleanParam("doc.comp.profile.block.value")';
+									'profile.block.meaning','getBooleanParam("doc.comp.profile.block.meaning")';
+								}
+							</TEMPLATE_CALL_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.nillable")\n&&\n{\n  nillable = getAttrBooleanValue("nillable");\n\n  // When this is a pseudo-global element (identified by\n  // {namespace:name:type}) defined locally at > 1 locations,\n  // check if the value of \'nillable\' attribute is the same\n  // at all locations\n\n  getIntParam("usageCount") > 1\n  &&\n  countElementsByKey (\n    "element-usage",\n    getParam("usageMapKey"),\n    BooleanQuery (\n      getAttrBooleanValue("nillable") == nillable\n    )\n  ) != getIntParam("usageCount") ? {\n\n    setVar ("variesByLocation", true);\n    true\n\n  } : {\n    nillable ?\n    {\n      setVar ("variesByLocation", false);\n      true;\n    } : false\n  }\n}'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+									text.option.renderNLs='true';
+								}
+								TEXT='Nillable:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<PANEL>
+								FMT={
+									ctrl.size.width='353.3';
+									text.style='cs8';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<PANEL>
+												COND='getBooleanVar ("variesByLocation")'
+												FMT={
+													ctrl.size.width='109.5';
+													ctrl.size.height='38.3';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																FMT={
+																	text.style='cs2';
+																}
+																TEXT='???'
+															</LABEL>
+															<LABEL>
+																FMT={
+																	text.style='cs6';
+																}
+																TEXT='(varies by location)'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<LABEL>
+												COND='! getBooleanVar ("variesByLocation")'
+												FMT={
+													text.style='cs6';
+												}
+												TEXT='(can be declared as nil using xsi:nil attribute in instance XML documents)'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				DESCR='in case of local element'
+				COND='getBooleanParam("doc.comp.profile.defined")'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+								}
+								TEXT='Defined:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<SS_CALL_CTRL>
+								FMT={
+									text.style='cs8';
+								}
+								SS_NAME='Defined Locally At'
+							</SS_CALL_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+	<AREA_SEC>
+		COND='getBooleanParam("doc.comp.profile.includes") &&\n{\n count = getIntParam("ownAttributeCount") +\n         getIntParam("ownAttributeWildcardCount") +\n         getIntParam("ownElementCount") +\n         getIntParam("ownElementWildcardCount");\n\n count > 0 ||\n getIntParam("ownAttributeProhibitionCount") > 0\n ? { setVar ("count", count); true } : false;\n}'
+		FMT={
+			trow.align.vert='Top';
+		}
+		<AREA>
+			<CTRL_GROUP>
+				<CTRLS>
+					<LABEL>
+						FMT={
+							text.style='cs7';
+						}
+						TEXT='Includes:'
+					</LABEL>
+					<DELIMITER>
+						FMT={
+							text.style='cs1';
+						}
+					</DELIMITER>
+					<PANEL>
+						FMT={
+							ctrl.size.width='439.5';
+							text.style='cs8';
+						}
+						<AREA>
+							<CTRL_GROUP>
+								FMT={
+									txtfl.delimiter.type='text';
+									txtfl.delimiter.text=', ';
+								}
+								<CTRLS>
+									<LABEL>
+										COND='getVar("count").toInt() == 1'
+										TEXT='definition'
+									</LABEL>
+									<LABEL>
+										COND='getVar("count").toInt() > 1'
+										TEXT='definitions'
+									</LABEL>
+									<DELIMITER>
+										FMT={
+											txtfl.delimiter.type='text';
+											txtfl.delimiter.text=' of ';
+										}
+									</DELIMITER>
+									<PANEL>
+										COND='getIntParam("ownAttributeCount") > 0'
+										FMT={
+											ctrl.size.width='212.3';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DATA_CTRL>
+														COND='getIntParam("ownAttributeCount") > 0'
+														FORMULA='getIntParam("ownAttributeCount")'
+													</DATA_CTRL>
+													<LABEL>
+														COND='getIntParam("ownAttributeCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-def"';
+															}
+														</DOC_HLINK>
+														TEXT='attribute'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("ownAttributeCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-def"';
+															}
+														</DOC_HLINK>
+														TEXT='attributes'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("ownAttributeWildcardCount") > 0'
+										FMT={
+											ctrl.size.width='80.3';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<LABEL>
+														TEXT='attr.'
+													</LABEL>
+													<LABEL>
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-wildcard-def"';
+															}
+														</DOC_HLINK>
+														TEXT='wildcard'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("ownElementCount") > 0'
+										FMT={
+											ctrl.size.width='210.8';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DATA_CTRL>
+														FORMULA='getIntParam("ownElementCount")'
+													</DATA_CTRL>
+													<LABEL>
+														COND='getIntParam("ownElementCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-def"';
+															}
+														</DOC_HLINK>
+														TEXT='element'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("ownElementCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-def"';
+															}
+														</DOC_HLINK>
+														TEXT='elements'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("ownElementWildcardCount") > 0'
+										FMT={
+											ctrl.size.width='261';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DATA_CTRL>
+														COND='getIntParam("ownElementWildcardCount") > 1'
+														FORMULA='getIntParam("ownElementWildcardCount")'
+													</DATA_CTRL>
+													<LABEL>
+														TEXT='elem.'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("ownElementWildcardCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-wildcard-def"';
+															}
+														</DOC_HLINK>
+														TEXT='wildcard'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("ownElementWildcardCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"content-element-wildcard-def"';
+															}
+														</DOC_HLINK>
+														TEXT='wildcards'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+									<PANEL>
+										COND='getIntParam("ownAttributeProhibitionCount") > 0'
+										FMT={
+											ctrl.size.width='288';
+											ctrl.size.height='38.3';
+											txtfl.delimiter.type='nbsp';
+										}
+										<AREA>
+											<CTRL_GROUP>
+												<CTRLS>
+													<DELIMITER>
+														FMT={
+															txtfl.delimiter.type='text';
+															txtfl.delimiter.text='; ';
+														}
+													</DELIMITER>
+													<DATA_CTRL>
+														FORMULA='getIntParam("ownAttributeProhibitionCount")'
+													</DATA_CTRL>
+													<LABEL>
+														TEXT='attr.'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("ownAttributeProhibitionCount") == 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-prohibition"';
+															}
+														</DOC_HLINK>
+														TEXT='probition'
+													</LABEL>
+													<LABEL>
+														COND='getIntParam("ownAttributeProhibitionCount") > 1'
+														<DOC_HLINK>
+															HKEYS={
+																'contextElement.id';
+																'"attribute-prohibition"';
+															}
+														</DOC_HLINK>
+														TEXT='prohibitions'
+													</LABEL>
+												</CTRLS>
+											</CTRL_GROUP>
+										</AREA>
+									</PANEL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</PANEL>
+				</CTRLS>
+			</CTRL_GROUP>
+		</AREA>
+	</AREA_SEC>
+	<FOLDER>
+		DESCR='in case of global element only'
+		COND='getBooleanParam("doc.comp.profile.used")'
+		MATCHING_ET='xs:element'
+		<BODY>
+			<AREA_SEC>
+				COND='getIntParam("usageCount") == 0'
+				FMT={
+					trow.align.vert='Top';
+				}
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+								}
+								TEXT='Used:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<LABEL>
+								FMT={
+									text.style='cs8';
+								}
+								TEXT='never'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									text.style='cs7';
+								}
+								TEXT='Used:'
+							</LABEL>
+							<DELIMITER>
+								FMT={
+									text.style='cs1';
+								}
+							</DELIMITER>
+							<PANEL>
+								FMT={
+									ctrl.size.width='209.3';
+									text.style='cs8';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											row.indent.block='true';
+										}
+										<CTRLS>
+											<LABEL>
+												TEXT='at'
+											</LABEL>
+											<DATA_CTRL>
+												FORMULA='getIntParam("usageCount")'
+											</DATA_CTRL>
+											<LABEL>
+												COND='getIntParam("usageCount") == 1'
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'"usage-locations"';
+													}
+												</DOC_HLINK>
+												TEXT='location'
+											</LABEL>
+											<LABEL>
+												COND='getIntParam("usageCount") > 1'
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'"usage-locations"';
+													}
+												</DOC_HLINK>
+												TEXT='locations'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+</ROOT>
+<STOCK_SECTIONS>
+	<FOLDER>
+		MATCHING_ET='xs:%localElement'
+		FMT={
+			sec.outputStyle='text-par';
+		}
+		SS_NAME='Defined Locally At'
+		<BODY>
+			<FOLDER>
+				DESCR='if the element is defined at multiple locations'
+				COND='getIntParam("usageCount") > 1'
+				BREAK_PARENT_BLOCK='when-executed'
+				<BODY>
+					<AREA_SEC>
+						<AREA>
+							<CTRL_GROUP>
+								<CTRLS>
+									<LABEL>
+										TEXT='locally at'
+									</LABEL>
+									<DATA_CTRL>
+										FORMULA='getIntParam("usageCount")'
+									</DATA_CTRL>
+									<LABEL>
+										COND='getIntParam("usageCount") > 1'
+										<DOC_HLINK>
+											HKEYS={
+												'contextElement.id';
+												'"usage-locations"';
+											}
+										</DOC_HLINK>
+										TEXT='locations'
+									</LABEL>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</AREA_SEC>
+					<ELEMENT_ITER>
+						COND='! hasParamValue("scope", "schema")'
+						FMT={
+							txtfl.delimiter.type='text';
+							txtfl.delimiter.text=', ';
+						}
+						TARGET_ET='#DOCUMENT'
+						SCOPE='advanced-location-rules'
+						RULES={
+							'* -> {findElementsByKey (\n  "element-usage", getParam("usageMapKey")\n)}::xs:%element/{Enum (getXMLDocument())}::#DOCUMENT';
+						}
+						FILTER_BY_KEY='getAttrValue("xmlName")'
+						SORTING='by-attr'
+						SORTING_KEY={lpath='@xmlName',ascending}
+						<BODY>
+							<AREA_SEC>
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<DATA_CTRL>
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'"detail"';
+													}
+												</DOC_HLINK>
+												ATTR='xmlName'
+											</DATA_CTRL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</AREA_SEC>
+						</BODY>
+						<HEADER>
+							<AREA_SEC>
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='in '
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</AREA_SEC>
+						</HEADER>
+					</ELEMENT_ITER>
+				</BODY>
+			</FOLDER>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'"def-locations"';
+									}
+								</DOC_HLINK>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'"def"';
+									}
+								</DOC_HLINK>
+								TEXT='locally'
+							</LABEL>
+							<LABEL>
+								TEXT='within'
+							</LABEL>
+							<PANEL>
+								COND='getIntParam("usageCount") == 1'
+								CONTEXT_ELEMENT_EXPR='findAncestor("xs:%element|xs:complexType|xs:group")'
+								MATCHING_ETS={'xs:%element';'xs:complexType';'xs:group'}
+								FMT={
+									ctrl.size.width='265.5';
+									ctrl.size.height='38.3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<SS_CALL_CTRL>
+												FMT={
+													text.style='cs2';
+												}
+												SS_NAME='XMLName'
+											</SS_CALL_CTRL>
+											<LABEL>
+												MATCHING_ET='xs:%element'
+												TEXT='element'
+											</LABEL>
+											<LABEL>
+												MATCHING_ET='xs:complexType'
+												TEXT='complexType'
+											</LABEL>
+											<LABEL>
+												MATCHING_ET='xs:group'
+												TEXT='group'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+							<PANEL>
+								COND='output.format.supportsPageRefs\n&&\ngetBooleanParam("fmt.page.refs")\n&&\nhyperTargetExists (ArgumentList (\n  contextElement.id,\n  Array ("def", "xml-source-location")\n))'
+								FMT={
+									ctrl.size.width='151.5';
+									ctrl.size.height='38.3';
+									text.style='cs5';
+									txtfl.delimiter.type='none';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='['
+											</LABEL>
+											<DATA_CTRL>
+												FMT={
+													ctrl.option.noHLinkFmt='true';
+													text.hlink.fmt='none';
+												}
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'Array ("def", "xml-source-location")',array;
+													}
+												</DOC_HLINK>
+												DOCFIELD='page-htarget'
+											</DATA_CTRL>
+											<LABEL>
+												TEXT=']'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+							<PANEL>
+								COND='! hasParamValue("scope", "schema")'
+								FMT={
+									ctrl.size.width='237';
+									ctrl.size.height='38.3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='in'
+											</LABEL>
+											<DATA_CTRL>
+												<DOC_HLINK>
+													HKEYS={
+														'getXMLDocument().id';
+														'"detail"';
+													}
+												</DOC_HLINK>
+												FORMULA='getXMLDocument().getAttrStringValue("xmlName")'
+											</DATA_CTRL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='hyperTargetExists (ArgumentList (\n  contextElement.id,\n  Array ("xml-source", "xml-source-location")\n))'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DELIMITER>
+								FMT={
+									txtfl.delimiter.type='text';
+									txtfl.delimiter.text='; ';
+								}
+							</DELIMITER>
+							<LABEL>
+								TEXT='see'
+							</LABEL>
+							<LABEL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("xml-source", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								TEXT='XML source'
+							</LABEL>
+							<PANEL>
+								COND='output.format.supportsPageRefs && \ngetBooleanParam("fmt.page.refs")'
+								FMT={
+									ctrl.size.width='186';
+									ctrl.size.height='38.3';
+									txtfl.delimiter.type='none';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<DELIMITER>
+												FMT={
+													txtfl.delimiter.type='nbsp';
+												}
+											</DELIMITER>
+											<LABEL>
+												FMT={
+													text.style='cs5';
+												}
+												TEXT='['
+											</LABEL>
+											<DATA_CTRL>
+												FMT={
+													ctrl.option.noHLinkFmt='true';
+													text.style='cs5';
+													text.hlink.fmt='none';
+												}
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'Array ("xml-source", "xml-source-location")',array;
+													}
+												</DOC_HLINK>
+												DOCFIELD='page-htarget'
+											</DATA_CTRL>
+											<LABEL>
+												FMT={
+													text.style='cs5';
+												}
+												TEXT=']'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+	<FOLDER>
+		MATCHING_ETS={'#CUSTOM';'xs:%complexType';'xs:%simpleType'}
+		FMT={
+			sec.outputStyle='text-par';
+		}
+		SS_NAME='Type Info'
+		<BODY>
+			<AREA_SEC>
+				DESCR='when the type reference is not resolved'
+				MATCHING_ET='#CUSTOM'
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								FMT={
+									text.style='cs2';
+								}
+								FORMULA='toXMLName (contextElement.value.toQName(), rootElement)'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				DESCR='when the reference is resolved to a documented type'
+				MATCHING_ETS={'xs:complexType';'xs:simpleType'}
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								COND='! getAttrBooleanValue ("abstract")'
+								FMT={
+									text.style='cs2';
+								}
+								<DOC_HLINK>
+									TITLE_EXPR='instanceOf ("xs:complexType") ? "complexType" : "simpleType"'
+									HKEYS={
+										'contextElement.id';
+										'"local"';
+										'rootElement.id';
+									}
+								</DOC_HLINK>
+								<DOC_HLINK>
+									TITLE_EXPR='instanceOf ("xs:complexType") ? "complexType" : "simpleType"'
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='toXMLName (getParam("elementTypeQName").toQName(), rootElement)'
+							</DATA_CTRL>
+							<DATA_CTRL>
+								COND='getAttrBooleanValue ("abstract")'
+								FMT={
+									text.style='cs2';
+									text.font.style.italic='true';
+								}
+								<DOC_HLINK>
+									TITLE_EXPR='instanceOf ("xs:complexType") ? "abstract complexType" : "abstract simpleType"'
+									HKEYS={
+										'contextElement.id';
+										'"local"';
+										'rootElement.id';
+									}
+								</DOC_HLINK>
+								<DOC_HLINK>
+									TITLE_EXPR='instanceOf ("xs:complexType") ? "abstract complexType" : "abstract simpleType"'
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='toXMLName (getParam("elementTypeQName").toQName(), rootElement)'
+							</DATA_CTRL>
+							<PANEL>
+								COND='output.format.supportsPageRefs\n&&\ngetBooleanParam("fmt.page.refs")\n&&\nhyperTargetExists (ArgumentList (\n  contextElement.id,\n  Array ("detail", "xml-source-location")\n))'
+								FMT={
+									ctrl.size.width='154.5';
+									text.style='cs5';
+									txtfl.delimiter.type='none';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='['
+											</LABEL>
+											<DATA_CTRL>
+												FMT={
+													ctrl.option.noHLinkFmt='true';
+													text.hlink.fmt='none';
+												}
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'Array ("detail", "xml-source-location")',array;
+													}
+												</DOC_HLINK>
+												DOCFIELD='page-htarget'
+											</DATA_CTRL>
+											<LABEL>
+												TEXT=']'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				DESCR='when type is anonymous'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								TEXT='anonymous'
+							</LABEL>
+							<TEMPLATE_CALL_CTRL>
+								TEMPLATE_FILE='../type/typeDerivationSummary.tpl'
+								ALT_FORMULA='instanceOf ("xs:%simpleType") ? "simpleType" : "complexType"'
+							</TEMPLATE_CALL_CTRL>
+							<PANEL>
+								COND='output.format.supportsPageRefs\n&&\ngetBooleanParam("fmt.page.refs")\n&&\nhyperTargetExists (ArgumentList (\n  contextElement.id,\n  Array ("detail", "xml-source-location")\n))'
+								FMT={
+									ctrl.size.width='154.5';
+									text.style='cs5';
+									txtfl.delimiter.type='none';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='['
+											</LABEL>
+											<DATA_CTRL>
+												FMT={
+													ctrl.option.noHLinkFmt='true';
+													text.hlink.fmt='none';
+												}
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'Array ("detail", "xml-source-location")',array;
+													}
+												</DOC_HLINK>
+												DOCFIELD='page-htarget'
+											</DATA_CTRL>
+											<LABEL>
+												TEXT=']'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+	<FOLDER>
+		DESCR='prints the qualified name of any global schema component and local element (passed as the stock-section context element)'
+		FMT={
+			sec.outputStyle='text-par';
+		}
+		SS_NAME='XMLName'
+		<BODY>
+			<AREA_SEC>
+				DESCR='case of global element or global complexType'
+				MATCHING_ETS={'xs:complexType';'xs:element'}
+				FMT={
+					par.option.nowrap='true';
+				}
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								COND='! getAttrBooleanValue ("abstract")'
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='toXMLName (\n  findAncestor("xs:schema").getAttrStringValue("targetNamespace"), \n  getAttrStringValue("name"),\n  Enum (rootElement, contextElement)\n)'
+							</DATA_CTRL>
+							<DATA_CTRL>
+								COND='getAttrBooleanValue ("abstract")'
+								FMT={
+									text.font.style.italic='true';
+								}
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='toXMLName (\n  findAncestor("xs:schema").getAttrStringValue("targetNamespace"), \n  getAttrStringValue("name"),\n  Enum (rootElement, contextElement)\n)'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				DESCR='case of a local element'
+				MATCHING_ET='xs:%localElement'
+				FMT={
+					txtfl.delimiter.type='none';
+				}
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "def", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='name = getAttrStringValue("name");\nschema = findAncestor ("xs:schema");\n\n(hasAttr("form") ? getAttrValue("form") :\n   schema.getAttrValue ("elementFormDefault")) == "qualified" \n     ? toXMLName (schema.getAttrStringValue("targetNamespace"), name) : name'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				DESCR='any other (global) component'
+				FMT={
+					txtfl.delimiter.type='none';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='toXMLName (\n  findAncestor("xs:schema").getAttrStringValue("targetNamespace"), \n  getAttrStringValue("name"),\n  Enum (rootElement, contextElement)\n)'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+</STOCK_SECTIONS>
+CHECKSUM='iN8a?uaVR0BxVLBzutEolrOT5F2rDaXRiuv6Gt0xRT8'
+</DOCFLEX_TEMPLATE>

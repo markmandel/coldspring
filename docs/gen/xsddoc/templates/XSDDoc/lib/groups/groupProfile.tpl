@@ -1,0 +1,818 @@
+<DOCFLEX_TEMPLATE VER='1.13'>
+CREATED='2005-10-13 03:37:00'
+LAST_UPDATE='2009-10-30 06:36:30'
+DESIGNER_TOOL='DocFlex SDK 1.x'
+DESIGNER_LICENSE_TYPE='Filigris Works Team'
+APP_ID='docflex-xml-xsddoc2'
+APP_NAME='DocFlex/XML XSDDoc'
+APP_VER='2.2.0'
+APP_AUTHOR='Copyright \u00a9 2005-2009 Filigris Works,\nLeonid Rudy Softwareprodukte. All rights reserved.'
+TEMPLATE_TYPE='DocumentTemplate'
+DSM_TYPE_ID='xsddoc'
+ROOT_ET='xs:group'
+<TEMPLATE_PARAMS>
+	PARAM={
+		param.name='nsURI';
+		param.title='group\'s namespace URI';
+		param.description='The namespace to which this group belongs';
+		param.type='string';
+	}
+	PARAM={
+		param.name='scope';
+		param.description='Indicates the scope of the main document for which this template is called:\n"any" - unspecified;\n"namespace" - namespace overview;\n"schema" - schema overview';
+		param.type='enum';
+		param.enum.values='any;namespace;schema';
+	}
+	PARAM={
+		param.name='usageCount';
+		param.description='number of locations where this element group is used';
+		param.type='integer';
+		param.default.expr='countElementsByKey ("group-usage", contextElement.id)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='contentModelKey';
+		param.title='"content-model-elements" map key';
+		param.description='The key for "content-model-elements" map to find items associated with this component';
+		param.type='Object';
+		param.default.expr='contextElement.id';
+	}
+	PARAM={
+		param.name='elementCount';
+		param.title='number of all content elements';
+		param.description='total number of content elements declared for this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (! instanceOf ("xs:any"))\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='elementWildcardCount';
+		param.title='number of all element wildcards';
+		param.description='total number of element wildcards declared for this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (instanceOf ("xs:any"))\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownElementCount';
+		param.title='number of elements defined in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    ! instanceOf ("xs:any") &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:group").id \n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='ownElementWildcardCount';
+		param.title='number of element wildcards defined in this component';
+		param.type='integer';
+		param.default.expr='countElementsByKey (\n  "content-model-elements", \n  getParam("contentModelKey"),\n  BooleanQuery (\n    instanceOf ("xs:any") &&\n    findPredecessorByType("xs:%element|xs:complexType|xs:group").id \n    == rootElement.id\n  )\n)';
+		param.hidden='true';
+	}
+	PARAM={
+		param.name='fmt.page.refs';
+		param.title='Generate page references';
+		param.type='boolean';
+		param.default.value='true';
+	}
+	PARAM={
+		param.name='doc.comp.profile.namespace';
+		param.title='Namespace';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.content';
+		param.title='Content';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.defined';
+		param.title='Defined';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.includes';
+		param.title='Includes';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.redefines';
+		param.title='Redefines';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.redefined';
+		param.title='Redefined';
+		param.type='boolean';
+	}
+	PARAM={
+		param.name='doc.comp.profile.used';
+		param.title='Used';
+		param.type='boolean';
+	}
+</TEMPLATE_PARAMS>
+FMT={
+	doc.lengthUnits='pt';
+	doc.hlink.style.link='cs3';
+}
+<STYLES>
+	CHAR_STYLE={
+		style.name='Code Smaller';
+		style.id='cs1';
+		text.font.name='Courier New';
+		text.font.size='8';
+	}
+	CHAR_STYLE={
+		style.name='Default Paragraph Font';
+		style.id='cs2';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Hyperlink';
+		style.id='cs3';
+		text.decor.underline='true';
+		text.color.foreground='#0000FF';
+	}
+	PAR_STYLE={
+		style.name='Normal';
+		style.id='s1';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Page Number Small';
+		style.id='cs4';
+		text.font.name='Courier New';
+		text.font.size='8';
+	}
+	PAR_STYLE={
+		style.name='Property Title';
+		style.id='s2';
+		text.font.size='8';
+		text.font.style.bold='true';
+		par.lineHeight='11';
+		par.margin.right='7';
+	}
+	PAR_STYLE={
+		style.name='Property Value';
+		style.id='s3';
+		text.font.name='Verdana';
+		text.font.size='8';
+		par.lineHeight='11';
+	}
+</STYLES>
+<ROOT>
+	<FOLDER>
+		FMT={
+			sec.outputStyle='table';
+			table.cellpadding.both='0';
+			table.border.style='none';
+			table.page.keepTogether='true';
+			table.option.borderStylesInHTML='true';
+		}
+		<BODY>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.namespace")'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='17.3';
+									par.style='s2';
+								}
+								TEXT='Namespace:'
+							</LABEL>
+							<DATA_CTRL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='17.3';
+									text.style='cs1';
+									par.style='s3';
+								}
+								<DOC_HLINK>
+									HKEYS={
+										'getStringParam("nsURI")';
+										'"detail"';
+									}
+								</DOC_HLINK>
+								FORMULA='(ns = getParam("nsURI")) != "" ? ns : "{global namespace}"'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.content") &&\n(\n  getIntParam("elementCount") > 0 ||\n  getIntParam("ownElementWildcardCount") > 0\n)'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='98.3';
+									par.style='s2';
+								}
+								TEXT='Content:'
+							</LABEL>
+							<PANEL>
+								FMT={
+									content.outputStyle='text-par';
+									ctrl.size.width='444.8';
+									ctrl.size.height='98.3';
+									par.style='s3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											txtfl.delimiter.type='text';
+											txtfl.delimiter.text=', ';
+										}
+										<CTRLS>
+											<PANEL>
+												COND='getIntParam("elementCount") > 0'
+												FMT={
+													ctrl.size.width='198.8';
+													ctrl.size.height='38.3';
+													txtfl.delimiter.type='nbsp';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<DATA_CTRL>
+																FORMULA='getIntParam("elementCount")'
+															</DATA_CTRL>
+															<LABEL>
+																COND='getIntParam("elementCount") == 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-detail"';
+																	}
+																</DOC_HLINK>
+																TEXT='element'
+															</LABEL>
+															<LABEL>
+																COND='getIntParam("elementCount") > 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-detail"';
+																	}
+																</DOC_HLINK>
+																TEXT='elements'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<PANEL>
+												COND='getIntParam("elementWildcardCount") > 0'
+												FMT={
+													ctrl.size.width='253.5';
+													ctrl.size.height='38.3';
+													txtfl.delimiter.type='nbsp';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<DATA_CTRL>
+																COND='getIntParam("elementWildcardCount") > 1'
+																FORMULA='getIntParam("elementWildcardCount")'
+															</DATA_CTRL>
+															<LABEL>
+																TEXT='elem.'
+															</LABEL>
+															<LABEL>
+																COND='getIntParam("elementWildcardCount") == 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-wildcard"';
+																	}
+																</DOC_HLINK>
+																TEXT='wildcard'
+															</LABEL>
+															<LABEL>
+																COND='getIntParam("elementWildcardCount") > 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-wildcard"';
+																	}
+																</DOC_HLINK>
+																TEXT='wildcards'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.defined")'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='119.3';
+									par.style='s2';
+								}
+								TEXT='Defined:'
+							</LABEL>
+							<PANEL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='119.3';
+									par.style='s3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='globally'
+											</LABEL>
+											<PANEL>
+												COND='! hasParamValue("scope", "schema")'
+												FMT={
+													ctrl.size.width='205.5';
+													ctrl.size.height='38.3';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																TEXT='in'
+															</LABEL>
+															<DATA_CTRL>
+																<DOC_HLINK>
+																	HKEYS={
+																		'getXMLDocument().id';
+																		'"detail"';
+																	}
+																</DOC_HLINK>
+																FORMULA='getXMLDocument().getAttrStringValue("xmlName")'
+															</DATA_CTRL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<PANEL>
+												COND='hyperTargetExists (ArgumentList (\n  contextElement.id,\n  Array ("xml-source", "xml-source-location")\n))'
+												FMT={
+													ctrl.size.width='289.5';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<DELIMITER>
+																FMT={
+																	txtfl.delimiter.type='text';
+																	txtfl.delimiter.text='; ';
+																}
+															</DELIMITER>
+															<LABEL>
+																TEXT='see'
+															</LABEL>
+															<LABEL>
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"xml-source"';
+																	}
+																</DOC_HLINK>
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"xml-source-location"';
+																	}
+																</DOC_HLINK>
+																TEXT='XML source'
+															</LABEL>
+															<PANEL>
+																COND='output.format.supportsPageRefs && \ngetBooleanParam("fmt.page.refs")'
+																FMT={
+																	ctrl.size.width='186';
+																	ctrl.size.height='38.3';
+																	txtfl.delimiter.type='none';
+																}
+																<AREA>
+																	<CTRL_GROUP>
+																		<CTRLS>
+																			<DELIMITER>
+																				FMT={
+																					txtfl.delimiter.type='nbsp';
+																				}
+																			</DELIMITER>
+																			<LABEL>
+																				FMT={
+																					text.style='cs4';
+																				}
+																				TEXT='['
+																			</LABEL>
+																			<DATA_CTRL>
+																				FMT={
+																					ctrl.option.noHLinkFmt='true';
+																					text.style='cs4';
+																					text.hlink.fmt='none';
+																				}
+																				<DOC_HLINK>
+																					HKEYS={
+																						'contextElement.id';
+																						'Array ("xml-source", "xml-source-location")',array;
+																					}
+																				</DOC_HLINK>
+																				DOCFIELD='page-htarget'
+																			</DATA_CTRL>
+																			<LABEL>
+																				FMT={
+																					text.style='cs4';
+																				}
+																				TEXT=']'
+																			</LABEL>
+																		</CTRLS>
+																	</CTRL_GROUP>
+																</AREA>
+															</PANEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.includes") &&\n{\n count = getIntParam("ownElementCount") +\n         getIntParam("ownElementWildcardCount");\n\n count > 0 ? { setVar ("count", count); true } : false;\n}'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='98.3';
+									par.style='s2';
+								}
+								TEXT='Includes:'
+							</LABEL>
+							<PANEL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='98.3';
+									par.style='s3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											txtfl.delimiter.type='text';
+											txtfl.delimiter.text=', ';
+										}
+										<CTRLS>
+											<LABEL>
+												COND='getVar("count").toInt() == 1'
+												TEXT='definition'
+											</LABEL>
+											<LABEL>
+												COND='getVar("count").toInt() > 1'
+												TEXT='definitions'
+											</LABEL>
+											<DELIMITER>
+												FMT={
+													txtfl.delimiter.type='text';
+													txtfl.delimiter.text=' of ';
+												}
+											</DELIMITER>
+											<PANEL>
+												COND='getIntParam("ownElementCount") > 0'
+												FMT={
+													ctrl.size.width='210.8';
+													ctrl.size.height='38.3';
+													txtfl.delimiter.type='nbsp';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<DATA_CTRL>
+																FORMULA='getIntParam("ownElementCount")'
+															</DATA_CTRL>
+															<LABEL>
+																COND='getIntParam("ownElementCount") == 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-def"';
+																	}
+																</DOC_HLINK>
+																TEXT='element'
+															</LABEL>
+															<LABEL>
+																COND='getIntParam("ownElementCount") > 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-def"';
+																	}
+																</DOC_HLINK>
+																TEXT='elements'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<PANEL>
+												COND='getIntParam("ownElementWildcardCount") > 0'
+												FMT={
+													ctrl.size.width='261';
+													ctrl.size.height='38.3';
+													txtfl.delimiter.type='nbsp';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<DATA_CTRL>
+																COND='getIntParam("ownElementWildcardCount") > 1'
+																FORMULA='getIntParam("ownElementWildcardCount")'
+															</DATA_CTRL>
+															<LABEL>
+																TEXT='elem.'
+															</LABEL>
+															<LABEL>
+																COND='getIntParam("ownElementWildcardCount") == 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-wildcard-def"';
+																	}
+																</DOC_HLINK>
+																TEXT='wildcard'
+															</LABEL>
+															<LABEL>
+																COND='getIntParam("ownElementWildcardCount") > 1'
+																<DOC_HLINK>
+																	HKEYS={
+																		'contextElement.id';
+																		'"content-element-wildcard-def"';
+																	}
+																</DOC_HLINK>
+																TEXT='wildcards'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.redefines")\n\n// see also "Context Element" tab'
+				CONTEXT_ELEMENT_EXPR='findElementByKey ("redefined-component", contextElement.id)'
+				MATCHING_ET='<ANY>'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='38.3';
+									par.style='s2';
+								}
+								TEXT='Redefines:'
+							</LABEL>
+							<PANEL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='38.3';
+									par.style='s3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<DATA_CTRL>
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'Array ("detail", "xml-source-location")',array;
+													}
+												</DOC_HLINK>
+												FORMULA='toXMLName (getStringParam("nsURI"), getAttrStringValue("name"))'
+											</DATA_CTRL>
+											<LABEL>
+												TEXT='in'
+											</LABEL>
+											<DATA_CTRL>
+												<DOC_HLINK>
+													HKEYS={
+														'getXMLDocument().id';
+														'"detail"';
+													}
+												</DOC_HLINK>
+												FORMULA='getXMLDocument().getAttrStringValue("xmlName")'
+											</DATA_CTRL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.redefined")\n&&\ncheckElementsByKey ("redefining-components", contextElement.id)'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='17.3';
+									par.style='s2';
+								}
+								TEXT='Redefined:'
+							</LABEL>
+							<SS_CALL_CTRL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='17.3';
+									par.style='s3';
+								}
+								SS_NAME='Redefining Components'
+							</SS_CALL_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.used") &&\ngetIntParam("usageCount") == 0'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='17.3';
+									par.style='s2';
+								}
+								TEXT='Used:'
+							</LABEL>
+							<LABEL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='17.3';
+									par.style='s3';
+								}
+								TEXT='never'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='getBooleanParam("doc.comp.profile.used") &&\ngetIntParam("usageCount") > 0'
+				FMT={
+					trow.align.vert='Top';
+				}
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								FMT={
+									ctrl.size.width='54.8';
+									ctrl.size.height='38.3';
+									par.style='s2';
+								}
+								TEXT='Used:'
+							</LABEL>
+							<PANEL>
+								FMT={
+									ctrl.size.width='444.8';
+									ctrl.size.height='38.3';
+									par.style='s3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='at'
+											</LABEL>
+											<DATA_CTRL>
+												FORMULA='getIntParam("usageCount")'
+											</DATA_CTRL>
+											<LABEL>
+												COND='getIntParam("usageCount") == 1'
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'"usage-locations"';
+													}
+												</DOC_HLINK>
+												TEXT='location'
+											</LABEL>
+											<LABEL>
+												COND='getIntParam("usageCount") > 1'
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'"usage-locations"';
+													}
+												</DOC_HLINK>
+												TEXT='locations'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</FOLDER>
+</ROOT>
+<STOCK_SECTIONS>
+	<ELEMENT_ITER>
+		FMT={
+			sec.outputStyle='text-par';
+			txtfl.delimiter.type='text';
+			txtfl.delimiter.text=', ';
+		}
+		TARGET_ET='<ANY>'
+		SCOPE='custom'
+		ELEMENT_ENUM_EXPR='findElementsByKey ("redefining-components", contextElement.id)'
+		SS_NAME='Redefining Components'
+		<BODY>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								TEXT='with'
+							</LABEL>
+							<DATA_CTRL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'Array ("detail", "xml-source-location")',array;
+									}
+								</DOC_HLINK>
+								FORMULA='toXMLName (getStringParam("nsURI"), getAttrStringValue("name"))'
+							</DATA_CTRL>
+							<LABEL>
+								TEXT='in'
+							</LABEL>
+							<DATA_CTRL>
+								<DOC_HLINK>
+									HKEYS={
+										'getXMLDocument().id';
+										'"detail"';
+									}
+								</DOC_HLINK>
+								FORMULA='getXMLDocument().getAttrStringValue("xmlName")'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+	</ELEMENT_ITER>
+</STOCK_SECTIONS>
+CHECKSUM='qkRpx70bKgU4eSu9sGtGnH5QN?f?9Lq5VqQ3Bx6FU70'
+</DOCFLEX_TEMPLATE>

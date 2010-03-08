@@ -1,0 +1,153 @@
+<DOCFLEX_TEMPLATE VER='1.13'>
+CREATED='2006-10-20 08:41:15'
+LAST_UPDATE='2009-10-30 06:36:31'
+DESIGNER_TOOL='DocFlex SDK 1.x'
+DESIGNER_LICENSE_TYPE='Filigris Works Team'
+APP_ID='docflex-xml-xsddoc2'
+APP_NAME='DocFlex/XML XSDDoc'
+APP_VER='2.2.0'
+APP_AUTHOR='Copyright \u00a9 2005-2009 Filigris Works,\nLeonid Rudy Softwareprodukte. All rights reserved.'
+TEMPLATE_TYPE='DocumentTemplate'
+DSM_TYPE_ID='xsddoc'
+ROOT_ET='<ANY>'
+<TEMPLATE_PARAMS>
+	PARAM={
+		param.name='remove.anns';
+		param.type='boolean';
+	}
+</TEMPLATE_PARAMS>
+FMT={
+	doc.lengthUnits='pt';
+	doc.hlink.style.link='cs2';
+}
+<STYLES>
+	CHAR_STYLE={
+		style.name='Default Paragraph Font';
+		style.id='cs1';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Hyperlink';
+		style.id='cs2';
+		text.decor.underline='true';
+		text.color.foreground='#0000FF';
+	}
+	PAR_STYLE={
+		style.name='Normal';
+		style.id='s1';
+		style.default='true';
+	}
+</STYLES>
+<ROOT>
+	<FOLDER>
+		FMT={
+			sec.outputStyle='text-par';
+			txtfl.delimiter.type='text';
+			txtfl.delimiter.text='; ';
+		}
+		<BODY>
+			<AREA_SEC>
+				COND='getBooleanParam("remove.anns")'
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								FMT={
+									ctrl.option.text.noBlankOutput='true';
+								}
+								FORMULA='(n = countElementsByLPath(".//xs:annotation")) > 0 ?\n "w/o annotations (" + toString(n) + ")"\n'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='hyperTargetExists (\n  ArgumentList (contextElement.id, "xml-source-location")\n)'
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								<DOC_HLINK>
+									HKEYS={
+										'contextElement.id';
+										'"xml-source-location"';
+									}
+								</DOC_HLINK>
+								TEXT='see'
+							</LABEL>
+							<LABEL>
+								TEXT='within schema source'
+							</LABEL>
+							<PANEL>
+								COND='output.format.supportsPageRefs'
+								FMT={
+									ctrl.size.width='153.8';
+									ctrl.size.height='38.3';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<DELIMITER>
+												FMT={
+													txtfl.delimiter.type='text';
+													txtfl.delimiter.text=': ';
+												}
+											</DELIMITER>
+											<LABEL>
+												TEXT='p.'
+											</LABEL>
+											<DATA_CTRL>
+												FMT={
+													ctrl.option.noHLinkFmt='true';
+													text.hlink.fmt='none';
+												}
+												<DOC_HLINK>
+													HKEYS={
+														'contextElement.id';
+														'"xml-source-location"';
+													}
+												</DOC_HLINK>
+												DOCFIELD='page-htarget'
+											</DATA_CTRL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+		<HEADER>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								TEXT='('
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</HEADER>
+		<FOOTER>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								TEXT=')'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</FOOTER>
+	</FOLDER>
+</ROOT>
+CHECKSUM='osFVHcsrDMCOjdU0S4IvKwMH3dNxUC2ff20dDGcGAHM'
+</DOCFLEX_TEMPLATE>

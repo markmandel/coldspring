@@ -1,0 +1,12 @@
+xsddoc.name = W3C XML Schema Files
+xsddoc.doc = Represents any number of W3C XML Schema Definition (XSD) files
+xsddoc.xsd.files = %THIS_DIR%/xmltype/XMLSchema.xsd
+xsddoc.ns.1.prefix = xs
+xsddoc.ns.1.uri = http://www.w3.org/2001/XMLSchema
+xsddoc.ns.2.prefix = xhtml
+xsddoc.ns.2.uri = http://www.w3.org/1999/xhtml
+xsddoc.xsd.includeAbstractTypes = true
+xsddoc.defaultRootElement = Documents
+xsddoc.pseudo-elements.all = on
+xsddoc.imageProvider.class = %IMAGE_PROVIDER_CLASS%
+xsddoc.imageProvider.xmlspy.version = %XMLSPY_VERSION%

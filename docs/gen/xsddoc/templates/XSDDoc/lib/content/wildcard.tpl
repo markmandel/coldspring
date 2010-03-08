@@ -1,0 +1,220 @@
+<DOCFLEX_TEMPLATE VER='1.13'>
+CREATED='2007-08-09 02:06:27'
+LAST_UPDATE='2009-10-30 06:36:30'
+DESIGNER_TOOL='DocFlex SDK 1.x'
+DESIGNER_LICENSE_TYPE='Filigris Works Team'
+APP_ID='docflex-xml-xsddoc2'
+APP_NAME='DocFlex/XML XSDDoc'
+APP_VER='2.2.0'
+APP_AUTHOR='Copyright \u00a9 2005-2009 Filigris Works,\nLeonid Rudy Softwareprodukte. All rights reserved.'
+TEMPLATE_TYPE='DocumentTemplate'
+DSM_TYPE_ID='xsddoc'
+ROOT_ET='xs:%wildcard'
+<TEMPLATE_PARAMS>
+	PARAM={
+		param.name='wildcardType';
+		param.type='string';
+		param.default.expr='instanceOf("xs:any") ? "element" : "attribute"';
+		param.autoPassed='false';
+	}
+</TEMPLATE_PARAMS>
+FMT={
+	doc.lengthUnits='pt';
+	doc.hlink.style.link='cs2';
+}
+<STYLES>
+	CHAR_STYLE={
+		style.name='Default Paragraph Font';
+		style.id='cs1';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Hyperlink';
+		style.id='cs2';
+		text.decor.underline='true';
+		text.color.foreground='#0000FF';
+	}
+	PAR_STYLE={
+		style.name='Normal';
+		style.id='s1';
+		style.default='true';
+	}
+</STYLES>
+<ROOT>
+	<ATTR_ITER>
+		FMT={
+			sec.outputStyle='text-par';
+			txtfl.delimiter.type='nbtxt';
+			txtfl.delimiter.text=';\\n ';
+		}
+		SCOPE='attr-values'
+		ATTR='namespace'
+		<BODY>
+			<AREA_SEC>
+				COND='iterator.value == "##any"'
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								TEXT='any'
+							</LABEL>
+							<DATA_CTRL>
+								FORMULA='getParam("wildcardType")'
+							</DATA_CTRL>
+							<LABEL>
+								TEXT='with any namespace'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='iterator.value == "##other"'
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								TEXT='any'
+							</LABEL>
+							<DATA_CTRL>
+								FORMULA='getParam("wildcardType")'
+							</DATA_CTRL>
+							<LABEL>
+								TEXT='with non-schema namespace'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='iterator.value == "##local"'
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								TEXT='any local'
+							</LABEL>
+							<DATA_CTRL>
+								FORMULA='getParam("wildcardType")'
+							</DATA_CTRL>
+							<LABEL>
+								TEXT='(without namespace)'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				COND='iterator.value == "##targetNamespace"'
+				BREAK_PARENT_BLOCK='when-executed'
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								TEXT='any'
+							</LABEL>
+							<DATA_CTRL>
+								FORMULA='getParam("wildcardType")'
+							</DATA_CTRL>
+							<LABEL>
+								TEXT='with schema namespace'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						FMT={
+							txtfl.delimiter.type='space';
+						}
+						<CTRLS>
+							<LABEL>
+								TEXT='any'
+							</LABEL>
+							<DATA_CTRL>
+								FORMULA='getParam("wildcardType")'
+							</DATA_CTRL>
+							<LABEL>
+								TEXT='with'
+							</LABEL>
+							<PANEL>
+								FMT={
+									ctrl.size.width='102.8';
+									ctrl.size.height='38.3';
+									txtfl.delimiter.type='none';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										<CTRLS>
+											<LABEL>
+												TEXT='"'
+											</LABEL>
+											<DATA_CTRL>
+												<URL_HLINK>
+													TARGET_FRAME_EXPR='"_blank"'
+													URL_EXPR='iterator.value.toString()'
+												</URL_HLINK>
+												FORMULA='iterator.value'
+											</DATA_CTRL>
+											<LABEL>
+												TEXT='"'
+											</LABEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</PANEL>
+							<LABEL>
+								TEXT='namespace'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</BODY>
+		<HEADER>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								TEXT='{'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</HEADER>
+		<FOOTER>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<LABEL>
+								TEXT='}'
+							</LABEL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+		</FOOTER>
+	</ATTR_ITER>
+</ROOT>
+CHECKSUM='qxdMvRjqBPbTEBOvjUhXljQoZERcodSq9sCEGPRvQZ0'
+</DOCFLEX_TEMPLATE>

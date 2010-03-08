@@ -1,0 +1,354 @@
+<DOCFLEX_TEMPLATE VER='1.13'>
+CREATED='2008-02-16 07:07:55'
+LAST_UPDATE='2009-10-30 06:36:29'
+DESIGNER_TOOL='DocFlex SDK 1.x'
+DESIGNER_LICENSE_TYPE='Filigris Works Team'
+APP_ID='docflex-xml-xsddoc2'
+APP_NAME='DocFlex/XML XSDDoc'
+APP_VER='2.2.0'
+APP_AUTHOR='Copyright \u00a9 2005-2009 Filigris Works,\nLeonid Rudy Softwareprodukte. All rights reserved.'
+TEMPLATE_TYPE='DocumentTemplate'
+DSM_TYPE_ID='xsddoc'
+ROOT_ET='xs:%facet'
+<TEMPLATE_PARAMS>
+	PARAM={
+		param.name='facet.annotation';
+		param.title='Include Annotations';
+		param.type='boolean';
+		param.default.value='true';
+	}
+	PARAM={
+		param.name='fmt.allowNestedTables';
+		param.title='Allow nested tables';
+		param.type='boolean';
+		param.default.value='true';
+	}
+</TEMPLATE_PARAMS>
+FMT={
+	doc.lengthUnits='pt';
+	doc.hlink.style.link='cs4';
+}
+<STYLES>
+	CHAR_STYLE={
+		style.name='Annotation Smallest';
+		style.id='cs1';
+		text.font.name='Arial';
+		text.font.size='8';
+	}
+	CHAR_STYLE={
+		style.name='Code Smaller';
+		style.id='cs2';
+		text.font.name='Courier New';
+		text.font.size='8';
+	}
+	CHAR_STYLE={
+		style.name='Default Paragraph Font';
+		style.id='cs3';
+		style.default='true';
+	}
+	CHAR_STYLE={
+		style.name='Hyperlink';
+		style.id='cs4';
+		text.decor.underline='true';
+		text.color.foreground='#0000FF';
+	}
+	PAR_STYLE={
+		style.name='Normal';
+		style.id='s1';
+		style.default='true';
+	}
+</STYLES>
+<ROOT>
+	<FOLDER>
+		DESCR='CASE OF ENUMERATIOM -- switch the context element back to the container'
+		COND='instanceOf("xs:enumeration")'
+		CONTEXT_ELEMENT_EXPR='contextElement.predecessor'
+		MATCHING_ETS={'xs:%restrictionType';'xs:restriction'}
+		BREAK_PARENT_BLOCK='when-executed'
+		<BODY>
+			<FOLDER>
+				DESCR='if there is at least one annotation within the <xs:enumeration> elements'
+				COND='getBooleanParam("facet.annotation")\n&&\nfindElementByLPath(\n  "xs:enumeration/xs:annotation/xs:documentation"\n) != null'
+				BREAK_PARENT_BLOCK='when-executed'
+				<BODY>
+					<ELEMENT_ITER>
+						DESCR='if nested tables are allowed'
+						COND='getBooleanParam("fmt.allowNestedTables")'
+						FMT={
+							sec.outputStyle='table';
+							txtfl.delimiter.type='text';
+							txtfl.delimiter.text=', ';
+							table.cellpadding.both='0';
+							table.border.style='none';
+						}
+						TARGET_ET='xs:enumeration'
+						SCOPE='simple-location-rules'
+						RULES={
+							'* -> xs:enumeration';
+						}
+						BREAK_PARENT_BLOCK='when-executed'
+						<BODY>
+							<AREA_SEC>
+								COND='checkStockSectionOutput("annotation")'
+								FMT={
+									trow.align.vert='Top';
+									trow.cellpadding.extra.bottom='0.2';
+								}
+								BREAK_PARENT_BLOCK='when-executed'
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											txtfl.delimiter.type='none';
+										}
+										<CTRLS>
+											<PANEL>
+												FMT={
+													ctrl.size.width='79.5';
+													ctrl.size.height='38.3';
+													text.style='cs2';
+													text.option.nbsps='true';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																TEXT='"'
+															</LABEL>
+															<DATA_CTRL>
+																ATTR='value'
+															</DATA_CTRL>
+															<LABEL>
+																TEXT='"'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<PANEL>
+												FMT={
+													ctrl.size.width='57.8';
+													ctrl.size.height='38.3';
+													text.style='cs1';
+													text.option.nbsps='true';
+													par.option.nowrap='true';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																TEXT=' '
+															</LABEL>
+															<LABEL>
+																FMT={
+																	text.style='cs2';
+																}
+																TEXT='-'
+															</LABEL>
+															<LABEL>
+																TEXT=' '
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<SS_CALL_CTRL>
+												FMT={
+													ctrl.size.width='362.3';
+													ctrl.size.height='38.3';
+													text.style='cs1';
+												}
+												SS_NAME='annotation'
+											</SS_CALL_CTRL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</AREA_SEC>
+							<AREA_SEC>
+								FMT={
+									trow.align.vert='Top';
+									trow.cellpadding.extra.bottom='0.2';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											txtfl.delimiter.type='none';
+										}
+										<CTRLS>
+											<PANEL>
+												FMT={
+													ctrl.size.width='499.5';
+													ctrl.size.height='38.3';
+													text.style='cs2';
+													text.option.nbsps='true';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																TEXT='"'
+															</LABEL>
+															<DATA_CTRL>
+																ATTR='value'
+															</DATA_CTRL>
+															<LABEL>
+																TEXT='"'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</AREA_SEC>
+						</BODY>
+					</ELEMENT_ITER>
+					<ELEMENT_ITER>
+						DESCR='if nested tables are not allowed'
+						TARGET_ET='xs:enumeration'
+						SCOPE='simple-location-rules'
+						RULES={
+							'* -> xs:enumeration';
+						}
+						<BODY>
+							<AREA_SEC>
+								FMT={
+									sec.outputStyle='text-par';
+									text.style='cs1';
+								}
+								<AREA>
+									<CTRL_GROUP>
+										FMT={
+											txtfl.delimiter.type='none';
+										}
+										<CTRLS>
+											<PANEL>
+												FMT={
+													ctrl.size.width='79.5';
+													ctrl.size.height='38.3';
+													text.style='cs2';
+													text.option.nbsps='true';
+												}
+												<AREA>
+													<CTRL_GROUP>
+														<CTRLS>
+															<LABEL>
+																TEXT='"'
+															</LABEL>
+															<DATA_CTRL>
+																ATTR='value'
+															</DATA_CTRL>
+															<LABEL>
+																TEXT='"'
+															</LABEL>
+														</CTRLS>
+													</CTRL_GROUP>
+												</AREA>
+											</PANEL>
+											<DELIMITER>
+												FMT={
+													txtfl.delimiter.type='text';
+													txtfl.delimiter.text=' - ';
+												}
+											</DELIMITER>
+											<SS_CALL_CTRL>
+												SS_NAME='annotation'
+											</SS_CALL_CTRL>
+										</CTRLS>
+									</CTRL_GROUP>
+								</AREA>
+							</AREA_SEC>
+						</BODY>
+					</ELEMENT_ITER>
+				</BODY>
+			</FOLDER>
+			<ELEMENT_ITER>
+				DESCR='otherwise, there are no annotations whithin <xs:enumeration> elements; print the enumeration values as a plain comma-delimited list'
+				FMT={
+					sec.outputStyle='text-par';
+					text.style='cs2';
+				}
+				TARGET_ET='xs:enumeration'
+				SCOPE='simple-location-rules'
+				RULES={
+					'* -> xs:enumeration';
+				}
+				<BODY>
+					<AREA_SEC>
+						<AREA>
+							<CTRL_GROUP>
+								FMT={
+									txtfl.delimiter.type='none';
+								}
+								<CTRLS>
+									<LABEL>
+										TEXT='"'
+									</LABEL>
+									<DATA_CTRL>
+										FMT={
+											text.option.nbsps='true';
+										}
+										ATTR='value'
+									</DATA_CTRL>
+									<LABEL>
+										TEXT='"'
+									</LABEL>
+									<DELIMITER>
+										FMT={
+											txtfl.delimiter.type='text';
+											txtfl.delimiter.text=', ';
+										}
+									</DELIMITER>
+								</CTRLS>
+							</CTRL_GROUP>
+						</AREA>
+					</AREA_SEC>
+				</BODY>
+			</ELEMENT_ITER>
+		</BODY>
+	</FOLDER>
+	<FOLDER>
+		DESCR='CASE OF OTHER FACETS'
+		<BODY>
+			<AREA_SEC>
+				<AREA>
+					<CTRL_GROUP>
+						<CTRLS>
+							<DATA_CTRL>
+								FMT={
+									text.style='cs2';
+								}
+								ATTR='value'
+							</DATA_CTRL>
+						</CTRLS>
+					</CTRL_GROUP>
+				</AREA>
+			</AREA_SEC>
+			<SS_CALL>
+				DESCR='facet annotation'
+				COND='getBooleanParam("facet.annotation")'
+				FMT={
+					sec.spacing.before='4';
+					text.style='cs1';
+				}
+				SS_NAME='annotation'
+			</SS_CALL>
+		</BODY>
+	</FOLDER>
+</ROOT>
+<STOCK_SECTIONS>
+	<FOLDER>
+		MATCHING_ET='xs:%annotated'
+		SS_NAME='annotation'
+		<BODY>
+			<TEMPLATE_CALL>
+				FMT={
+					par.lineHeight='0';
+				}
+				TEMPLATE_FILE='../ann/annotation.tpl'
+			</TEMPLATE_CALL>
+		</BODY>
+	</FOLDER>
+</STOCK_SECTIONS>
+CHECKSUM='9yAVrGAyN738LhUo3OHpr7RyamXNcR7KzwbySa5AlHw'
+</DOCFLEX_TEMPLATE>
