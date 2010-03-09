@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An abstract bean definition for any sort of bean that can be setup in ColdSpring" output="false"
 			 colddoc:abstract="true">
@@ -145,7 +145,7 @@
 	<cfset structInsert(getConstructorArgs(), arguments.constructorArg.getName(), arguments.constructorArg, false) />
 </cffunction>
 
-<cffunction name="getPropertiesAsArray" hint="retursn the properties as an array, for convenience" access="public" returntype="array" output="false"
+<cffunction name="getPropertiesAsArray" hint="returns the properties as an array, for convenience" access="public" returntype="array" output="false"
 			colddoc:generic="Property">
 	<cfreturn createObject("java", "java.util.ArrayList").init(getProperties().values()) />
 </cffunction>

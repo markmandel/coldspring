@@ -157,10 +157,10 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="description" minOccurs="0"/>
+				<xsd:element ref="meta" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:choice minOccurs="0" maxOccurs="1">
-					<xsd:element ref="meta"/>
 					<xsd:element ref="bean"/>
-					<xsd:element ref="ref"/>					
+					<xsd:element ref="ref"/>
 					<xsd:element ref="value"/>
 					<xsd:element ref="null"/>
 					<xsd:element ref="list"/>
@@ -245,10 +245,10 @@
 	<xsd:complexType name="propertyType">
 		<xsd:sequence>
 			<xsd:element ref="description" minOccurs="0"/>
+			<xsd:element ref="meta" minOccurs="0" maxOccurs="unbounded"/>
 			<xsd:choice minOccurs="0" maxOccurs="1">
-				<xsd:element ref="meta"/>
 				<xsd:element ref="bean"/>
-				<xsd:element ref="ref"/>				
+				<xsd:element ref="ref"/>		
 				<xsd:element ref="value"/>
 				<xsd:element ref="null"/>
 				<xsd:element ref="list"/>

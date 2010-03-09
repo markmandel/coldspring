@@ -34,9 +34,11 @@
 	
 	<bean id="car2" class="coldspring.unittests.testBeans.Car">
 		<constructor-arg name="engine">
+			<description>Here is the engine</description>
 			<ref bean="engine"/>
 		</constructor-arg>
 		<property name="color">
+			<description>Here is a colour</description>
 			<ref bean="color2"/>
 		</property>
 		<property name="make">
@@ -98,6 +100,7 @@
 			</bean>
 		</property>
 		<property name="make">
+			<meta key="makeBrand" value="Ford"/>
 			<value>Mustang</value>
 		</property>
 		<property name="wheels">

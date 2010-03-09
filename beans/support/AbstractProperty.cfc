@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An abstract dependency, such as a constructor-arg or property definition" output="false"
 			 colddoc:abstract="true">
@@ -24,6 +24,11 @@
 	<cfreturn instance.Value />
 </cffunction>
 
+<cffunction name="getMeta" hint="Return custom object meta data" access="public" returntype="struct" output="false"
+			colddoc:generic="string,string">
+	<cfreturn instance.Meta />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -34,6 +39,7 @@
 	<cfscript>
 		setName(arguments.name);
 		setValue(arguments.value);
+		setMeta(StructNew());
 	</cfscript>
 </cffunction>
 
@@ -45,6 +51,11 @@
 <cffunction name="setValue" access="private" returntype="void" output="false">
 	<cfargument name="Value" type="AbstractValue" required="true">
 	<cfset instance.Value = arguments.Value />
+</cffunction>
+
+<cffunction name="setMeta" access="private" returntype="void" output="false">
+	<cfargument name="Meta" type="struct" required="true" colddoc:generic="string,string">
+	<cfset instance.Meta = arguments.Meta />
 </cffunction>
 
 </cfcomponent>

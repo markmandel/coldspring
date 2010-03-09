@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent extends="coldspring.beans.xml.AbstractNamespaceHandler" output="false">
 
@@ -31,7 +31,7 @@
 	<cfscript>
 		var map = {};
 
-		map["http://www.coldspringframework.org/schema/beans"] = getDirectoryFromPath(getMetadata(this).path) & "/coldspring-beans-2.0.xsd";
+		map["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = getDirectoryFromPath(getMetadata(this).path) & "/coldspring-beans-2.0.xsd";
 
 		return map;
     </cfscript>

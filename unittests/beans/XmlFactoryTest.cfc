@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Unit tests for XmlFactory parsing and support" extends="coldspring.unittests.AbstractTestCase" output="false">
 
@@ -180,8 +180,32 @@
 		AssertTrue(structKeyExists(local.beanDef.getMeta(), "keyValue1"));
 		AssertTrue(structKeyExists(local.beanDef.getMeta(), "keyValue2"));
 
+		AssertFalse(structKeyExists(local.beanDef.getMeta(), "makeBrand"));
+
 		AssertEquals("metaValue1", structFind(local.beanDef.getMeta(), "keyValue1"));
 		AssertEquals("metaValue2", structFind(local.beanDef.getMeta(), "keyValue2"));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testMetaOnProperty" hint="tests meta on a property" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		makePublic(instance.factory, "getBeanDefinitionRegistry");
+
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car3");
+
+		local.properties = local.beanDef.getProperties();
+
+		AssertTrue(structIsEmpty(properties.make.getMeta()));
+
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car4");
+
+		local.properties = local.beanDef.getProperties();
+
+		AssertFalse(structIsEmpty(properties.make.getMeta()));
+
+		AssertEquals("Ford", structFind(properties.make.getMeta(), "makeBrand"));
     </cfscript>
 </cffunction>
 

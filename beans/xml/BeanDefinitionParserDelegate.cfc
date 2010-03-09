@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Delegate for common XML Bean parsing tasks" output="false">
 
@@ -144,12 +144,12 @@
 	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
 	<cfargument name="beanDefinition" hint="the bean def to add the properties to" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
-		var constructorArgs = arguments.beanElement.getElementsByTagName(instance.static.PROPERTY_ELEMENT);
+		var properties = arguments.beanElement.getElementsByTagName(instance.static.PROPERTY_ELEMENT);
 		var counter = 0;
 
-		for(; counter lt constructorArgs.getLength(); counter++)
+		for(; counter lt properties.getLength(); counter++)
 		{
-			parsePropertyElement(constructorArgs.item(counter), arguments.beanDefinition);
+			parsePropertyElement(properties.item(counter), arguments.beanDefinition);
 		}
     </cfscript>
 </cffunction>
@@ -168,6 +168,9 @@
 		if(structKeyExists(local, "value"))
 		{
 			local.property = createObject("component", "coldspring.beans.support.Property").init(local.name, local.value);
+
+			//add meta if it exists
+			parseMetaElements(arguments.element, local.property);
 
 			arguments.beanDefinition.addProperty(local.property);
 		}
@@ -279,7 +282,13 @@
 
 				if(local.element.getNodeType() eq getNode().ELEMENT_NODE)
 				{
-					return parsePropertySubElement(local.element);
+					local.value = parsePropertySubElement(local.element);
+
+					//could be a Meta or Description element, which is ignored
+					if(structKeyExists(local, "value"))
+					{
+						return local.value;
+					}
 				}
 			}
 		}
@@ -318,15 +327,24 @@
 </cffunction>
 
 <cffunction name="parseMetaElements" hint="parse all meta sub-elements on a given element" access="public" returntype="void" output="false">
-	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
+	<cfargument name="element" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
 	<cfargument name="metaObject" hint="to object to add custm meta data to. Must have a method getMeta() that returns a struct" type="any" required="Yes">
 	<cfscript>
-		var metaElements = arguments.beanElement.getElementsByTagName(instance.static.META_ELEMENT);
+		/*
+			Don't use getElementsByTagName(), as <meta> an be in <bean>, <property>, and <constructor-arg>
+		*/
+		var childNodes = arguments.element.getChildNodes();
 		var counter = 0;
+		var child = 0;
 
-		for(; counter lt metaElements.getLength(); counter++)
+		for(;counter lt childNodes.getLength(); counter++)
 		{
-			parseMetaElement(metaElements.item(counter), arguments.metaObject);
+			child = childNodes.item(counter);
+
+			if(child.getNodeType() eq getNode().ELEMENT_NODE AND child.getTagName() eq instance.static.META_ELEMENT)
+			{
+				parseMetaElement(child, arguments.metaObject);
+			}
 		}
     </cfscript>
 </cffunction>
