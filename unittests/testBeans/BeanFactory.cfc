@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An extension of the abstractBeanFactory for testing purposes" extends="coldspring.beans.AbstractBeanFactory" output="false">
 
@@ -27,12 +27,12 @@
 
 <cffunction name="addBeanDefinition" hint="add a bean definition to the registry" access="public" returntype="void" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
-	<cfset getBeanDefinitionRegistry().addBeanDefinition(argumentCollection=arguments)>
+	<cfset getBeanDefinitionRegistry().registerBeanDefinition(argumentCollection=arguments)>
 </cffunction>
 
 <cffunction name="getBeanDefinitionByName" hint="" access="public" returntype="any" output="false">
 	<cfargument name="id" hint="the id of the bean to check for" type="string" required="Yes" />
-	<cfreturn getBeanDefinitionRegistry().getBeanDefinitionByName(argumentCollection=arguments) />
+	<cfreturn getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="getBeanDefinitionRegistry" access="public" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">

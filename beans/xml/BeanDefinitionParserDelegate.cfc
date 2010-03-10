@@ -311,7 +311,7 @@
 		else if(arguments.element.getTagName() eq instance.static.BEAN_ELEMENT)
 		{
 			local.beanDef = parseBeanDefinitionElement(arguments.element);
-			getBeanDefinitionRegistry().addBeanDefinition(local.beanDef);
+			getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
 
 			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getID(), getBeanDefinitionRegistry());
 		}

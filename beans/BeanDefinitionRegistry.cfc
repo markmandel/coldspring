@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Registry for all the bean Definitions" output="false">
 
@@ -25,7 +25,7 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="addBeanDefinition" hint="add a bean definition to the registry" access="public" returntype="void" output="false">
+<cffunction name="registerBeanDefinition" hint="add a bean definition to the registry" access="public" returntype="void" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
 		arguments.beanDefinition.setBeanCache(getBeanCache());
@@ -34,7 +34,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getBeanDefinitionByName" hint="get a bean definition from the registry" access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
 	<cfargument name="id" hint="the id of the bean definition to get" type="string" required="Yes">
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
@@ -48,7 +48,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="hasBeanDefinitionByName" hint="Returns true if a bean definition exists" access="public" returntype="boolean" output="false">
+<cffunction name="containsBeanDefinition" hint="Returns true if a bean definition exists" access="public" returntype="boolean" output="false">
 	<cfargument name="id" hint="the id of the bean to check for" type="string" required="Yes" />
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
@@ -59,6 +59,29 @@
 		}
 
 		return false;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in the registry." access="public" returntype="numeric" output="false">
+	<cfreturn structCount(getBeanCache()) />
+</cffunction>
+
+<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this registry" access="private" returntype="array" output="false"
+			colddoc:generic="string">
+	<cfreturn structKeyArray(getBeanCache()) />
+</cffunction>
+
+<cffunction name="removeBeanDefinition" hint="Remove the BeanDefinition for the given name.  Throws a BeanDefinitionNotFoundException if it doesn't exist" access="public" returntype="void" output="false">
+	<cfargument name="id" hint="the name of the bean to check for" type="string" required="Yes" />
+	<cfscript>
+		var beanDefs = getBeanDefinitions();
+
+		if(NOT StructKeyExists(beanDefs, arguments.id))
+		{
+			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(arguments.id);
+		}
+
+		structDelete(beanDefs, arguments.id);
     </cfscript>
 </cffunction>
 

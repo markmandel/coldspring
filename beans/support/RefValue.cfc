@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="A reference to another BeanDefinition" extends="AbstractValue" output="false">
 
@@ -47,7 +47,7 @@
 	<cfscript>
 		if(NOT hasBeanDefinition())
 		{
-			setBeanDefinition(getBeanDefinitionRegistry().getBeanDefinitionByName(getBeanName()));
+			setBeanDefinition(getBeanDefinitionRegistry().getBeanDefinition(getBeanName()));
 		}
 
 		return getBeanDefinition().getInstance();

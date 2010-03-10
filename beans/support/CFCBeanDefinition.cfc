@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="A bean definition for a CFC" extends="AbstractBeanDefinition" output="false">
 
@@ -147,7 +147,7 @@
 				{
 					if(getAutowire() eq "byName")
 					{
-						if(getBeanDefinitionRegistry().hasBeanDefinitionByName(param.name))
+						if(getBeanDefinitionRegistry().containsBeanDefinition(param.name))
 						{
 							ref = createObject("component", "RefValue").init(param.name, getBeanDefinitionRegistry());
 							constructorArg = createObject("component", "ConstructorArg").init(param.name, ref);
@@ -181,7 +181,7 @@
 			{
 				if(getAutowire() eq "byName")
 				{
-					if(getBeanDefinitionRegistry().hasBeanDefinitionByName(name))
+					if(getBeanDefinitionRegistry().containsBeanDefinition(name))
 					{
 						ref = createObject("component", "RefValue").init(name, getBeanDefinitionRegistry());
 						property = createObject("component", "Property").init(name, ref);

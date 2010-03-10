@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An abstract bean factory" output="false"
 			 colddoc:abstract="true">
@@ -38,7 +38,7 @@
 
 	<cftry>
 	<cfscript>
-		beanDef = getBeanDefinitionRegistry().getBeanDefinitionByName(argumentCollection=arguments);
+		beanDef = getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments);
 		bean = beanDef.getInstance();
 
 		//clear out the prototype cache, is it is thread local.
@@ -53,9 +53,9 @@
 	</cftry>
 </cffunction>
 
-<cffunction name="hasBeanByName" hint="Returns true if a bean (definition) exists" access="public" returntype="boolean" output="false">
+<cffunction name="containsBeanDefinition" hint="Returns true if a bean (definition) exists" access="public" returntype="boolean" output="false">
 	<cfargument name="id" hint="the id of the bean to check for" type="string" required="Yes" />
-	<cfreturn getBeanDefinitionRegistry().hasBeanDefintionByName(argumentCollection=arguments) />
+	<cfreturn getBeanDefinitionRegistry().containsBeanDefinition(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="refresh" hint="refresh the bean factory" access="public" returntype="void" output="false">

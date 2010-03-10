@@ -171,11 +171,11 @@
 
 		makePublic(instance.factory, "getBeanDefinitionRegistry");
 
-		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car3");
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car3");
 
 		AssertTrue(structIsEmpty(local.beanDef.getMeta()));
 
-		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car4");
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car4");
 
 		AssertTrue(structKeyExists(local.beanDef.getMeta(), "keyValue1"));
 		AssertTrue(structKeyExists(local.beanDef.getMeta(), "keyValue2"));
@@ -193,13 +193,13 @@
 
 		makePublic(instance.factory, "getBeanDefinitionRegistry");
 
-		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car3");
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car3");
 
 		local.properties = local.beanDef.getProperties();
 
 		AssertTrue(structIsEmpty(properties.make.getMeta()));
 
-		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car4");
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car4");
 
 		local.properties = local.beanDef.getProperties();
 
@@ -215,7 +215,7 @@
 
 		makePublic(instance.factory, "getBeanDefinitionRegistry");
 
-		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinitionByName("car3");
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car3");
     </cfscript>
 </cffunction>--->
 

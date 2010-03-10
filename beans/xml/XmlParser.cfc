@@ -138,7 +138,7 @@
 					{
 						newContext.setContainingBeanDefinition(local.beanDefinitions);
 
-						getBeanDefinitionRegistry().addBeanDefinition(local.beanDefinitions);
+						getBeanDefinitionRegistry().registerBeanDefinition(local.beanDefinitions);
 					}
 					else if(isArray(local.beanDefinitions))
 					{
@@ -146,7 +146,7 @@
                         for(local.counter=1; local.counter lte local.len; local.counter++)
                         {
                         	local.beanDef = local.beanDefinitions[local.counter];
-							getBeanDefinitionRegistry().addBeanDefinition(local.beanDef);
+							getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
                         }
 					}
 				}
