@@ -20,7 +20,7 @@
 		FTP Task: net-common-2.0.jar
 		MXUnit Task: mxunit-ant.jar
 	-->
-	
+	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" /> 
 	
 	<!-- GENERAL PROPERTIES -->
 	<property name="src" location="./" />
@@ -28,23 +28,40 @@
 	<property name="coldspring.version" value="2.0" />
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
-	<property name="coldspring.local" value="http://cf9:94"/>
+	<property name="coldspring.localserver" value="cf9"/>
+	<property name="coldspring.localport" value="94"/>
 	<property name="docs" location="${src}/docs"/>
 	<property name="docs.xsddoc" location="${docs}/xsd"/>
 	<property name="docs.api" location="${docs}/api"/>
 	<property name="xsddoc" location="${docs}/gen/xsddoc"/>
 	<property name="xsddoc.lib" location="${xsddoc}/lib"/>
 	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
+	<property name="unittests.path" location="${src}/unitttests"/>
 	
 	<!-- ================================= 
           target: deploy              
          ================================= -->
     <target name="deploy" depends="" description="Deploy the current build of ColdSpring">
+    	<antcall target="unittest" />
     	<antcall target="upload-schemas"/>
     	<antcall target="xsddoc"/>
     	<antcall target="colddoc"/>
     </target>
 	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: unittest                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="unittest">
+    	<mxunittask server="${coldspring.localserver}" port="${coldspring.localport}"
+    		haltonerror="true"
+    		haltonfailure="true"
+    		defaultrunner="/unittests/HttpAntRunner.cfc"
+    		verbose="true"
+    		>
+    		<directory path="/unittests" componentpath="unittests" recurse="true"/>
+    	</mxunittask>
+    </target>
+
 	<!-- - - - - - - - - - - - - - - - - - 
           target: uploadSchemas                      
          - - - - - - - - - - - - - - - - - -->
@@ -69,7 +86,7 @@
           target: colddoc                      
          - - - - - - - - - - - - - - - - - -->
     <target name="colddoc" depends="colddoc-clean">
-    	<get src="${coldspring.local}/docs/gen/colddoc/run.cfm" dest="${tmp}/colddoc.html" />
+    	<get src="http://${coldspring.localserver}:${coldspring.localport}/docs/gen/colddoc/run.cfm" dest="${tmp}/colddoc.html" />
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
