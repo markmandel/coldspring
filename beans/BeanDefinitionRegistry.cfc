@@ -19,6 +19,7 @@
 	<cfargument name="beanCache" hint="The actual bean cache. Needed for AbstractBeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfscript>
 		setBeanDefinitions(StructNew());
+		setTypeNameCache(StructNew());
 		setBeanCache(arguments.beanCache);
 
 		return this;
@@ -63,12 +64,12 @@
 </cffunction>
 
 <cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in the registry." access="public" returntype="numeric" output="false">
-	<cfreturn structCount(getBeanCache()) />
+	<cfreturn structCount(getBeanDefinitions()) />
 </cffunction>
 
-<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this registry" access="private" returntype="array" output="false"
+<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this registry" access="public" returntype="array" output="false"
 			colddoc:generic="string">
-	<cfreturn structKeyArray(getBeanCache()) />
+	<cfreturn structKeyArray(getBeanDefinitions()) />
 </cffunction>
 
 <cffunction name="removeBeanDefinition" hint="Remove the BeanDefinition for the given name.  Throws a BeanDefinitionNotFoundException if it doesn't exist" access="public" returntype="void" output="false">
@@ -84,6 +85,17 @@
 		structDelete(beanDefs, arguments.id);
     </cfscript>
 </cffunction>
+
+<!---
+ String[] 	getBeanNamesForType(Class type, boolean includeNonSingletons, boolean allowEagerInit)
+          Return the names of beans matching the given type (including subclasses), judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.
+
+		  Note: have a BeanTypeCache that stores names against types in an array.
+		  When adding a new BeanDefinition, get the MetaData, and loop up the inheritene tree, and set all the types found to that particular name
+		  that way it's easy to go up the tree.
+
+		  removing will be more fun, as you will have to do the same thing.  May want to do an eachClassInInheritence(class, callback)
+ --->
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
@@ -107,5 +119,14 @@
 	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfset instance.beanCache = arguments.beanCache />
 </cffunction>
+
+<cffunction name="getTypeNameCache" hint="returns a map of class types that match up to arrays of bean names" access="private" returntype="struct" output="false" colddoc:generic="string,array">
+	<cfreturn instance.typeNameCache />
+</cffunction>
+<cffunction name="setTypeNameCache" access="private" returntype="void" output="false" colddoc:generic="string,string">
+	<cfargument name="typeNameCache" type="struct" required="true">
+	<cfset instance.typeNameCache = arguments.typeNameCache />
+</cffunction>
+
 
 </cfcomponent>
