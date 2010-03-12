@@ -29,9 +29,14 @@
 <cffunction name="registerBeanDefinition" hint="add a bean definition to the registry" access="public" returntype="void" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
+		var typeNameCache = getTypeNameCache();
+		var args = {id = arguments.beanDefinition.getID()};
+
 		arguments.beanDefinition.setBeanCache(getBeanCache());
 
 		StructInsert(getBeanDefinitions(), arguments.beanDefinition.getID(), arguments.beanDefinition, true);
+
+		eachClassInTypeHierarchy(arguments.beanDefinition.getClassName(), cacheNameAgainstType, args);
     </cfscript>
 </cffunction>
 
@@ -76,30 +81,107 @@
 	<cfargument name="id" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
-
-		if(NOT StructKeyExists(beanDefs, arguments.id))
-		{
-			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(arguments.id);
-		}
+		var beanDefinition = getBeanDefinition(arguments.id);
+		var args = {id = beanDefinition.getID()};
 
 		structDelete(beanDefs, arguments.id);
+
+		eachClassInTypeHierarchy(beanDefinition.getClassName(), removeNameAgainstType, args);
     </cfscript>
 </cffunction>
 
-<!---
- String[] 	getBeanNamesForType(Class type, boolean includeNonSingletons, boolean allowEagerInit)
-          Return the names of beans matching the given type (including subclasses), judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.
+<cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
+			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
+			<br/><strong>NOTE: This method introspects top-level beans only.</strong> It does not  check nested beans which might match the specified type as well.<br/>
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized. If the object created by the FactoryBean doesn't match, the raw FactoryBean itself will be matched against the type.
+			"
+			access="public" returntype="array" output="false">
+	<cfargument name="className" hint="the class type" type="string" required="Yes">
+	<cfscript>
+		var typeNameCache = getTypeNameCache();
+		if(structKeyExists(typeNameCache, arguments.className))
+		{
+			return typeNameCache[arguments.className];
+		}
 
-		  Note: have a BeanTypeCache that stores names against types in an array.
-		  When adding a new BeanDefinition, get the MetaData, and loop up the inheritene tree, and set all the types found to that particular name
-		  that way it's easy to go up the tree.
-
-		  removing will be more fun, as you will have to do the same thing.  May want to do an eachClassInInheritence(class, callback)
- --->
+		return arrayNew(1);
+    </cfscript>
+</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<!--- Wrap this into a coldpsring.util.Class library?  --->
+<cffunction name="eachClassInTypeHierarchy" hint="Calls the callback for each class type in inheritence, and also for each interface it implements" access="private" returntype="void" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfargument name="callback" hint="the callback to fire for each class type found a" type="any" required="Yes">
+	<cfargument name="args" hint="optional arguments to also pass through to the callback" type="struct" required="No" default="#structNew()#">
+	<cfscript>
+		var meta = getComponentMetadata(arguments.className);
+		var call = arguments.callback;
+		var local = {};
+
+		while(structKeyExists(meta, "extends"))
+		{
+			arguments.args.className = meta.name;
+			call(argumentCollection=arguments.args);
+
+			if(structKeyExists(meta, "implements"))
+			{
+				local.implements = meta.implements;
+
+				for(local.key in local.implements)
+				{
+					local.imeta = local.implements[local.key];
+
+					arguments.args.className = local.imeta.name;
+					call(argumentCollection=arguments.args);
+
+					while(structKeyExists(local.imeta, "extends"))
+					{
+						//this is here because extends on interfaces goes extends[classname];
+						local.imeta = local.imeta.extends[structKeyList(local.imeta.extends)];
+
+						arguments.args.className = local.imeta.name;
+						call(argumentCollection=arguments.args);
+					}
+				}
+			}
+
+			meta = meta.extends;
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="removeNameAgainstType" hint="callback for eachInTypeHierarchy that removes the bean name against the class in the type cache" access="private" returntype="void" output="false">
+	<cfargument name="className" hint="the class name" type="string" required="Yes">
+	<cfargument name="id" hint="the bean definition id" type="string" required="Yes">
+	<cfscript>
+		var typeNameCache = getTypeNameCache();
+
+		if(structKeyExists(typeNameCache, arguments.className))
+		{
+			typeNameCache[arguments.className].remove(arguments.id);
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="cacheNameAgainstType" hint="callback for eachInTypeHierarchy that caches the bean name against the class the type cache" access="private" returntype="void" output="false">
+	<cfargument name="className" hint="the class name" type="string" required="Yes">
+	<cfargument name="id" hint="the bean definition id" type="string" required="Yes">
+	<cfscript>
+		var typeNameCache = getTypeNameCache();
+
+		if(NOT structKeyExists(typeNameCache, arguments.className))
+		{
+			//use an array list for speed and pass by reference.
+			structInsert(typeNameCache, arguments.className, createObject("java", "java.util.ArrayList").init());
+		}
+
+		ArrayAppend(typeNameCache[className], arguments.id);
+	</cfscript>
+</cffunction>
 
 <cffunction name="getBeanDefinitions" access="private" returntype="struct" output="false"
 			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
