@@ -611,20 +611,15 @@ class name.
 	Autowiring by property name. If a bean of class Cat exposes a dog
 	property, Spring will try to set this to the value of the bean "dog"
 	in the current container. If there is no matching bean by name, nothing
-	special happens; use dependency-check="objects" to raise an error in
-	that case.
+	special happens.
 
 	3. "byType"
 	Autowiring if there is exactly one bean of the property type in the
 	container. If there is more than one, a fatal error is raised, and
-	you cannot use byType autowiring for that bean. If there is none,
-	nothing special happens; use dependency-check="objects" to raise an
-	error in that case.
+	you cannot use byType autowiring for that bean.
 
 	Note that explicit dependencies, i.e. "property" and "constructor-arg"
-	elements, always override autowiring. Autowire behavior can be combined
-	with dependency checking, which will be performed after all autowiring
-	has been completed.
+	elements, always override autowiring.
 
 	Note: This attribute will not be inherited by child bean definitions.
 	Hence, it needs to be specified per concrete bean definition.

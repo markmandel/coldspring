@@ -129,6 +129,8 @@
 		var len = 0;
 		var param = 0;
 		var constructorArg = 0;
+		var class = 0;
+		var array = 0;
 
 		/*
 		Constructor autowire metadata
@@ -151,13 +153,26 @@
 						{
 							ref = createObject("component", "RefValue").init(param.name, getBeanDefinitionRegistry());
 							constructorArg = createObject("component", "ConstructorArg").init(param.name, ref);
-
 							addConstructorArg(constructorArg);
 						}
 					}
-					else if(getAutowire() eq "byType")
+					else if(getAutowire() eq "byType" AND structKeyExists(param, "type"))
 					{
-						//TODO: autowire by type
+						array = getBeanDefinitionRegistry().getBeanNamesForType(param.type);
+
+						request.debug("type: #param.type#");
+						request.debug(array);
+
+						if(ArrayLen(array) eq 1)
+						{
+							ref = createObject("component", "RefValue").init(array[1], getBeanDefinitionRegistry());
+							constructorArg = createObject("component", "ConstructorArg").init(param.name, ref);
+							addConstructorArg(constructorArg);
+						}
+						else if(ArrayLen(array) gt 1)
+						{
+							createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(getID(), param.type);
+						}
 					}
 				}
 			}
@@ -185,18 +200,25 @@
 					{
 						ref = createObject("component", "RefValue").init(name, getBeanDefinitionRegistry());
 						property = createObject("component", "Property").init(name, ref);
-
 						addProperty(property);
 					}
 				}
-				else if(getAutowire() eq "byType")
+				else if(getAutowire() eq "byType" AND structKeyExists(arguments.func.parameters[1], "type"))
 				{
-					//TODO: autowire by type
+					array = getBeanDefinitionRegistry().getBeanNamesForType(arguments.func.parameters[1].type);
+					if(ArrayLen(array) eq 1)
+					{
+						ref = createObject("component", "RefValue").init(array[1], getBeanDefinitionRegistry());
+						property = createObject("component", "Property").init(name, ref);
+						addProperty(property);
+					}
+					else if(ArrayLen(array) gt 1)
+					{
+						createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(getID(), arguments.func.parameters[1].type);
+					}
 				}
 			}
 		}
-
-
     </cfscript>
 </cffunction>
 

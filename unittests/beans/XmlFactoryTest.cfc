@@ -219,4 +219,15 @@
     </cfscript>
 </cffunction>--->
 
+<cffunction name="testAutowireByType" hint="tests to make sure autowire by type is working" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/autowire-by-type-car-beans.xml"));
+		instance.factory.refresh();
+
+		local.car = instance.factory.getBean("car1");
+    </cfscript>
+</cffunction>
+
 </cfcomponent>
