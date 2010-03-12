@@ -16,7 +16,6 @@
 <cfscript>
 	this.name = "ColdSpring Documentation";
 	this.sessionmanagement = false;
-	this.mappings["/coldspring"] = expandPath("/");
 </cfscript>
 
 </cfcomponent>

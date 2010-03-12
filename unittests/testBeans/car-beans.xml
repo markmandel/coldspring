@@ -5,34 +5,34 @@
 	   default-autowire="no"
 	   >
 
-	<bean id="abstractCar" abstract="true" class="coldspring.unittests.testBeans.Car"/>
+	<bean id="abstractCar" abstract="true" class="unittests.testBeans.Car"/>
 	   
-	<bean id="car1" class="coldspring.unittests.testBeans.Car">
+	<bean id="car1" class="unittests.testBeans.Car">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="color" ref="color1" />
 		<property name="make" value="Mustang"/>
 		<property name="wheels">
 			<map>
 				<entry key="1">
-					<bean class="coldspring.unittests.testBeans.Wheel"/>
+					<bean class="unittests.testBeans.Wheel"/>
 				</entry>
 				<entry key="2">
-					<bean class="coldspring.unittests.testBeans.Wheel"/>
+					<bean class="unittests.testBeans.Wheel"/>
 				</entry>
 				<entry key="3">
-					<bean class="coldspring.unittests.testBeans.Wheel"/>
+					<bean class="unittests.testBeans.Wheel"/>
 				</entry>
 				<entry key="4">
-					<bean class="coldspring.unittests.testBeans.Wheel"/>
+					<bean class="unittests.testBeans.Wheel"/>
 				</entry>
 				<entry key="spare">
-					<bean class="coldspring.unittests.testBeans.Wheel"/>
+					<bean class="unittests.testBeans.Wheel"/>
 				</entry>
 			</map>
 		</property>
 	</bean>
 	
-	<bean id="car2" class="coldspring.unittests.testBeans.Car">
+	<bean id="car2" class="unittests.testBeans.Car">
 		<constructor-arg name="engine">
 			<description>Here is the engine</description>
 			<ref bean="engine"/>
@@ -55,7 +55,7 @@
 		</property>
 	</bean>
 	
-	<bean id="car3" class="coldspring.unittests.testBeans.Car" autowire="byName">
+	<bean id="car3" class="unittests.testBeans.Car" autowire="byName">
 		<property name="make">
 			<value>Mustang</value>
 		</property>
@@ -80,11 +80,11 @@
 		</property>		
 	</bean>
 	
-	<bean id="car4" class="coldspring.unittests.testBeans.Car">
+	<bean id="car4" class="unittests.testBeans.Car">
 		<meta key="keyValue1" value="metaValue1"/>
 		<meta key="keyValue2" value="metaValue2"/>
 		<constructor-arg name="engine">
-			<bean class="coldspring.unittests.testBeans.Engine">
+			<bean class="unittests.testBeans.Engine">
 				<property name="gears">
 					<list>
 						<value>1</value>
@@ -95,7 +95,7 @@
 			</bean>
 		</constructor-arg>
 		<property name="color">
-			<bean class="coldspring.unittests.testBeans.Color">
+			<bean class="unittests.testBeans.Color">
 				<constructor-arg name="name" value="blue"/>
 			</bean>
 		</property>
@@ -114,7 +114,7 @@
 		</property>		
 	</bean>
 	
-	<bean id="carSimpleMap" class="coldspring.unittests.testBeans.Car">
+	<bean id="carSimpleMap" class="unittests.testBeans.Car">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="wheels">
 			<map>
@@ -124,7 +124,7 @@
 		</property>
 	</bean>
 
-	<bean id="carObjectKeyMap" class="coldspring.unittests.testBeans.Car">
+	<bean id="carObjectKeyMap" class="unittests.testBeans.Car">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="wheels">
 			<map>
@@ -134,7 +134,7 @@
 		</property>
 	</bean>
 	   
-	<bean id="engine" class="coldspring.unittests.testBeans.Engine">
+	<bean id="engine" class="unittests.testBeans.Engine">
 		<property name="gears">
 			<list>
 				<value>1</value>
@@ -144,20 +144,20 @@
 		</property>
 	</bean>
 
-	<bean id="color" class="coldspring.unittests.testBeans.Color">
+	<bean id="color" class="unittests.testBeans.Color">
 		<constructor-arg name="name" value="blue"/>
 	</bean>
 
-	<bean id="color1" class="coldspring.unittests.testBeans.Color">
+	<bean id="color1" class="unittests.testBeans.Color">
 		<constructor-arg name="name" value="blue"/>
 	</bean>
 
-	<bean id="color2" class="coldspring.unittests.testBeans.Color">
+	<bean id="color2" class="unittests.testBeans.Color">
 		<constructor-arg name="name">
 			<value>blue</value>
 		</constructor-arg>
 	</bean>
 	
-	<bean id="wheel" class="coldspring.unittests.testBeans.Wheel" scope="prototype"/>
+	<bean id="wheel" class="unittests.testBeans.Wheel" scope="prototype"/>
 	
 </beans>

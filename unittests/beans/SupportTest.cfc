@@ -9,15 +9,15 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
-<cfcomponent hint="Unit tests for BeanDefinitions and support" extends="coldspring.unittests.AbstractTestCase" output="false">
+<cfcomponent hint="Unit tests for BeanDefinitions and support" extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="setup" hint="the setup for the tests" access="public" returntype="void" output="false">
 	<cfscript>
-		instance.factory = createObject("component", "coldspring.unittests.testBeans.BeanFactory").init();
+		instance.factory = createObject("component", "unittests.testBeans.BeanFactory").init();
     </cfscript>
 </cffunction>
 
@@ -26,9 +26,9 @@
 		var local = {};
 
 		//car needs an engine
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "coldspring.unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
-		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", "coldspring.unittests.testBeans.Engine", instance.factory.getBeanDefinitionRegistry());
-		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", "coldspring.unittests.testBeans.Color", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
+		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", "unittests.testBeans.Engine", instance.factory.getBeanDefinitionRegistry());
+		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", "unittests.testBeans.Color", instance.factory.getBeanDefinitionRegistry());
 
 		//constructor arg to point to the engine and color
 		local.engineRef = createObject("component", "coldspring.beans.support.RefValue").init("engine", instance.factory.getBeanDefinitionRegistry());
@@ -71,12 +71,12 @@
 <cffunction name="testCFCAutowireByName" hint="test basic autowiring, hopefully it works" access="public" returntype="void" output="false">
 	<cfscript>
 		//car needs an engine
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "coldspring.unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
 
 		local.car.setAutowire("byName");
 
-		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", "coldspring.unittests.testBeans.Engine", instance.factory.getBeanDefinitionRegistry());
-		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", "coldspring.unittests.testBeans.Color", instance.factory.getBeanDefinitionRegistry());
+		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", "unittests.testBeans.Engine", instance.factory.getBeanDefinitionRegistry());
+		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", "unittests.testBeans.Color", instance.factory.getBeanDefinitionRegistry());
 
 		instance.factory.addBeanDefinition(local.car);
 		instance.factory.addBeanDefinition(local.engine);
@@ -97,10 +97,10 @@
 <!--- TODO: this isn't going to work yet, until we implement caching --->
 <cffunction name="testCFCAutowireCircularReference" hint="test a circular reference with autowiring" access="public" returntype="void" output="false">
 	<cfscript>
-		local.cr1 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference1", "coldspring.unittests.testBeans.CircularReference1", instance.factory.getBeanDefinitionRegistry());
+		local.cr1 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference1", "unittests.testBeans.CircularReference1", instance.factory.getBeanDefinitionRegistry());
 		local.cr1.setAutowire("byName");
 
-		local.cr2 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference2", "coldspring.unittests.testBeans.CircularReference2", instance.factory.getBeanDefinitionRegistry());
+		local.cr2 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference2", "unittests.testBeans.CircularReference2", instance.factory.getBeanDefinitionRegistry());
 		local.cr2.setAutowire("byName");
 
 		instance.factory.addBeanDefinition(local.cr1);
@@ -108,7 +108,7 @@
 
 		local.cr1Inst = instance.factory.getBean("circularReference1");
 
-		AssertEquals(getMetaData(local.cr1Inst.getCircularReference2()).name, "coldspring.unittests.testBeans.CircularReference2", "Not the same class name");
+		AssertEquals(getMetaData(local.cr1Inst.getCircularReference2()).name, "unittests.testBeans.CircularReference2", "Not the same class name");
 
 		AssertSame(local.cr1Inst, local.cr1Inst.getCircularReference2().getCircularReference1(), "Not the same object");
     </cfscript>

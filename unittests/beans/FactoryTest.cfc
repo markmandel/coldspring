@@ -9,15 +9,15 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
-<cfcomponent hint="test for the factory beans" extends="coldspring.unittests.AbstractTestCase" output="false">
+<cfcomponent hint="test for the factory beans" extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="setup" hint="the setup for the tests" access="public" returntype="void" output="false">
 	<cfscript>
-		instance.factory = createObject("component", "coldspring.unittests.testBeans.BeanFactory").init();
+		instance.factory = createObject("component", "unittests.testBeans.BeanFactory").init();
     </cfscript>
 </cffunction>
 
@@ -108,7 +108,7 @@
 		local.Thread = createObject("java", "java.lang.Thread");
 
 		//singleton
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "coldspring.unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
 		local.lockname = local.beanCache.getLockName(local.car);
 
 		//"coldspring.beans.support.beandefinition.createInstance.#arguments.beanDef.getID()#.#getSystem().identityHashCode(this)#";

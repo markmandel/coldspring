@@ -1,4 +1,4 @@
-﻿<cfcomponent extends="coldspring.unittests.AbstractTestCase" output="false">
+﻿<cfcomponent extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

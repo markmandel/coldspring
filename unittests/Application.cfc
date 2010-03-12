@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="The application.cfc" output="false">
 
@@ -17,7 +17,7 @@
 	this.name = "ColdSpring Unit Tests";
 	this.sessionmanagement = true;
 	this.sessiontimeout = createTimespan(0, 0, 10, 0);
-	this.mappings["/coldspring"] = expandPath("/");
+	this.mappings["/ut"] = expandPath("/");
 </cfscript>
 
 </cfcomponent>

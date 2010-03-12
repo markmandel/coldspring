@@ -1,7 +1,7 @@
 
 <cfinvoke component="mxunit.runner.DirectoryTestSuite"
 			method="run"
-			directory="#expandPath('/coldspring/unittests')#"
+			directory="#expandPath('/unittests')#"
 			componentPath="unittests"
 			recurse="true"
 			excludes=""

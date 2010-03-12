@@ -228,7 +228,7 @@
 				else if(local.child.hasAttribute(instance.static.KEY_REF_ATTRIBUTE))
 				{
 					local.beanName = local.child.getAttribute(instance.static.KEY_REF_ATTRIBUTE);
-					local.key = createObject("component", "beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
+					local.key = createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
 				}
 
 				//work out value
@@ -239,7 +239,7 @@
 				else if(local.child.hasAttribute(instance.static.VALUE_REF_ATTRIBUTE))
 				{
 					local.beanName = local.child.getAttribute(instance.static.VALUE_REF_ATTRIBUTE);
-					local.value = createObject("component", "beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
+					local.value = createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
 				}
 				else
 				{

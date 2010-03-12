@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Unit tests for XmlFactory parsing and support" extends="coldspring.unittests.AbstractTestCase" output="false">
+<cfcomponent hint="Unit tests for XmlFactory parsing and support" extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -28,7 +28,7 @@
 		local.engine = instance.factory.getBean("engine");
 
 		//we did get back an engine
-		assertEquals(getMetaData(local.engine).name, "coldspring.unittests.testBeans.Engine");
+		assertEquals(getMetaData(local.engine).name, "unittests.testBeans.Engine");
 		assertEquals("default engine", local.engine.getType());
     </cfscript>
 </cffunction>
@@ -79,7 +79,7 @@
 	<cfscript>
 		var local = {};
 
-		assertEquals(getMetaData(arguments.car).name, "coldspring.unittests.testBeans.Car");
+		assertEquals(getMetaData(arguments.car).name, "unittests.testBeans.Car");
 
 		assertEquals("Mustang", arguments.car.getMake());
 
@@ -90,13 +90,13 @@
 		assertEquals(local.gears, local.engine.getGears());
 
 		//we did get back an engine
-		assertEquals(getMetaData(local.engine).name, "coldspring.unittests.testBeans.Engine");
+		assertEquals(getMetaData(local.engine).name, "unittests.testBeans.Engine");
 		assertEquals("default engine", local.engine.getType());
 
 		//did we get a colour?
 		local.colour = arguments.car.getColor();
 
-		assertEquals(getMetaData(local.colour).name, "coldspring.unittests.testBeans.Color");
+		assertEquals(getMetaData(local.colour).name, "unittests.testBeans.Color");
 
 		assertEquals("blue", local.colour.getName());
 

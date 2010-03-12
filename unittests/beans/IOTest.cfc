@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent extends="coldspring.unittests.AbstractTestCase" output="false">
+<cfcomponent extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -29,7 +29,7 @@
 
 		local.entityMap = {};
 
-		local.entityMap["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = expandPath("/beans/xml/config/coldspring-beans-2.0.xsd");
+		local.entityMap["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = expandPath("/coldspring/beans/xml/config/coldspring-beans-2.0.xsd");
 
 		local.reader = createObject("component", "coldspring.io.XMLFileReader").init(expandPath("/unittests/testBeans/emptyBeans.xml"), instance.javaloader, local.entityMap);
 

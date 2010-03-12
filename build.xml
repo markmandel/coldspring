@@ -23,20 +23,19 @@
 	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" /> 
 	
 	<!-- GENERAL PROPERTIES -->
-	<property name="src" location="./" />
+	<property name="src" location="./coldspring" />
 	<property name="tmp" location="/tmp" />
 	<property name="coldspring.version" value="2.0" />
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
 	<property name="coldspring.localserver" value="cf9"/>
 	<property name="coldspring.localport" value="94"/>
-	<property name="docs" location="${src}/docs"/>
+	<property name="docs" location="./docs"/>
 	<property name="docs.xsddoc" location="${docs}/xsd"/>
 	<property name="docs.api" location="${docs}/api"/>
 	<property name="xsddoc" location="${docs}/gen/xsddoc"/>
 	<property name="xsddoc.lib" location="${xsddoc}/lib"/>
 	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
-	<property name="unittests.path" location="${src}/unitttests"/>
 	
 	<!-- ================================= 
           target: deploy              
