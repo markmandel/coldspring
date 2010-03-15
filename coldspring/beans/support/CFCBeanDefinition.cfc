@@ -84,11 +84,12 @@
 <cffunction name="autowire" hint="virtual method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
 		var meta = getComponentMetadata(getClassName());
-		eachMetaFunction(meta, autowireCommand);
+		var args = {meta = meta};
+		eachMetaFunction(meta, autowireCallback, args);
     </cfscript>
 </cffunction>
 
-<cffunction name="eachMetaFunction" hint="calls a HOF for each function that is found in meta data, with 'func' as the argument name" access="private" returntype="void" output="false">
+<cffunction name="eachMetaFunction" hint="calls a callback for each function that is found in meta data, with 'func' as the argument name" access="private" returntype="void" output="false">
 	<cfargument name="meta" hint="the meta data to loop through for functions" type="struct" required="Yes">
 	<cfargument name="func" hint="the HOF to call for each function that is found" type="any" required="Yes">
 	<cfargument name="args" hint="the arguments to pass to the HOF. 'func' is reserved for each function that is found" type="struct" required="No" default="#StructNew()#">
@@ -118,8 +119,9 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="autowireCommand" hint="Command HOF for each to autowire the CFC" access="private" returntype="void" output="false">
+<cffunction name="autowireCallback" hint="Callback for each to autowire the CFC" access="private" returntype="void" output="false">
 	<cfargument name="func" hint="the function meta data" type="struct" required="Yes">
+	<cfargument name="meta" hint="the original meta data" type="struct" required="Yes">
 	<cfscript>
 		var ref = 0;
 		var property = 0;
@@ -131,6 +133,7 @@
 		var constructorArg = 0;
 		var class = 0;
 		var array = 0;
+		var package = getPackage(arguments.meta.name);
 
 		/*
 		Constructor autowire metadata
@@ -158,10 +161,8 @@
 					}
 					else if(getAutowire() eq "byType" AND structKeyExists(param, "type"))
 					{
-						array = getBeanDefinitionRegistry().getBeanNamesForType(param.type);
-
-						request.debug("type: #param.type#");
-						request.debug(array);
+						class = resolveClassName(param.type, package);
+						array = getBeanDefinitionRegistry().getBeanNamesForType(class);
 
 						if(ArrayLen(array) eq 1)
 						{
@@ -205,7 +206,9 @@
 				}
 				else if(getAutowire() eq "byType" AND structKeyExists(arguments.func.parameters[1], "type"))
 				{
-					array = getBeanDefinitionRegistry().getBeanNamesForType(arguments.func.parameters[1].type);
+					class = resolveClassName(arguments.func.parameters[1].type, package);
+
+					array = getBeanDefinitionRegistry().getBeanNamesForType(class);
 					if(ArrayLen(array) eq 1)
 					{
 						ref = createObject("component", "RefValue").init(array[1], getBeanDefinitionRegistry());
@@ -222,5 +225,29 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="resolveClassName" hint="resolves a class name that may not be full qualified" access="private" returntype="string" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfargument name="package" hint="the package the class comes from" type="string" required="Yes">
+	<cfscript>
+		if(ListLen(arguments.className, ".") eq 1)
+		{
+			arguments.className = arguments.package & "." & arguments.className;
+		}
+
+		return arguments.className;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getPackage" hint="returns the package this class belongs to" access="private" returntype="string" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfscript>
+		var builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
+
+		builder.setLength(builder.lastIndexOf("."));
+
+		return builder.toString();
+    </cfscript>
+
+</cffunction>
 
 </cfcomponent>

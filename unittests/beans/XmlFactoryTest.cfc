@@ -227,6 +227,12 @@
 		instance.factory.refresh();
 
 		local.car = instance.factory.getBean("car1");
+
+		local.engine = local.car.getEngine();
+		assertEquals("default engine", local.engine.getType());
+
+		local.colour = local.car.getColor();
+		assertEquals("blue", local.colour.getName());
     </cfscript>
 </cffunction>
 
