@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.coldspringframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"
+	   default-autowire="byType"
+	   >
+	<bean id="car1" class="unittests.testBeans.Car">
+	</bean>
+	
+	<bean id="engine" class="unittests.testBeans.Engine">
+		<property name="gears">
+			<list>
+				<value>1</value>
+				<value>2</value>
+				<value>3</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="engine2" class="unittests.testBeans.Engine">
+		<property name="gears">
+			<list>
+				<value>1</value>
+				<value>2</value>
+				<value>3</value>
+			</list>
+		</property>
+	</bean>	
+
+	<bean id="color" class="unittests.testBeans.Color">
+		<constructor-arg name="name" value="blue"/>
+	</bean>
+</beans>

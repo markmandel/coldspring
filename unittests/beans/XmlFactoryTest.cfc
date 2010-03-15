@@ -236,4 +236,28 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testAutowireByTypeAmbiguousExceptionConstructor" hint="tests to make sure autowire by type is working" access="public" returntype="void" output="false"
+			mxunit:expectedException="coldspring.beans.support.exception.AmbiguousTypeAutowireException">
+	<cfscript>
+		var local = {};
+
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/autowire-by-type-ambiguous-constructor.xml"));
+		instance.factory.refresh();
+
+		local.car = instance.factory.getBean("car1");
+    </cfscript>
+</cffunction>
+
+<cffunction name="testAutowireByTypeAmbiguousExceptionProperty" hint="tests to make sure autowire by type is working" access="public" returntype="void" output="false"
+			mxunit:expectedException="coldspring.beans.support.exception.AmbiguousTypeAutowireException">
+	<cfscript>
+		var local = {};
+
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/autowire-by-type-ambiguous-property.xml"));
+		instance.factory.refresh();
+
+		local.car = instance.factory.getBean("car1");
+    </cfscript>
+</cffunction>
+
 </cfcomponent>

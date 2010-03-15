@@ -51,7 +51,7 @@
 	<cfscript>
 		var local = {};
 
-		local.reader = createObject("component", "coldspring.io.XMLFileReader").init(expandPath("/unittests/testBeans/brokenBeans.xml"), instance.javaloader);
+		local.reader = createObject("component", "coldspring.io.XMLFileReader").init(expandPath("/unittests/testBeans/errorXML/brokenBeans.xml"), instance.javaloader);
 
 		local.document = local.reader.parseToDocument();
     </cfscript>
