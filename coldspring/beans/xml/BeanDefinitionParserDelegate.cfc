@@ -135,6 +135,9 @@
 		{
 			local.contructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init(local.name, local.value);
 
+			//add meta if it exists
+			parseMetaElements(arguments.element, local.contructorArg);
+
 			arguments.beanDefinition.addConstructorArg(local.contructorArg);
 		}
     </cfscript>

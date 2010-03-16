@@ -35,6 +35,8 @@
 	<bean id="car2" class="unittests.testBeans.Car">
 		<constructor-arg name="engine">
 			<description>Here is the engine</description>
+			<meta key="engineMeta" value="engineMetaValue"/>
+			<meta key="engineMeta2" value="engineMetaValue2"/>
 			<ref bean="engine"/>
 		</constructor-arg>
 		<property name="color">

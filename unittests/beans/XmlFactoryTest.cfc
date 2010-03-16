@@ -209,15 +209,26 @@
     </cfscript>
 </cffunction>
 
-<!---<cffunction name="testMetaOnConstructorArg" hint="test a meta on constructor arg" access="public" returntype="void" output="false">
+<cffunction name="testMetaOnConstructorArg" hint="test a meta on constructor arg" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
 		makePublic(instance.factory, "getBeanDefinitionRegistry");
 
-		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car3");
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car1");
+
+		local.constructorArgs = local.beanDef.getConstructorArgs();
+
+		AssertFalse(structKeyExists(local.constructorArgs.engine.getMeta(), "engineMeta"));
+
+		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car2");
+
+		local.constructorArgs = local.beanDef.getConstructorArgs();
+
+		AssertTrue(structKeyExists(local.constructorArgs.engine.getMeta(), "engineMeta"));
+		AssertTrue(structKeyExists(local.constructorArgs.engine.getMeta(), "engineMeta2"));
     </cfscript>
-</cffunction>--->
+</cffunction>
 
 <cffunction name="testAutowireByType" hint="tests to make sure autowire by type is working" access="public" returntype="void" output="false">
 	<cfscript>
