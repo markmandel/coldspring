@@ -16,19 +16,13 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getInstance" hint="Returns an instance of the bean this represents. Calls the private method 'create' to create the instance, and autowire() to autowire"
-			access="public" returntype="any" output="false"
-			colddoc:abstract="true"
-			>
+<cffunction name="getInstance" hint="Returns an instance of the bean this represents. Calls the private method 'create' to create the instance.
+									<br/>on notifyComplete, if isAbstract() this gets switched with a method that throws an Exception."
+			access="public" returntype="any" output="false">
 	<cfscript>
 		var bean = 0;
 		var cache = getBeanCache().getCache(getScope());
 		var id = getID();
-
-		if(isAbstract())
-		{
-			createObject("component", "coldspring.beans.support.exception.AbstractBeanCannotBeInstantiatedException").init(this);
-		}
 	</cfscript>
 
 	<cfif NOT StructKeyExists(cache, getID())>
@@ -59,6 +53,7 @@
 <cffunction name="notifyComplete" hint="Called when all the beans are added to the Factory, and post processing can occur." access="public" returntype="void" output="false">
 	<cfscript>
 		buildAutowire();
+		buildGetInstance();
     </cfscript>
 </cffunction>
 
@@ -67,17 +62,17 @@
 		//if has factory-method, or factory-bean, must have the other
 		if(hasFactoryBeanName() neq hasFactoryMethodName())
 		{
-			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(this, "factory-bean and factory-method attriutes must be set together.");
+			createObject("component", "coldspring.beans.support.exception.BeanDefinitionValidationException").init(this, "factory-bean and factory-method attriutes must be set together.");
 		}
 
-		if(hasFactoryBeanName() AND hasFactoryMethodName() AND hasClassName())
+		if((hasFactoryBeanName() OR hasFactoryMethodName()) AND hasClassName())
 		{
-			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(this, "If factory-bean has been specified, a bean cannot have a class.");
+			createObject("component", "coldspring.beans.support.exception.BeanDefinitionValidationException").init(this, "If factory-bean has been specified, a bean cannot have a class.");
 		}
 
 		if(NOT (hasFactoryBeanName() AND hasFactoryMethodName()) AND NOT hasClassName())
 		{
-			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(this, "If no factory-bean has been specified, a bean must have a class.");
+			createObject("component", "coldspring.beans.support.exception.BeanDefinitionValidationException").init(this, "If no factory-bean has been specified, a bean must have a class.");
 		}
     </cfscript>
 </cffunction>
@@ -271,6 +266,33 @@
     	</cflock>
 	</cfif>
 </cffunction>
+
+<cffunction name="buildGetInstance" hint="applies the appropriate mixin to getInstance() to control what how the instance is created" access="private" returntype="void" output="false">
+	<cfscript>
+		var methodInjector = 0;
+
+		if(isAbstract())
+		{
+			methodInjector = createObject("component", "coldspring.util.MethodInjector").init();
+
+			methodInjector.start(this);
+			methodInjector.injectMethod(this, getInstance_Abstract, "public", "getInstance");
+			methodInjector.stop(this);
+		}
+
+    </cfscript>
+</cffunction>
+
+<!--- mixins --->
+
+<cffunction name="getInstance_Abstract" hint="Mixin: method to be used to switch with getInstance, if isAbstract is set to true, on notifyComplete()"
+			access="private" returntype="any" output="false">
+	<cfscript>
+		createObject("component", "coldspring.beans.support.exception.AbstractBeanCannotBeInstantiatedException").init(this);
+    </cfscript>
+</cffunction>
+
+<!--- /mixins --->
 
 <cffunction name="autowire" hint="virtual method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("autowire", this)>

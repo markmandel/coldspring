@@ -36,7 +36,10 @@
 
 		StructInsert(getBeanDefinitions(), arguments.beanDefinition.getID(), arguments.beanDefinition, true);
 
-		eachClassInTypeHierarchy(arguments.beanDefinition.getClassName(), cacheNameAgainstType, args);
+		if(arguments.beanDefinition.hasClassName())
+		{
+			eachClassInTypeHierarchy(arguments.beanDefinition.getClassName(), cacheNameAgainstType, args);
+		}
     </cfscript>
 </cffunction>
 

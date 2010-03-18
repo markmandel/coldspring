@@ -271,4 +271,36 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testNoClassSet" hint="test for when no class has been set" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.beans.support.exception.BeanDefinitionValidationException">
+	<cfscript>
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/no-class-set.xml"));
+		instance.factory.refresh();
+    </cfscript>
+</cffunction>
+
+<cffunction name="testOnlyFactoryBean" hint="test when only a factory bean has been set" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.beans.support.exception.BeanDefinitionValidationException">
+	<cfscript>
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/only-factory-method.xml"));
+		instance.factory.refresh();
+    </cfscript>
+</cffunction>
+
+<cffunction name="testOnlyFactoryMethod" hint="test for when only a factory method has been set" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.beans.support.exception.BeanDefinitionValidationException">
+	<cfscript>
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/only-factory-bean.xml"));
+		instance.factory.refresh();
+    </cfscript>
+</cffunction>
+
+<cffunction name="testFactoryBeanAndClass" hint="test for when only a factory bean and class has been set" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.beans.support.exception.BeanDefinitionValidationException">
+	<cfscript>
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/factory-bean-and-class.xml"));
+		instance.factory.refresh();
+    </cfscript>
+</cffunction>
+
 </cfcomponent>

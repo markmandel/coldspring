@@ -38,6 +38,8 @@
 	instance.static.KEY_REF_ATTRIBUTE = "key-ref";
 	instance.static.VALUE_REF_ATTRIBUTE = "value-ref";
 	instance.static.ABSTRACT_ATTRIBUTE = "abstract";
+	instance.static.FACTORY_METHOD_ATTRIBUTE = "factory-method";
+	instance.static.FACTORY_BEAN_ATTRIBUTE = "factory-bean";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -87,6 +89,16 @@
 		if(arguments.element.hasAttribute(instance.static.CLASS_ATTRIBUTE))
 		{
 			beanDef.setClassName(arguments.element.getAttribute(instance.static.CLASS_ATTRIBUTE));
+		}
+
+		if(arguments.element.hasAttribute(instance.static.FACTORY_BEAN_ATTRIBUTE))
+		{
+			beanDef.setFactoryBeanName(arguments.element.getAttribute(instance.static.FACTORY_BEAN_ATTRIBUTE));
+		}
+
+		if(arguments.element.hasAttribute(instance.static.FACTORY_METHOD_ATTRIBUTE))
+		{
+			beanDef.setFactoryMethodName(arguments.element.getAttribute(instance.static.FACTORY_METHOD_ATTRIBUTE));
 		}
 
 		//set autowire
