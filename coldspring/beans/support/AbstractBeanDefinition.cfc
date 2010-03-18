@@ -29,17 +29,6 @@
 		{
 			createObject("component", "coldspring.beans.support.exception.AbstractBeanCannotBeInstantiatedException").init(this);
 		}
-
-		/*
-		make sure the meta data is complete
-		we do this here, because its only place we
-		can guarentee the autowire mode is going to have
-		been stopped being fiddled with.
-		*/
-		if(NOT isAutowireComplete())
-		{
-			buildAutowire();
-		}
 	</cfscript>
 
 	<cfif NOT StructKeyExists(cache, getID())>
@@ -67,6 +56,32 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="notifyComplete" hint="Called when all the beans are added to the Factory, and post processing can occur." access="public" returntype="void" output="false">
+	<cfscript>
+		buildAutowire();
+    </cfscript>
+</cffunction>
+
+<cffunction name="validate" hint="Validates the structure of this bean, throws an exception if it is invalid" access="public" returntype="void" output="false">
+	<cfscript>
+		//if has factory-method, or factory-bean, must have the other
+		if(hasFactoryBeanName() neq hasFactoryMethodName())
+		{
+			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(this, "factory-bean and factory-method attriutes must be set together.");
+		}
+
+		if(hasFactoryBeanName() AND hasFactoryMethodName() AND hasClassName())
+		{
+			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(this, "If factory-bean has been specified, a bean cannot have a class.");
+		}
+
+		if(NOT (hasFactoryBeanName() AND hasFactoryMethodName()) AND NOT hasClassName())
+		{
+			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(this, "If no factory-bean has been specified, a bean must have a class.");
+		}
+    </cfscript>
+</cffunction>
+
 <cffunction name="getID" access="public" returntype="string" output="false">
 	<cfreturn instance.id />
 </cffunction>
@@ -78,6 +93,10 @@
 <cffunction name="setClassName" access="public" returntype="void" output="false">
 	<cfargument name="class" type="any" required="true">
 	<cfset instance.class = arguments.class />
+</cffunction>
+
+<cffunction name="hasClassName" hint="whether this object has a class name" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "class") />
 </cffunction>
 
 <cffunction name="getScope" access="public" returntype="string" output="false">
@@ -180,6 +199,32 @@
 	<cfset instance.Abstract = arguments.Abstract />
 </cffunction>
 
+<cffunction name="getFactoryBeanName" access="public" returntype="string" output="false">
+	<cfreturn instance.factoryBeanName />
+</cffunction>
+
+<cffunction name="setFactoryBeanName" access="public" returntype="void" output="false">
+	<cfargument name="factoryBeanName" type="string" required="true">
+	<cfset instance.factoryBeanName = arguments.factoryBeanName />
+</cffunction>
+
+<cffunction name="hasFactoryBeanName" hint="whether this object has a factoryBeanName" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "factoryBeanName") />
+</cffunction>
+
+<cffunction name="getFactoryMethodName" access="public" returntype="string" output="false">
+	<cfreturn instance.factoryMethodName />
+</cffunction>
+
+<cffunction name="setFactoryMethodName" access="public" returntype="void" output="false">
+	<cfargument name="factoryMethodName" type="string" required="true">
+	<cfset instance.factoryMethodName = arguments.factoryMethodName />
+</cffunction>
+
+<cffunction name="hasFactoryMethodName" hint="whether this object has a factoryMethodName" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "factoryMethodName") />
+</cffunction>
+
 <cffunction name="getMeta" hint="Return custom object meta data" access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
 	<cfreturn instance.Meta />
@@ -191,11 +236,9 @@
 
 <cffunction name="init" hint="Constructor" access="private" returntype="AbstractBeanDefinition" output="false">
 	<cfargument name="id" hint="the id of this bean" type="string" required="Yes">
-	<cfargument name="class" hint="the class of this bean" type="string" required="Yes">
 	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfscript>
 		setID(arguments.id);
-		setClassName(arguments.class);
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
 		setScope("singleton");
 		setAutowire("no");
@@ -212,7 +255,7 @@
 </cffunction>
 
 <cffunction name="buildAutowire" hint="construct all the required meta that needs to be built around this BeanDefinition" access="private" returntype="void" output="false">
-		<!--- don't double check, as we have an if already around this --->
+	<cfif NOT isAutowireComplete()>
     	<cflock name="coldspring.beans.support.abstractBeanDefinition.buildAutowire.#getID()#" throwontimeout="true" timeout="60">
     	<cfscript>
     		if(NOT isAutowireComplete())
@@ -226,6 +269,7 @@
 			}
     	</cfscript>
     	</cflock>
+	</cfif>
 </cffunction>
 
 <cffunction name="autowire" hint="virtual method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">

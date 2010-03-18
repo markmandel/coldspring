@@ -108,7 +108,9 @@
 		local.Thread = createObject("java", "java.lang.Thread");
 
 		//singleton
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", instance.factory.getBeanDefinitionRegistry());
+		local.car.setClassName("unittests.testBeans.Car");
+
 		local.lockname = local.beanCache.getLockName(local.car);
 
 		//"coldspring.beans.support.beandefinition.createInstance.#arguments.beanDef.getID()#.#getSystem().identityHashCode(this)#";

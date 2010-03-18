@@ -39,6 +39,11 @@
 	<cfreturn super.getBeanDefinitionRegistry() />
 </cffunction>
 
+<cffunction name="endRefresh" hint="finalises the refresh, and notifies the beans they are complete, and validates them. Should be called at the end of a refresh() method."
+			access="public" returntype="void" output="false">
+	<cfset super.endRefresh()>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

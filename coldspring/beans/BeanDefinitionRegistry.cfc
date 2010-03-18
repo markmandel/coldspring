@@ -108,6 +108,37 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="validate" hint="validate all the bean definitions in the Registry. Usually called after notifyCompete()" access="public" returntype="void" output="false">
+	<cfscript>
+		var beanDefinitions = getBeanDefinitions();
+		var id = 0;
+		var beanDefinition = 0;
+
+		for(id in beanDefinitions)
+		{
+			beanDefinition = beanDefinitions[id];
+
+			beanDefinition.validate();
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="notifyComplete" hint="Called when all the BeanDefinitions have been added to the registry, and calls notifyComplete() on all AbstractBeanDefinitions to allow them to do post processing"
+			access="public" returntype="void" output="false">
+	<cfscript>
+		var beanDefinitions = getBeanDefinitions();
+		var id = 0;
+		var beanDefinition = 0;
+
+		for(id in beanDefinitions)
+		{
+			beanDefinition = beanDefinitions[id];
+
+			beanDefinition.notifyComplete();
+		}
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

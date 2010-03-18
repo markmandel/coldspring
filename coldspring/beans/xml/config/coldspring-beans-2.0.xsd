@@ -150,7 +150,7 @@
 	argument list or are supposed to be matched generically by type.
 
 	constructor-arg elements are also used in conjunction with the
-	factory-method element to construct beans using static or instance
+	factory-method element to construct beans using instance
 	factory methods.
 			]]></xsd:documentation>
 		</xsd:annotation>
@@ -650,26 +650,14 @@ class name.
 	constructor-arg elements to specify arguments to the factory method,
 	if it takes arguments. Autowiring does not apply to factory methods.
 
-	If the "class" attribute is present, the factory method will be a static
-	method on the class specified by the "class" attribute on this bean
-	definition. Often this will be the same class as that of the constructed
-	object - for example, when the factory method is used as an alternative
-	to a constructor. However, it may be on a different class. In that case,
-	the created object will *not* be of the class specified in the "class"
-	attribute. This is analogous to FactoryBean behavior.
-
-	If the "factory-bean" attribute is present, the "class" attribute is not
-	used, and the factory method will be an instance method on the object
-	returned from a getBean call with the specified bean name. The factory
-	bean may be defined as a singleton or a prototype.
-
+	The "factory-bean" attribute must also be present present, which will specify
+	the Bean that the factory-method will be called on.
+	
 	The factory method can have any number of arguments. Autowiring is not
-	supported. Use indexed constructor-arg elements in conjunction with the
+	supported. Use constructor-arg elements in conjunction with the
 	factory-method attribute.
 
 	Setter Injection can be used in conjunction with a factory method.
-	Method Injection cannot, as the factory method returns an instance,
-	which will be used when the container creates the bean.
 				]]></xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>

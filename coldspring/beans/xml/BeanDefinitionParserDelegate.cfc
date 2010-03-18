@@ -16,7 +16,7 @@
 <cfscript>
 	instance.static = {};
 
-	instance.static.DEFAULT_AUTOWIRE_ATTIBUTE = "default-autowire";
+	instance.static.DEFAULT_AUTOWIRE_ATTRIBUTE = "default-autowire";
 
 	instance.static.BEAN_ELEMENT = "bean";
 	instance.static.CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
@@ -28,8 +28,8 @@
 	instance.static.META_ELEMENT = "meta";
 
 	instance.static.ID_ATTRIBUTE = "id";
-	instance.static.CLASS_ATTIBUTE = "class";
-	instance.static.AUTOWIRE_ATTIBUTE = "autowire";
+	instance.static.CLASS_ATTRIBUTE = "class";
+	instance.static.AUTOWIRE_ATTRIBUTE = "autowire";
 	instance.static.NAME_ATTRIBUTE = "name";
 	instance.static.REF_ATTRIBUTE = "ref";
 	instance.static.VALUE_ATTRIBUTE = "value";
@@ -70,7 +70,7 @@
 	<cfargument name="element" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
 	<cfscript>
 		var id = 0;
-		var class = arguments.element.getAttribute(instance.static.CLASS_ATTIBUTE);
+		var class = 0;
 		var beanDef = 0;
 
 		if(arguments.element.hasAttribute(instance.static.ID_ATTRIBUTE))
@@ -82,10 +82,15 @@
 			id = class & "." & createUUID();
 		}
 
-		beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id, class, getBeanDefinitionRegistry());
+		beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id, getBeanDefinitionRegistry());
+
+		if(arguments.element.hasAttribute(instance.static.CLASS_ATTRIBUTE))
+		{
+			beanDef.setClassName(arguments.element.getAttribute(instance.static.CLASS_ATTRIBUTE));
+		}
 
 		//set autowire
-		beanDef.setAutowire(getAutowireMode(arguments.element.getAttribute(instance.static.AUTOWIRE_ATTIBUTE)));
+		beanDef.setAutowire(getAutowireMode(arguments.element.getAttribute(instance.static.AUTOWIRE_ATTRIBUTE)));
 
 		//add constructor args
 		parseConstructorArgElements(arguments.element, beanDef);
@@ -374,7 +379,7 @@
 <cffunction name="initDefaultValues" hint="initialise default bean values" access="private" returntype="void" output="false">
 	<cfargument name="element" hint="the top level org.w3c.dom.Element for the config xml" type="any" required="Yes">
 	<cfscript>
-		setDefaultAutorwireMode(arguments.element.getAttribute(instance.static.DEFAULT_AUTOWIRE_ATTIBUTE));
+		setDefaultAutorwireMode(arguments.element.getAttribute(instance.static.DEFAULT_AUTOWIRE_ATTRIBUTE));
     </cfscript>
 </cffunction>
 

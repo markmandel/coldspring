@@ -58,10 +58,11 @@
 	<cfreturn getBeanDefinitionRegistry().containsBeanDefinition(argumentCollection=arguments) />
 </cffunction>
 
-<cffunction name="refresh" hint="refresh the bean factory" access="public" returntype="void" output="false">
+<cffunction name="refresh" hint="Refresh the bean factory. Implementations of this BeanFactory will want to implement their own refresh() method."
+			access="public" returntype="void" output="false">
 	<cfscript>
-		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init());
-		setBeanDefinitionRegistry(createObject("component", "BeanDefinitionRegistry").init(getBeanCache()));
+		prepareRefresh();
+		endRefresh();
     </cfscript>
 </cffunction>
 
@@ -77,6 +78,21 @@
 	<cfscript>
 		setJavaLoader(createObject("component", "coldspring.util.java.JavaLoader").init(getVersion()));
 	</cfscript>
+</cffunction>
+
+<cffunction name="prepareRefresh" hint="prepares the refresh method, should be called at the beginning of refresh()" access="private" returntype="void" output="false">
+	<cfscript>
+		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init());
+		setBeanDefinitionRegistry(createObject("component", "BeanDefinitionRegistry").init(getBeanCache()));
+    </cfscript>
+</cffunction>
+
+<cffunction name="endRefresh" hint="finalises the refresh, and notifies the beans they are complete, and validates them. Should be called at the end of a refresh() method."
+			access="private" returntype="void" output="false">
+	<cfscript>
+		getBeanDefinitionRegistry().notifyComplete();
+		getBeanDefinitionRegistry().validate();
+    </cfscript>
 </cffunction>
 
 <cffunction name="getBeanCache" access="private" returntype="coldspring.beans.factory.BeanCache" output="false">

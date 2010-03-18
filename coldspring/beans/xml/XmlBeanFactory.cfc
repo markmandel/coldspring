@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Bean Factory whose source is XML" extends="coldspring.beans.AbstractBeanFactory" output="false">
 
@@ -43,11 +43,13 @@
 
 <cffunction name="refresh" hint="refresh the bean factory" access="public" returntype="void" output="false">
 	<cfscript>
-		super.refresh();
+		prepareRefresh();
 
 		getXMLParser().setBeanDefinitionRegistry(getBeanDefinitionRegistry());
 
 		getXMLParser().parseXMLToBeanDefintions();
+
+		endRefresh();
     </cfscript>
 </cffunction>
 

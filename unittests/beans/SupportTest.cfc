@@ -1,4 +1,4 @@
-<!---
+74<!---
    Copyright 2010 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,9 +26,14 @@
 		var local = {};
 
 		//car needs an engine
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
-		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", "unittests.testBeans.Engine", instance.factory.getBeanDefinitionRegistry());
-		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", "unittests.testBeans.Color", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", instance.factory.getBeanDefinitionRegistry());
+		local.car.setClassName("unittests.testBeans.Car");
+
+		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", instance.factory.getBeanDefinitionRegistry());
+		local.engine.setClassName("unittests.testBeans.Engine");
+
+		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", instance.factory.getBeanDefinitionRegistry());
+		local.color.setClassName("unittests.testBeans.Color");
 
 		//constructor arg to point to the engine and color
 		local.engineRef = createObject("component", "coldspring.beans.support.RefValue").init("engine", instance.factory.getBeanDefinitionRegistry());
@@ -71,16 +76,22 @@
 <cffunction name="testCFCAutowireByName" hint="test basic autowiring, hopefully it works" access="public" returntype="void" output="false">
 	<cfscript>
 		//car needs an engine
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", "unittests.testBeans.Car", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", instance.factory.getBeanDefinitionRegistry());
+		local.car.setClassName("unittests.testBeans.Car");
 
 		local.car.setAutowire("byName");
 
-		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", "unittests.testBeans.Engine", instance.factory.getBeanDefinitionRegistry());
-		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", "unittests.testBeans.Color", instance.factory.getBeanDefinitionRegistry());
+		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", instance.factory.getBeanDefinitionRegistry());
+		local.engine.setClassName("unittests.testBeans.Engine");
+
+		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", instance.factory.getBeanDefinitionRegistry());
+		local.color.setClassName("unittests.testBeans.Color");
 
 		instance.factory.addBeanDefinition(local.car);
 		instance.factory.addBeanDefinition(local.engine);
 		instance.factory.addBeanDefinition(local.color);
+
+		instance.factory.endRefresh();
 
 		local.carInst = instance.factory.getBean("car");
 
@@ -97,14 +108,18 @@
 <!--- TODO: this isn't going to work yet, until we implement caching --->
 <cffunction name="testCFCAutowireCircularReference" hint="test a circular reference with autowiring" access="public" returntype="void" output="false">
 	<cfscript>
-		local.cr1 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference1", "unittests.testBeans.CircularReference1", instance.factory.getBeanDefinitionRegistry());
+		local.cr1 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference1", instance.factory.getBeanDefinitionRegistry());
+		local.cr1.setClassName("unittests.testBeans.CircularReference1");
 		local.cr1.setAutowire("byName");
 
-		local.cr2 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference2", "unittests.testBeans.CircularReference2", instance.factory.getBeanDefinitionRegistry());
+		local.cr2 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference2", instance.factory.getBeanDefinitionRegistry());
+		local.cr2.setClassName("unittests.testBeans.CircularReference2");
 		local.cr2.setAutowire("byName");
 
 		instance.factory.addBeanDefinition(local.cr1);
 		instance.factory.addBeanDefinition(local.cr2);
+
+		instance.factory.endRefresh();
 
 		local.cr1Inst = instance.factory.getBean("circularReference1");
 
