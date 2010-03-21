@@ -279,7 +279,6 @@
 			methodInjector.injectMethod(this, getInstance_Abstract, "public", "getInstance");
 			methodInjector.stop(this);
 		}
-
     </cfscript>
 </cffunction>
 

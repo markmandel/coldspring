@@ -116,6 +116,51 @@
 		</property>		
 	</bean>
 	
+	<!-- factory methods -->
+	<bean id="car5" class="unittests.testBeans.Car">
+		<constructor-arg name="engine" ref="engineChild"/>
+		<property name="color" ref="colorChild" />
+		<property name="make" value="Mustang"/>
+		<property name="wheels">
+			<map>
+				<entry key="1">
+					<ref bean="wheelChild"/>
+				</entry>
+				<entry key="2">
+					<ref bean="wheelChild"/>
+				</entry>
+				<entry key="3">
+					<ref bean="wheelChild"/>
+				</entry>
+				<entry key="4">
+					<ref bean="wheelChild"/>
+				</entry>
+				<entry key="spare">
+					<ref bean="wheelChild"/>
+				</entry>
+			</map>
+		</property>
+	</bean>	
+	
+	<bean id="carFactory" class="unittests.testBeans.factory.CarFactory"/>
+	<bean id="engineChild" factory-bean="carFactory" factory-method="getEngine">
+		<constructor-arg name="gears">
+			<list>
+				<value>1</value>
+				<value>2</value>
+				<value>3</value>
+			</list>
+		</constructor-arg>		
+	</bean>
+	
+	<bean id="colorChild" factory-bean="carFactory" factory-method="getColor">
+		<property name="name" value="blue"/>
+	</bean>
+	
+	<bean id="wheelChild" factory-bean="carFactory" factory-method="getWheel" scope="request"/>
+	
+	<!-- /factory methods -->
+	
 	<bean id="carSimpleMap" class="unittests.testBeans.Car">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="wheels">

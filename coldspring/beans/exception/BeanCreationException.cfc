@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Exception for when something goes wrong with Bean creation" extends="coldspring.exception.Exception" output="false">
 
@@ -26,7 +26,7 @@
 	</cfsavecontent>
 
 	<cfscript>
-		super.init("Error creating bean '#arguments.beanDefinition.getID()#', class '#arguments.beanDefinition.getClassName()#'", detail);
+		super.init("Error creating bean '#arguments.beanDefinition.getID()#'", detail);
 
 		return this;
 	</cfscript>

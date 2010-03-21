@@ -66,7 +66,7 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <!--- mixins --->
-<cffunction name="injectMethodMixin" hint="[mixin, removed at init] - injects a method into the CFC scope" access="private" returntype="void" output="false">
+<cffunction name="injectMethodMixin" hint="mixin: injects a method into the CFC scope" access="private" returntype="void" output="false">
 	<cfargument name="UDF" hint="UDF to be checked" type="any" required="Yes">
 	<cfargument name="overwriteAccess" hint="argument to overwrite the method's access level to another access level" type="string" required="No">
 	<cfargument name="overwriteName" hint="overwrite the name in which you wish to inject this method into" type="string" required="No">
@@ -97,7 +97,7 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="removeMethodMixin" hint="[mixin, removed at init] - injects a method into the CFC scope" access="private" returntype="void" output="false">
+<cffunction name="removeMethodMixin" hint="mixin: injects a method into the CFC scope" access="private" returntype="void" output="false">
 	<cfargument name="UDFName" hint="Name of the UDF to be removed" type="string" required="Yes">
 	<cfscript>
 		StructDelete(this, arguments.udfName);

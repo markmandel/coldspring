@@ -10,7 +10,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Simple Color Bean">
 
@@ -29,7 +29,7 @@
 	<cfreturn instance.name />
 </cffunction>
 
-<cffunction name="setName" access="private" returntype="void" output="false">
+<cffunction name="setName" access="public" returntype="void" output="false">
 	<cfargument name="name" type="string" required="true">
 	<cfset instance.name = arguments.name />
 </cffunction>

@@ -73,6 +73,16 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testFactoryBean" hint="test implementation of factory bean and method" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.car = instance.factory.getBean("car5");
+
+		testCar(local.car, true);
+    </cfscript>
+</cffunction>
+
 <cffunction name="testCar" hint="test out a car" access="private" returntype="void" output="false">
 	<cfargument name="car" hint="the car to test" type="any" required="Yes">
 	<cfargument name="sameWheels" hint="all wheels are the same object?" type="boolean" required="No" default="false">

@@ -22,6 +22,26 @@
 	<cfreturn this />
 </cffunction>
 
+<cffunction name="notifyComplete" hint="Called when all the beans are added to the Factory, and post processing can occur." access="public" returntype="void" output="false">
+	<cfscript>
+		var methodInjector = 0;
+
+		//if we are a factor bean, overwrite how create() works.
+		if(hasFactoryBeanName() AND hasFactoryMethodName())
+		{
+			methodInjector = createObject("component", "coldspring.util.MethodInjector").init();
+
+			methodInjector.start(this);
+
+			methodInjector.injectMethod(cfc=this, udf=create_factoryBean, overwriteName="create");
+
+			methodInjector.stop(this);
+		}
+
+		super.notifyComplete();
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -246,7 +266,41 @@
 
 		return builder.toString();
     </cfscript>
-
 </cffunction>
+
+<!--- mixins --->
+
+<cffunction name="create_factoryBean" hint="mixin: to replace create(), when we need to constructs the cfc instance from a factory bean"
+			access="private" returntype="any" output="false">
+	<cfscript>
+		var constructorArgs = getConstructorArgsAsArray();
+		var arg = 0;
+		var initArgs = {};
+		var factoryBean = getBeanDefinitionRegistry().getBeanDefinition(getFactoryBeanName()).getInstance();
+		var object = 0;
+	</cfscript>
+
+	<cfloop array="#constructorArgs#" index="arg">
+		<cfscript>
+			initArgs[arg.getName()] = arg.getValue();
+        </cfscript>
+	</cfloop>
+
+	<cftry>
+		<cfinvoke component="#factoryBean#" method="#getFactoryMethodName()#" argumentcollection="#initArgs#" returnvariable="object">
+
+		<cfscript>
+			injectPropertyDependencies(object);
+
+			return object;
+        </cfscript>
+
+		<cfcatch>
+			<cfset createObject("component", "coldspring.beans.exception.BeanCreationException").init(this, cfcatch)>
+		</cfcatch>
+	</cftry>
+</cffunction>
+
+<!--- /mixins --->
 
 </cfcomponent>
