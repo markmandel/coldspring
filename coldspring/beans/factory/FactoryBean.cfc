@@ -1,0 +1,36 @@
+﻿<!---
+   Copyright 2010 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --->
+
+<cfinterface hint="
+	<p>Interface to be implemented by objects used within a BeanFactory  which are themselves factories. If a bean implements this interface, it is used as a factory for an object to expose, not directly as a bean instance that will be exposed itself.</p>
+	<p>NB: A bean that implements this interface cannot be used as a normal bean. A FactoryBean is defined in a bean style, but the object exposed for bean references (getObject() is always the object that it creates.</p>
+	<p>FactoryBeans can support singletons and prototypes, and can either create objects lazily on demand or eagerly on startup. The SmartFactoryBean interface allows for exposing more fine-grained behavioral metadata.</p>
+	<p>This interface is heavily used within the framework itself. It can be used for application components as well; however, this is not common outside of infrastructure code.</p>
+	<p>NOTE: FactoryBean objects participate in the containing BeanFactory's synchronization of bean creation. There is usually no need for internal synchronization other than for purposes of lazy initialization within the FactoryBean itself (or the like).</p>">
+
+<cffunction name="getObject" hint="Return an instance (possibly shared or independent) of the object managed by this factory." access="public" returntype="any" output="false">
+</cffunction>
+
+<cffunction name="getObjectType" access="public" returntype="string" output="false" hint="
+	<p>Return the type of object that this FactoryBean creates, or null if not known in advance.</p>
+	<p>This allows one to check for specific types of beans without instantiating objects, for example on autowiring.</p>">
+</cffunction>
+
+<cffunction name="isSingleton" access="public" returntype="boolean" output="false" hint="
+	<p>Is the object managed by this factory a singleton? That is, will getObject() always return the same object (a reference that can be cached)?</p>
+	<p>NOTE: If a FactoryBean indicates to hold a singleton object, the object returned from getObject() might get cached by the owning BeanFactory. Hence, do not return true unless the FactoryBean always exposes the same reference.</p>
+	<p>The singleton status of the FactoryBean itself will generally be provided by the owning BeanFactory; usually, it has to be defined as singleton there.</p>
+	">
+</cffunction>
+
+</cfinterface>

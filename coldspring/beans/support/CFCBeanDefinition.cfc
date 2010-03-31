@@ -26,7 +26,7 @@
 	<cfscript>
 		var methodInjector = 0;
 
-		//if we are a factor bean, overwrite how create() works.
+		//if we are a factory bean, overwrite how create() works.
 		if(hasFactoryBeanName() AND hasFactoryMethodName())
 		{
 			methodInjector = createObject("component", "coldspring.util.MethodInjector").init();

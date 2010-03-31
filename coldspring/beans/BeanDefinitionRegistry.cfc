@@ -21,6 +21,14 @@
 		setBeanDefinitions(StructNew());
 		setTypeNameCache(StructNew());
 		setBeanCache(arguments.beanCache);
+		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
+
+		//setup closures
+		setCacheNameAgainstTypeClosure(createObject("component", "coldspring.util.Closure").init(cacheNameAgainstType));
+		setRemoveNameAgainstTypeClosure(createObject("component", "coldspring.util.Closure").init(removeNameAgainstType));
+
+		getCacheNameAgainstTypeClosure().bind("typeNameCache", getTypeNameCache());
+		getRemoveNameAgainstTypeClosure().bind("typeNameCache", getTypeNameCache());
 
 		return this;
 	</cfscript>
@@ -38,7 +46,7 @@
 
 		if(arguments.beanDefinition.hasClassName())
 		{
-			eachClassInTypeHierarchy(arguments.beanDefinition.getClassName(), cacheNameAgainstType, args);
+			getCFCMetaUtil().eachClassInTypeHierarchy(arguments.beanDefinition.getClassName(), getCacheNameAgainstTypeClosure(), args);
 		}
     </cfscript>
 </cffunction>
@@ -89,7 +97,7 @@
 
 		structDelete(beanDefs, arguments.id);
 
-		eachClassInTypeHierarchy(beanDefinition.getClassName(), removeNameAgainstType, args);
+		getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getRemoveNameAgainstTypeClosure(), args);
     </cfscript>
 </cffunction>
 
@@ -146,54 +154,11 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<!--- Wrap this into a coldpsring.util.Class library?  --->
-<cffunction name="eachClassInTypeHierarchy" hint="Calls the callback for each class type in inheritence, and also for each interface it implements" access="private" returntype="void" output="false">
-	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
-	<cfargument name="callback" hint="the callback to fire for each class type found a" type="any" required="Yes">
-	<cfargument name="args" hint="optional arguments to also pass through to the callback" type="struct" required="No" default="#structNew()#">
-	<cfscript>
-		var meta = getComponentMetadata(arguments.className);
-		var call = arguments.callback;
-		var local = {};
-
-		while(structKeyExists(meta, "extends"))
-		{
-			arguments.args.className = meta.name;
-			call(argumentCollection=arguments.args);
-
-			if(structKeyExists(meta, "implements"))
-			{
-				local.implements = meta.implements;
-
-				for(local.key in local.implements)
-				{
-					local.imeta = local.implements[local.key];
-
-					arguments.args.className = local.imeta.name;
-					call(argumentCollection=arguments.args);
-
-					while(structKeyExists(local.imeta, "extends"))
-					{
-						//this is here because extends on interfaces goes extends[classname];
-						local.imeta = local.imeta.extends[structKeyList(local.imeta.extends)];
-
-						arguments.args.className = local.imeta.name;
-						call(argumentCollection=arguments.args);
-					}
-				}
-			}
-
-			meta = meta.extends;
-		}
-    </cfscript>
-</cffunction>
-
-<cffunction name="removeNameAgainstType" hint="callback for eachInTypeHierarchy that removes the bean name against the class in the type cache" access="private" returntype="void" output="false">
+<!--- closure functions --->
+<cffunction name="removeNameAgainstType" hint="closure function for eachInTypeHierarchy that removes the bean name against the class in the type cache" access="private" returntype="void" output="false">
 	<cfargument name="className" hint="the class name" type="string" required="Yes">
 	<cfargument name="id" hint="the bean definition id" type="string" required="Yes">
 	<cfscript>
-		var typeNameCache = getTypeNameCache();
-
 		if(structKeyExists(typeNameCache, arguments.className))
 		{
 			typeNameCache[arguments.className].remove(arguments.id);
@@ -201,12 +166,10 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="cacheNameAgainstType" hint="callback for eachInTypeHierarchy that caches the bean name against the class the type cache" access="private" returntype="void" output="false">
+<cffunction name="cacheNameAgainstType" hint="closure function for eachInTypeHierarchy that caches the bean name against the class the type cache" access="private" returntype="void" output="false">
 	<cfargument name="className" hint="the class name" type="string" required="Yes">
 	<cfargument name="id" hint="the bean definition id" type="string" required="Yes">
 	<cfscript>
-		var typeNameCache = getTypeNameCache();
-
 		if(NOT structKeyExists(typeNameCache, arguments.className))
 		{
 			//use an array list for speed and pass by reference.
@@ -216,6 +179,7 @@
 		ArrayAppend(typeNameCache[className], arguments.id);
 	</cfscript>
 </cffunction>
+<!--- /closure functions --->
 
 <cffunction name="getBeanDefinitions" access="private" returntype="struct" output="false"
 			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
@@ -239,9 +203,37 @@
 <cffunction name="getTypeNameCache" hint="returns a map of class types that match up to arrays of bean names" access="private" returntype="struct" output="false" colddoc:generic="string,array">
 	<cfreturn instance.typeNameCache />
 </cffunction>
+
 <cffunction name="setTypeNameCache" access="private" returntype="void" output="false" colddoc:generic="string,string">
 	<cfargument name="typeNameCache" type="struct" required="true">
 	<cfset instance.typeNameCache = arguments.typeNameCache />
+</cffunction>
+
+<cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
+	<cfreturn instance.cfcMetaUtil />
+</cffunction>
+
+<cffunction name="setCFCMetaUtil" access="private" returntype="void" output="false">
+	<cfargument name="cfcMetaUtil" type="coldspring.util.CFCMetaUtil" required="true">
+	<cfset instance.cfcMetaUtil = arguments.cfcMetaUtil />
+</cffunction>
+
+<cffunction name="getRemoveNameAgainstTypeClosure" access="private" returntype="coldspring.util.Closure" output="false">
+	<cfreturn instance.removeNameAgainstTypeClosure />
+</cffunction>
+
+<cffunction name="setRemoveNameAgainstTypeClosure" access="private" returntype="void" output="false">
+	<cfargument name="removeNameAgainstTypeClosure" type="coldspring.util.Closure" required="true">
+	<cfset instance.removeNameAgainstTypeClosure = arguments.removeNameAgainstTypeClosure />
+</cffunction>
+
+<cffunction name="getCacheNameAgainstTypeClosure" access="private" returntype="coldspring.util.Closure" output="false">
+	<cfreturn instance.cacheNameAgainstTypeClosure />
+</cffunction>
+
+<cffunction name="setCacheNameAgainstTypeClosure" access="private" returntype="void" output="false">
+	<cfargument name="cacheNameAgainstTypeClosure" type="coldspring.util.Closure" required="true">
+	<cfset instance.cacheNameAgainstTypeClosure = arguments.cacheNameAgainstTypeClosure />
 </cffunction>
 
 

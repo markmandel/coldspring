@@ -17,7 +17,6 @@
 	this.name = "ColdSpring Unit Tests";
 	this.sessionmanagement = true;
 	this.sessiontimeout = createTimespan(0, 0, 10, 0);
-	this.mappings["/ut"] = expandPath("/");
 </cfscript>
 
 </cfcomponent>
