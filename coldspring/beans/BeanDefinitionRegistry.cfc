@@ -15,13 +15,23 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
+<cfscript>
+	//constants
+	instance.static = {};
+
+	instance.static.REGISTRY_POST_PROCESSOR_CLASS = "coldspring.beans.BeanDefinitionRegistryPostProcessor";
+</cfscript>
+
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionRegistry" output="false">
 	<cfargument name="beanCache" hint="The actual bean cache. Needed for AbstractBeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfscript>
 		setBeanDefinitions(StructNew());
 		setTypeNameCache(StructNew());
 		setBeanCache(arguments.beanCache);
+
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
+
+		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init("postProcessBeanDefinitionRegistry"));
 
 		//setup closures
 		setCacheNameAgainstTypeClosure(createObject("component", "coldspring.util.Closure").init(cacheNameAgainstType));
@@ -137,10 +147,20 @@
 <cffunction name="notifyComplete" hint="Called when all the BeanDefinitions have been added to the registry, and calls notifyComplete() on all AbstractBeanDefinitions to allow them to do post processing"
 			access="public" returntype="void" output="false">
 	<cfscript>
-		var beanDefinitions = getBeanDefinitions();
+		var beanDefinitions = 0;
 		var id = 0;
 		var beanDefinition = 0;
 
+		//set up post processors
+		autoRegisterObservers();
+
+		//fire RegistryPost Processor
+		getRegistryPostProcessorObservable().notifyObservers(this);
+
+		//get this here, as it may be different, do to the processors
+		beanDefinitions = getBeanDefinitions();
+
+		//notify complete
 		for(id in beanDefinitions)
 		{
 			beanDefinition = beanDefinitions[id];
@@ -153,6 +173,26 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="autoRegisterObservers" hint="auto register all the observer bean definitions in the registry" access="private" returntype="void" output="false">
+	<cfscript>
+		var beanDefinitions = getBeanDefinitions();
+		var id = 0;
+		var beanDefinition = 0;
+		for (id in beanDefinitions)
+		{
+			beanDefinition = beanDefinitions[id];
+
+			//check for special marker classes
+			if(beanDefinition.hasClassName() AND getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.REGISTRY_POST_PROCESSOR_CLASS))
+			{
+				//event post processors can't be autowired
+				beanDefinition.setAutowire("no");
+				getRegistryPostProcessorObservable().addObserver(beanDefinition.getInstance());
+			}
+		}
+    </cfscript>
+</cffunction>
 
 <!--- closure functions --->
 <cffunction name="removeNameAgainstType" hint="closure function for eachInTypeHierarchy that removes the bean name against the class in the type cache" access="private" returntype="void" output="false">
@@ -234,6 +274,15 @@
 <cffunction name="setCacheNameAgainstTypeClosure" access="private" returntype="void" output="false">
 	<cfargument name="cacheNameAgainstTypeClosure" type="coldspring.util.Closure" required="true">
 	<cfset instance.cacheNameAgainstTypeClosure = arguments.cacheNameAgainstTypeClosure />
+</cffunction>
+
+<cffunction name="getRegistryPostProcessorObservable" access="private" returntype="coldspring.util.Observable" output="false">
+	<cfreturn instance.registryPostProcessorObservable />
+</cffunction>
+
+<cffunction name="setRegistryPostProcessorObservable" access="private" returntype="void" output="false">
+	<cfargument name="registryPostProcessorObservable" type="coldspring.util.Observable" required="true">
+	<cfset instance.registryPostProcessorObservable = arguments.registryPostProcessorObservable />
 </cffunction>
 
 

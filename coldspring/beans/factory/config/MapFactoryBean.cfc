@@ -1,0 +1,76 @@
+﻿<!---
+   Copyright 2010 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --->
+
+<cfcomponent hint="Simple factory for shared Map instances. Allows for central setup of Maps via the 'map' element in XML bean definitions." implements="coldspring.beans.factory.FactoryBean" output="false">
+
+<!------------------------------------------- PUBLIC ------------------------------------------->
+
+<cffunction name="init" hint="Constructor" access="public" returntype="MapFactoryBean" output="false">
+	<cfscript>
+		variables.instance = StructNew();
+
+		setSourceMap(structNew());
+
+		return this;
+	</cfscript>
+</cffunction>
+
+<cffunction name="getObject" hint="Returns the set up map/struct" access="public" returntype="any" output="false">
+	<cfreturn getSourceMap() />
+</cffunction>
+
+<cffunction name="getObjectType" access="public" returntype="string" output="false" hint="returns ''">
+	<cfreturn "" />
+</cffunction>
+
+<cffunction name="isSingleton" access="public" returntype="boolean" output="false" hint="returns true">
+	<cfreturn true />
+</cffunction>
+
+<cffunction name="setSourceMap" access="public" returntype="void" output="false">
+	<cfargument name="sourceMap" type="struct" required="true">
+	<cfscript>
+		if(NOT hasTargetMapClass())
+		{
+			instance.sourceMap = arguments.sourceMap;
+		}
+		else
+		{
+			instance.sourceMap = createObject("java", getTargetMapClass()).init();
+			instance.sourceMap.putAll(arguments.sourceMap);
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="setTargetMapClass" hint="The Java Map class to use for the Array. If not set, the default ColdFusion struct is used." access="public" returntype="void" output="false">
+	<cfargument name="targetMapClass" type="string" required="true">
+	<cfset instance.targetMapClass = arguments.targetMapClass />
+</cffunction>
+
+<!------------------------------------------- PACKAGE ------------------------------------------->
+
+<!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="getSourceMap" access="private" returntype="struct" output="false">
+	<cfreturn instance.sourceMap />
+</cffunction>
+
+<cffunction name="getTargetMapClass" access="private" returntype="string" output="false">
+	<cfreturn instance.targetMapClass />
+</cffunction>
+
+<cffunction name="hasTargetMapClass" hint="whether this object has a targetMapClass" access="private" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "targetMapClass") />
+</cffunction>
+
+</cfcomponent>

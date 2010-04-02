@@ -65,11 +65,6 @@
 			createObject("component", "coldspring.beans.support.exception.BeanDefinitionValidationException").init(this, "factory-bean and factory-method attriutes must be set together.");
 		}
 
-		if((hasFactoryBeanName() OR hasFactoryMethodName()) AND hasClassName())
-		{
-			createObject("component", "coldspring.beans.support.exception.BeanDefinitionValidationException").init(this, "If factory-bean has been specified, a bean cannot have a class.");
-		}
-
 		if(NOT (hasFactoryBeanName() AND hasFactoryMethodName()) AND NOT hasClassName())
 		{
 			createObject("component", "coldspring.beans.support.exception.BeanDefinitionValidationException").init(this, "If no factory-bean has been specified, a bean must have a class.");
@@ -79,6 +74,11 @@
 
 <cffunction name="getID" access="public" returntype="string" output="false">
 	<cfreturn instance.id />
+</cffunction>
+
+<cffunction name="setID" access="public" returntype="void" output="false">
+	<cfargument name="id" type="string" required="true">
+	<cfset instance.id = arguments.id />
 </cffunction>
 
 <cffunction name="getClassName" access="public" returntype="any" output="false">
@@ -304,11 +304,6 @@
 <cffunction name="injectPropertyDependencies" hint="virtual method: inject all the properpty values into the given bean" access="private" returntype="void" output="false">
 	<cfargument name="bean" hint="the bean to inject the properties into" type="any" required="Yes">
 	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("injectPropertyDependencies", this)>
-</cffunction>
-
-<cffunction name="setID" access="private" returntype="void" output="false">
-	<cfargument name="id" type="string" required="true">
-	<cfset instance.id = arguments.id />
 </cffunction>
 
 <cffunction name="setConstructorArgs" access="private" returntype="void" output="false">

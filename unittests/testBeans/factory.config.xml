@@ -11,5 +11,28 @@
 				<value>third value</value>
 			</list>
 		</property>
+	</bean>
+	
+	<bean id="myMapFactoryBean" class="coldspring.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map>
+				<entry key="foo" value="1"/>
+				<entry key="bar" value="2"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="myJSONFactoryBean" class="coldspring.beans.factory.config.JSONFactoryBean">
+		<property name="sourceJSON">
+			<value>
+			<![CDATA[
+				{
+					"array" : [1,2,3,4]
+					,"struct" : { "foo" : "bar" }
+					,"string" : "Frodo Baggins"
+				}
+			]]>
+			</value>
+		</property> 
 	</bean>	   
 </beans>

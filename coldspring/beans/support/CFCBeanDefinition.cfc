@@ -290,8 +290,6 @@
 		<cfinvoke component="#factoryBean#" method="#getFactoryMethodName()#" argumentcollection="#initArgs#" returnvariable="object">
 
 		<cfscript>
-			injectPropertyDependencies(object);
-
 			return object;
         </cfscript>
 

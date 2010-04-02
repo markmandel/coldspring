@@ -1,4 +1,17 @@
-﻿<cfcomponent hint="Tests for things like beanNameAway, FactoryBean etc" extends="unittests.AbstractTestCase" output="false">
+﻿<!---
+   Copyright 2010 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --->
+
+<cfcomponent hint="Tests for things like beanNameAway, FactoryBean etc" extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -19,7 +32,44 @@
 		local.testArray = ["first value", "second value", "third value"];
 
 		assertEquals(local.testArray, local.array);
+
+		local.factoryBean = instance.factory.getBean("&myListFactoryBean");
+
+		assertEquals("coldspring.beans.factory.config.ListFactoryBean", getMetadata(local.factoryBean).name);
     </cfscript>
+</cffunction>
+
+<cffunction name="testMapFactory" hint="tests map factories" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.map = instance.factory.getBean("myMapFactoryBean");
+
+		assertTrue(isStruct(local.map), "Should be an struct");
+
+		local.testMap = { foo = 1, bar = 2 };
+
+		assertEquals(local.testMap, local.map);
+
+		local.factoryBean = instance.factory.getBean("&myMapFactoryBean");
+
+		assertEquals("coldspring.beans.factory.config.MapFactoryBean", getMetadata(local.factoryBean).name);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testJSONFactory" hint="tests JSON factories" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.map = instance.factory.getBean("myJSONFactoryBean");
+
+		local.array = [1.0,2.0,3.0,4.0]; //weird json conversion
+		local.struct = {foo = "bar"};
+
+		assertEquals(local.array, local.map.array);
+		assertEquals(local.struct, local.map.struct);
+		assertEquals("Frodo Baggins", local.map.string);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
