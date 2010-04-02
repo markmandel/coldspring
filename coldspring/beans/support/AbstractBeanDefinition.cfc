@@ -129,13 +129,17 @@
 	<cfset instance.lazyInit = arguments.lazyInit />
 </cffunction>
 
-<cffunction name="getInitMethod" access="public" returntype="string" output="false">
+<cffunction name="getInitMethod" access="public" hint="Get the name of the custom initialization method to invoke after setting bean properties." returntype="string" output="false">
 	<cfreturn instance.initMethod />
 </cffunction>
 
-<cffunction name="setInitMethod" access="public" returntype="void" output="false">
+<cffunction name="setInitMethod" access="public" hint="Set the name of the custom initialization method to invoke after setting bean properties." returntype="void" output="false">
 	<cfargument name="initMethod" type="string" required="true">
 	<cfset instance.initMethod = arguments.initMethod />
+</cffunction>
+
+<cffunction name="hasInitMethod" hint="whether this object has a init-method" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "initMethod") />
 </cffunction>
 
 <cffunction name="getConstructorArgs" hint="constructor argument dependencies" access="public" returntype="struct" output="false"
@@ -293,17 +297,17 @@
 
 <!--- /mixins --->
 
-<cffunction name="autowire" hint="virtual method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
-	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("autowire", this)>
+<cffunction name="autowire" hint="abstract method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("autowire", this)>
 </cffunction>
 
 <cffunction name="create" hint="vitual method: creates the object intsance" access="private" returntype="any" output="false">
-	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("create", this)>
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("create", this)>
 </cffunction>
 
-<cffunction name="injectPropertyDependencies" hint="virtual method: inject all the properpty values into the given bean" access="private" returntype="void" output="false">
+<cffunction name="injectPropertyDependencies" hint="abstract method: inject all the properpty values into the given bean" access="private" returntype="void" output="false">
 	<cfargument name="bean" hint="the bean to inject the properties into" type="any" required="Yes">
-	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("injectPropertyDependencies", this)>
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("injectPropertyDependencies", this)>
 </cffunction>
 
 <cffunction name="setConstructorArgs" access="private" returntype="void" output="false">

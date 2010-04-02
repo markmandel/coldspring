@@ -40,6 +40,7 @@
 	instance.static.ABSTRACT_ATTRIBUTE = "abstract";
 	instance.static.FACTORY_METHOD_ATTRIBUTE = "factory-method";
 	instance.static.FACTORY_BEAN_ATTRIBUTE = "factory-bean";
+	instance.static.INIT_METHOD_ATTRIBUTE = "init-method";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -99,6 +100,11 @@
 		if(arguments.element.hasAttribute(instance.static.FACTORY_METHOD_ATTRIBUTE))
 		{
 			beanDef.setFactoryMethodName(arguments.element.getAttribute(instance.static.FACTORY_METHOD_ATTRIBUTE));
+		}
+
+		if(arguments.element.hasAttribute(instance.static.INIT_METHOD_ATTRIBUTE))
+		{
+			beanDef.setInitMethod(arguments.element.getAttribute(instance.static.INIT_METHOD_ATTRIBUTE));
 		}
 
 		//set autowire

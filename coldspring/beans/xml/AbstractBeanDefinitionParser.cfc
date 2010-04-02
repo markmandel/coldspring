@@ -22,7 +22,7 @@
 			access="public" returntype="any" output="false">
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
-			<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("parse", this)>
+			<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("parse", this)>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

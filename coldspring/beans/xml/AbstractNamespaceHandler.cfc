@@ -39,11 +39,11 @@
 <cffunction name="getSchemaLocations" hint="virtual function: overwite this function to give ColdSpring a map of remote Schemas to their local absolute paths"
 			access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
-	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("getSchemaLocations", this)>
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("getSchemaLocations", this)>
 </cffunction>
 
 <cffunction name="getNameSpaces" hint="virtual function: overwrite to return a single, list or array of string values that are the namespaces this handler manages the parsing for" access="public" returntype="any" output="false">
-	<cfset createObject("component", "coldspring.exception.VirtualMethodException").init("getNameSpaces", this)>
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("getNameSpaces", this)>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -100,7 +100,7 @@
 	</cfloop>
 </cffunction>
 
-<cffunction name="autowire" hint="virtual method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
+<cffunction name="autowire" hint="abstract method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
 		var meta = getComponentMetadata(getClassName());
 		var args = {meta = meta};
