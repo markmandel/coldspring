@@ -1,4 +1,3 @@
-
 <!---
    Copyright 2010 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,16 +9,24 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Simple Car Bean">
 
 <cfset this.id = CreateUUId() />
 
+<!------------------------------------------- PUBLIC ------------------------------------------->
+
 <cffunction name="init" hint="Constructor" access="public" returntype="Car" output="false">
 	<cfargument name="engine" type="Engine" required="Yes" />
 	<cfset setEngine(arguments.engine)>
 	<cfreturn this />
+</cffunction>
+
+<cffunction name="configure" hint="post DI method that takes the make, and reverses it to reverse make" access="public" returntype="void" output="false">
+	<cfscript>
+		setReverseMake(reverse(getMake()));
+    </cfscript>
 </cffunction>
 
 <cffunction name="setColor" access="public" returntype="void" output="false">
@@ -57,5 +64,18 @@
 	<cfargument name="Wheels" type="struct" required="true">
 	<cfset instance.Wheels = arguments.Wheels />
 </cffunction>
+
+<cffunction name="getReverseMake" access="public" returntype="string" output="false">
+	<cfreturn instance.reverseMake />
+</cffunction>
+
+<cffunction name="setReverseMake" access="public" returntype="void" output="false">
+	<cfargument name="reverseMake" type="string" required="true">
+	<cfset instance.reverseMake = arguments.reverseMake />
+</cffunction>
+
+<!------------------------------------------- PACKAGE ------------------------------------------->
+
+<!------------------------------------------- PRIVATE ------------------------------------------->
 
 </cfcomponent>

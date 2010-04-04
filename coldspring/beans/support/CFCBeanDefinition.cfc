@@ -108,6 +108,11 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="invokeInitMethod" hint="invoke the init method specified" access="private" returntype="void" output="false">
+	<cfargument name="bean" hint="the bean created from this beanDefinition" type="any" required="Yes">
+	<cfinvoke component="#arguments.bean#" method="#getInitMethod()#">
+</cffunction>
+
 <cffunction name="eachMetaFunction" hint="calls a callback for each function that is found in meta data, with 'func' as the argument name" access="private" returntype="void" output="false">
 	<cfargument name="meta" hint="the meta data to loop through for functions" type="struct" required="Yes">
 	<cfargument name="func" hint="the HOF to call for each function that is found" type="any" required="Yes">

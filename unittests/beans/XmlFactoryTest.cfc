@@ -313,4 +313,14 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testInitMethod" hint="test the init method works" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.car = instance.factory.getBean("car1");
+
+		assertEquals(reverse(local.car.getMake()), local.car.getReverseMake());
+    </cfscript>
+</cffunction>
+
 </cfcomponent>

@@ -40,6 +40,11 @@
 					reconcile a circular dependency.
 				*/
 				injectPropertyDependencies(bean);
+
+				if(hasInitMethod())
+				{
+					invokeInitMethod(bean);
+				}
 			}
     	</cfscript>
     	</cflock>
@@ -142,6 +147,10 @@
 	<cfreturn StructKeyExists(instance, "initMethod") />
 </cffunction>
 
+<cffunction name="removeInitMethod" hint="removes the init method set on this bean definition" access="public" returntype="void" output="false">
+	<cfset structDelete(instance, "initMethod")>
+</cffunction>
+
 <cffunction name="getConstructorArgs" hint="constructor argument dependencies" access="public" returntype="struct" output="false"
 	colddoc:generic="string,ConstructorArg">
 	<cfreturn instance.constructorArgs />
@@ -242,7 +251,6 @@
 		setScope("singleton");
 		setAutowire("no");
 		setLazyInit(false);
-		setInitMethod("");
 		setAutowireComplete(false);
 		setConstructorArgs(StructNew());
 		setProperties(StructNew());
@@ -286,16 +294,7 @@
     </cfscript>
 </cffunction>
 
-<!--- mixins --->
-
-<cffunction name="getInstance_Abstract" hint="Mixin: method to be used to switch with getInstance, if isAbstract is set to true, on notifyComplete()"
-			access="private" returntype="any" output="false">
-	<cfscript>
-		createObject("component", "coldspring.beans.support.exception.AbstractBeanCannotBeInstantiatedException").init(this);
-    </cfscript>
-</cffunction>
-
-<!--- /mixins --->
+<!--- abstract methods --->
 
 <cffunction name="autowire" hint="abstract method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("autowire", this)>
@@ -309,6 +308,24 @@
 	<cfargument name="bean" hint="the bean to inject the properties into" type="any" required="Yes">
 	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("injectPropertyDependencies", this)>
 </cffunction>
+
+<cffunction name="invokeInitMethod" hint="invoke the init method specified" access="private" returntype="void" output="false">
+	<cfargument name="bean" hint="the bean created from this beanDefinition" type="any" required="Yes">
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("invokeInitMethod", this)>
+</cffunction>
+
+<!--- /abstract methods --->
+
+<!--- mixins --->
+
+<cffunction name="getInstance_Abstract" hint="Mixin: method to be used to switch with getInstance, if isAbstract is set to true, on notifyComplete()"
+			access="private" returntype="any" output="false">
+	<cfscript>
+		createObject("component", "coldspring.beans.support.exception.AbstractBeanCannotBeInstantiatedException").init(this);
+    </cfscript>
+</cffunction>
+
+<!--- /mixins --->
 
 <cffunction name="setConstructorArgs" access="private" returntype="void" output="false">
 	<cfargument name="constructorArgs" type="struct" required="true" colddoc:generic="string,ConstructorArg">

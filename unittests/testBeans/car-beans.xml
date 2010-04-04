@@ -7,7 +7,7 @@
 
 	<bean id="abstractCar" abstract="true" class="unittests.testBeans.Car"/>
 	   
-	<bean id="car1" class="unittests.testBeans.Car">
+	<bean id="car1" class="unittests.testBeans.Car" init-method="configure">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="color" ref="color1" />
 		<property name="make" value="Mustang"/>
