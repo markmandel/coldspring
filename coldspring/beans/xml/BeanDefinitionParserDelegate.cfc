@@ -85,7 +85,7 @@
 			id = class & "." & createUUID();
 		}
 
-		beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id, getBeanDefinitionRegistry());
+		beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
 
 		if(arguments.element.hasAttribute(instance.static.CLASS_ATTRIBUTE))
 		{

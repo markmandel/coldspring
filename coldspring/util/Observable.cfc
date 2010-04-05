@@ -16,9 +16,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="Observable" output="false">
-	<cfargument name="fireEventMethodName" hint="the name of the method to call on observers" type="string" required="No" default="update">
 	<cfscript>
-		setFireEventMethodName(arguments.fireEventMethodName);
 		setCollection(createObject("java", "java.util.ArrayList").init());
 		setSystem(createObject("java", "java.lang.System"));
 
@@ -59,9 +57,9 @@
 	</cflock>
 </cffunction>
 
-<cffunction name="notifyObservers" hint="call the 'fireEventMethodName' on the Observers, and notify them that things have changed.
-			Whatever arguments are passed to this function, are passed onto that method"
-			access="public" returntype="void" output="false">
+<cffunction	name="onMissingMethod" access="public" returntype="any" output="false" hint="calling this method calls the same method on all the observers">
+	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
+	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
 	<cfscript>
 		var collection = 0;
 		var observer = 0;
@@ -69,10 +67,11 @@
 	<cflock name="coldspring.util.Observer.#getSystem().identityHashCode(this)#" type="readonly" timeout="60">
 		<cfset collection = getCollection()>
 		<cfloop array="#collection#" index="observer">
-			<cfinvoke component="#observer#" method="#getFireEventMethodName()#" argumentcollection="#arguments#">
+			<cfinvoke component="#observer#" method="#arguments.missingMethodName#" argumentcollection="#missingMethodArguments#">
 		</cfloop>
 	</cflock>
 </cffunction>
+
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
@@ -85,15 +84,6 @@
 <cffunction name="setCollection" access="private" returntype="void" output="false">
 	<cfargument name="Collection" type="any" required="true">
 	<cfset instance.Collection = arguments.Collection />
-</cffunction>
-
-<cffunction name="getFireEventMethodName" access="private" returntype="string" output="false">
-	<cfreturn instance.fireEventMethodName />
-</cffunction>
-
-<cffunction name="setFireEventMethodName" access="private" returntype="void" output="false">
-	<cfargument name="fireEventMethodName" type="string" required="true">
-	<cfset instance.fireEventMethodName = arguments.fireEventMethodName />
 </cffunction>
 
 <cffunction name="getSystem" access="private" returntype="any" output="false">

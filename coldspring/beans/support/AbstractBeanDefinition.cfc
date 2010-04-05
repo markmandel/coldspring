@@ -55,6 +55,13 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="configure" hint="configure after this bean definition has been registered" access="public" returntype="void" output="false">
+	<cfargument name="beanDefinitionRegistry" hint="the bean definition registry this belongs to" type="coldspring.beans.BeanDefinitionRegistry" required="Yes">
+	<cfscript>
+		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
+    </cfscript>
+</cffunction>
+
 <cffunction name="notifyComplete" hint="Called when all the beans are added to the Factory, and post processing can occur." access="public" returntype="void" output="false">
 	<cfscript>
 		buildAutowire();
@@ -244,10 +251,8 @@
 
 <cffunction name="init" hint="Constructor" access="private" returntype="AbstractBeanDefinition" output="false">
 	<cfargument name="id" hint="the id of this bean" type="string" required="Yes">
-	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfscript>
 		setID(arguments.id);
-		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
 		setScope("singleton");
 		setAutowire("no");
 		setLazyInit(false);

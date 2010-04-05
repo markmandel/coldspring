@@ -17,7 +17,6 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="CFCBeanDefinition" output="false">
 	<cfargument name="id" hint="the id of this bean" type="string" required="Yes">
-	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfset super.init(argumentCollection=arguments)>
 	<cfreturn this />
 </cffunction>

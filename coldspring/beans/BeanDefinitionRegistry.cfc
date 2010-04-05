@@ -31,7 +31,7 @@
 
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
 
-		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init("postProcessBeanDefinitionRegistry"));
+		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
 
 		//setup closures
 		setCacheNameAgainstTypeClosure(createObject("component", "coldspring.util.Closure").init(cacheNameAgainstType));
@@ -49,6 +49,8 @@
 	<cfscript>
 		var typeNameCache = getTypeNameCache();
 		var args = {id = arguments.beanDefinition.getID()};
+
+		arguments.beanDefinition.configure(this);
 
 		arguments.beanDefinition.setBeanCache(getBeanCache());
 
@@ -155,7 +157,7 @@
 		autoRegisterObservers();
 
 		//fire RegistryPost Processor
-		getRegistryPostProcessorObservable().notifyObservers(this);
+		getRegistryPostProcessorObservable().postProcessBeanDefinitionRegistry(this);
 
 		//get this here, as it may be different, do to the processors
 		beanDefinitions = getBeanDefinitions();

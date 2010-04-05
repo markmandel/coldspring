@@ -19,7 +19,7 @@
 
 		local.args = { check1 = 1 };
 
-		instance.observable.notifyObservers(argumentCollection=local.args);
+		instance.observable.update(argumentCollection=local.args);
 
 		assertTrue(structKeyExists(local.observer1, "check1"), "Should be 'check1'");
 		assertEquals(1, local.observer1.check1);
@@ -29,7 +29,7 @@
 
 		local.args = { check2 = 2 };
 
-		instance.observable.notifyObservers(argumentCollection=local.args);
+		instance.observable.update(argumentCollection=local.args);
 
 		assertTrue(structKeyExists(local.observer1, "check2"), "Should be 'check2'");
 		assertEquals(2, local.observer1.check2);
@@ -53,7 +53,7 @@
 
 		local.args = { check1 = 1 };
 
-		instance.observable.notifyObservers(argumentCollection=local.args);
+		instance.observable.update(argumentCollection=local.args);
 
 		assertTrue(structKeyExists(local.observer1, "check1"), "Should be 'check1'");
 		assertEquals(1, local.observer1.check1);
@@ -63,13 +63,12 @@
 
 		local.args = { check2 = 2 };
 
-		instance.observable.notifyObservers(argumentCollection=local.args);
+		instance.observable.update(argumentCollection=local.args);
 
 		assertFalse(structKeyExists(local.observer1, "check2"), "Should not be 'check2'");
 		assertFalse(structKeyExists(local.observer1, "check2"), "Should not be 'check2'");
     </cfscript>
 </cffunction>
-
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
