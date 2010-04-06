@@ -33,7 +33,7 @@
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
 
 		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
-		setBeanPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
+		setBeanPostProcessorObservable(createObject("component", "coldspring.beans.factory.config.BeanPostProcessObservable").init());
 
 		//setup closures
 		setCacheNameAgainstTypeClosure(createObject("component", "coldspring.util.Closure").init(cacheNameAgainstType));
@@ -185,7 +185,11 @@
 
 <cffunction name="initDefaultPostProcessors" hint="Add the default post processors to their appropriate observables" access="private" returntype="void" output="false">
 	<cfscript>
-		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.xml.config.FactoryBeanRegistryPostProcessor").init());
+		//registry post processors
+		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.FactoryBeanRegistryPostProcessor").init());
+
+		//bean post processors
+		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanNameAwarePostProcessor").init());
     </cfscript>
 </cffunction>
 
@@ -306,13 +310,13 @@
 	<cfset instance.registryPostProcessorObservable = arguments.registryPostProcessorObservable />
 </cffunction>
 
-<cffunction name="getBeanPostProcessorObservable" access="private" returntype="coldspring.util.Observable" output="false"
+<cffunction name="getBeanPostProcessorObservable" access="private" returntype="coldspring.beans.factory.config.BeanPostProcessObservable" output="false"
 	colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfreturn instance.beanPostProcessorObservable />
 </cffunction>
 
 <cffunction name="setBeanPostProcessorObservable" access="private" returntype="void" output="false">
-	<cfargument name="beanPostProcessorObservable" type="coldspring.util.Observable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
+	<cfargument name="beanPostProcessorObservable" type="coldspring.beans.factory.config.BeanPostProcessObservable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfset instance.beanPostProcessorObservable = arguments.beanPostProcessorObservable />
 </cffunction>
 

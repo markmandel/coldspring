@@ -79,10 +79,18 @@
     </cfscript>
 </cffunction>
 
-
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="removeOnMissingMethod" hint="If you are extending this Observable,
+			this convenience method is hear to make it easier to clear off the onMM implementation, so you can write your own observer notification
+			implementation" access="private" returntype="void" output="false">
+	<cfscript>
+		structDelete(variables, "onMissingMethod");
+		structDelete(this, "onMissingMethod");
+    </cfscript>
+</cffunction>
 
 <cffunction name="getCollection" access="private" returntype="any" output="false">
 	<cfreturn instance.Collection />
