@@ -84,13 +84,23 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="RegistryPostProcessorTest" hint="testing post processing" access="public" returntype="void" output="false">
+<cffunction name="registryPostProcessorTest" hint="testing post processing" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
 		local.counter = instance.factory.getBean("beanCounter");
 
-		assertEquals(8, local.counter.getCount());
+		assertEquals(9, local.counter.getCount());
+    </cfscript>
+</cffunction>
+
+<cffunction name="beanNameAwareTest" hint="testing of whether or not a bean is name aware" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.bean = instance.factory.getBean("nameAware");
+
+		assertEquals("nameAware", local.bean.getBeanName());
     </cfscript>
 </cffunction>
 
