@@ -28,6 +28,8 @@
 	<property name="coldspring.version" value="2.0" />
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
+	<property name="coldspring.sourceforge.server" value="web.sourceforge.net"/>
+	<property name="coldspring.sourceforge.docs" value="/home/groups/c/co/coldspring/htdocs/ber/docs"/>
 	<property name="coldspring.localserver" value="cf9"/>
 	<property name="coldspring.localport" value="94"/>
 	<property name="docs" location="./docs"/>
@@ -45,6 +47,7 @@
     	<antcall target="upload-schemas"/>
     	<antcall target="xsddoc"/>
     	<antcall target="colddoc"/>
+    	<antcall target="upload-documentation"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -92,7 +95,12 @@
 			<contains string="${colddoc.return}" substring="Done!" casesensitive="false" />
     	</condition>
     	<echo message="Colddoc: ${colddoc.complete}"></echo>
+    	<antcall target="colddoc-${colddoc.complete}" />
     </target>
+	<target name="colddoc-true"></target>
+	<target name="colddoc-false">
+		<fail message="Error with ColdDoc"/>
+	</target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: colddoc-clean                      
@@ -122,6 +130,23 @@
     <target name="xsddoc-clean">
 		<delete dir="${docs.xsddoc}/beans"/>
     </target>
+	
+	<target name="upload-documentation">
+		<input addproperty="upload-documentation.do" message="Should we upload the Documentation to Sourceforge?" validargs="Y,N" />
+		<antcall target="upload-documentation-${upload-documentation.do}" />		
+	</target>
+	<target name="upload-documentation-N"/>
+	
+	<target name="upload-documentation-Y">
+		<input addproperty="upload-documentation.user" message="What is the Sourceforge Username?"></input>
+		
+		<echo message="Rsync Schemas from ${coldspring.sourceforge.server}"/>
+		<property name="rsync.line" value="-rv --delete --exclude=/gen ./ ${upload-documentation.user}@${coldspring.sourceforge.server}:${coldspring.sourceforge.docs}"/>
+		<echo message="rsync ${rsync.line}"/>
+		<exec executable="rsync" dir="${docs}" logerror="true">
+			<arg line="${rsync.line}"/>
+		</exec>
+	</target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: xsddoc-gen                      
