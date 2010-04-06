@@ -13,6 +13,7 @@
 
 <cfcomponent hint="The application.cfc" output="false">
 
+<cfsetting showdebugoutput="false">
 <cfscript>
 	this.name = "ColdSpring Documentation";
 	this.sessionmanagement = false;

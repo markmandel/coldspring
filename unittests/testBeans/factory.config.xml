@@ -34,5 +34,8 @@
 			]]>
 			</value>
 		</property> 
-	</bean>	   
+	</bean>
+	
+	<!-- marker post processor -->
+	<bean id="markerBeanPostProcessor" class="unittests.testBeans.MarkerBeanPostProcessor" />	   
 </beans>

@@ -86,6 +86,12 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="colddoc" depends="colddoc-clean">
     	<get src="http://${coldspring.localserver}:${coldspring.localport}/docs/gen/colddoc/run.cfm" dest="${tmp}/colddoc.html" />
+    	<loadfile property="colddoc.return" srcfile="${tmp}/colddoc.html"></loadfile>
+    	<echo message="Colddoc: ${colddoc.return}"></echo>
+    	<condition property="colddoc.complete">
+			<contains string="${colddoc.return}" substring="Done!" casesensitive="false" />
+    	</condition>
+    	<echo message="Colddoc: ${colddoc.complete}"></echo>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 

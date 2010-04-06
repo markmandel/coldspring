@@ -20,12 +20,18 @@
 									<br/>on notifyComplete, if isAbstract() this gets switched with a method that throws an Exception."
 			access="public" returntype="any" output="false">
 	<cfscript>
+		var local = {};
 		var bean = 0;
 		var cache = getBeanCache().getCache(getScope());
 		var id = getID();
+		var completeKey = id & ":complete";
 	</cfscript>
 
-	<cfif NOT StructKeyExists(cache, getID())>
+	<!---
+		The ':complete' key tracks if the beanDef has been fully initialised. This stops outside beans
+		picking up a copy before the bean has been fully initialised, even though it is in cache.
+	 --->
+	<cfif NOT StructKeyExists(cache, id) AND NOT structKeyExists(cache, completeKey)>
     	<cflock name="#getBeanCache().getLockName(this)#" throwontimeout="true" timeout="60">
     	<cfscript>
     		if(NOT StructKeyExists(cache, id))
@@ -41,10 +47,30 @@
 				*/
 				injectPropertyDependencies(bean);
 
+				local.postBean = getBeanPostProcessorObservable().postProcessBeforeInitialization(bean, getID());
+
+				if(structKeyExists(local, "postBean"))
+				{
+					bean = local.postBean;
+				}
+
 				if(hasInitMethod())
 				{
 					invokeInitMethod(bean);
 				}
+
+				local.postBean = getBeanPostProcessorObservable().postProcessAfterInitialization(bean, getID());
+
+				if(structKeyExists(local, "postBean"))
+				{
+					bean = local.postBean;
+				}
+
+				//replace in cache, in case it was wrapped
+				cache[id] = bean;
+
+				//now set it to being truly complete.
+				cache[completeKey] = 1;
 			}
     	</cfscript>
     	</cflock>
@@ -57,8 +83,12 @@
 
 <cffunction name="configure" hint="configure after this bean definition has been registered" access="public" returntype="void" output="false">
 	<cfargument name="beanDefinitionRegistry" hint="the bean definition registry this belongs to" type="coldspring.beans.BeanDefinitionRegistry" required="Yes">
+	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" hint="The bean cache" required="true">
+	<cfargument name="beanPostProcessorObservable" hint="the observable collection for bean post processing" type="coldspring.util.Observable" required="Yes" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfscript>
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
+		setBeanCache(arguments.beanCache);
+		setBeanPostProcessorObservable(arguments.beanPostProcessorObservable);
     </cfscript>
 </cffunction>
 
@@ -198,11 +228,6 @@
 <cffunction name="hasPropertyByName" hint="a check to see if a property with the given name exists" access="public" returntype="boolean" output="false">
 	<cfargument name="name" hint="the name of the property" type="string" required="Yes">
 	<cfreturn structKeyExists(getProperties(), arguments.name) />
-</cffunction>
-
-<cffunction name="setBeanCache" hint="Set the bean cache. Gets called when being added to an AbstractBeanFactory" access="public" returntype="void" output="false">
-	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" required="true">
-	<cfset instance.beanCache = arguments.beanCache />
 </cffunction>
 
 <cffunction name="isAbstract" access="public" returntype="boolean" output="false">
@@ -359,6 +384,11 @@
 	<cfreturn instance.beanDefinitionRegistry />
 </cffunction>
 
+<cffunction name="setBeanCache" hint="Set the bean cache." access="private" returntype="void" output="false">
+	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" required="true">
+	<cfset instance.beanCache = arguments.beanCache />
+</cffunction>
+
 <cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">
 	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfset instance.beanDefinitionRegistry = arguments.beanDefinitionRegistry />
@@ -367,6 +397,16 @@
 <cffunction name="setMeta" access="private" returntype="void" output="false">
 	<cfargument name="Meta" type="struct" required="true" colddoc:generic="string,string">
 	<cfset instance.Meta = arguments.Meta />
+</cffunction>
+
+<cffunction name="getBeanPostProcessorObservable" access="private" returntype="coldspring.util.Observable" output="false"
+	colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
+	<cfreturn instance.beanPostProcessorObservable />
+</cffunction>
+
+<cffunction name="setBeanPostProcessorObservable" access="private" returntype="void" output="false">
+	<cfargument name="beanPostProcessorObservable" type="coldspring.util.Observable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
+	<cfset instance.beanPostProcessorObservable = arguments.beanPostProcessorObservable />
 </cffunction>
 
 </cfcomponent>

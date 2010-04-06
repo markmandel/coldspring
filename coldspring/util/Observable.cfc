@@ -63,13 +63,20 @@
 	<cfscript>
 		var collection = 0;
 		var observer = 0;
+		var local = {};
     </cfscript>
 	<cflock name="coldspring.util.Observer.#getSystem().identityHashCode(this)#" type="readonly" timeout="60">
 		<cfset collection = getCollection()>
 		<cfloop array="#collection#" index="observer">
-			<cfinvoke component="#observer#" method="#arguments.missingMethodName#" argumentcollection="#missingMethodArguments#">
+			<cfinvoke component="#observer#" method="#arguments.missingMethodName#" argumentcollection="#missingMethodArguments#" returnvariable="local.return">
 		</cfloop>
 	</cflock>
+	<cfscript>
+		if(structKeyExists(local, "return"))
+		{
+			return local.return;
+		}
+    </cfscript>
 </cffunction>
 
 
