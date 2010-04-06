@@ -22,7 +22,7 @@
 </cfscript>
 
 
-<cffunction name="init" hint="Constructor" access="public" returntype="BeanPostProcessObservable" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="BeanPostProcessorObservable" output="false">
 	<cfscript>
 		super.init();
 

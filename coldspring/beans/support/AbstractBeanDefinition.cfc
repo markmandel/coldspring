@@ -84,7 +84,7 @@
 <cffunction name="configure" hint="configure after this bean definition has been registered" access="public" returntype="void" output="false">
 	<cfargument name="beanDefinitionRegistry" hint="the bean definition registry this belongs to" type="coldspring.beans.BeanDefinitionRegistry" required="Yes">
 	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" hint="The bean cache" required="true">
-	<cfargument name="beanPostProcessorObservable" hint="the observable collection for bean post processing" type="coldspring.beans.factory.config.BeanPostProcessObservable" required="Yes" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
+	<cfargument name="beanPostProcessorObservable" hint="the observable collection for bean post processing" type="coldspring.beans.factory.config.BeanPostProcessorObservable" required="Yes" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfscript>
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
 		setBeanCache(arguments.beanCache);
@@ -399,13 +399,13 @@
 	<cfset instance.Meta = arguments.Meta />
 </cffunction>
 
-<cffunction name="getBeanPostProcessorObservable" access="private" returntype="coldspring.beans.factory.config.BeanPostProcessObservable" output="false"
+<cffunction name="getBeanPostProcessorObservable" access="private" returntype="coldspring.beans.factory.config.BeanPostProcessorObservable" output="false"
 	colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfreturn instance.beanPostProcessorObservable />
 </cffunction>
 
 <cffunction name="setBeanPostProcessorObservable" access="private" returntype="void" output="false">
-	<cfargument name="beanPostProcessorObservable" type="coldspring.beans.factory.config.BeanPostProcessObservable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
+	<cfargument name="beanPostProcessorObservable" type="coldspring.beans.factory.config.BeanPostProcessorObservable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfset instance.beanPostProcessorObservable = arguments.beanPostProcessorObservable />
 </cffunction>
 

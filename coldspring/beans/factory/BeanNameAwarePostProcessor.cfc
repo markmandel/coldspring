@@ -22,8 +22,6 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanNameAwarePostProcessor" output="false">
 	<cfscript>
-		setNameAwareCache(StructNew());
-
 		return this;
 	</cfscript>
 </cffunction>
@@ -50,14 +48,5 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="getNameAwareCache" access="private" returntype="struct" output="false">
-	<cfreturn instance.nameAwareCache />
-</cffunction>
-
-<cffunction name="setNameAwareCache" access="private" returntype="void" output="false">
-	<cfargument name="nameAwareCache" type="struct" required="true">
-	<cfset instance.nameAwareCache = arguments.nameAwareCache />
-</cffunction>
 
 </cfcomponent>
