@@ -66,6 +66,11 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="addBeanPostProcessor" hint="programatically add a bean post processor" access="public" returntype="void" output="false">
+	<cfargument name="postProcessor" hint="the post processor in question" type="coldspring.beans.factory.config.BeanPostProcessor" required="Yes">
+	<cfset getBeanDefinitionRegistry().addBeanPostProcessor(argumentCollection=arguments)>
+</cffunction>
+
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
 	<cfreturn "0.1.b">
 </cffunction>

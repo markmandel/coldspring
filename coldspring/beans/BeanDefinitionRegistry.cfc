@@ -42,6 +42,8 @@
 		getCacheNameAgainstTypeClosure().bind("typeNameCache", getTypeNameCache());
 		getRemoveNameAgainstTypeClosure().bind("typeNameCache", getTypeNameCache());
 
+		initDefaultPostProcessors();
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -180,6 +182,12 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="initDefaultPostProcessors" hint="Add the default post processors to their appropriate observables" access="private" returntype="void" output="false">
+	<cfscript>
+		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.xml.config.FactoryBeanRegistryPostProcessor").init());
+    </cfscript>
+</cffunction>
 
 <cffunction name="autoRegisterObservers" hint="auto register all the observer bean definitions in the registry" access="private" returntype="void" output="false">
 	<cfscript>

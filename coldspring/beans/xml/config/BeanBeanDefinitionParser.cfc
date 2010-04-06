@@ -15,11 +15,6 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cfscript>
-	instance.static.FACTORY_BEAN_REGISTRY_POST_PROCESSOR_CLASS = "coldspring.beans.xml.config.FactoryBeanRegistryPostProcessor";
-</cfscript>
-
-
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanBeanDefinitionParser" output="false">
 	<cfscript>
 		super.init();
@@ -34,8 +29,6 @@
 	<cfscript>
 		var beanDef = arguments.parserContext.getDelegate().parseBeanDefinitionElement(arguments.element);
 
-		registerFactoryBeanRegsitryPostProcessor(arguments.parserContext.getBeanDefinitionRegistry());
-
 		return beanDef;
     </cfscript>
 </cffunction>
@@ -43,21 +36,5 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="registerFactoryBeanRegsitryPostProcessor" hint="ensure the factory bean post processor is registered" access="private" returntype="void" output="false">
-	<cfargument name="registry" type="coldspring.beans.BeanDefinitionRegistry" required="yes" />
-	<cfscript>
-		var beanDef = 0;
-
-		if(NOT arguments.registry.containsBeanDefinition(instance.static.FACTORY_BEAN_REGISTRY_POST_PROCESSOR_CLASS))
-		{
-			beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(instance.static.FACTORY_BEAN_REGISTRY_POST_PROCESSOR_CLASS, arguments.registry);
-
-			beanDef.setClassName(instance.static.FACTORY_BEAN_REGISTRY_POST_PROCESSOR_CLASS);
-
-			arguments.registry.registerBeanDefinition(beanDef);
-		}
-    </cfscript>
-</cffunction>
 
 </cfcomponent>

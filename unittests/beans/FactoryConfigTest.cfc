@@ -74,11 +74,23 @@
 
 <cffunction name="beanPostProcessorTest" hint="testing post processing" access="public" returntype="void" output="false">
 	<cfscript>
+		var local = {};
+
 		local.factoryBean = instance.factory.getBean("&myMapFactoryBean");
 		local.map = instance.factory.getBean("myMapFactoryBean");
 
 		assertEquals("&myMapFactoryBean", local.factoryBean.beforeName);
 		assertEquals("&myMapFactoryBean", local.factoryBean.afterName);
+    </cfscript>
+</cffunction>
+
+<cffunction name="RegistryPostProcessorTest" hint="testing post processing" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.counter = instance.factory.getBean("beanCounter");
+
+		assertEquals(8, local.counter.getCount());
     </cfscript>
 </cffunction>
 

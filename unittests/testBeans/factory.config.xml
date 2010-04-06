@@ -37,5 +37,7 @@
 	</bean>
 	
 	<!-- marker post processor -->
-	<bean id="markerBeanPostProcessor" class="unittests.testBeans.MarkerBeanPostProcessor" />	   
+	<bean id="markerBeanPostProcessor" class="unittests.testBeans.MarkerBeanPostProcessor" />
+	
+	<bean id="beanCounter" class="unittests.testBeans.BeanCountRegistryPostProcessor" />
 </beans>
