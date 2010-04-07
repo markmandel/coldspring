@@ -6,7 +6,10 @@
 	<cfscript>
 		var beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init();
 
-		instance.registry = createObject("component", "coldspring.beans.BeanDefinitionRegistry").init(beanCache);
+		//this is lazy, but I'll just create an abstract bean factory. (This should be mocked later, but I'm on a deadline)
+		var factory = createObject("component", "coldspring.beans.AbstractBeanFactory");
+
+		instance.registry = createObject("component", "coldspring.beans.BeanDefinitionRegistry").init(factory, beanCache);
     </cfscript>
 </cffunction>
 

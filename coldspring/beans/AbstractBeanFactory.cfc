@@ -88,7 +88,7 @@
 <cffunction name="prepareRefresh" hint="prepares the refresh method, should be called at the beginning of refresh()" access="private" returntype="void" output="false">
 	<cfscript>
 		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init());
-		setBeanDefinitionRegistry(createObject("component", "BeanDefinitionRegistry").init(getBeanCache()));
+		setBeanDefinitionRegistry(createObject("component", "BeanDefinitionRegistry").init(this, getBeanCache()));
     </cfscript>
 </cffunction>
 

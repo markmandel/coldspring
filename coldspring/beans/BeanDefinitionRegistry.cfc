@@ -24,11 +24,13 @@
 </cfscript>
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionRegistry" output="false">
+	<cfargument name="beanFactory" hint="the containing bean factory" type="coldspring.beans.AbstractBeanFactory" required="Yes">
 	<cfargument name="beanCache" hint="The actual bean cache. Needed for AbstractBeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfscript>
 		setBeanDefinitions(StructNew());
 		setTypeNameCache(StructNew());
 		setBeanCache(arguments.beanCache);
+		setBeanFactory(arguments.beanFactory);
 
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
 
@@ -189,6 +191,7 @@
 		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.FactoryBeanRegistryPostProcessor").init());
 
 		//bean post processors
+		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanFactoryAwarePostProcessor").init(getBeanFactory()));
 		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanNameAwarePostProcessor").init());
     </cfscript>
 </cffunction>
@@ -318,6 +321,15 @@
 <cffunction name="setBeanPostProcessorObservable" access="private" returntype="void" output="false">
 	<cfargument name="beanPostProcessorObservable" type="coldspring.beans.factory.config.BeanPostProcessorObservable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfset instance.beanPostProcessorObservable = arguments.beanPostProcessorObservable />
+</cffunction>
+
+<cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.AbstractBeanFactory" output="false">
+	<cfreturn instance.beanFactory />
+</cffunction>
+
+<cffunction name="setBeanFactory" access="private" returntype="void" output="false">
+	<cfargument name="beanFactory" type="coldspring.beans.AbstractBeanFactory" required="true">
+	<cfset instance.beanFactory = arguments.beanFactory />
 </cffunction>
 
 </cfcomponent>

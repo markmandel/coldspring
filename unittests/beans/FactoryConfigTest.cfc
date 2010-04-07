@@ -90,7 +90,7 @@
 
 		local.counter = instance.factory.getBean("beanCounter");
 
-		assertEquals(9, local.counter.getCount());
+		assertEquals(10, local.counter.getCount());
     </cfscript>
 </cffunction>
 
@@ -101,6 +101,16 @@
 		local.bean = instance.factory.getBean("nameAware");
 
 		assertEquals("nameAware", local.bean.getBeanName());
+    </cfscript>
+</cffunction>
+
+<cffunction name="beanFactoryAwareTest" hint="testing of whether or not a bean is factory aware" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.bean = instance.factory.getBean("factoryAware");
+
+		assertSame(instance.factory, local.bean.getBeanFactory());
     </cfscript>
 </cffunction>
 

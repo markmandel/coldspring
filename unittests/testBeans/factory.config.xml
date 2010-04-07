@@ -41,4 +41,5 @@
 	<bean id="beanCounter" class="unittests.testBeans.BeanCountRegistryPostProcessor" />
 	
 	<bean id="nameAware" class="unittests.testBeans.BeanNameAwareBean" />
+	<bean id="factoryAware" class="unittests.testBeans.BeanFactoryAwareBean" />
 </beans>
