@@ -157,11 +157,14 @@
 		var id = 0;
 		var beanDefinition = 0;
 
-		//set up post processors
-		autoRegisterObservers();
+		//auto register any registry observers
+		autoRegisterRegistryObservers();
 
-		//fire RegistryPost Processor
+		//fire RegistryPost Processor (do this before bean post processors go into effect, as you may need a hook to remove them from the meta)
 		getRegistryPostProcessorObservable().postProcessBeanDefinitionRegistry(this);
+
+		//the set up any bean post processors
+		autoRegisterBeanObservers();
 
 		//get this here, as it may be different, do to the processors
 		beanDefinitions = getBeanDefinitions();
@@ -196,7 +199,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="autoRegisterObservers" hint="auto register all the observer bean definitions in the registry" access="private" returntype="void" output="false">
+<cffunction name="autoRegisterRegistryObservers" hint="auto register all the BeanRegistry post processors" access="private" returntype="void" output="false">
 	<cfscript>
 		var beanDefinitions = getBeanDefinitions();
 		var id = 0;
@@ -212,7 +215,23 @@
 				{
 					getRegistryPostProcessorObservable().addObserver(beanDefinition.getInstance());
 				}
+			}
+		}
+    </cfscript>
+</cffunction>
 
+<cffunction name="autoRegisterBeanObservers" hint="auto register all the bean/beanfactory post processors" access="private" returntype="void" output="false">
+	<cfscript>
+		var beanDefinitions = getBeanDefinitions();
+		var id = 0;
+		var beanDefinition = 0;
+		for (id in beanDefinitions)
+		{
+			beanDefinition = beanDefinitions[id];
+
+			//check for special marker classes
+			if(beanDefinition.hasClassName())
+			{
 				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_POST_PROCESSOR_CLASS))
 				{
 					addBeanPostProcessor(beanDefinition.getInstance());

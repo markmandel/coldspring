@@ -71,6 +71,29 @@
 	<cfset getBeanDefinitionRegistry().addBeanPostProcessor(argumentCollection=arguments)>
 </cffunction>
 
+<cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in this bean factory." access="public" returntype="numeric" output="false">
+	<cfreturn getBeanDefinitionRegistry().getBeanDefinitionCount() />
+</cffunction>
+
+<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this bean factory" access="public" returntype="array" output="false"
+			colddoc:generic="string">
+	<cfreturn getBeanDefinitionRegistry().getBeanDefinitionNames() />
+</cffunction>
+
+<cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
+			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
+			<br/><strong>NOTE: This method introspects top-level beans only.</strong> It does not  check nested beans which might match the specified type as well.<br/>
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized. If the object created by the FactoryBean doesn't match, the raw FactoryBean itself will be matched against the type.
+			"
+			access="public" returntype="array" output="false">
+	<cfargument name="className" hint="the class type" type="string" required="Yes">
+	<cfreturn getBeanDefinitionRegistry().getBeanNamesForType(argumentCollection=arguments) />
+</cffunction>
+
+<!---
+ void 	addBeanFactoryPostProcessor(BeanFactoryPostProcessor beanFactoryPostProcessor)
+ --->
+
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
 	<cfreturn "0.1.b">
 </cffunction>
