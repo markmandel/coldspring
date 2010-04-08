@@ -14,4 +14,19 @@
 <cfinterface hint="Allows for custom modification of an application context's bean definitions, adapting the bean property values of the context's underlying bean factory.<br/>
 					Application contexts can auto-detect BeanFactoryPostProcessor beans in their bean definitions and apply them before any other beans get created.<br/>
 					Useful for custom config files targeted at system administrators that override bean properties configured in the application context.">
+
+<!------------------------------------------- PUBLIC ------------------------------------------->
+
+<cffunction name="postProcessBeanFactory" hint="Modify the application context's internal bean factory after its standard initialization.
+			All bean definitions will have been loaded, but no beans will have been instantiated yet. This allows for overriding or adding properties even to eager-initializing beans."
+			access="public" returntype="void" output="false">
+	<cfargument name="beanFactory" hint="" type="coldspring.beans.AbstractBeanFactory" required="Yes">
+</cffunction>
+
+<!------------------------------------------- PACKAGE ------------------------------------------->
+
+<!------------------------------------------- PRIVATE ------------------------------------------->
+
+
+
 </cfinterface>

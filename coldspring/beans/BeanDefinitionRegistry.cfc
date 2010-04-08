@@ -21,6 +21,7 @@
 
 	instance.static.REGISTRY_POST_PROCESSOR_CLASS = "coldspring.beans.BeanDefinitionRegistryPostProcessor";
 	instance.static.BEAN_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanPostProcessor";
+	instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanFactoryPostProcessor";
 </cfscript>
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionRegistry" output="false">
@@ -35,6 +36,7 @@
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
 
 		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
+		setBeanFactoryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
 		setBeanPostProcessorObservable(createObject("component", "coldspring.beans.factory.config.BeanPostProcessorObservable").init());
 
 		//setup closures
@@ -176,12 +178,19 @@
 
 			beanDefinition.notifyComplete();
 		}
+
+		getBeanFactoryPostProcessorObservable().postProcessBeanFactory(getBeanFactory());
     </cfscript>
 </cffunction>
 
 <cffunction name="addBeanPostProcessor" hint="programatically add a bean post processor" access="public" returntype="void" output="false">
 	<cfargument name="postProcessor" hint="the post processor in question" type="coldspring.beans.factory.config.BeanPostProcessor" required="Yes">
 	<cfset getBeanPostProcessorObservable().addObserver(arguments.postProcessor)>
+</cffunction>
+
+<cffunction name="addBeanFactoryPostProcessor" hint="programatically add a beanFactory post processor" access="public" returntype="void" output="false">
+	<cfargument name="postProcessor" hint="the post processor in question" type="coldspring.beans.factory.config.BeanFactoryPostProcessor" required="Yes">
+	<cfset getBeanFactoryPostProcessorObservable().addObserver(arguments.postProcessor)>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -235,6 +244,10 @@
 				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_POST_PROCESSOR_CLASS))
 				{
 					addBeanPostProcessor(beanDefinition.getInstance());
+				}
+				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS))
+				{
+					addBeanFactoryPostProcessor(beanDefinition.getInstance());
 				}
 			}
 		}
@@ -340,6 +353,16 @@
 <cffunction name="setBeanPostProcessorObservable" access="private" returntype="void" output="false">
 	<cfargument name="beanPostProcessorObservable" type="coldspring.beans.factory.config.BeanPostProcessorObservable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanPostProcessor">
 	<cfset instance.beanPostProcessorObservable = arguments.beanPostProcessorObservable />
+</cffunction>
+
+<cffunction name="getBeanFactoryPostProcessorObservable" access="private" returntype="coldspring.util.Observable" output="false"
+	colddoc:generic="coldspring.beans.factory.config.BeanFactoryPostProcessor">
+	<cfreturn instance.BeanFactoryPostProcessorObservable />
+</cffunction>
+
+<cffunction name="setBeanFactoryPostProcessorObservable" access="private" returntype="void" output="false">
+	<cfargument name="BeanFactoryPostProcessorObservable" type="coldspring.util.Observable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanFactoryPostProcessor">
+	<cfset instance.BeanFactoryPostProcessorObservable = arguments.BeanFactoryPostProcessorObservable />
 </cffunction>
 
 <cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.AbstractBeanFactory" output="false">

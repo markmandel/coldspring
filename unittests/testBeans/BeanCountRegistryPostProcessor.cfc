@@ -1,4 +1,4 @@
-﻿<cfcomponent hint="contains how many beans tehre are" implements="coldspring.beans.BeanDefinitionRegistryPostProcessor" output="false">
+﻿<cfcomponent hint="contains how many beans tehre are" implements="coldspring.beans.BeanDefinitionRegistryPostProcessor,coldspring.beans.factory.config.BeanFactoryPostProcessor" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -11,21 +11,39 @@
 <cffunction name="postProcessBeanDefinitionRegistry" hint="How many beans are in there?" access="public" returntype="void" output="false">
 	<cfargument name="registry" type="coldspring.beans.BeanDefinitionRegistry" required="yes" />
 	<cfscript>
-		setCount(arguments.registry.getBeanDefinitionCount());
+		setRegistryCount(arguments.registry.getBeanDefinitionCount());
     </cfscript>
 </cffunction>
 
-<cffunction name="getCount" access="public" returntype="numeric" output="false">
-	<cfreturn instance.Count />
+<cffunction name="postProcessBeanFactory" hint="Modify the application context's internal bean factory after its standard initialization.
+			All bean definitions will have been loaded, but no beans will have been instantiated yet. This allows for overriding or adding properties even to eager-initializing beans."
+			access="public" returntype="void" output="false">
+	<cfargument name="beanFactory" hint="" type="coldspring.beans.AbstractBeanFactory" required="Yes">
+	<cfscript>
+		setBeanFactoryCount(arguments.beanFactory.getBeanDefinitionCount());
+    </cfscript>
+</cffunction>
+
+<cffunction name="getRegistryCount" access="public" returntype="numeric" output="false">
+	<cfreturn instance.rCount />
+</cffunction>
+
+<cffunction name="getFactoryCount" access="public" returntype="numeric" output="false">
+	<cfreturn instance.fCount />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="setCount" access="private" returntype="void" output="false">
+<cffunction name="setRegistryCount" access="private" returntype="void" output="false">
 	<cfargument name="Count" type="numeric" required="true">
-	<cfset instance.Count = arguments.Count />
+	<cfset instance.rCount = arguments.Count />
+</cffunction>
+
+<cffunction name="setBeanFactoryCount" access="private" returntype="void" output="false">
+	<cfargument name="Count" type="numeric" required="true">
+	<cfset instance.fCount = arguments.Count />
 </cffunction>
 
 </cfcomponent>

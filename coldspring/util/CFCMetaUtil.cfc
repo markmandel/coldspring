@@ -29,6 +29,7 @@
 	<cfscript>
 		var meta = getComponentMetadata(arguments.className);
 		var local = {};
+		var queue = 0;
 
 		while(structKeyExists(meta, "extends"))
 		{
@@ -38,21 +39,31 @@
 			if(structKeyExists(meta, "implements"))
 			{
 				local.implements = meta.implements;
+				queue = createObject("java", "java.util.ArrayDeque").init();
 
+				//set up initial queue
 				for(local.key in local.implements)
 				{
 					local.imeta = local.implements[local.key];
+					queue.add(local.imeta);
+				}
+
+				//go breadth first
+				while(NOT queue.isEmpty())
+				{
+					local.imeta = queue.remove();
 
 					arguments.args.className = local.imeta.name;
 					arguments.closure.call(argumentCollection=arguments.args);
 
-					while(structKeyExists(local.imeta, "extends"))
+					//if we have an extends, add it to the queue
+					if(structKeyExists(local.imeta, "extends"))
 					{
-						//this is here because extends on interfaces goes extends[classname];
-						local.imeta = local.imeta.extends[structKeyList(local.imeta.extends)];
-
-						arguments.args.className = local.imeta.name;
-						arguments.closure.call(argumentCollection=arguments.args);
+						for(local.key in local.imeta.extends)
+						{
+							local.imeta = local.imeta.extends[local.key];
+							queue.add(local.imeta);
+						}
 					}
 				}
 			}
