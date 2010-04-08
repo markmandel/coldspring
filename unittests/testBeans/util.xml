@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.coldspringframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.coldspringframework.org/schema/util"
+	xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd 
+	http://www.coldspringframework.org/schema/util http://coldspringframework.org/schema/coldspring-util-2.0.xsd ">
+	
+	<util:json id="json" scope="prototype">
+		<![CDATA[
+			{
+				"array" : [1,2,3,4]
+				,"struct" : { "foo" : "bar" }
+				,"string" : "Frodo Baggins"
+			}
+		]]>
+	</util:json>
+	
+	<util:list id="list">
+		<value>1</value>
+		<value>2</value>
+		<value>3</value>
+		<value>4</value>
+	</util:list>
+	
+	<util:map id="map" scope="request">
+		<entry key="foo" value="bar"/>
+		<entry key="bar" value="foo"/>
+	</util:map>
+</beans>

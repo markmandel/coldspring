@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.coldspringframework.org/schema/util"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		xmlns:beans="http://www.coldspringframework.org/schema/beans"
+		targetNamespace="http://www.coldspringframework.org/schema/util"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.coldspringframework.org/schema/beans" schemaLocation="http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"/>
+
+	<xsd:annotation>
+	<xsd:documentation>
+	ColdSpring XML Beans Schema, version 2.0
+	Authors: Mark Mandel
+	
+	Credits to the Spring XML Util Schema, version 2.5, on which this is heavily based, and much
+	of the documentation and schema code was lifted.
+		
+	Utility schema for XML configuration that allows for the easier creation of lists, maps, data types etc.
+	</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="list">
+		<xsd:annotation>
+			<xsd:documentation source="coldfusion:coldspring.beans.factory.config.ListFactoryBean">
+	Builds a List instance of the specified type, populated with the specified content.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:listOrSetType">
+					<xsd:attribute name="id" type="xsd:ID">
+						<xsd:annotation>
+							<xsd:documentation>The unique identifier for this list</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="list-class" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								If not set, a default ColdFusion Array is used. Otherwise, the Java class specified is used for the List.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="scope" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	The scope of this collection bean: typically "singleton" (one shared instance,
+	which will be returned by all calls to getBean with the given id), or
+	"prototype" (independent instance resulting from each call to getBean).
+	Default is "singleton". Further scopes, such as "request" or "session",
+	are also supported.
+							]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="map">
+		<xsd:annotation>
+			<xsd:documentation source="coldfusion:coldspring.beans.factory.config.MapFactoryBean">
+	Builds a Map instance of the specified type, populated with the specified content.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:mapType">
+					<xsd:attribute name="id" type="xsd:ID">
+						<xsd:annotation>
+							<xsd:documentation>The unique identifier for this list</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="map-class" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								If not set, a default ColdFusion Struct is used. Otherwise, the Java class specified is used for the Map.
+							</xsd:documentation>
+						</xsd:annotation>					
+					</xsd:attribute>
+					<xsd:attribute name="scope" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	The scope of this collection bean: typically "singleton" (one shared instance,
+	which will be returned by all calls to getBean with the given id), or
+	"prototype" (independent instance resulting from each call to getBean).
+	Default is "singleton". Further scopes, such as "request" or "session",
+	are also supported.
+							]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="json">
+		<xsd:annotation>
+			<xsd:documentation source="coldfusion:coldspring.beans.factory.config.JSONFactoryBean">
+		Builds the data structure specified by the JSON written as body to this tag 
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="id" type="xsd:ID">
+						<xsd:annotation>
+							<xsd:documentation>The unique identifier for this list</xsd:documentation>
+						</xsd:annotation>					
+					</xsd:attribute>
+					<xsd:attribute name="scope" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	The scope of this collection bean: typically "singleton" (one shared instance,
+	which will be returned by all calls to getBean with the given id), or
+	"prototype" (independent instance resulting from each call to getBean).
+	Default is "singleton". Further scopes, such as "request" or "session",
+	are also supported.
+							]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>		
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

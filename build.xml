@@ -80,6 +80,7 @@
 		<ftp server="${coldspring.server}" userid="${upload.schema.user}" password="${upload.schema.password}" 
 			 remotedir="${coldspring.server.schema}">
 			<fileset file="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
+			<fileset file="${src}/beans/xml/config/coldspring-util-${coldspring.version}.xsd"/>
 		</ftp>
     </target>	
 	<target name="upload-schemas-N"/>
@@ -115,12 +116,18 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="xsddoc" depends="xsddoc-clean">
 		<mkdir dir="${docs.xsddoc}/beans"/>
+    	<mkdir dir="${docs.xsddoc}/util"/>
     	
     	<!-- beans documentation -->
     	<antcall target="xsddoc-gen">
 			<param name="xsdfile" value="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
 			<param name="xsdout" value="beans"/>
     		<param name="xsdtitle" value="ColdSpring ${coldspring.version} Beans Schema"/>
+		</antcall>
+		<antcall target="xsddoc-gen">
+			<param name="xsdfile" value="${src}/beans/xml/config/coldspring-util-${coldspring.version}.xsd"/>
+			<param name="xsdout" value="util"/>
+    		<param name="xsdtitle" value="ColdSpring ${coldspring.version} Util Schema"/>
 		</antcall>
     </target>	
 	
@@ -129,6 +136,7 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="xsddoc-clean">
 		<delete dir="${docs.xsddoc}/beans"/>
+    	<delete dir="${docs.xsddoc}/util"/>
     </target>
 	
 	<target name="upload-documentation">
