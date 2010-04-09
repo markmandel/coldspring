@@ -21,8 +21,6 @@
 		assertEquals(local.testArray, local.array);
 
 		local.reget = instance.factory.getBean("list");
-
-		assertSame(local.array, local.reget);
     </cfscript>
 </cffunction>
 
@@ -59,7 +57,7 @@
 
 		local.reget = instance.factory.getBean("json");
 
-		assertSame(local.map, local.reget);
+		assertNotSame(local.map, local.reget);
 	</cfscript>
 </cffunction>
 

@@ -323,4 +323,15 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testPrototype" hint="tests prototype scope" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.car = instance.factory.getBean("wheel");
+		local.reget = instance.factory.getBean("wheel");
+
+		assertNotSame(local.car, local.reget);
+	</cfscript>
+</cffunction>
+
 </cfcomponent>

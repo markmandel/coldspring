@@ -13,6 +13,13 @@
 
 <cfcomponent hint="The definition parser for util:map element" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
 
+<cfscript>
+	instance.static.ID_ATTRIBUTE = "id";
+	instance.static.SCOPE_ATTRIBUTE = "scope";
+
+	instance.static.MAP_FACTORY_BEAN_CLASS = "coldspring.beans.factory.config.MapFactoryBean";
+</cfscript>
+
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="MapBeanDefinitionParser" output="false">
@@ -27,7 +34,18 @@
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
 	<cfscript>
-		//var beanDef = arguments.parserContext.getDelegate().parseBeanDefinitionElement(arguments.element);
+		var id = arguments.element.getAttribute(instance.static.ID_ATTRIBUTE);
+		var beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
+		var value = arguments.parserContext.getDelegate().parseMapElement(arguments.element);
+		var property = createObject("component", "coldspring.beans.support.Property").init("sourceMap", value);
+
+		if(arguments.element.hasAttribute(instance.static.SCOPE_ATTRIBUTE))
+		{
+			beanDef.setScope(arguments.element.getAttribute(instance.static.SCOPE_ATTRIBUTE));
+		}
+
+		beanDef.setClassName(instance.static.MAP_FACTORY_BEAN_CLASS);
+		beanDef.addProperty(property);
 
 		return beanDef;
     </cfscript>

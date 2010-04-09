@@ -29,6 +29,7 @@
 
 	instance.static.ID_ATTRIBUTE = "id";
 	instance.static.CLASS_ATTRIBUTE = "class";
+	instance.static.SCOPE_ATTRIBUTE = "scope";
 	instance.static.AUTOWIRE_ATTRIBUTE = "autowire";
 	instance.static.NAME_ATTRIBUTE = "name";
 	instance.static.REF_ATTRIBUTE = "ref";
@@ -105,6 +106,11 @@
 		if(arguments.element.hasAttribute(instance.static.INIT_METHOD_ATTRIBUTE))
 		{
 			beanDef.setInitMethod(arguments.element.getAttribute(instance.static.INIT_METHOD_ATTRIBUTE));
+		}
+
+		if(arguments.element.hasAttribute(instance.static.SCOPE_ATTRIBUTE))
+		{
+			beanDef.setScope(arguments.element.getAttribute(instance.static.SCOPE_ATTRIBUTE));
 		}
 
 		//set autowire

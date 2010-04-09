@@ -13,6 +13,16 @@
 
 <cfcomponent hint="The definition parser for util:json element" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
 
+<cfscript>
+	instance.static = {};
+
+	instance.static.ID_ATTRIBUTE = "id";
+	instance.static.SCOPE_ATTRIBUTE = "scope";
+
+	instance.static.JSON_FACTORY_BEAN_CLASS = "coldspring.beans.factory.config.JSONFactoryBean";
+</cfscript>
+
+
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="JSONBeanDefinitionParser" output="false">
@@ -27,7 +37,18 @@
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
 	<cfscript>
-		//var beanDef = arguments.parserContext.getDelegate().parseBeanDefinitionElement(arguments.element);
+		var id = arguments.element.getAttribute(instance.static.ID_ATTRIBUTE);
+		var beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
+		var value = createObject("component", "coldspring.beans.support.SimpleValue").init(arguments.element.getTextContent());
+		var property = createObject("component", "coldspring.beans.support.Property").init("sourceJSON", value);
+
+		beanDef.setClassName(instance.static.JSON_FACTORY_BEAN_CLASS);
+		beanDef.addProperty(property);
+
+		if(arguments.element.hasAttribute(instance.static.SCOPE_ATTRIBUTE))
+		{
+			beanDef.setScope(arguments.element.getAttribute(instance.static.SCOPE_ATTRIBUTE));
+		}
 
 		return beanDef;
     </cfscript>
