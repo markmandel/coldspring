@@ -67,6 +67,7 @@
 <cffunction name="initDefaultNamespaceHandlers" hint="sets up the default namespace handlers" access="private" returntype="void" output="false">
 	<cfscript>
 		addNamespaceHandler(createObject("component", "coldspring.beans.xml.config.BeansNamespaceHandler").init());
+		addNamespaceHandler(createObject("component", "coldspring.beans.xml.config.UtilNamespaceHandler").init());
     </cfscript>
 </cffunction>
 

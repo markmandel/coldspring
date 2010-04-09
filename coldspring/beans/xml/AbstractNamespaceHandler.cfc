@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="abstract base class for Namespace handling" output="false"
 			 colddoc:abstract="true">
@@ -19,20 +19,20 @@
 <cffunction name="getBeanDefinitionParser" hint="get the bean definition parser for a given element" access="public" returntype="AbstractBeanDefinitionParser" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element for which you need a parser" type="any" required="Yes">
 	<cfscript>
-		if(structKeyExists(getDefinitionParsers(), arguments.element.getTagName()))
+		if(structKeyExists(getDefinitionParsers(), arguments.element.getLocalName()))
 		{
-			return structFind(getDefinitionParsers(), arguments.element.getTagName());
+			return structFind(getDefinitionParsers(), arguments.element.getLocalName());
 		}
 
 		//if not found, throw an exception
-		createObject("component", "coldspring.beans.xml.exception.BeanDefinitionParserNotFoundException").init(arguments.element.getNamespaceURI(), arguments.element.getTagName());
+		createObject("component", "coldspring.beans.xml.exception.BeanDefinitionParserNotFoundException").init(arguments.element.getNamespaceURI(), arguments.element.getLocalName());
     </cfscript>
 </cffunction>
 
 <cffunction name="hasBeanDefinitionParser" hint="do we have a DefintiionParser for this element?" access="public" returntype="boolean" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element for which you need a parser" type="any" required="Yes">
 	<cfscript>
-		return structKeyExists(getDefinitionParsers(), arguments.element.getTagName());
+		return structKeyExists(getDefinitionParsers(), arguments.element.getLocalName());
     </cfscript>
 </cffunction>
 

@@ -11,15 +11,17 @@
    limitations under the License.
  --->
 
-<cfcomponent extends="coldspring.beans.xml.AbstractNamespaceHandler" hint="Namespace handler for the 'http://www.coldspringframework.org/schema/beans' namespace" output="false">
+<cfcomponent extends="coldspring.beans.xml.AbstractNamespaceHandler" hint="Namespace handler for the 'http://www.coldspringframework.org/schema/util' namespace" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="BeansNameSpaceHandler" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="UtilNameSpaceHandler" output="false">
 	<cfscript>
 		super.init();
 
-		registerBeanDefinitionParser("bean", createObject("component", "BeanBeanDefinitionParser").init());
+		registerBeanDefinitionParser("list", createObject("component", "ListBeanDefinitionParser").init());
+		registerBeanDefinitionParser("map", createObject("component", "MapBeanDefinitionParser").init());
+		registerBeanDefinitionParser("json", createObject("component", "JSONBeanDefinitionParser").init());
 
 		return this;
 	</cfscript>
@@ -31,14 +33,14 @@
 	<cfscript>
 		var map = {};
 
-		map["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = getDirectoryFromPath(getMetadata(this).path) & "/coldspring-beans-2.0.xsd";
+		map["http://coldspringframework.org/schema/coldspring-util-2.0.xsd"] = getDirectoryFromPath(getMetadata(this).path) & "/coldspring-util-2.0.xsd";
 
 		return map;
     </cfscript>
 </cffunction>
 
 <cffunction name="getNameSpaces" hint="a single, list or array of string values that are the namespaces this handler manages the parsing for" access="public" returntype="any" output="false">
-	<cfreturn "http://www.coldspringframework.org/schema/beans" />
+	<cfreturn "http://www.coldspringframework.org/schema/util" />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -39,7 +39,7 @@
 
 		local.element = local.document.getDocumentElement();
 
-		assertEquals("beans", local.element.getTagName());
+		assertEquals("beans", local.element.getLocalName());
 		assertEquals("http://www.coldspringframework.org/schema/beans", local.element.getNamespaceURI());
 		assertEquals("byName", local.element.getAttribute("default-autowire"));
 		assertEquals("false", local.element.getAttribute("default-lazy-init"));

@@ -324,28 +324,28 @@
 <cffunction name="parsePropertySubElement" hint="parses a common sub element such as ref, bean, map etc and returns a AbstractValue is it find something" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the parent element" type="any" required="Yes">
 	<cfscript>
-		if(arguments.element.getTagName() eq instance.static.REF_ELEMENT)
+		if(arguments.element.getLocalName() eq instance.static.REF_ELEMENT)
 		{
 			local.beanName = arguments.element.getAttribute(instance.static.BEAN_ATTRIBUTE);
 			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
 		}
-		else if(arguments.element.getTagName() eq instance.static.VALUE_ELEMENT)
+		else if(arguments.element.getLocalName() eq instance.static.VALUE_ELEMENT)
 		{
 			local.simpleValue = arguments.element.getTextContent();
 			return createObject("component", "coldspring.beans.support.SimpleValue").init(local.simpleValue);
 		}
-		else if(arguments.element.getTagName() eq instance.static.BEAN_ELEMENT)
+		else if(arguments.element.getLocalName() eq instance.static.BEAN_ELEMENT)
 		{
 			local.beanDef = parseBeanDefinitionElement(arguments.element);
 			getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
 
 			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getID(), getBeanDefinitionRegistry());
 		}
-		else if(arguments.element.getTagName() eq instance.static.LIST_ELEMENT)
+		else if(arguments.element.getLocalName() eq instance.static.LIST_ELEMENT)
 		{
 			return parseListElement(arguments.element);
 		}
-		else if(arguments.element.getTagName() eq instance.static.MAP_ELEMENT)
+		else if(arguments.element.getLocalName() eq instance.static.MAP_ELEMENT)
 		{
 			return parseMapElement(arguments.element);
 		}
@@ -367,7 +367,7 @@
 		{
 			child = childNodes.item(counter);
 
-			if(child.getNodeType() eq getNode().ELEMENT_NODE AND child.getTagName() eq instance.static.META_ELEMENT)
+			if(child.getNodeType() eq getNode().ELEMENT_NODE AND child.getLocalName() eq instance.static.META_ELEMENT)
 			{
 				parseMetaElement(child, arguments.metaObject);
 			}

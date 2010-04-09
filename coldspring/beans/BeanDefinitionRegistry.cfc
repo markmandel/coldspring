@@ -1,4 +1,4 @@
-<!---
+ morn<!---
    Copyright 2010 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -160,13 +160,10 @@
 		var beanDefinition = 0;
 
 		//auto register any registry observers
-		autoRegisterRegistryObservers();
+		autoRegisterRegistryPostProcessors();
 
 		//fire RegistryPost Processor (do this before bean post processors go into effect, as you may need a hook to remove them from the meta)
 		getRegistryPostProcessorObservable().postProcessBeanDefinitionRegistry(this);
-
-		//the set up any bean post processors
-		autoRegisterBeanObservers();
 
 		//get this here, as it may be different, do to the processors
 		beanDefinitions = getBeanDefinitions();
@@ -179,7 +176,13 @@
 			beanDefinition.notifyComplete();
 		}
 
+		//auto register BeanFactoryPostProcessors
+		autoRegisterBeanFactoryPostProcessors();
+
 		getBeanFactoryPostProcessorObservable().postProcessBeanFactory(getBeanFactory());
+
+		//auto register beanProstProcessors
+		autoRegisterBeanPostProcessors();
     </cfscript>
 </cffunction>
 
@@ -208,7 +211,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="autoRegisterRegistryObservers" hint="auto register all the BeanRegistry post processors" access="private" returntype="void" output="false">
+<cffunction name="autoRegisterRegistryPostProcessors" hint="auto register all the BeanRegistry post processors" access="private" returntype="void" output="false">
 	<cfscript>
 		var beanDefinitions = getBeanDefinitions();
 		var id = 0;
@@ -229,7 +232,28 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="autoRegisterBeanObservers" hint="auto register all the bean/beanfactory post processors" access="private" returntype="void" output="false">
+<cffunction name="autoRegisterBeanFactoryPostProcessors" hint="auto register all the beanfactory post processors" access="private" returntype="void" output="false">
+	<cfscript>
+		var beanDefinitions = getBeanDefinitions();
+		var id = 0;
+		var beanDefinition = 0;
+		for (id in beanDefinitions)
+		{
+			beanDefinition = beanDefinitions[id];
+
+			//check for special marker classes
+			if(beanDefinition.hasClassName())
+			{
+				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS))
+				{
+					addBeanFactoryPostProcessor(beanDefinition.getInstance());
+				}
+			}
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="autoRegisterBeanPostProcessors" hint="auto register all the bean post processors" access="private" returntype="void" output="false">
 	<cfscript>
 		var beanDefinitions = getBeanDefinitions();
 		var id = 0;
@@ -245,14 +269,11 @@
 				{
 					addBeanPostProcessor(beanDefinition.getInstance());
 				}
-				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS))
-				{
-					addBeanFactoryPostProcessor(beanDefinition.getInstance());
-				}
 			}
 		}
     </cfscript>
 </cffunction>
+
 
 <!--- closure functions --->
 <cffunction name="removeNameAgainstType" hint="closure function for eachInTypeHierarchy that removes the bean name against the class in the type cache" access="private" returntype="void" output="false">
