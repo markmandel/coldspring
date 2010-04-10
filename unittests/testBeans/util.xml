@@ -20,7 +20,14 @@
 		<value>third value</value>
 	</util:list>
 	
-	<util:map id="map" scope="request">
+	<util:map id="map">
+		<entry key="foo">
+			<value>1</value>
+		</entry>
+		<entry key="bar" value="2"/>
+	</util:map>
+	
+	<util:map id="map2" scope="prototype">
 		<entry key="foo">
 			<value>1</value>
 		</entry>

@@ -11,12 +11,9 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="The definition parser for util:list element" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+<cfcomponent hint="The definition parser for util:list element" extends="AbstractUtilBeanDefinitionParser" output="false">
 
 <cfscript>
-	instance.static.ID_ATTRIBUTE = "id";
-	instance.static.SCOPE_ATTRIBUTE = "scope";
-
 	instance.static.LIST_FACTORY_BEAN_CLASS = "coldspring.beans.factory.config.ListFactoryBean";
 </cfscript>
 
@@ -34,15 +31,9 @@
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
 	<cfscript>
-		var id = arguments.element.getAttribute(instance.static.ID_ATTRIBUTE);
-		var beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
+		var beanDef = super.parse(argumentCollection=arguments);
 		var value = arguments.parserContext.getDelegate().parseListElement(arguments.element);
 		var property = createObject("component", "coldspring.beans.support.Property").init("sourceList", value);
-
-		if(arguments.element.hasAttribute(instance.static.SCOPE_ATTRIBUTE))
-		{
-			beanDef.setScope(arguments.element.getAttribute(instance.static.SCOPE_ATTRIBUTE));
-		}
 
 		beanDef.setClassName(instance.static.LIST_FACTORY_BEAN_CLASS);
 		beanDef.addProperty(property);

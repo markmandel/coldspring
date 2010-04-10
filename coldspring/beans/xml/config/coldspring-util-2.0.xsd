@@ -48,8 +48,7 @@
 	The scope of this collection bean: typically "singleton" (one shared instance,
 	which will be returned by all calls to getBean with the given id), or
 	"prototype" (independent instance resulting from each call to getBean).
-	Default is "singleton". Further scopes, such as "request" or "session",
-	are also supported.
+	Default is "singleton". Session and request are not supported.
 							]]></xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -85,8 +84,7 @@
 	The scope of this collection bean: typically "singleton" (one shared instance,
 	which will be returned by all calls to getBean with the given id), or
 	"prototype" (independent instance resulting from each call to getBean).
-	Default is "singleton". Further scopes, such as "request" or "session",
-	are also supported.
+	Default is "singleton". Session and request are not supported.
 							]]></xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>

@@ -39,6 +39,16 @@
 		local.reget = instance.factory.getBean("map");
 
 		assertSame(local.map, local.reget);
+
+		local.reget = instance.factory.getBean("map2");
+
+		assertNotSame(local.map, local.reget);
+		assertEquals(local.map, local.reget);
+
+		local.reget2 = instance.factory.getBean("map2");
+
+		assertEquals(local.reget2, local.reget);
+		assertNotSame(local.reget2, local.reget, "this should be prototype");
     </cfscript>
 </cffunction>
 

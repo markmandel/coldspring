@@ -17,9 +17,10 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ListFactoryBean" output="false">
 	<cfscript>
-		variables.instance = StructNew();
+		variables.instance = {};
 
 		setSourceList(ArrayNew(1));
+		setSingleton(false);
 
 		return this;
 	</cfscript>
@@ -27,16 +28,44 @@
 
 <cffunction name="getObject" hint="Returns the set up array" access="public" returntype="any" output="false">
 	<cfscript>
-		return getSourceList();
-    </cfscript>
-</cffunction>
+		var result = 0;
+		if(isSingleton())
+		{
+			/*
+			return here in an attempt to keep the same reference
+			if it's a native CF array
+			*/
+			return getSourceList();
+		}
+		else
+		{
+			if(NOT hasTargetListClass())
+			{
+				result = [];
+			}
+			else
+			{
+				result = createObject("java", getTargetListClass()).init();
+			}
 
-<cffunction name="isSingleton" access="public" returntype="boolean" output="false" hint="Returns true">
-	<cfreturn true />
+			result.addAll(getSourceList());
+		}
+
+		return result;
+    </cfscript>
 </cffunction>
 
 <cffunction name="getObjectType" access="public" returntype="string" output="false" hint="returns ''">
 	<cfreturn "" />
+</cffunction>
+
+<cffunction name="isSingleton" access="public" hint="Is this list a singleton? Defaults to false" returntype="boolean" output="false">
+	<cfreturn instance.isSingleton />
+</cffunction>
+
+<cffunction name="setSingleton" access="public" returntype="void" output="false">
+	<cfargument name="isSingleton" type="boolean" required="true">
+	<cfset instance.isSingleton = arguments.isSingleton />
 </cffunction>
 
 <cffunction name="setSourceList" hint="Set the source List, typically populated via XML 'list' elements." access="public" returntype="void" output="false">

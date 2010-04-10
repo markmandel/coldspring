@@ -17,17 +17,30 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="JSONFactoryBean" output="false">
 	<cfscript>
-		setSourceJSON("");
+		setSingleton(false);
+
 		return this;
 	</cfscript>
 </cffunction>
 
 <cffunction name="getObject" hint="Returns the deserialised JSON" access="public" returntype="any" output="false">
-	<cfreturn deserializeJSON(getSourceJSON()) />
+	<cfscript>
+		if(isSingleton())
+		{
+			return getSourceJSON();
+		}
+
+		return duplicate(getSourceJSON());
+    </cfscript>
 </cffunction>
 
-<cffunction name="isSingleton" access="public" returntype="boolean" output="false" hint="returns true">
-	<cfreturn true />
+<cffunction name="isSingleton" access="public" hint="Is this data structure is singleton? Defaults to false" returntype="boolean" output="false">
+	<cfreturn instance.isSingleton />
+</cffunction>
+
+<cffunction name="setSingleton" access="public" returntype="void" output="false">
+	<cfargument name="isSingleton" type="boolean" required="true">
+	<cfset instance.isSingleton = arguments.isSingleton />
 </cffunction>
 
 <cffunction name="getObjectType" access="public" returntype="string" output="false" hint="returns ''">
@@ -36,14 +49,14 @@
 
 <cffunction name="setSourceJSON" hint="The JSON to be deserialised" access="public" returntype="void" output="false">
 	<cfargument name="sourceJSON" type="string" required="true">
-	<cfset instance.sourceJSON = arguments.sourceJSON />
+	<cfset instance.sourceJSON = deserializeJSON(arguments.sourceJSON) />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="getSourceJSON" access="private" returntype="string" output="false">
+<cffunction name="getSourceJSON" access="private" hint="The deserialised JSON" returntype="any" output="false">
 	<cfreturn instance.sourceJSON />
 </cffunction>
 
