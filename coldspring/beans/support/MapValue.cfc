@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="I represent a struct of AbstractValues, use getValue() to modify" extends="AbstractValue" output="false">
 
@@ -75,12 +75,12 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="getValueMap" access="private" returntype="struct" output="false">
+<cffunction name="getValueMap" access="private" returntype="struct" output="false" colddoc:generic="AbstractValue,AbstractValue">
 	<cfreturn instance.valueMap />
 </cffunction>
 
 <cffunction name="setValueMap" access="private" returntype="void" output="false">
-	<cfargument name="valueMap" type="struct" required="true">
+	<cfargument name="valueMap" type="struct" required="true" colddoc:generic="AbstractValue,AbstractValue">
 	<cfset instance.valueMap = arguments.valueMap />
 </cffunction>
 
