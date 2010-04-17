@@ -83,7 +83,7 @@
 		}
 		else
 		{
-			id = class & "." & createUUID();
+			id = createUUID();
 		}
 
 		beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
