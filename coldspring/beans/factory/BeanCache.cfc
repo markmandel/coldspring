@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Manages the various different scopes for Beans. Supports: singleton, prototype, request and session" output="false">
 
@@ -21,9 +21,13 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanCache" output="false">
+	<cfargument name="javaLoader" hint="accesss to loaded java libraries" type="coldspring.util.java.JavaLoader" required="true">
 	<cfscript>
+		setJavaLoader(arguments.javaLoader);
+
 		setSingletonCache(StructNew());
-		setPrototypeThreadLocal(createObject("java", "java.lang.ThreadLocal").init());
+		setPrototypeCache(getJavaLoader().create("org.coldspring.util.DummyMap").init());
+
 		setSystem(createObject("java", "java.lang.System"));
 		setThread(createObject("java", "java.lang.Thread"));
 
@@ -50,12 +54,6 @@
 		var call = StructFind(getLockNameCommandMap(), arguments.beanDef.getScope());
 
 		return call(argumentCollection=arguments);
-    </cfscript>
-</cffunction>
-
-<cffunction name="clearPrototypeCache" hint="clears the prototype cache. Important as it is thread local, and CF runs on a thread pool" access="public" returntype="void" output="false">
-	<cfscript>
-		getPrototypeThreadLocal().remove();
     </cfscript>
 </cffunction>
 
@@ -133,19 +131,10 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getPrototypeCache" hint="returns the cache for the prototype cache" access="private" returntype="struct" output="false"
+<cffunction name="getPrototypeCache" hint="returns the cache for the prototype cache, which caches nothing" access="private" returntype="struct" output="false"
 			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
 	<cfscript>
-		var local = {};
-
-		local.cache = getPrototypeThreadLocal().get();
-
-		if(NOT structKeyExists(local, "cache"))
-		{
-			getPrototypeThreadLocal().set(StructNew());
-		}
-
-		return getPrototypeThreadLocal().get();
+		return instance.prototypeCache;
     </cfscript>
 </cffunction>
 
@@ -175,13 +164,9 @@
 	<cfset instance.singletonCache = arguments.singletonCache />
 </cffunction>
 
-<cffunction name="getPrototypeThreadLocal" access="private" returntype="any" output="false">
-	<cfreturn instance.prototypeThreadLocal />
-</cffunction>
-
-<cffunction name="setPrototypeThreadLocal" access="private" returntype="void" output="false">
-	<cfargument name="prototypeThreadLocal" type="any" required="true">
-	<cfset instance.prototypeThreadLocal = arguments.prototypeThreadLocal />
+<cffunction name="setPrototypeCache" access="private" returntype="void" output="false">
+	<cfargument name="prototypeCache" type="struct" required="true">
+	<cfset instance.prototypeCache = arguments.prototypeCache />
 </cffunction>
 
 <cffunction name="getSystem" access="private" returntype="any" output="false">
@@ -218,6 +203,15 @@
 <cffunction name="setLockNameCommandMap" access="private" returntype="void" output="false">
 	<cfargument name="lockNameCommandMap" type="struct" required="true">
 	<cfset instance.lockNameCommandMap = arguments.lockNameCommandMap />
+</cffunction>
+
+<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.java.JavaLoader" output="false">
+	<cfreturn instance.javaLoader />
+</cffunction>
+
+<cffunction name="setJavaLoader" access="private" returntype="void" output="false">
+	<cfargument name="javaLoader" type="coldspring.util.java.JavaLoader" required="true">
+	<cfset instance.javaLoader = arguments.javaLoader />
 </cffunction>
 
 </cfcomponent>

@@ -34,23 +34,12 @@
 	<cfscript>
     	var beanDef = 0;
 		var bean = 0;
-    </cfscript>
 
-	<cftry>
-	<cfscript>
 		beanDef = getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments);
 		bean = beanDef.getInstance();
 
-		//clear out the prototype cache, is it is thread local.
-		getBeanCache().clearPrototypeCache();
-
 		return bean;
     </cfscript>
-		<cfcatch>
-			<cfset getBeanCache().clearPrototypeCache()>
-			<cfrethrow>
-		</cfcatch>
-	</cftry>
 </cffunction>
 
 <cffunction name="containsBeanDefinition" hint="Returns true if a bean (definition) exists" access="public" returntype="boolean" output="false">
@@ -116,7 +105,7 @@
 
 <cffunction name="prepareRefresh" hint="prepares the refresh method, should be called at the beginning of refresh()" access="private" returntype="void" output="false">
 	<cfscript>
-		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init());
+		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init(getJavaLoader()));
 		setBeanDefinitionRegistry(createObject("component", "BeanDefinitionRegistry").init(this, getBeanCache()));
     </cfscript>
 </cffunction>

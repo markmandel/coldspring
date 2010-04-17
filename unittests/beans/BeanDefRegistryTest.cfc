@@ -4,7 +4,8 @@
 
 <cffunction name="setup" hint="setup method" access="public" returntype="void" output="false">
 	<cfscript>
-		var beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init();
+		var jl = createObject("component", "coldspring.util.java.JavaLoader").init("unittests");
+		var beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init(jl);
 
 		//this is lazy, but I'll just create an abstract bean factory. (This should be mocked later, but I'm on a deadline)
 		var factory = createObject("component", "coldspring.beans.AbstractBeanFactory");

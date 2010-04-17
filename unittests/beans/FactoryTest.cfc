@@ -23,9 +23,10 @@
 
 <cffunction name="beanCacheGetCacheTest" hint="tests for the bean cache" access="public" returntype="void" output="false">
 	<cfscript>
+		var jl = createObject("component", "coldspring.util.java.JavaLoader").init("unittests");
 		var local = {};
 
-		local.beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init();
+		local.beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init(jl);
 
 		//singleton
 		local.sCache1 = local.beanCache.getCache("singleton");
@@ -41,9 +42,8 @@
 
 		local.sCache2 = local.beanCache.getCache("prototype");
 
-		AssertEquals(local.sCache1.uuid, local.sCache2.uuid, "prototype cache should be the same");
-
-		local.beanCache.clearPrototypeCache();
+		AssertFalse(structKeyExists(local.sCache1, "uuid"));
+		AssertFalse(structKeyExists(local.sCache2, "uuid"));
 
 		local.sCache2 = local.beanCache.getCache("prototype");
 
@@ -101,9 +101,10 @@
 
 <cffunction name="beanCacheGetLockNameTest" hint="tests the lock names coming out of the beanCache" access="public" returntype="void" output="false">
 	<cfscript>
+		var jl = createObject("component", "coldspring.util.java.JavaLoader").init("unittests");
 		var local = {};
 
-		local.beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init();
+		local.beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init(jl);
 		local.System = createObject("java", "java.lang.System");
 		local.Thread = createObject("java", "java.lang.Thread");
 

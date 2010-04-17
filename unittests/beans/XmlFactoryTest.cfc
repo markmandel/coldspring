@@ -49,7 +49,7 @@
 
 		local.car = instance.factory.getBean("car2");
 
-		testCar(local.car, true);
+		testCar(local.car, false);
     </cfscript>
 </cffunction>
 
@@ -59,7 +59,7 @@
 
 		local.car = instance.factory.getBean("car3");
 
-		testCar(local.car, true);
+		testCar(local.car, false);
     </cfscript>
 </cffunction>
 
@@ -69,7 +69,7 @@
 
 		local.car = instance.factory.getBean("car4");
 
-		testCar(local.car, true);
+		testCar(local.car, false);
     </cfscript>
 </cffunction>
 

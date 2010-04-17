@@ -71,6 +71,9 @@
 
 				//now set it to being truly complete.
 				cache[completeKey] = 1;
+
+				//do this here, as prototype scoped beans, have a cache that stores nothing
+				return bean;
 			}
     	</cfscript>
     	</cflock>
