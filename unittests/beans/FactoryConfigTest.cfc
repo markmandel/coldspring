@@ -90,7 +90,7 @@
 
 		local.counter = instance.factory.getBean("beanCounter");
 
-		assertEquals(10, local.counter.getRegistryCount());
+		assertEquals(12, local.counter.getRegistryCount());
 		assertEquals(local.counter.getFactoryCount(), local.counter.getRegistryCount());
     </cfscript>
 </cffunction>

@@ -17,6 +17,7 @@
 	instance.static = {};
 
 	instance.static.DEFAULT_AUTOWIRE_ATTRIBUTE = "default-autowire";
+	instance.static.DEFAULT_LAZY_INIT_ATTRIBUTE = "default-lazy-init";
 
 	instance.static.BEAN_ELEMENT = "bean";
 	instance.static.CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
@@ -42,6 +43,7 @@
 	instance.static.FACTORY_METHOD_ATTRIBUTE = "factory-method";
 	instance.static.FACTORY_BEAN_ATTRIBUTE = "factory-bean";
 	instance.static.INIT_METHOD_ATTRIBUTE = "init-method";
+	instance.static.LAZY_INIT_ATTRIBUTE = "lazy-init";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -53,6 +55,8 @@
 		initDefaultValues(arguments.document.getDocumentElement());
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
 		setNode(createObject("java", "org.w3c.dom.Node"));
+
+		_trace("getDefaultLazyInit:, #getDefaultLazyInit()#");
 
 		return this;
 	</cfscript>
@@ -67,6 +71,18 @@
 		}
 
 		return arguments.autowire;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getLazyInitMode" hint="returns the overall lazy init mode, factoring in the default value" access="public" returntype="string" output="false">
+	<cfargument name="lazyInit" hint="the lazy init value set on the bean definition" type="string" required="Yes">
+	<cfscript>
+		if(arguments.lazyInit eq "default")
+		{
+			return getDefaultLazyInit();
+		}
+
+		return arguments.lazyInit;
     </cfscript>
 </cffunction>
 
@@ -116,6 +132,8 @@
 		//set autowire
 		beanDef.setAutowire(getAutowireMode(arguments.element.getAttribute(instance.static.AUTOWIRE_ATTRIBUTE)));
 
+		beanDef.setLazyInit(getLazyInitMode(arguments.element.getAttribute(instance.static.LAZY_INIT_ATTRIBUTE)));
+
 		//add constructor args
 		parseConstructorArgElements(arguments.element, beanDef);
 
@@ -134,6 +152,17 @@
 		return beanDef;
     </cfscript>
 </cffunction>
+
+<cffunction name="_trace">
+	<cfargument name="s">
+	<cfset var g = "">
+	<cfsetting showdebugoutput="true">
+	<cfsavecontent variable="g">
+		<cfdump var="#arguments.s#">
+	</cfsavecontent>
+	<cftrace text="#g#">
+</cffunction>
+
 
 <cffunction name="parseConstructorArgElements" hint="parse all constructor arg sub-elements on a given element" access="public" returntype="void" output="false">
 	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
@@ -404,6 +433,7 @@
 	<cfargument name="element" hint="the top level org.w3c.dom.Element for the config xml" type="any" required="Yes">
 	<cfscript>
 		setDefaultAutorwireMode(arguments.element.getAttribute(instance.static.DEFAULT_AUTOWIRE_ATTRIBUTE));
+		setDefaultLazyInit(arguments.element.getAttribute(instance.static.DEFAULT_LAZY_INIT_ATTRIBUTE));
     </cfscript>
 </cffunction>
 
@@ -424,6 +454,16 @@
 	<cfargument name="defaultAutorwireMode" type="string" required="true">
 	<cfset instance.defaultAutorwireMode = arguments.defaultAutorwireMode />
 </cffunction>
+
+<cffunction name="getDefaultLazyInit" access="private" returntype="string" output="false">
+	<cfreturn instance.defaultLazyInit />
+</cffunction>
+
+<cffunction name="setDefaultLazyInit" access="private" returntype="void" output="false">
+	<cfargument name="defaultLazyInit" type="string" required="true">
+	<cfset instance.defaultLazyInit = arguments.defaultLazyInit />
+</cffunction>
+
 
 <cffunction name="setNode" access="private" returntype="void" output="false">
 	<cfargument name="node" type="any" required="true">

@@ -32,13 +32,7 @@
 <cffunction name="getBean" hint="gets a bean by a given id" access="public" returntype="any" output="false">
 	<cfargument name="id" hint="the id of the bean to get" type="string" required="Yes">
 	<cfscript>
-    	var beanDef = 0;
-		var bean = 0;
-
-		beanDef = getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments);
-		bean = beanDef.getInstance();
-
-		return bean;
+		return getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments).getInstance();
     </cfscript>
 </cffunction>
 
@@ -90,7 +84,7 @@
 </cffunction>
 
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
-	<cfreturn "0.1.c">
+	<cfreturn "0.2">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -115,6 +109,34 @@
 	<cfscript>
 		getBeanDefinitionRegistry().notifyComplete();
 		getBeanDefinitionRegistry().validate();
+
+		instantiateaNonLazyBeans();
+    </cfscript>
+</cffunction>
+
+<cffunction name="instantiateaNonLazyBeans" hint="go through the bean definitions and instantiate any of the beans that aren't lazy-init='true'" access="private" returntype="void" output="false">
+	<cfscript>
+		var beanNames = getBeanDefinitionNames();
+		var len = ArrayLen(beanNames);
+		var counter = 1;
+		var name = 0;
+		var beanDef = 0;
+
+        for(; counter lte len; counter++)
+        {
+			name = beanNames[counter];
+
+			beanDef = getBeanDefinition(name);
+
+			/**
+			 * only eagerly init when a bean is lazy-init=false, a singleton
+			 * and also not abstract.
+			 */
+			if(NOT beanDef.isAbstract() AND NOT beanDef.isLazyInit() AND beanDef.getScope() eq "singleton")
+			{
+				getBean(name);
+			}
+        }
     </cfscript>
 </cffunction>
 

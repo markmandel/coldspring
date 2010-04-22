@@ -42,4 +42,8 @@
 	
 	<bean id="nameAware" class="unittests.testBeans.BeanNameAwareBean" />
 	<bean id="factoryAware" class="unittests.testBeans.BeanFactoryAwareBean" />
+	
+	<!-- test lazy init's -->
+	<bean id="nameToRequest3" class="unittests.testBeans.BeanNameToRequest" init-method="configure"/>
+	<bean id="nameToRequest4" class="unittests.testBeans.BeanNameToRequest" init-method="configure" lazy-init="true"/>	
 </beans>

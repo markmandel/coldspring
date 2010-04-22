@@ -582,9 +582,8 @@ class name.
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
 	Indicates whether or not this bean is to be lazily initialized.
-	If false, it will be instantiated on startup by bean factories
-	that perform eager initialization of singletons. The default is
-	"false".
+	If false, it will be instantiated on startup by if the bean is a singleton, and not abstract. 
+	The default is "false".
 
 	Note: This attribute will not be inherited by child bean definitions.
 	Hence, it needs to be specified per concrete bean definition.

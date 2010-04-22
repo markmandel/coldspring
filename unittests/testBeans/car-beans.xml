@@ -3,6 +3,7 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	   xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"
 	   default-autowire="no"
+	   default-lazy-init="true"
 	   >
 
 	<bean id="abstractCar" abstract="true" class="unittests.testBeans.Car"/>
@@ -207,4 +208,7 @@
 	
 	<bean id="wheel" class="unittests.testBeans.Wheel" scope="prototype"/>
 	
+	<!-- test lazy init's -->
+	<bean id="nameToRequest1" class="unittests.testBeans.BeanNameToRequest" init-method="configure"/>
+	<bean id="nameToRequest2" class="unittests.testBeans.BeanNameToRequest" init-method="configure" lazy-init="false"/>
 </beans>

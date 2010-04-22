@@ -334,4 +334,18 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testLazyInit" hint="testing of lazy init" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		assertFalse(StructKeyExists(request, "nameToRequest1"), "nameToRequest1 should NOT be there");
+		assertTrue(StructKeyExists(request, "nameToRequest2"), "nameToRequest2 should be there");
+
+		local.factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/factory.config.xml"));
+
+		assertTrue(StructKeyExists(request, "nameToRequest3"), "nameToRequest3 should be there");
+		assertFalse(StructKeyExists(request, "nameToRequest4"), "nameToRequest4 should NOT be there");
+    </cfscript>
+</cffunction>
+
 </cfcomponent>
