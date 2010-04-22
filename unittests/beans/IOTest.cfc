@@ -47,7 +47,7 @@
 </cffunction>
 
 <cffunction name="invalidXMLReaderTest" hint="test erronous XML document" access="public" returntype="void" output="false"
-	mxunit:expectedException="org.xml.sax.SAXParseException">
+	mxunit:expectedException="coldspring.io.exception.InvalidXMLException">
 	<cfscript>
 		var local = {};
 

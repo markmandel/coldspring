@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Component for reading and parsing XML data" output="false">
 
@@ -46,7 +46,14 @@
 		builder.setEntityResolver(getJavaLoader().create("org.coldspringframework.beans.xml.MappedEntityResolver").init(getSchemaMap()));
 		builder.setErrorHandler(getJavaLoader().create("org.coldspringframework.beans.xml.DefaultErrorHandler").init());
 
-		document = builder.parse(getPath());
+		try
+		{
+			document = builder.parse(getPath());
+		}
+		catch(org.xml.sax.SAXParseException exc)
+		{
+			createObject("component", "coldspring.io.exception.InvalidXMLException").init(getPath(), getContent(), exc.lineNumber, exc.columnNumber, exc.message);
+		}
 
 		return document;
     </cfscript>
@@ -54,6 +61,10 @@
 
 <cffunction name="getPath" access="public" returntype="string" output="false">
 	<cfreturn instance.path />
+</cffunction>
+
+<cffunction name="getContent" hint="returns the string value of the XML content" access="public" returntype="string" output="false">
+	<cfreturn fileRead(getPath()) />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
