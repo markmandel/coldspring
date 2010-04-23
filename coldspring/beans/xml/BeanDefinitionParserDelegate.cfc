@@ -56,8 +56,6 @@
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
 		setNode(createObject("java", "org.w3c.dom.Node"));
 
-		_trace("getDefaultLazyInit:, #getDefaultLazyInit()#");
-
 		return this;
 	</cfscript>
 </cffunction>
@@ -152,17 +150,6 @@
 		return beanDef;
     </cfscript>
 </cffunction>
-
-<cffunction name="_trace">
-	<cfargument name="s">
-	<cfset var g = "">
-	<cfsetting showdebugoutput="true">
-	<cfsavecontent variable="g">
-		<cfdump var="#arguments.s#">
-	</cfsavecontent>
-	<cftrace text="#g#">
-</cffunction>
-
 
 <cffunction name="parseConstructorArgElements" hint="parse all constructor arg sub-elements on a given element" access="public" returntype="void" output="false">
 	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
