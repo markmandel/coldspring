@@ -151,6 +151,22 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="parseBeanDefinitionAliases" hint="parses common aliases from a <bean> implementation" access="public" returntype="array" output="false">
+	<cfargument name="element" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
+	<cfscript>
+		var aliases = 0;
+		if(arguments.element.hasAttribute(instance.static.NAME_ATTRIBUTE))
+		{
+			aliases = arguments.element.getAttribute(instance.static.NAME_ATTRIBUTE).split("[ ,;]+");
+
+			//coldfusion manages lists a little better
+			return createObject("java", "java.util.Arrays").asList(aliases);
+		}
+
+		return createObject("java", "java.util.ArrayList").init();
+    </cfscript>
+</cffunction>
+
 <cffunction name="parseConstructorArgElements" hint="parse all constructor arg sub-elements on a given element" access="public" returntype="void" output="false">
 	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
 	<cfargument name="beanDefinition" hint="the bean def to add the constructor args to" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">

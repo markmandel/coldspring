@@ -81,11 +81,11 @@
 		}
 		else if(isAlias(arguments.name))
 		{
-			return StructFind(beanDefs, structFind(getAliasCache(), arguments.name));
+			return getBeanDefinition(structFind(getAliasCache(), arguments.name));
 		}
 
 		//oops, can't find it.
-		createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(arguments.id);
+		createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(arguments.name);
     </cfscript>
 </cffunction>
 
@@ -100,7 +100,7 @@
 		}
 		else if(isAlias(arguments.name))
 		{
-			return true;
+			return containsBeanDefinition(structFind(getAliasCache(), arguments.name));
 		}
 
 		return false;
@@ -200,10 +200,23 @@
 </cffunction>
 
 <cffunction name="registerAlias" hint="given the name, register an alias for it" access="public" returntype="void" output="false">
-	<cfargument name="id" hint="the bean id of the concrete Bean Definition" type="string" required="Yes">
-	<cfargument name="alias" hint="the alias to register" type="string" required="Yes">
+	<cfargument name="name" hint="the bean name of the concrete Bean Definition (Could be an alias, name or id)" type="string" required="Yes">
+	<cfargument name="alias" hint="the alias to register - either a simple value, or an array of aliases for this name" type="any" required="Yes">
 	<cfscript>
-		structInsert(getAliasCache(), arguments.alias, arguments.id, true);
+		var local = {};
+
+		if(isSimpleValue(arguments.alias))
+		{
+			registerAliasSingle(argumentCollection=arguments);
+		}
+		else
+		{
+			local.len = ArrayLen(arguments.alias);
+            for(local.counter=1; local.counter lte local.len; local.counter++)
+            {
+				registerAliasSingle(arguments.name, arguments.alias[local.counter]);
+            }
+		}
     </cfscript>
 </cffunction>
 
@@ -219,8 +232,6 @@
 		var beanDefinitions = getBeanDefinitions();
 		var id = 0;
 		var beanDefinition = 0;
-
-		validateAliases();
 
 		for(id in beanDefinitions)
 		{
@@ -290,23 +301,12 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="validateAliases" hint="make sure all configured aliases are pointing at valid beans" access="private" returntype="void" output="false">
+<cffunction name="registerAliasSingle" hint="given the name, register an alias for it" access="public" returntype="void" output="false">
+	<cfargument name="name" hint="the bean name of the concrete Bean Definition (Could be an alias, name or id)" type="string" required="Yes">
+	<cfargument name="alias" hint="the alias to register" type="string" required="Yes">
 	<cfscript>
-		var aliases = getAliasCache();
-		var alias = 0;
-		var id = 0;
-		var beanDefinitions = getBeanDefinitions();
-
-		for(alias in aliases)
-		{
-			id = aliases[alias];
-
-			if(NOT structKeyExists(beanDefinition, id))
-			{
-				createObject("component", "coldspring.beans.exception.InvalidAliasException").init(alias, id);
-			}
-		}
-	</cfscript>
+		structInsert(getAliasCache(), arguments.alias, arguments.name, true);
+    </cfscript>
 </cffunction>
 
 <cffunction name="autoRegisterRegistryPostProcessors" hint="auto register all the BeanRegistry post processors" access="private" returntype="void" output="false">

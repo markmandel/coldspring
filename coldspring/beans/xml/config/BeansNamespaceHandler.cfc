@@ -20,6 +20,7 @@
 		super.init();
 
 		registerBeanDefinitionParser("bean", createObject("component", "BeanBeanDefinitionParser").init());
+		registerBeanDefinitionParser("alias", createObject("component", "AliasBeanDefinitionParser").init());
 
 		return this;
 	</cfscript>

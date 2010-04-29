@@ -1,4 +1,4 @@
-<!---
+﻿<!---
    Copyright 2010 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -11,11 +11,17 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="The definition parser for the <bean> element" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+<cfcomponent hint="Parser for managing <alias> tags" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+
+<cfscript>
+	instance.static = {};
+	instance.static.ALIAS_ATTRIBUTE = "alias";
+	instance.static.NAME_ATTRIBUTE = "name";
+</cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="BeanBeanDefinitionParser" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="AliasBeanDefinitionParser" output="false">
 	<cfscript>
 		super.init();
 
@@ -23,18 +29,15 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="parse" hint="return a CFCBeanDefinition for <bean>" access="public" returntype="any" output="false">
+<cffunction name="parse" hint="Registers an alias with the BeanDefinitionRegistry for each <alias> tag it encounters"
+			access="public" returntype="any" output="false">
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
 	<cfscript>
-		var beanDef = arguments.parserContext.getDelegate().parseBeanDefinitionElement(arguments.element);
+		var alias = arguments.element.getAttribute(instance.static.ALIAS_ATTRIBUTE);
+		var name = arguments.element.getAttribute(instance.static.NAME_ATTRIBUTE);
 
-		//pick up 'name' aliases
-		var aliases = arguments.parserContext.getDelegate().parseBeanDefinitionAliases(arguments.element);
-
-		arguments.parserContext.getBeanDefinitionRegistry().registerAlias(beanDef.getID(), aliases);
-
-		return beanDef;
+		arguments.parserContext.getBeanDefinitionRegistry().registerAlias(name, alias);
     </cfscript>
 </cffunction>
 

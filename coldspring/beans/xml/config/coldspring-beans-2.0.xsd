@@ -55,8 +55,8 @@
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<!-- 
 					<xsd:element ref="import"/>
-					<xsd:element ref="alias"/>
 					 -->
+					<xsd:element ref="alias"/>
 					<xsd:element ref="bean"/>
 					<xsd:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
 				</xsd:choice>
@@ -107,6 +107,35 @@
 			<xsd:choice minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="alias">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+	Defines an alias for a bean (which can reside in a different definition
+	resource).
+			]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:restriction base="xsd:anyType">
+					<xsd:attribute name="name" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	The name of the bean to define an alias for.
+							]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="alias" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	The alias name to define for the bean.
+							]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:restriction>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>	
 	
 	<xsd:element name="bean">
 		<xsd:annotation>

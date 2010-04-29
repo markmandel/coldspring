@@ -7,8 +7,11 @@
 	   >
 
 	<bean id="abstractCar" abstract="true" class="unittests.testBeans.Car"/>
+	
+	<alias name="car1" alias="alsoCar1"/>
+	<alias name="myCarBoogaLoo" alias="anotherAliasForCar1"/>
 	   
-	<bean id="car1" class="unittests.testBeans.Car" init-method="configure">
+	<bean id="car1" name="anotherNameForCar1, myCarBoogaLoo" class="unittests.testBeans.Car" init-method="configure">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="color" ref="color1" />
 		<property name="make" value="Mustang"/>
