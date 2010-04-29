@@ -31,6 +31,7 @@
 		setBeanDefinitions(StructNew());
 		setTypeNameCache(StructNew());
 		setBeanCache(arguments.beanCache);
+		setAliasCache(structNew());
 		setBeanFactory(arguments.beanFactory);
 
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
@@ -70,25 +71,34 @@
 </cffunction>
 
 <cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
-	<cfargument name="id" hint="the id of the bean definition to get" type="string" required="Yes">
+	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
 
-		if(NOT StructKeyExists(beanDefs, arguments.id))
+		if(StructKeyExists(beanDefs, arguments.name))
 		{
-			createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(arguments.id);
+			return StructFind(beanDefs, arguments.name);
+		}
+		else if(isAlias(arguments.name))
+		{
+			return StructFind(beanDefs, structFind(getAliasCache(), arguments.name));
 		}
 
-		return StructFind(beanDefs, arguments.id);
+		//oops, can't find it.
+		createObject("component", "coldspring.beans.exception.BeanDefinitionNotFoundException").init(arguments.id);
     </cfscript>
 </cffunction>
 
 <cffunction name="containsBeanDefinition" hint="Returns true if a bean definition exists" access="public" returntype="boolean" output="false">
-	<cfargument name="id" hint="the id of the bean to check for" type="string" required="Yes" />
+	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
 
-		if(StructKeyExists(beanDefs, arguments.id))
+		if(StructKeyExists(beanDefs, arguments.name))
+		{
+			return true;
+		}
+		else if(isAlias(arguments.name))
 		{
 			return true;
 		}
@@ -107,15 +117,32 @@
 </cffunction>
 
 <cffunction name="removeBeanDefinition" hint="Remove the BeanDefinition for the given name.  Throws a BeanDefinitionNotFoundException if it doesn't exist" access="public" returntype="void" output="false">
-	<cfargument name="id" hint="the name of the bean to check for" type="string" required="Yes" />
+	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
-		var beanDefinition = getBeanDefinition(arguments.id);
+		var beanDefinition = getBeanDefinition(arguments.name);
 		var args = {id = beanDefinition.getID()};
+		var local = {};
 
-		structDelete(beanDefs, arguments.id);
+		structDelete(beanDefs, beanDefinition.getID());
 
 		getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getRemoveNameAgainstTypeClosure(), args);
+
+		//remove aliases
+		if(isAlias(arguments.name))
+		{
+			removeAlias(arguments.name);
+		}
+		else
+		{
+			local.aliases = getAliases(arguments.name);
+			local.len = ArrayLen(local.aliases);
+            for(local.counter=1; local.counter lte local.len; local.counter++)
+            {
+            	local.alias = local.aliases[local.counter];
+				removeAlias(local.alias);
+            }
+		}
     </cfscript>
 </cffunction>
 
@@ -137,11 +164,63 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="getAliases"
+	hint="Return the aliases for the given bean name, if any. All of those aliases point to the same bean when used in a getBean(java.lang.String) call.<br/>
+	If the given name is an alias, the corresponding original bean name and other aliases (if any) will be returned, with the original bean name being the first element in the array.<br/>
+	Will ask the parent factory if the bean cannot be found in this factory instance." access="public" returntype="array" output="false">
+	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
+	<cfscript>
+		var aliasCache = getAliasCache();
+		var id = 0;
+		var aliase = 0;
+		var aliases = [];
+
+		/*
+			Unlikely to be called very often, so we'll just loop around
+		*/
+
+		for(alias in aliasCache)
+		{
+			if(aliasCache[alias] eq arguments.name);
+			{
+				arrayAppend(aliases, alias);
+			}
+		}
+
+		return aliases;
+    </cfscript>
+</cffunction>
+
+<cffunction name="isAlias" hint="Determine whether this given name is defines as an alias (as opposed to the name of an actually registered component). "
+			access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
+	<cfscript>
+		return structKeyExists(getAliasCache(), arguments.name);
+    </cfscript>
+</cffunction>
+
+<cffunction name="registerAlias" hint="given the name, register an alias for it" access="public" returntype="void" output="false">
+	<cfargument name="id" hint="the bean id of the concrete Bean Definition" type="string" required="Yes">
+	<cfargument name="alias" hint="the alias to register" type="string" required="Yes">
+	<cfscript>
+		structInsert(getAliasCache(), arguments.alias, arguments.id, true);
+    </cfscript>
+</cffunction>
+
+<cffunction name="removeAlias" hint="Remove the specified alias from this registry." access="public" returntype="void" output="false">
+	<cfargument name="alias" hint="the alias to remove" type="string" required="Yes">
+	<cfscript>
+		structDelete(getAliasCache(), arguments.alias);
+    </cfscript>
+</cffunction>
+
 <cffunction name="validate" hint="validate all the bean definitions in the Registry. Usually called after notifyCompete()" access="public" returntype="void" output="false">
 	<cfscript>
 		var beanDefinitions = getBeanDefinitions();
 		var id = 0;
 		var beanDefinition = 0;
+
+		validateAliases();
 
 		for(id in beanDefinitions)
 		{
@@ -209,6 +288,25 @@
 		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanFactoryAwarePostProcessor").init(getBeanFactory()));
 		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanNameAwarePostProcessor").init());
     </cfscript>
+</cffunction>
+
+<cffunction name="validateAliases" hint="make sure all configured aliases are pointing at valid beans" access="private" returntype="void" output="false">
+	<cfscript>
+		var aliases = getAliasCache();
+		var alias = 0;
+		var id = 0;
+		var beanDefinitions = getBeanDefinitions();
+
+		for(alias in aliases)
+		{
+			id = aliases[alias];
+
+			if(NOT structKeyExists(beanDefinition, id))
+			{
+				createObject("component", "coldspring.beans.exception.InvalidAliasException").init(alias, id);
+			}
+		}
+	</cfscript>
 </cffunction>
 
 <cffunction name="autoRegisterRegistryPostProcessors" hint="auto register all the BeanRegistry post processors" access="private" returntype="void" output="false">
@@ -319,6 +417,15 @@
 <cffunction name="setBeanCache" access="private" returntype="void" output="false">
 	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfset instance.beanCache = arguments.beanCache />
+</cffunction>
+
+<cffunction name="getAliasCache" access="private" returntype="struct" output="false" colddoc:generic="string,string">
+	<cfreturn instance.aliasCache />
+</cffunction>
+
+<cffunction name="setAliasCache" access="private" returntype="void" output="false">
+	<cfargument name="aliasCache" type="struct" required="true" colddoc:generic="string,string">
+	<cfset instance.aliasCache = arguments.aliasCache />
 </cffunction>
 
 <cffunction name="getTypeNameCache" hint="returns a map of class types that match up to arrays of bean names" access="private" returntype="struct" output="false" colddoc:generic="string,array">

@@ -11,17 +11,17 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="An abstract bean factory" output="false"
+<cfcomponent hint="An abstract bean factory" implements="BeanFactory" output="false"
 			 colddoc:abstract="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="setParent" access="public" returntype="void" output="false">
-	<cfargument name="parent" type="coldspring.beans.AbstractBeanFactory" required="Yes">
+	<cfargument name="parent" type="BeanFactory" required="Yes">
 	<cfset instance.parent = arguments.parent />
 </cffunction>
 
-<cffunction name="getParent" access="public" returntype="coldspring.beans.AbstractBeanFactory" output="false">
+<cffunction name="getParent" access="public" returntype="BeanFactory" output="false">
 	<cfreturn instance.parent />
 </cffunction>
 
@@ -30,14 +30,14 @@
 </cffunction>
 
 <cffunction name="getBean" hint="gets a bean by a given id" access="public" returntype="any" output="false">
-	<cfargument name="id" hint="the id of the bean to get" type="string" required="Yes">
+	<cfargument name="name" hint="the name of the bean to get" type="string" required="Yes">
 	<cfscript>
 		return getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments).getInstance();
     </cfscript>
 </cffunction>
 
 <cffunction name="containsBeanDefinition" hint="Returns true if a bean (definition) exists" access="public" returntype="boolean" output="false">
-	<cfargument name="id" hint="the id of the bean to check for" type="string" required="Yes" />
+	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfreturn getBeanDefinitionRegistry().containsBeanDefinition(argumentCollection=arguments) />
 </cffunction>
 
@@ -47,6 +47,14 @@
 		prepareRefresh();
 		endRefresh();
     </cfscript>
+</cffunction>
+
+<cffunction name="getAliases"
+	hint="Return the aliases for the given bean name, if any. All of those aliases point to the same bean when used in a getBean(java.lang.String) call.<br/>
+	If the given name is an alias, the corresponding original bean name and other aliases (if any) will be returned, with the original bean name being the first element in the array.<br/>
+	Will ask the parent factory if the bean cannot be found in this factory instance." access="public" returntype="array" output="false">
+	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
+	<cfreturn getBeanDefinitionRegistry().getAliases() />
 </cffunction>
 
 <cffunction name="addBeanFactoryPostProcessor" hint="programatically add a beanFactory post processor" access="public" returntype="void" output="false">
@@ -79,12 +87,12 @@
 </cffunction>
 
 <cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
-	<cfargument name="id" hint="the id of the bean definition to get" type="string" required="Yes">
+	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
 	<cfreturn getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
-	<cfreturn "0.2">
+	<cfreturn "0.2.a">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

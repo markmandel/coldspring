@@ -16,7 +16,7 @@
 
 <cffunction name="testContains" hint="testing the contains" access="public" returntype="void" output="false">
 	<cfscript>
-		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo", instance.registry);
+		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo");
 
 		beanDef.setClassName("unittests.testBeans.Car");
 
@@ -36,7 +36,7 @@
 
 <cffunction name="testCount" hint="testing the contains" access="public" returntype="void" output="false">
 	<cfscript>
-		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo", instance.registry);
+		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo");
 		beanDef.setClassName("unittests.testBeans.Car");
 
 		assertEquals(0, instance.registry.getBeanDefinitionCount());
@@ -45,7 +45,7 @@
 
 		assertEquals(1, instance.registry.getBeanDefinitionCount());
 
-		beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo2", instance.registry);
+		beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo2");
 		beanDef.setClassName("unittests.testBeans.Car");
 
 		instance.registry.registerBeanDefinition(beanDef);
@@ -60,7 +60,7 @@
 
 <cffunction name="testGetNames" hint="test getting the bean def names" access="public" returntype="void" output="false">
 	<cfscript>
-		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo", instance.registry);
+		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo");
 		var names = [];
 
 		beanDef.setClassName("unittests.testBeans.Car");
@@ -71,7 +71,7 @@
 		names = ["foo"];
 		assertEquals(names, instance.registry.getBeanDefinitionNames());
 
-		beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo2", instance.registry);
+		beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo2");
 		beanDef.setClassName("unittests.testBeans.Car");
 
 		instance.registry.registerBeanDefinition(beanDef);
@@ -88,7 +88,7 @@
 
 <cffunction name="testGetNamesByType" hint="testing getting names of beans by their type" access="public" returntype="void" output="false">
 	<cfscript>
-		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo", instance.registry);
+		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo");
 		var names = [];
 
 		beanDef.setClassName("unittests.testBeans.Car");
@@ -100,7 +100,7 @@
 		names = ["foo"];
 		assertEquals(names, instance.registry.getBeanNamesForType("unittests.testBeans.Car"));
 
-		beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo2", instance.registry);
+		beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo2");
 		beanDef.setClassName("unittests.testBeans.Car");
 
 		instance.registry.registerBeanDefinition(beanDef);
@@ -115,6 +115,64 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testAlias" hint="test to see if aliasing works" access="public" returntype="void" output="false">
+	<cfscript>
+		var beanDef = createObject("coldspring.beans.support.CFCBeanDefinition").init("foo");
+		var local = {};
+
+		beanDef.setClassName("unittests.testBeans.Car");
+
+		assertFalse(instance.registry.containsBeanDefinition("foo"));
+
+		instance.registry.registerBeanDefinition(beanDef);
+
+		instance.registry.notifyComplete();
+		instance.registry.validate();
+
+		local.def = instance.registry.getBeanDefinition("foo");
+
+		assertSame(local.def, beanDef);
+
+		assertFalse(instance.registry.isAlias("foo"));
+
+		local.aliases = [];
+		assertEquals(local.aliases, instance.registry.getAliases("foo"));
+
+		assertFalse(instance.registry.containsBeanDefinition("fooAlias"));
+
+		//register alias
+		instance.registry.registerAlias("foo", "fooAlias");
+
+		assertTrue(instance.registry.isAlias("fooAlias"));
+
+		local.aliases = ["fooAlias"];
+		assertEquals(local.aliases, instance.registry.getAliases("foo"));
+
+		assertTrue(instance.registry.containsBeanDefinition("fooAlias"));
+
+		local.def = instance.registry.getBeanDefinition("fooAlias");
+
+		assertSame(local.def, beanDef);
+
+		//remove alias
+		instance.registry.removeAlias("fooAlias");
+
+		assertFalse(instance.registry.isAlias("foo"));
+
+		local.aliases = [];
+
+		assertEquals(local.aliases, instance.registry.getAliases("foo"));
+
+		assertFalse(instance.registry.containsBeanDefinition("fooAlias"));
+
+		//put is back in to test the remove bean process
+		instance.registry.registerAlias("foo", "fooAlias");
+
+		instance.registry.removeBeanDefinition("foo");
+
+		assertFalse(instance.registry.isAlias("fooAlias"), "Alias should be removed");
+    </cfscript>
+</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
