@@ -132,8 +132,8 @@
 				len = ArrayLen(meta.functions);
 		        for(counter = 1; counter lte len; counter++)
 		        {
-		        	args.func = meta.functions[counter];
-					call(argumentCollection=args);
+		        	arguments.args.func = meta.functions[counter];
+					call(argumentCollection=arguments.args);
 		        }
 			}
 
