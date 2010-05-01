@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An abstract value for an Abstract Property" output="false"
 			 colddoc:abstract="true">
@@ -18,6 +18,14 @@
 
 <cffunction name="getValue" hint="The value this obejct is" access="public" returntype="any" output="false">
 	<cfreturn instance.value />
+</cffunction>
+
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
+	<cfscript>
+		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+
+		return cloneable.clone(this);
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

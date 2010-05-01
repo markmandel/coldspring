@@ -95,6 +95,63 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="overrideFrom" hint="Override settings in this bean definition (assumably a copied parent from a parent-child inheritance relationship) from the given bean definition (assumably the child).
+			<br/>
+			* Will override className if specified in the given bean definition.<br/>
+	        * Will always take abstract, scope, lazyInit, autowireMode, from the given bean definition.<br/>
+	        * Will add constructorArguments, properties, from the given bean definition to existing ones.<br/>
+	        * Will override factoryBeanName, factoryMethodName, and initMethodName if specified in the given bean definition.<br/>"
+	access="public" returntype="void" output="false">
+	<cfargument name="beanDefinition" hint="the bean definition to overwrite with" type="AbstractBeanDefinition" required="Yes">
+	<cfscript>
+		var len = 0;
+		var counter = 0;
+		var item = 0;
+		var values = 0;
+
+		if(arguments.beanDefinition.hasClassName())
+		{
+			setClassName(arguments.beanDefinition.getClassName());
+		}
+
+		setAbstract(arguments.beanDefinition.getAbstract());
+		setScope(arguments.beanDefinition.getScope());
+		setLazyInit(arguments.beanDefinition.getLazyInit());
+		setAutowire(arguments.beanDefinition.getAutowire());
+
+		values = arguments.beanDefinition.getConstructorArgsAsArray();
+		len = arrayLen(values);
+		for(counter = 1; counter <= len; counter++)
+		{
+			item = values[counter];
+			addConstructorArg(item);
+		}
+
+		values = arguments.beanDefinition.getPropertiesAsArray();
+		len = arrayLen(values);
+		for(counter = 1; counter <= len; counter++)
+		{
+			item = values[counter];
+			addProperty(item);
+		}
+
+		if(arguments.beanDefinition.hasFactoryBeanName())
+		{
+			setFactoryBeanName(arguments.beanDefinition.getFactoryBeanName());
+		}
+
+		if(arguments.beanDefinition.hasFactoryMethodName())
+		{
+			setFactoryMethodName(arguments.beanDefinition.getFactoryMethodName());
+		}
+
+		if(arguments.beanDefinition.hasInitMethod())
+		{
+			setInitMethod(arguments.beanDefinition.getInitMethod());
+		}
+    </cfscript>
+</cffunction>
+
 <cffunction name="notifyComplete" hint="Called when all the beans are added to the Factory, and post processing can occur." access="public" returntype="void" output="false">
 	<cfscript>
 		buildAutowire();
@@ -209,7 +266,7 @@
 <cffunction name="addConstructorArg" hint="adds a constructor argument dependency."
 			access="public" returntype="void" output="false">
 	<cfargument name="constructorArg" type="coldspring.beans.support.ConstructorArg" required="true" />
-	<cfset structInsert(getConstructorArgs(), arguments.constructorArg.getName(), arguments.constructorArg, false) />
+	<cfset structInsert(getConstructorArgs(), arguments.constructorArg.getName(), arguments.constructorArg, true) />
 </cffunction>
 
 <cffunction name="getPropertiesAsArray" hint="returns the properties as an array, for convenience" access="public" returntype="array" output="false"
@@ -225,7 +282,7 @@
 <cffunction name="addProperty" hint="adds a property dependency."
 			access="public" returntype="void" output="false">
 	<cfargument name="property" type="coldspring.beans.support.Property" required="true" />
-	<cfset structInsert(getProperties(), arguments.property.getName(), arguments.property) />
+	<cfset structInsert(getProperties(), arguments.property.getName(), arguments.property, true) />
 </cffunction>
 
 <cffunction name="hasPropertyByName" hint="a check to see if a property with the given name exists" access="public" returntype="boolean" output="false">
@@ -268,9 +325,30 @@
 	<cfreturn StructKeyExists(instance, "factoryMethodName") />
 </cffunction>
 
+<cffunction name="getParentName" hint="Return the name of the parent definition of this bean definition" access="public" returntype="string" output="false">
+	<cfreturn instance.parentName />
+</cffunction>
+
+<cffunction name="setParentName" hint="Set the name of the parent definition of this bean definition" access="public" returntype="void" output="false">
+	<cfargument name="parentName" type="string" required="true">
+	<cfset instance.parentName = arguments.parentName />
+</cffunction>
+
+<cffunction name="hasParentName" hint="whether this object has a parentName" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "parentName") />
+</cffunction>
+
 <cffunction name="getMeta" hint="Return custom object meta data" access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
 	<cfreturn instance.Meta />
+</cffunction>
+
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
+	<cfscript>
+		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+
+		return cloneable.clone(this);
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

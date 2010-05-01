@@ -29,6 +29,14 @@
 	<cfreturn instance.Meta />
 </cffunction>
 
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
+	<cfscript>
+		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+
+		return cloneable.clone(this);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
