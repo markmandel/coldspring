@@ -74,8 +74,31 @@
 	<cfset instance.reverseMake = arguments.reverseMake />
 </cffunction>
 
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="Car" output="false">
+	<cfscript>
+		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+
+		return cloneable.clone(this);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="setInstance" hint="sets the incoming clone data " access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		if(structKeyExists(arguments.instance, "wheels"))
+		{
+			arguments.instance.wheels = arguments.cloneable.cloneStruct(arguments.instance.wheels);
+		}
+
+		arguments.instance.engine = arguments.instance.engine.clone();
+
+		variables.instance = arguments.instance;
+    </cfscript>
+</cffunction>
 
 </cfcomponent>

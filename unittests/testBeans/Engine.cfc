@@ -10,7 +10,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Simple Engine Bean">
 
@@ -40,6 +40,14 @@
 <cffunction name="setGears" access="public" returntype="void" output="false">
 	<cfargument name="Gears" type="array" required="true">
 	<cfset instance.Gears = arguments.Gears />
+</cffunction>
+
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="Engine" output="false">
+	<cfscript>
+		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+
+		return cloneable.clone(this);
+    </cfscript>
 </cffunction>
 
 </cfcomponent>

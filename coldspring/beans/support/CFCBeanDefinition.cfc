@@ -162,6 +162,11 @@
 		Constructor autowire metadata
 		*/
 
+		if(NOT structKeyExists(arguments.func, "access"))
+		{
+			arguments.func.access = "public";
+		}
+
 		if(arguments.func.access eq "public"
 			AND LCase(arguments.func.name) eq "init")
 		{

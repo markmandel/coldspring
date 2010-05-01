@@ -34,7 +34,7 @@
 
 		getMethodInjector().injectMethod(arguments.object, __cloneObject, "public");
 
-		clone = arguments.object.__cloneObject();
+		clone = arguments.object.__cloneObject(this);
 
 		getMethodInjector().removeMethod(arguments.object, "cloneObject");
 
@@ -60,6 +60,21 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="cloneStruct" hint="Run .clone() on a struct, and return the new struct. Handy helper method." access="public" returntype="struct" output="false">
+	<cfargument name="struct" hint="the struct to clone all elements on" type="struct" required="Yes">
+	<cfscript>
+		var cloneStruct = {};
+		var key = 0;
+
+		for(key in arguments.struct)
+		{
+			structInsert(cloneStruct, key, arguments.struct[key].clone());
+		}
+
+		return cloneStruct;
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -70,13 +85,15 @@
 	<cfargument name="cloneable" hint="pass through cloneable, as it's handy" type="Cloneable" required="Yes">
 	<cfscript>
 		var clone = 0;
+		var injector = createObject("component", "MethodInjector").init();
+
 		if(structKeyExists(variables, "setInstance"))
 		{
 			clone = createObject("component", getMetadata(this).name);
 
-			getMethodInjector().start(clone);
-			getMethodInjector().changeMethodScope(clone, "setInstance", "public");
-			getMethodInjector().stop(clone);
+			injector.start(clone);
+			injector.changeMethodScope(clone, "setInstance", "public");
+			injector.stop(clone);
 
 			clone.setInstance(structCopy(variables.instance), arguments.cloneable);
 		}

@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="i am a wheel" output="false">
 
@@ -19,6 +19,14 @@
 	<cfscript>
 		return this;
 	</cfscript>
+</cffunction>
+
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="Wheel" output="false">
+	<cfscript>
+		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+
+		return cloneable.clone(this);
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
