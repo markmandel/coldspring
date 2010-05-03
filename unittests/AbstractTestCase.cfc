@@ -9,15 +9,27 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An abstract test case for default setup, teardown, and util methods" extends="mxunit.framework.TestCase" output="false"
 			 colddoc:abstract="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
+<cffunction name="_trace" access="private">
+	<cfargument name="s">
+	<cfset var g = "">
+	<cfsetting showdebugoutput="true">
+	<cfsavecontent variable="g">
+		<cfdump var="#arguments.s#">
+	</cfsavecontent>
+	<cftrace text="#g#">
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+
 
 </cfcomponent>

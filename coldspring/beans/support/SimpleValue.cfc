@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Is a simple value, such as a string, or a number" extends="AbstractValue" output="false">
 
@@ -20,7 +20,7 @@
 	<cfscript>
 		if(NOT isSimpleValue(arguments.value))
 		{
-			createObject("component", "coldspring.beans.support.exception.NotSimpleValueException").init("arguments.value");
+			createObject("component", "coldspring.beans.support.exception.NotSimpleValueException").init("#arguments.value#");
 		}
 
 		setValue(arguments.value);

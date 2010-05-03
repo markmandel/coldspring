@@ -100,7 +100,9 @@
 			* Will override className if specified in the given bean definition.<br/>
 	        * Will always take abstract, scope, lazyInit, autowireMode, from the given bean definition.<br/>
 	        * Will add constructorArguments, properties, from the given bean definition to existing ones.<br/>
-	        * Will override factoryBeanName, factoryMethodName, and initMethodName if specified in the given bean definition.<br/>"
+	        * Will override factoryBeanName, factoryMethodName, and initMethodName if specified in the given bean definition.<br/>
+			* Will override meta data, if it exists"
+
 	access="public" returntype="void" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to overwrite with" type="AbstractBeanDefinition" required="Yes">
 	<cfscript>
@@ -114,10 +116,15 @@
 			setClassName(arguments.beanDefinition.getClassName());
 		}
 
-		setAbstract(arguments.beanDefinition.getAbstract());
+		setAbstract(arguments.beanDefinition.isAbstract());
 		setScope(arguments.beanDefinition.getScope());
-		setLazyInit(arguments.beanDefinition.getLazyInit());
+		setLazyInit(arguments.beanDefinition.isLazyInit());
 		setAutowire(arguments.beanDefinition.getAutowire());
+
+		if(!structIsEmpty(arguments.beanDefinition.getMeta()))
+		{
+			setMeta(arguments.beanDefinition.getMeta());
+		}
 
 		values = arguments.beanDefinition.getConstructorArgsAsArray();
 		len = arrayLen(values);
@@ -340,7 +347,7 @@
 
 <cffunction name="getMeta" hint="Return custom object meta data" access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
-	<cfreturn instance.Meta />
+	<cfreturn instance.meta />
 </cffunction>
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
@@ -402,6 +409,18 @@
 			methodInjector.injectMethod(this, getInstance_Abstract, "public", "getInstance");
 			methodInjector.stop(this);
 		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		arguments.instance.constructorArgs = arguments.cloneable.cloneStruct(arguments.instance.constructorArgs);
+		arguments.instance.properties = arguments.cloneable.cloneStruct(arguments.instance.properties);
+		arguments.instance.meta = duplicate(arguments.instance.meta);
+
+		variables.instance = arguments.instance;
     </cfscript>
 </cffunction>
 

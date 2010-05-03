@@ -36,7 +36,7 @@
 		</property>
 	</bean>
 	
-	<bean id="car2" class="unittests.testBeans.Car">
+	<bean id="car2" parent="abstractCar">
 		<constructor-arg name="engine">
 			<description>Here is the engine</description>
 			<meta key="engineMeta" value="engineMetaValue"/>
@@ -118,6 +118,31 @@
 				<entry key="spare" value-ref="wheel"/>
 			</map>
 		</property>		
+	</bean>
+	
+	<bean id="parentCar" name="parentAlias" class="unittests.testBeans.Car" init-method="configure" abstract="true">
+		<meta key="keyValue1" value="metaValue1"/>
+		<meta key="keyValue2" value="metaValue2"/>	
+		<constructor-arg name="engine" ref="childEngine"/>
+		<property name="color" ref="color1" />
+		<property name="wheels">
+			<map>
+				<entry key="1" value-ref="wheel"/>
+				<entry key="2" value-ref="wheel"/>
+				<entry key="3" value-ref="wheel"/>
+				<entry key="4" value-ref="wheel"/>
+				<entry key="spare" value-ref="wheel"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="childEngine" parent="engine"/>
+	
+	<bean id="childCar" parent="parentAlias">
+		<property name="make">
+			<meta key="makeBrand" value="Ford"/>
+			<value>Mustang</value>
+		</property>
 	</bean>
 	
 	<!-- factory methods -->

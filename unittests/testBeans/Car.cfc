@@ -86,7 +86,7 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="setInstance" hint="sets the incoming clone data " access="private" returntype="void" output="false">
+<cffunction name="setCloneInstanceData" hint="sets the incoming clone data " access="private" returntype="void" output="false">
 	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
 	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
 	<cfscript>

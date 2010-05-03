@@ -30,9 +30,9 @@
 	<cfreturn instance.beanName />
 </cffunction>
 
-<cffunction name="setBeanDefinition" hint="The actual bean definition" access="public" returntype="void" output="false">
-	<cfargument name="beanDefinition" type="coldspring.beans.support.AbstractBeanDefinition" required="true">
-	<cfset instance.beanDefinition = arguments.beanDefinition />
+<cffunction name="setBeanName" access="public" returntype="void" output="false">
+	<cfargument name="beanName" type="string" required="true">
+	<cfset instance.beanName = arguments.beanName />
 </cffunction>
 
 <cffunction name="getBeanDefinition" access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
@@ -58,9 +58,17 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="setBeanName" access="private" returntype="void" output="false">
-	<cfargument name="beanName" type="string" required="true">
-	<cfset instance.beanName = arguments.beanName />
+<cffunction name="setBeanDefinition" hint="The actual bean definition" access="private" returntype="void" output="false">
+	<cfargument name="beanDefinition" type="coldspring.beans.support.AbstractBeanDefinition" required="true">
+	<cfset instance.beanDefinition = arguments.beanDefinition />
+</cffunction>
+
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		variables.instance = arguments.instance;
+    </cfscript>
 </cffunction>
 
 <cffunction name="getBeanDefinitionRegistry" access="private" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">

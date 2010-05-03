@@ -348,4 +348,16 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testParentCar" hint="test that a car with a parent works" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.beanDef = instance.factory.getBeanDefinition("childCar");
+
+		local.car = instance.factory.getBean("childCar");
+
+		testCar(local.car);
+    </cfscript>
+</cffunction>
+
 </cfcomponent>

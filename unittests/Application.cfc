@@ -12,6 +12,7 @@
  --->
 
 <cfcomponent hint="The application.cfc" output="false">
+<cfsetting requesttimeout="#(60*60)#">
 
 <cfscript>
 	this.name = "ColdSpring Unit Tests";

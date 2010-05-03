@@ -29,7 +29,7 @@
 	<cfreturn instance.Meta />
 </cffunction>
 
-<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractProperty" output="false">
 	<cfscript>
 		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
 
@@ -49,6 +49,16 @@
 		setValue(arguments.value);
 		setMeta(StructNew());
 	</cfscript>
+</cffunction>
+
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		arguments.instance.value = arguments.instance.value.clone();
+
+		variables.instance = arguments.instance;
+    </cfscript>
 </cffunction>
 
 <cffunction name="setName" access="private" returntype="void" output="false">

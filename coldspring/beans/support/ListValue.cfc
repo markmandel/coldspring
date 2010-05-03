@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="An array of abstractValues, use getValue() to modify. Uses an ArrayList, so it will pass by reference"
 			 extends="AbstractValue" output="false">
@@ -52,6 +52,16 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		arguments.instance.valueArray = arguments.cloneable.cloneArray(arguments.instance.valueArray, "java.util.ArrayList");
+
+		variables.instance = arguments.instance;
+    </cfscript>
+</cffunction>
 
 <cffunction name="getValueArray" access="private" returntype="array" output="false"	colddoc:generic="AbstractValue">
 	<cfreturn instance.valueArray />

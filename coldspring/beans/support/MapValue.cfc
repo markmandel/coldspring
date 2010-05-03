@@ -75,6 +75,16 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		arguments.instance.valueMap = arguments.cloneable.cloneStruct(arguments.instance.valueMap, true, "java.util.HashMap");
+
+		variables.instance = arguments.instance;
+    </cfscript>
+</cffunction>
+
 <cffunction name="getValueMap" access="private" returntype="struct" output="false" colddoc:generic="AbstractValue,AbstractValue">
 	<cfreturn instance.valueMap />
 </cffunction>

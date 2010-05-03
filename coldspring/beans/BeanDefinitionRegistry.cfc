@@ -126,7 +126,13 @@
 
 		structDelete(beanDefs, beanDefinition.getID());
 
-		getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getRemoveNameAgainstTypeClosure(), args);
+		if(beanDefinition.hasClassName())
+		{
+			getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getRemoveNameAgainstTypeClosure(), args);
+		}
+
+		/*
+		Keeping this in case I need it, but don't be removing aliases, unless explicitly asked
 
 		//remove aliases
 		if(isAlias(arguments.name))
@@ -143,6 +149,7 @@
 				removeAlias(local.alias);
             }
 		}
+		*/
     </cfscript>
 </cffunction>
 
@@ -171,9 +178,21 @@
 	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
 	<cfscript>
 		var aliasCache = getAliasCache();
-		var id = 0;
-		var aliase = 0;
+		var alias = 0;
 		var aliases = [];
+		var id = 0;
+
+		id = arguments.name;
+
+		if(isAlias(id))
+		{
+			while(!isAlias(arguments.name))
+			{
+				id = aliasCache[arguments.name];
+			}
+
+			arrayAppend(aliases, id);
+		}
 
 		/*
 			Unlikely to be called very often, so we'll just loop around
@@ -181,7 +200,7 @@
 
 		for(alias in aliasCache)
 		{
-			if(aliasCache[alias] eq arguments.name);
+			if(aliasCache[alias] eq id);
 			{
 				arrayAppend(aliases, alias);
 			}
@@ -293,6 +312,7 @@
 <cffunction name="initDefaultPostProcessors" hint="Add the default post processors to their appropriate observables" access="private" returntype="void" output="false">
 	<cfscript>
 		//registry post processors
+		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.ChildBeanRegistryPostProcessor").init());
 		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.FactoryBeanRegistryPostProcessor").init());
 
 		//bean post processors

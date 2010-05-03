@@ -23,7 +23,7 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="clone" hint="clone an object. If 'setInstance(struct, cloneable)' is defined locally (publically, or privately) on the object being cloned,
+<cffunction name="clone" hint="clone an object. If 'setCloneInstanceData(struct, cloneable)' is defined locally (publically, or privately) on the object being cloned,
 		it gets passed a shallow copy of variables.instance to modify as neccessary. Otherwise, the object is just duplicated."
 		access="public" returntype="any" output="false">
 	<cfargument name="object" hint="the object to clone" type="any" required="Yes">
@@ -44,12 +44,22 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="cloneArray" hint="Run .clone() on an array, and return the new array. Handy helper method." access="public" returntype="array" output="false">
+<cffunction name="cloneArray" hint="Run .clone() on an array, and return the new array. Handy helper method." access="public" returntype="any" output="false">
 	<cfargument name="array" hint="the array to clone all elements on" type="array" required="Yes">
+	<cfargument name="arrayClass" hint="optional java class to use for the cloned array" type="string" required="No">
 	<cfscript>
-		var cloneArray = [];
+		var cloneArray = 0;
 		var len = ArrayLen(arguments.array);
 		var counter = 1;
+
+		if(structKeyExists(arguments, "arrayClass"))
+		{
+			cloneArray = createObject("java", arguments.arrayClass).init();
+		}
+		else
+		{
+			cloneArray = [];
+		}
 
 		for(; counter lte len; counter++)
 		{
@@ -62,13 +72,41 @@
 
 <cffunction name="cloneStruct" hint="Run .clone() on a struct, and return the new struct. Handy helper method." access="public" returntype="struct" output="false">
 	<cfargument name="struct" hint="the struct to clone all elements on" type="struct" required="Yes">
+	<cfargument name="cloneKeys" hint="make sure to clone the keys as well" type="boolean" required="No" default="false">
+	<cfargument name="structClass" hint="optional java class to use when creating the struct/map" type="string" required="No">
 	<cfscript>
-		var cloneStruct = {};
+		var cloneStruct = 0;
 		var key = 0;
+		var cloneValue = 0;
+		var cloneKey = 0;
+
+		if(structKeyExists(arguments, "structClass"))
+		{
+			cloneStruct = createObject("java", arguments.structClass).init();
+		}
+		else
+		{
+			cloneStruct = {};
+		}
 
 		for(key in arguments.struct)
 		{
-			structInsert(cloneStruct, key, arguments.struct[key].clone());
+			/* use put() and get() as not sure if we are coming from native java */
+			if(arguments.cloneKeys)
+			{
+				/*
+					We do the clone on the value first, as the clone on the key
+					changes the object so that the Map can't find the value anymore
+				*/
+				cloneValue = arguments.struct.get(key).clone();
+				cloneKey = key.clone();
+
+				cloneStruct.put(cloneKey, cloneValue);
+			}
+			else
+			{
+				cloneStruct.put(key, arguments.struct.get(key).clone());
+			}
 		}
 
 		return cloneStruct;
@@ -81,21 +119,21 @@
 
 <!--- mixins --->
 
-<cffunction name="__cloneObject" hint="mixin: clone the object by copying the instance struct and passing it to the private setInstance function" access="private" returntype="any" output="false">
+<cffunction name="__cloneObject" hint="mixin: clone the object by copying the instance struct and passing it to the private setCloneInstanceData function" access="private" returntype="any" output="false">
 	<cfargument name="cloneable" hint="pass through cloneable, as it's handy" type="Cloneable" required="Yes">
 	<cfscript>
 		var clone = 0;
 		var injector = createObject("component", "MethodInjector").init();
 
-		if(structKeyExists(variables, "setInstance"))
+		if(structKeyExists(variables, "setCloneInstanceData"))
 		{
 			clone = createObject("component", getMetadata(this).name);
 
 			injector.start(clone);
-			injector.changeMethodScope(clone, "setInstance", "public");
+			injector.changeMethodScope(clone, "setCloneInstanceData", "public");
 			injector.stop(clone);
 
-			clone.setInstance(structCopy(variables.instance), arguments.cloneable);
+			clone.setCloneInstanceData(structCopy(variables.instance), arguments.cloneable);
 		}
 		else
 		{

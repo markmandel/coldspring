@@ -55,7 +55,6 @@
 				//create an instance of the factory bean, so we can get the type
 				factoryBean = createObject("component", beanDefinition.getClassName()).init();
 
-				//this is first pass
 				if(NOT factoryBean.isSingleton())
 				{
 					childBeanDefinition.setScope("prototype");

@@ -44,6 +44,7 @@
 	instance.static.FACTORY_BEAN_ATTRIBUTE = "factory-bean";
 	instance.static.INIT_METHOD_ATTRIBUTE = "init-method";
 	instance.static.LAZY_INIT_ATTRIBUTE = "lazy-init";
+	instance.static.PARENT_ATTRIBUTE = "parent";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -142,6 +143,12 @@
 		if(arguments.element.hasAttribute(instance.static.ABSTRACT_ATTRIBUTE))
 		{
 			beanDef.setAbstract(arguments.element.getAttribute(instance.static.ABSTRACT_ATTRIBUTE));
+		}
+
+		//parent
+		if(arguments.element.hasAttribute(instance.static.PARENT_ATTRIBUTE))
+		{
+			beanDef.setParentName(arguments.element.getAttribute(instance.static.PARENT_ATTRIBUTE));
 		}
 
 		//meta elements

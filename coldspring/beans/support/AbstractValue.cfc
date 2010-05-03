@@ -20,7 +20,7 @@
 	<cfreturn instance.value />
 </cffunction>
 
-<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractValue" output="false">
 	<cfscript>
 		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
 

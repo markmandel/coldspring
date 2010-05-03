@@ -170,6 +170,10 @@
 
 		instance.registry.removeBeanDefinition("foo");
 
+		assertTrue(instance.registry.isAlias("fooAlias"), "Alias should NOT be removed");
+
+		instance.registry.removeAlias("fooAlias");
+
 		assertFalse(instance.registry.isAlias("fooAlias"), "Alias should be removed");
     </cfscript>
 </cffunction>
