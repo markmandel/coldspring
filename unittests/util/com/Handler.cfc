@@ -22,7 +22,7 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="invoke" hint="Processes a method invocation one a proxy instance and returns the result.
+<cffunction name="invokeMethod" hint="Processes a method invocation one a proxy instance and returns the result.
 	This method will be invoked on an invocation handler when a method is invoked on a proxy instance that it is assosciated with." access="public" returntype="any" output="false">
 	<cfargument name="proxy" type="any" required="yes" />
 	<cfargument name="method" type="string" required="yes" />

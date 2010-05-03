@@ -66,7 +66,7 @@
 	<cfargument name="className" hint="the name of the class to create a proxy for" type="string" required="Yes">
 	<cfscript>
 		//we don't call init, because we only want an intance we can manipulate
-		var proxy = createObject(arguments.className);
+		var proxy = createObject("component", arguments.className);
 		var injector = getMethodInjector();
 
 		injector.start(proxy);
@@ -104,7 +104,7 @@
 			,args = arguments.missingMethodArguments
 		};
 
-		return __$getInvocationHandler().invoke(argumentCollection=args);
+		return __$getInvocationHandler().invokeMethod(argumentCollection=args);
     </cfscript>
 </cffunction>
 

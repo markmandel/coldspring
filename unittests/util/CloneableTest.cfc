@@ -20,7 +20,7 @@
 		var local = {};
 
 		local.engine = createObject("component", "unittests.testBeans.Engine").init();
-		local.car = createObject("component", "unittests.testBeans.Car").init(engine);
+		local.car = createObject("component", "unittests.testBeans.Car").init(local.engine);
 
 		local.car.setMake("Ford");
 

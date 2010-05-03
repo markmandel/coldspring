@@ -207,15 +207,15 @@
 
 		local.properties = local.beanDef.getProperties();
 
-		AssertTrue(structIsEmpty(properties.make.getMeta()));
+		AssertTrue(structIsEmpty(local.properties.make.getMeta()));
 
 		local.beanDef = instance.factory.getBeanDefinitionRegistry().getBeanDefinition("car4");
 
 		local.properties = local.beanDef.getProperties();
 
-		AssertFalse(structIsEmpty(properties.make.getMeta()));
+		AssertFalse(structIsEmpty(local.properties.make.getMeta()));
 
-		AssertEquals("Ford", structFind(properties.make.getMeta(), "makeBrand"));
+		AssertEquals("Ford", structFind(local.properties.make.getMeta(), "makeBrand"));
     </cfscript>
 </cffunction>
 

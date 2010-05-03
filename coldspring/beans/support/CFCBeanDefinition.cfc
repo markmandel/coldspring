@@ -269,13 +269,26 @@
 <cffunction name="getPackage" hint="returns the package this class belongs to" access="private" returntype="string" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfscript>
+		//have to do this stupid juggling because CF8 'can't find 'setLength() on a Builder'
 		var builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
 
-		builder.setLength(builder.lastIndexOf("."));
+		//builder.setLength(builder.lastIndexOf(".")); << CF8 fails on this because it can't resolve Java Methods. Grrr.
+		builder.delete(javacast("int", builder.lastIndexOf(".")), len(arguments.className));
 
 		return builder.toString();
     </cfscript>
 </cffunction>
+
+<cffunction name="_dump">
+	<cfargument name="s">
+	<cfargument name="abort" default="true">
+	<cfset var g = "">
+		<cfdump var="#arguments.s#">
+		<cfif arguments.abort>
+		<cfabort>
+		</cfif>
+</cffunction>
+
 
 <!--- mixins --->
 
