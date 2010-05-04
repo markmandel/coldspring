@@ -81,13 +81,13 @@
 
 		<cfif structKeyExists(arguments.bean, setterName)>
 
+			<cfscript>
+				//move this up here, in case something goes wrong in getValue()
+				args = {};
+				args[getMetaData(arguments.bean[setterName]).parameters[1].name] = property.getValue();
+            </cfscript>
+
 			<cftry>
-				<cfscript>
-					args = {};
-
-					args[getMetaData(arguments.bean[setterName]).parameters[1].name] = property.getValue();
-	            </cfscript>
-
 				<cfinvoke component="#arguments.bean#" method="#setterName#" argumentcollection="#args#" />
 
 				<cfcatch>

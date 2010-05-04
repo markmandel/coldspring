@@ -53,9 +53,7 @@
 			<xsd:sequence>
 				<xsd:element ref="description" minOccurs="0"/>
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<!-- 
 					<xsd:element ref="import"/>
-					 -->
 					<xsd:element ref="alias"/>
 					<xsd:element ref="bean"/>
 					<xsd:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
@@ -107,6 +105,28 @@
 			<xsd:choice minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="import">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+	Specifies an XML bean definition resource to import.
+			]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:restriction base="xsd:anyType">
+					<xsd:attribute name="resource" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	The relative resource location of the XML (bean definition) file to import,
+	for example "myImport.xml" or "includes/myImport.xml" or "../myImport.xml".
+							]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:restriction>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>	
 	
 	<xsd:element name="alias">
 		<xsd:annotation>
