@@ -33,7 +33,7 @@
 			<br/>Dynamic proxies cannot be created for any CFCs that have code in the pseudo constructor that could fail when createObject is called"
 			access="public" returntype="any" output="false">
 	<cfargument name="className" hint="the name of the class to create a proxy for" type="string" required="Yes">
-	<cfargument name="handler" hint="the Invocation handler that is associated with this dynamic proxy" type="InvocationHandler" required="Yes">
+	<cfargument name="handler" hint="the Invocation handler that is associated with this dynamic proxy" type="any" required="Yes" colddoc:generic="InvocationHandler">
 	<cfscript>
 		var cache = getProxyPrototypeCache();
 		var proxy = 0;
@@ -94,7 +94,7 @@
 
 <!--- mixins --->
 
-<cffunction	name="onMissingMethod" access="private" returntype="any" output="false" hint="Mixing for use when ">
+<cffunction	name="onMissingMethod" access="private" returntype="any" output="false" hint="Mixin: used to provide the method interception on the proxy">
 	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
 	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
 	<cfscript>
@@ -119,12 +119,12 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="__$getInvocationHandler" access="private" returntype="InvocationHandler" output="false">
+<cffunction name="__$getInvocationHandler" access="private" returntype="any" output="false" colddoc:generic="InvocationHandler">
 	<cfreturn instance.__$invocationHandler />
 </cffunction>
 
 <cffunction name="__$setinvocationHandler" access="private" returntype="void" output="false">
-	<cfargument name="__$invocationHandler" type="InvocationHandler" required="true">
+	<cfargument name="__$invocationHandler" type="any" required="true" colddoc:generic="InvocationHandler">
 	<cfset instance.__$invocationHandler = arguments.__$invocationHandler />
 </cffunction>
 
