@@ -76,7 +76,7 @@
 		delegate = createObject("component", "coldspring.beans.xml.BeanDefinitionParserDelegate").init(document, getBeanDefinitionRegistry());
 		parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), this, xmlFileReader, delegate);
 
-		parseElement(document.getDocumentElement(), parserContext);
+		parseRootLevelElement(document.getDocumentElement(), parserContext);
     </cfscript>
 </cffunction>
 
@@ -151,7 +151,7 @@
 
  --->
 
-<cffunction name="parseElement" hint="parses an XML element" access="private" returntype="void" output="false">
+<cffunction name="parseRootLevelElement" hint="parses elements at the root level of the document." access="private" returntype="void" output="false">
 	<cfargument name="element" hint="The root org.w3c.dom.Element of the document, to parse" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the parser context" type="coldspring.beans.xml.ParserContext" required="No" default="#getParserContextThreadLocal().get()#">
 	<cfscript>
@@ -159,58 +159,56 @@
 		var namespaceHandler = 0;
 		var parser = 0;
 		var local = {};
-		var nodeList = 0;
+		var nodeList = arguments.element.getChildNodes();
 		var counter = 0;
 		var newContext = 0;
 		var child = 0;
 
-		if(arguments.element.getNodeType() eq Node.ELEMENT_NODE)
+		for(counter = 0; counter < nodeList.getLength(); counter++)
 		{
-			newContext = arguments.parserContext.clone();
+			child = nodeList.item(counter);
 
-			if(hasNamespaceHandler(arguments.element.getNamespaceURI()))
+			if(child.getNodeType() eq Node.ELEMENT_NODE)
 			{
-				namespaceHandler = getNamespaceHandler(arguments.element.getNamespaceURI());
+				newContext = arguments.parserContext.clone();
 
-				if(namespaceHandler.hasBeanDefinitionParser(arguments.element))
+				if(hasNamespaceHandler(child.getNamespaceURI()))
 				{
-					arguments.parserContext.setNamespaceHandler(namespaceHandler);
+					namespaceHandler = getNamespaceHandler(child.getNamespaceURI());
 
-					parser = namespaceHandler.getBeanDefinitionParser(arguments.element);
-
-					//do your parsing.
-					local.beanDefinitions = parser.parse(arguments.element, arguments.parserContext);
-
-					if(NOT structKeyExists(local, "beanDefinitions"))
+					if(namespaceHandler.hasBeanDefinitionParser(child))
 					{
-						if(arguments.parserContext.hasContainingBeanDefinition())
+						arguments.parserContext.setNamespaceHandler(namespaceHandler);
+
+						parser = namespaceHandler.getBeanDefinitionParser(child);
+
+						//do your parsing.
+						local.beanDefinitions = parser.parse(child, arguments.parserContext);
+
+						if(NOT structKeyExists(local, "beanDefinitions"))
 						{
-							newContext.setContainingBeanDefinition(arguments.parserContext.getContainingBeanDefinition());
+							if(arguments.parserContext.hasContainingBeanDefinition())
+							{
+								newContext.setContainingBeanDefinition(arguments.parserContext.getContainingBeanDefinition());
+							}
+						}
+						else if(isObject(local.beanDefinitions))
+						{
+							newContext.setContainingBeanDefinition(local.beanDefinitions);
+
+							getBeanDefinitionRegistry().registerBeanDefinition(local.beanDefinitions);
+						}
+						else if(isArray(local.beanDefinitions))
+						{
+							local.len = ArrayLen(local.beanDefinitions);
+	                        for(local.counter=1; local.counter lte local.len; local.counter++)
+	                        {
+	                        	local.beanDef = local.beanDefinitions[local.counter];
+								getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
+	                        }
 						}
 					}
-					else if(isObject(local.beanDefinitions))
-					{
-						newContext.setContainingBeanDefinition(local.beanDefinitions);
-
-						getBeanDefinitionRegistry().registerBeanDefinition(local.beanDefinitions);
-					}
-					else if(isArray(local.beanDefinitions))
-					{
-						local.len = ArrayLen(local.beanDefinitions);
-                        for(local.counter=1; local.counter lte local.len; local.counter++)
-                        {
-                        	local.beanDef = local.beanDefinitions[local.counter];
-							getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
-                        }
-					}
 				}
-			}
-
-			nodeList = arguments.element.getChildNodes();
-
-			for(counter = 0; counter lt nodeList.getLength(); counter++)
-			{
-				parseElement(nodeList.item(counter), newContext);
 			}
 		}
     </cfscript>
