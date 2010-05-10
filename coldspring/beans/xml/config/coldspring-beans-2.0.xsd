@@ -159,7 +159,7 @@
 	
 	<xsd:element name="bean">
 		<xsd:annotation>
-			<xsd:documentation><![CDATA[
+			<xsd:documentation source="cfc:coldspring.beans.support.AbstractBeanDefinition"><![CDATA[
 	Defines a single (usually named) bean.
 
 	A bean definition may contain nested tags for constructor arguments,
@@ -191,7 +191,7 @@
 	
 	<xsd:element name="constructor-arg">
 		<xsd:annotation>
-			<xsd:documentation source="java:org.springframework.beans.factory.config.ConstructorArgumentValues">
+			<xsd:documentation source="cfc:coldspring.beans.support.ConstructorArg">
 				<![CDATA[
 	Bean definitions can specify zero or more constructor arguments.
 	This is an alternative to "autowire constructor".
@@ -244,7 +244,7 @@
 	
 	<xsd:element name="ref">
 		<xsd:annotation>
-			<xsd:documentation><![CDATA[
+			<xsd:documentation source="cfc:coldspring.beans.support.RefValue"><![CDATA[
 	Defines a reference to another bean in this factory or an external
 	factory (parent or included factory).
 			]]></xsd:documentation>
@@ -282,7 +282,7 @@
 
 	<xsd:element name="property" type="propertyType">
 		<xsd:annotation>
-			<xsd:documentation><![CDATA[
+			<xsd:documentation source="coldspring.beans.support.Property"><![CDATA[
 	Bean definitions can have zero or more properties.
 	Property elements correspond to JavaBean setter methods exposed
 	by the bean classes. ColdSpring supports primitives, references to other
@@ -330,7 +330,7 @@
 	
 	<xsd:element name="list">
 		<xsd:annotation>
-			<xsd:documentation><![CDATA[
+			<xsd:documentation source="cfc:coldspring.beans.support.ListValue"><![CDATA[
 	A list can contain multiple inner bean, ref, collection, or value elements.
 	A list can also map to an array type; the necessary conversion is performed
 	automatically.
@@ -353,7 +353,7 @@
 
 	<xsd:element name="map">
 		<xsd:annotation>
-			<xsd:documentation><![CDATA[
+			<xsd:documentation source="cfc:coldspring.beans.support.MapValue"><![CDATA[
 	A mapping from a key to an object. Maps may be empty.
 			]]></xsd:documentation>
 		</xsd:annotation>
@@ -374,7 +374,7 @@
 	
 	<xsd:element name="value" type="xsd:string">
 		<xsd:annotation>
-			<xsd:documentation><![CDATA[
+			<xsd:documentation source="cfc:coldspring.beans.support.SimpleValue"><![CDATA[
 	Contains a string representation of a property value.
 	
 	Note that this is recommended for simple objects only. Configure

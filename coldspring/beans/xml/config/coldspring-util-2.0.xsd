@@ -23,7 +23,7 @@
 
 	<xsd:element name="list">
 		<xsd:annotation>
-			<xsd:documentation source="coldfusion:coldspring.beans.factory.config.ListFactoryBean">
+			<xsd:documentation source="cfc:coldspring.beans.factory.config.ListFactoryBean">
 	Builds a List instance of the specified type, populated with the specified content.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -59,7 +59,7 @@
 
 	<xsd:element name="map">
 		<xsd:annotation>
-			<xsd:documentation source="coldfusion:coldspring.beans.factory.config.MapFactoryBean">
+			<xsd:documentation source="cfc:coldspring.beans.factory.config.MapFactoryBean">
 	Builds a Map instance of the specified type, populated with the specified content.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -95,7 +95,7 @@
 	
 	<xsd:element name="json">
 		<xsd:annotation>
-			<xsd:documentation source="coldfusion:coldspring.beans.factory.config.JSONFactoryBean">
+			<xsd:documentation source="cfc:coldspring.beans.factory.config.JSONFactoryBean">
 		Builds the data structure specified by the JSON written as body to this tag 
 			</xsd:documentation>
 		</xsd:annotation>
