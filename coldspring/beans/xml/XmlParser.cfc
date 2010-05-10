@@ -50,30 +50,34 @@
 	</cfloop>
 </cffunction>
 
-<cffunction name="parseXMLToBeanDefintions" hint="takes the current XML document and passes it to relevent parsers for parsing" access="public" returntype="void" output="false">
+<cffunction name="parseConfigLocationsToBeanDefintions" hint="Takes the current XML Config Locations and passes the XML data to their relevent parsers for parsing,
+	and then add the beans to the system"
+	access="public" returntype="void" output="false">
 	<cfscript>
-		var xmlFileReader = 0;
-		var document = 0;
 		var configLocations = getConfigLocations();
 		var config = 0;
-		var parserContext = 0;
-		var delegate = 0;
     </cfscript>
 
 	<cfloop array="#configLocations#" index="config">
-		<cfscript>
-			xmlFileReader = createObject("component", "coldspring.io.XMLFileReader").init(config, getJavaLoader(), getSchemaMap());
-
-			document = xmlFileReader.parseToDocument();
-
-			document.normalize();
-
-			delegate = createObject("component", "coldspring.beans.xml.BeanDefinitionParserDelegate").init(document, getBeanDefinitionRegistry());
-			parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), xmlFileReader, delegate);
-
-			parseElement(document.getDocumentElement(), parserContext);
-        </cfscript>
+		<cfset parseXMLToBeanDefinitions(config)>
 	</cfloop>
+</cffunction>
+
+<cffunction name="parseXMLToBeanDefinitions" hint="Parse a specific XML document into bean definitions, and add them to the registry" access="public" returntype="void" output="false">
+	<cfargument name="path" hint="the absolute path to the XML configuration file" type="string" required="Yes">
+	<cfscript>
+		var xmlFileReader = createObject("component", "coldspring.io.XMLFileReader").init(arguments.path, getJavaLoader(), getSchemaMap());
+		var document = xmlFileReader.parseToDocument();
+		var delegate = 0;
+		var parserContext = 0;
+
+		document.normalize();
+
+		delegate = createObject("component", "coldspring.beans.xml.BeanDefinitionParserDelegate").init(document, getBeanDefinitionRegistry());
+		parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), this, xmlFileReader, delegate);
+
+		parseElement(document.getDocumentElement(), parserContext);
+    </cfscript>
 </cffunction>
 
 <cffunction name="setBeanDefinitionRegistry" access="public" returntype="void" output="false">
@@ -93,12 +97,62 @@
 	<cfset instance.configLocations = arguments.configLocations />
 </cffunction>
 
+<cffunction name="getConfigLocations" access="public" returntype="array" output="false"
+			colddoc:generic="string">
+	<cfreturn instance.configLocations />
+</cffunction>
+
+<cffunction name="getNamespaceHandler" hint="get the namespace handler for a given namespace" access="public" returntype="coldspring.beans.xml.AbstractNamespaceHandler" output="false">
+	<cfargument name="namespace" hint="the namespace to look for" type="string" required="Yes">
+	<cfreturn StructFind(getNamespaceHandlers(), arguments.namespace) />
+</cffunction>
+
+<cffunction name="hasNamespaceHandler" hint="do we have a namespace handler for the given namespace?" access="public" returntype="boolean" output="false">
+	<cfargument name="namespace" hint="the namespace to look for" type="string" required="Yes">
+	<cfreturn StructKeyExists(getNamespaceHandlers(), arguments.namespace) />
+</cffunction>
+
+<cffunction name="getNamespaceHandlers" access="public" hint="Return all the namespace handlers for all namespaces" returntype="struct" output="false"
+			colddoc:generic="string,AbstractNamespaceHandler">
+	<cfreturn instance.namespaceHandlers />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<!---
+	/**
+	 * Parse the elements at the root level in the document:
+	 * "import", "alias", "bean".
+	 * @param root the DOM root element of the document
+	 */
+	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
+		if (delegate.isDefaultNamespace(root.getNamespaceURI())) {
+			NodeList nl = root.getChildNodes();
+			for (int i = 0; i < nl.getLength(); i++) {
+				Node node = nl.item(i);
+				if (node instanceof Element) {
+					Element ele = (Element) node;
+					String namespaceUri = ele.getNamespaceURI();
+					if (delegate.isDefaultNamespace(namespaceUri)) {
+						parseDefaultElement(ele, delegate);
+					}
+					else {
+						delegate.parseCustomElement(ele);
+					}
+				}
+			}
+		}
+		else {
+			delegate.parseCustomElement(root);
+		}
+	}
+
+ --->
+
 <cffunction name="parseElement" hint="parses an XML element" access="private" returntype="void" output="false">
-	<cfargument name="element" hint="The org.w3c.dom.Element to parse" type="any" required="Yes">
+	<cfargument name="element" hint="The root org.w3c.dom.Element of the document, to parse" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the parser context" type="coldspring.beans.xml.ParserContext" required="No" default="#getParserContextThreadLocal().get()#">
 	<cfscript>
 		var Node = arguments.parserContext.getDelegate().getNode();
@@ -162,21 +216,6 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getNamespaceHandler" hint="get the namespace handler?" access="private" returntype="coldspring.beans.xml.AbstractNamespaceHandler" output="false">
-	<cfargument name="namespace" hint="the namespace to look for" type="string" required="Yes">
-	<cfreturn StructFind(getNamespaceHandlers(), arguments.namespace) />
-</cffunction>
-
-<cffunction name="hasNamespaceHandler" hint="do we have a namespace handler?" access="private" returntype="boolean" output="false">
-	<cfargument name="namespace" hint="the namespace to look for" type="string" required="Yes">
-	<cfreturn StructKeyExists(getNamespaceHandlers(), arguments.namespace) />
-</cffunction>
-
-<cffunction name="getNamespaceHandlers" access="private" returntype="struct" output="false"
-			colddoc:generic="string,AbstractNamespaceHandler">
-	<cfreturn instance.namespaceHandlers />
-</cffunction>
-
 <cffunction name="setNamespaceHandlers" access="private" returntype="void" output="false">
 	<cfargument name="namespaceHandlers" type="struct" required="true" colddoc:generic="string,AbstractNamespaceHandler">
 	<cfset instance.namespaceHandlers = arguments.namespaceHandlers />
@@ -193,11 +232,6 @@
 
 <cffunction name="getBeanDefinitionRegistry" access="private" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">
 	<cfreturn instance.beanDefinitionRegistry />
-</cffunction>
-
-<cffunction name="getConfigLocations" access="private" returntype="array" output="false"
-			colddoc:generic="string">
-	<cfreturn instance.configLocations />
 </cffunction>
 
 <cffunction name="getSchemaMap" access="private" returntype="struct" output="false" hint="Collection to map all the schemas to local resource paths"

@@ -99,7 +99,7 @@
 	</cfloop>
 </cffunction>
 
-<cffunction name="autowire" hint="abstract method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
+<cffunction name="autowire" hint="autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
 		var meta = getComponentMetadata(getClassName());
 		var args = {meta = meta};
@@ -278,17 +278,6 @@
 		return builder.toString();
     </cfscript>
 </cffunction>
-
-<cffunction name="_dump">
-	<cfargument name="s">
-	<cfargument name="abort" default="true">
-	<cfset var g = "">
-		<cfdump var="#arguments.s#">
-		<cfif arguments.abort>
-		<cfabort>
-		</cfif>
-</cffunction>
-
 
 <!--- mixins --->
 

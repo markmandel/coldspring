@@ -54,7 +54,7 @@
 	If the given name is an alias, the corresponding original bean name and other aliases (if any) will be returned, with the original bean name being the first element in the array.<br/>
 	Will ask the parent factory if the bean cannot be found in this factory instance." access="public" returntype="array" output="false">
 	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
-	<cfreturn getBeanDefinitionRegistry().getAliases() />
+	<cfreturn getBeanDefinitionRegistry().getAliases(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="addBeanFactoryPostProcessor" hint="programatically add a beanFactory post processor" access="public" returntype="void" output="false">

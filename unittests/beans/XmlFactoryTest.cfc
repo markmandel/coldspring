@@ -360,4 +360,27 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="importTest" hint="test the <import> element" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		instance.factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/import-test.xml"));
+
+		debug(instance.factory.getAliases("car1"));
+
+		local.car1 = instance.factory.getBean("car1");
+
+		testCar(local.car1);
+
+		local.car2 = instance.factory.getBean("import_carAlias");
+
+		testCar(local.car2);
+
+		assertSame(local.car1, local.car2);
+
+		local.car3 = instance.factory.getBean("import_car1");
+
+		testCar(local.car3);
+    </cfscript>
+</cffunction>
+
 </cfcomponent>

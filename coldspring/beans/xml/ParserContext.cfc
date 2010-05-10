@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="The parser context when parsing XML" output="false">
 
@@ -17,10 +17,12 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ParserContext" output="false">
 	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
+	<cfargument name="xmlParser" type="XmlParser" required="true">
 	<cfargument name="xmlFileReader" type="coldspring.io.XMLFileReader" required="true">
 	<cfargument name="delegate" type="coldspring.beans.xml.BeanDefinitionParserDelegate" required="true">
 	<cfscript>
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
+		setXmlParser(arguments.xmlParser);
 		setXMLFileReader(arguments.xmlFileReader);
 		setDelegate(arguments.delegate);
 
@@ -54,12 +56,17 @@
   	<cfreturn StructKeyExists(instance, "containingBeanDefinition") />
 </cffunction>
 
-<cffunction name="getBeanDefinitionRegistry" access="public" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">
+<cffunction name="getBeanDefinitionRegistry" hint="The bean definition registry" access="public" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">
 	<cfreturn instance.beanDefinitionRegistry />
 </cffunction>
 
-<cffunction name="getDelegate" access="public" returntype="coldspring.beans.xml.BeanDefinitionParserDelegate" output="false">
+<cffunction name="getDelegate" access="public" hint="Access to the bean defintion parser delegate, for easy access to Bean Definition parsing routines"
+	returntype="coldspring.beans.xml.BeanDefinitionParserDelegate" output="false">
 	<cfreturn instance.delegate />
+</cffunction>
+
+<cffunction name="getXmlParser" hint="Access to the underlyng XML parser" access="public" returntype="XmlParser" output="false">
+	<cfreturn instance.xmlParser />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -68,10 +75,16 @@
 
 <cffunction name="clone" hint="clone this parser context. Does not copy the containing bean definition, or the namespace handler" access="public" returntype="ParserContext" output="false">
 	<cfscript>
-		var clone = createObject("component", "ParserContext").init(getBeanDefinitionRegistry(), getXMLFileReader(), getDelegate());
+		//not using clonable framework, just as this is super easy to clone, and this will be faster.
+		var clone = createObject("component", "ParserContext").init(getBeanDefinitionRegistry(), getXmlParser(), getXMLFileReader(), getDelegate());
 
 		return clone;
     </cfscript>
+</cffunction>
+
+<cffunction name="setXmlParser" access="private" returntype="void" output="false">
+	<cfargument name="xmlParser" type="XmlParser" required="true">
+	<cfset instance.xmlParser = arguments.xmlParser />
 </cffunction>
 
 <cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">

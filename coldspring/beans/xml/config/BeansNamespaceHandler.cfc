@@ -21,6 +21,7 @@
 
 		registerBeanDefinitionParser("bean", createObject("component", "BeanBeanDefinitionParser").init());
 		registerBeanDefinitionParser("alias", createObject("component", "AliasBeanDefinitionParser").init());
+		registerBeanDefinitionParser("import", createObject("component", "ImportDefinitionParser").init());
 
 		return this;
 	</cfscript>

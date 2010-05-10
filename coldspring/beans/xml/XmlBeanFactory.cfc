@@ -47,7 +47,7 @@
 
 		getXMLParser().setBeanDefinitionRegistry(getBeanDefinitionRegistry());
 
-		getXMLParser().parseXMLToBeanDefintions();
+		getXMLParser().parseConfigLocationsToBeanDefintions();
 
 		endRefresh();
     </cfscript>

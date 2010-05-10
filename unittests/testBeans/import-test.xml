@@ -5,5 +5,30 @@
 	   >
 	<import resource="./car-beans.xml"/>
 	
-	<alias name="importCar" alias="car1"/>
+	<alias alias="import_carAlias" name="car1"/>
+	
+	<bean id="import_car1" parent="abstractCar">
+		<constructor-arg name="engine">
+			<description>Here is the engine</description>
+			<meta key="engineMeta" value="engineMetaValue"/>
+			<meta key="engineMeta2" value="engineMetaValue2"/>
+			<ref bean="engine"/>
+		</constructor-arg>
+		<property name="color">
+			<description>Here is a colour</description>
+			<ref bean="color2"/>
+		</property>
+		<property name="make">
+			<value>Mustang</value>
+		</property>
+		<property name="wheels">
+			<map>
+				<entry key="1" value-ref="wheel"/>
+				<entry key="2" value-ref="wheel"/>
+				<entry key="3" value-ref="wheel"/>
+				<entry key="4" value-ref="wheel"/>
+				<entry key="spare" value-ref="wheel"/>
+			</map>
+		</property>
+	</bean>	
 </beans>
