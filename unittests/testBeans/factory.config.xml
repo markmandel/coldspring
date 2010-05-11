@@ -13,6 +13,17 @@
 		</property>
 	</bean>
 	
+	<bean id="myArrayListBean" class="coldspring.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.ArrayList"/>
+		<property name="sourceList">
+			<list>
+				<value>first value</value>
+				<value>second value</value>
+				<value>third value</value>
+			</list>
+		</property>
+	</bean>	
+	
 	<bean id="myMapFactoryBean" class="coldspring.beans.factory.config.MapFactoryBean">
 		<property name="sourceMap">
 			<map>
@@ -21,6 +32,16 @@
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="myHashMapBean" class="coldspring.beans.factory.config.MapFactoryBean">
+		<property name="targetMapClass" value="java.util.HashMap"/>
+		<property name="sourceMap">
+			<map>
+				<entry key="foo" value="1"/>
+				<entry key="bar" value="2"/>
+			</map>
+		</property>
+	</bean>	
 	
 	<bean id="myJSONFactoryBean" class="coldspring.beans.factory.config.JSONFactoryBean">
 		<property name="sourceJSON">
