@@ -29,20 +29,35 @@
 <cffunction name="getObject" hint="Returns the set up map/struct" access="public" returntype="any" output="false">
 	<cfscript>
 		var result = 0;
+
+		//set up the initial value - does not need to be locked as CS does the locking for us.
+		if(NOT hasResultMap())
+		{
+			if(NOT hasTargetMapClass())
+			{
+				setResultMap(getSourceMap());
+			}
+			else
+			{
+				setResultMap(createObject("java", getTargetMapClass()).init());
+				getResultMap().putAll(getSourceMap());
+			}
+		}
+
 		if(isSingleton())
 		{
-			result = getSourceMap();
+			result = getResultMap();
 		}
 		else
 		{
 			if(NOT hasTargetMapClass())
 			{
-				result = structCopy(getSourceMap());
+				result = structCopy(getResultMap());
 			}
 			else
 			{
 				result = createObject("java", getTargetMapClass()).init();
-				result.putAll(getSourceMap());
+				result.putAll(getResultMap());
 			}
 		}
 
@@ -65,22 +80,16 @@
 
 <cffunction name="setSourceMap" access="public" returntype="void" output="false">
 	<cfargument name="sourceMap" type="struct" required="true">
-	<cfscript>
-		if(NOT hasTargetMapClass())
-		{
-			instance.sourceMap = arguments.sourceMap;
-		}
-		else
-		{
-			instance.sourceMap = createObject("java", getTargetMapClass()).init();
-			instance.sourceMap.putAll(arguments.sourceMap);
-		}
-    </cfscript>
+	<cfset instance.sourceMap = arguments.sourceMap>
 </cffunction>
 
 <cffunction name="setTargetMapClass" hint="The Java Map class to use for the Array. If not set, the default ColdFusion struct is used." access="public" returntype="void" output="false">
 	<cfargument name="targetMapClass" type="string" required="true">
 	<cfset instance.targetMapClass = arguments.targetMapClass />
+</cffunction>
+
+<cffunction name="getTargetMapClass" access="public" returntype="string" output="false">
+	<cfreturn instance.targetMapClass />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -91,12 +100,21 @@
 	<cfreturn instance.sourceMap />
 </cffunction>
 
-<cffunction name="getTargetMapClass" access="private" returntype="string" output="false">
-	<cfreturn instance.targetMapClass />
-</cffunction>
-
 <cffunction name="hasTargetMapClass" hint="whether this object has a targetMapClass" access="private" returntype="boolean" output="false">
 	<cfreturn StructKeyExists(instance, "targetMapClass") />
+</cffunction>
+
+<cffunction name="getResultMap" access="private" returntype="struct" output="false">
+	<cfreturn instance.resultMap />
+</cffunction>
+
+<cffunction name="setResultMap" access="private" returntype="void" output="false">
+	<cfargument name="resultMap" type="struct" required="true">
+	<cfset instance.resultMap = arguments.resultMap />
+</cffunction>
+
+<cffunction name="hasResultMap" hint="whether this object has a resultMap" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "resultMap") />
 </cffunction>
 
 </cfcomponent>

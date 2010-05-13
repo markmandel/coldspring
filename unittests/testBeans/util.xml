@@ -33,4 +33,17 @@
 		</entry>
 		<entry key="bar" value="2"/>
 	</util:map>
+	
+	<util:list id="arrayList" list-class="java.util.ArrayList">
+		<value>first value</value>
+		<value>second value</value>
+		<value>third value</value>
+	</util:list>
+	
+	<util:map id="hashMap" map-class="java.util.HashMap">
+		<entry key="foo">
+			<value>1</value>
+		</entry>
+		<entry key="bar" value="2"/>
+	</util:map>	
 </beans>

@@ -71,6 +71,38 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="listTargetClassTest" hint="test to see if the target class works" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.array = instance.factory.getBean("arrayList");
+
+		local.testArray = ["first value", "second value", "third value"];
+
+		assertEquals(local.testArray, local.array);
+
+		AssertEquals("java.util.ArrayList", local.array.getClass().getName());
+    </cfscript>
+</cffunction>
+
+<cffunction name="mapTargetClassTest" hint="tests to see if target class workds" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.map = instance.factory.getBean("hashMap");
+
+		assertTrue(isStruct(local.map), "Should be an struct");
+		AssertEquals("java.util.HashMap", local.map.getClass().getName());
+
+		local.testMap = createObject("java", "java.util.HashMap");
+		local.testMap.put("foo", 1);
+		local.testMap.put("bar", 2);
+
+		assertEquals(local.testMap, local.map);
+
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

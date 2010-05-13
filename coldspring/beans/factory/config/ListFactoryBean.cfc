@@ -29,13 +29,28 @@
 <cffunction name="getObject" hint="Returns the set up array" access="public" returntype="any" output="false">
 	<cfscript>
 		var result = 0;
+
+		//set up the initial value - does not need to be locked as CS does the locking for us.
+		if(NOT hasResultList())
+		{
+			if(NOT hasTargetListClass())
+			{
+				setResultList(getSourceList());
+			}
+			else
+			{
+				setResultList(createObject("java", getTargetListClass()).init());
+				getResultList().addAll(getSourceList());
+			}
+		}
+
 		if(isSingleton())
 		{
 			/*
 			return here in an attempt to keep the same reference
 			if it's a native CF array
 			*/
-			return getSourceList();
+			return getResultList();
 		}
 		else
 		{
@@ -71,21 +86,17 @@
 <cffunction name="setSourceList" hint="Set the source List, typically populated via XML 'list' elements." access="public" returntype="void" output="false">
 	<cfargument name="sourceList" type="array" required="true">
 	<cfscript>
-		if(NOT hasTargetListClass())
-		{
-			instance.sourceList = arguments.sourceList;
-		}
-		else
-		{
-			instance.sourceList = createObject("java", getTargetListClass()).init();
-			instance.sourceList.addAll(arguments.sourceList);
-		}
+		instance.sourceList = arguments.sourceList;
     </cfscript>
 </cffunction>
 
 <cffunction name="setTargetListClass" hint="The Java List class to use for the Array. If not set, the default ColdFusion array is used." access="public" returntype="void" output="false">
 	<cfargument name="targetListClass" type="string" required="true">
 	<cfset instance.targetListClass = arguments.targetListClass />
+</cffunction>
+
+<cffunction name="getTargetListClass" access="public" returntype="string" output="false">
+	<cfreturn instance.targetListClass />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -96,12 +107,21 @@
 	<cfreturn instance.sourceList />
 </cffunction>
 
-<cffunction name="getTargetListClass" access="private" returntype="string" output="false">
-	<cfreturn instance.targetListClass />
-</cffunction>
-
 <cffunction name="hasTargetListClass" hint="whether this object has a targetListClass" access="private" returntype="boolean" output="false">
 	<cfreturn StructKeyExists(instance, "targetListClass") />
+</cffunction>
+
+<cffunction name="getResultList" access="private" returntype="array" output="false">
+	<cfreturn instance.resultList />
+</cffunction>
+
+<cffunction name="setResultList" access="private" returntype="void" output="false">
+	<cfargument name="resultList" type="array" required="true">
+	<cfset instance.resultList = arguments.resultList />
+</cffunction>
+
+<cffunction name="hasResultList" hint="whether this object has a resultList" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "resultList") />
 </cffunction>
 
 </cfcomponent>

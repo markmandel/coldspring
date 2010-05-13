@@ -15,6 +15,7 @@
 
 <cfscript>
 	instance.static.LIST_FACTORY_BEAN_CLASS = "coldspring.beans.factory.config.ListFactoryBean";
+	instaince.static.LIST_CLASS_ATTRIBUTE = "list-class";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -37,6 +38,14 @@
 
 		beanDef.setClassName(instance.static.LIST_FACTORY_BEAN_CLASS);
 		beanDef.addProperty(property);
+
+		//manage the target class
+		if(arguments.element.hasAttribute(instaince.static.LIST_CLASS_ATTRIBUTE))
+		{
+			value = createObject("component", "coldspring.beans.support.SimpleValue").init(arguments.element.getAttribute(instaince.static.LIST_CLASS_ATTRIBUTE));
+			property = createObject("component", "coldspring.beans.support.Property").init("targetListClass", value);
+			beanDef.addProperty(property);
+		}
 
 		return beanDef;
     </cfscript>

@@ -440,14 +440,6 @@
 				<xsd:element ref="entry"/>
 			</xsd:choice>
 		</xsd:sequence>
-		<xsd:attribute name="key-type" type="xsd:string">
-			<xsd:annotation>
-				<xsd:documentation source="java:java.lang.Class"><![CDATA[
-The default Java type for nested entry keys. Must be a fully qualified
-class name.
-					]]></xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>	
 	</xsd:complexType>
 	
 	<xsd:element name="entry" type="entryType">

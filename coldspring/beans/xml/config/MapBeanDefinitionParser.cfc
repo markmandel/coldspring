@@ -15,6 +15,7 @@
 
 <cfscript>
 	instance.static.MAP_FACTORY_BEAN_CLASS = "coldspring.beans.factory.config.MapFactoryBean";
+	instance.static.MAP_CLASS_ATTRIBUTE = "map-class";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -37,6 +38,14 @@
 
 		beanDef.setClassName(instance.static.MAP_FACTORY_BEAN_CLASS);
 		beanDef.addProperty(property);
+
+		//manage the target class
+		if(arguments.element.hasAttribute(instance.static.MAP_CLASS_ATTRIBUTE))
+		{
+			value = createObject("component", "coldspring.beans.support.SimpleValue").init(arguments.element.getAttribute(instance.static.MAP_CLASS_ATTRIBUTE));
+			property = createObject("component", "coldspring.beans.support.Property").init("targetMapClass", value);
+			beanDef.addProperty(property);
+		}
 
 		return beanDef;
     </cfscript>
