@@ -22,19 +22,25 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="eachClassInTypeHierarchy" hint="Calls the callback for each class type in inheritence, and also for each interface it implements" access="public" returntype="void" output="false">
+<cffunction name="eachClassInTypeHierarchy" hint="Calls the closure for each class type in inheritence, and also for each interface it implements.
+				If the closure returns 'false', processing is stopped" access="public" returntype="void" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfargument name="closure" hint="the closure to fire for each class type found a" type="coldspring.util.Closure" required="Yes">
 	<cfargument name="args" hint="optional arguments to also pass through to the callback" type="struct" required="No" default="#structNew()#">
 	<cfscript>
-		var meta = getComponentMetadata(arguments.className);
 		var local = {};
+		var meta = getComponentMetadata(arguments.className);
 		var queue = 0;
 
 		while(structKeyExists(meta, "extends"))
 		{
 			arguments.args.className = meta.name;
-			arguments.closure.call(argumentCollection=arguments.args);
+			local.result = arguments.closure.call(argumentCollection=arguments.args);
+
+			if(structKeyExists(local, "result") AND !local.result)
+			{
+				return;
+			}
 
 			if(structKeyExists(meta, "implements"))
 			{
@@ -54,7 +60,12 @@
 					local.imeta = queue.remove();
 
 					arguments.args.className = local.imeta.name;
-					arguments.closure.call(argumentCollection=arguments.args);
+					local.result = arguments.closure.call(argumentCollection=arguments.args);
+
+					if(structKeyExists(local, "result") AND !local.result)
+					{
+						return;
+					}
 
 					//if we have an extends, add it to the queue
 					if(structKeyExists(local.imeta, "extends"))
@@ -77,12 +88,15 @@
 	<cfargument name="class1" hint="the implementing class / interface" type="string" required="Yes">
 	<cfargument name="class2" hint="the super class / interface" type="string" required="Yes">
 	<cfscript>
-		var args = { compareClass = arguments.class2 };
-		var closure = duplicate(getClassTypeCheckClosure());
+		var args =
+			{
+				compareClass = arguments.class2
+				,result = {value=false} //you'll laugh, but passing this around in a struct means it gets passed by reference.
+			};
 
-		eachClassInTypeHierarchy(arguments.class1, closure, args);
+		eachClassInTypeHierarchy(arguments.class1, getClassTypeCheckClosure(), args);
 
-		return closure.bound("result");
+		return args.result.value;
     </cfscript>
 </cffunction>
 
@@ -91,14 +105,17 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <!--- closureMethods --->
-<cffunction name="classTypeCheck" hint="check to see if the given className is the same as the passed in one" access="private" returntype="void" output="false">
+<cffunction name="classTypeCheck" hint="check to see if the given className is the same as the passed in one" access="private" returntype="boolean" output="false">
 	<cfargument name="className" hint="the class to check" type="string" required="Yes">
 	<cfargument name="compareClass" hint="the class to compare against" type="string" required="Yes">
 	<cfscript>
 		if(arguments.className eq arguments.compareClass)
 		{
-			variables.result = true;
+			arguments.result.value = true;
+			return false;
 		}
+
+		return true;
     </cfscript>
 </cffunction>
 <!--- /closureMethods --->
@@ -108,7 +125,6 @@
 		if(NOT hasClassTypeCheckClosure())
 		{
 			setClassTypeCheckClosure(createObject("component", "coldspring.util.Closure").init(classTypeCheck));
-			getClassTypeCheckClosure().bind("result", false);
 		}
     </cfscript>
 	<cfreturn instance.classTypeCheckClosure />
