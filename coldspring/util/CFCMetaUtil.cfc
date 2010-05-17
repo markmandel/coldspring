@@ -18,6 +18,8 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="CFCMetaUtil" output="false">
 	<cfscript>
 		variables.instance = {};
+		setAssignableCache(StructNew());
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -37,7 +39,7 @@
 			arguments.args.className = meta.name;
 			local.result = arguments.closure.call(argumentCollection=arguments.args);
 
-			if(structKeyExists(local, "result") AND !local.result)
+			if(structKeyExists(local, "result") && !local.result)
 			{
 				return;
 			}
@@ -62,7 +64,7 @@
 					arguments.args.className = local.imeta.name;
 					local.result = arguments.closure.call(argumentCollection=arguments.args);
 
-					if(structKeyExists(local, "result") AND !local.result)
+					if(structKeyExists(local, "result") && !local.result)
 					{
 						return;
 					}
@@ -88,13 +90,26 @@
 	<cfargument name="class1" hint="the implementing class / interface" type="string" required="Yes">
 	<cfargument name="class2" hint="the super class / interface" type="string" required="Yes">
 	<cfscript>
-		var args =
-			{
-				compareClass = arguments.class2
-				,result = {value=false} //you'll laugh, but passing this around in a struct means it gets passed by reference.
-			};
+		var args = 0;
+		var key = arguments.class1 & ":" & arguments.class2;
+		var cache = getAssignableCache();
+
+		//do some caching. Not going to worry about locking.
+		if(structKeyExists(cache, key))
+		{
+			return cache[key];
+		}
+
+		args =
+		{
+			compareClass = arguments.class2
+			//you'll laugh, but passing this around in a struct means it gets passed by reference.
+			,result = {value=false}
+		};
 
 		eachClassInTypeHierarchy(arguments.class1, getClassTypeCheckClosure(), args);
+
+		cache[key] = args.result.value;
 
 		return args.result.value;
     </cfscript>
@@ -138,5 +153,15 @@
 <cffunction name="hasClassTypeCheckClosure" hint="whether this object has a classTypeCheckClosure" access="private" returntype="boolean" output="false">
 	<cfreturn StructKeyExists(instance, "classTypeCheckClosure") />
 </cffunction>
+
+<cffunction name="getAssignableCache" access="private" returntype="struct" output="false">
+	<cfreturn instance.assignableCache />
+</cffunction>
+
+<cffunction name="setAssignableCache" access="private" returntype="void" output="false">
+	<cfargument name="assignableCache" type="struct" required="true">
+	<cfset instance.assignableCache = arguments.assignableCache />
+</cffunction>
+
 
 </cfcomponent>
