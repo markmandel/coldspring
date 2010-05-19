@@ -16,6 +16,8 @@
 <cfscript>
 	instance.static = {};
 
+	instance.static.BEANS_NAMESPACE_URI = "http://www.coldspringframework.org/schema/beans";
+
 	instance.static.DEFAULT_AUTOWIRE_ATTRIBUTE = "default-autowire";
 	instance.static.DEFAULT_LAZY_INIT_ATTRIBUTE = "default-lazy-init";
 
@@ -50,10 +52,11 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionParserDelegate" output="false">
-	<cfargument name="document" hint="the configuration XML org.w3c.dom.Document for this XML config file" type="any" required="Yes">
 	<cfargument name="beanDefinitionRegistry" hint="The bean definition registry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
+	<cfargument name="readerContext" hint="the current XML file reader context" type="ReaderContext" required="Yes">
 	<cfscript>
-		initDefaultValues(arguments.document.getDocumentElement());
+		setReaderContext(arguments.readerContext);
+		initDefaultValues(getReaderContext().getDocument().getDocumentElement());
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
 		setNode(createObject("java", "org.w3c.dom.Node"));
 
@@ -196,7 +199,7 @@
 
 		local.name = arguments.element.getAttribute(instance.static.NAME_ATTRIBUTE);
 
-		local.value = parsePropertySubElements(arguments.element);
+		local.value = parsePropertySubElements(arguments.element, arguments.beanDefinition);
 
 		//maybe we don't find something relevent
 		if(structKeyExists(local, "value"))
@@ -233,7 +236,7 @@
 
 		local.name = arguments.element.getAttribute(instance.static.NAME_ATTRIBUTE);
 
-		local.value = parsePropertySubElements(arguments.element);
+		local.value = parsePropertySubElements(arguments.element, arguments.beanDefinition);
 
 		//maybe we don't find something relevent
 		if(structKeyExists(local, "value"))
@@ -250,6 +253,7 @@
 
 <cffunction name="parseListElement" hint="parses a list element" access="public" returntype="coldspring.beans.support.ListValue" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the list element" type="any" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
 		var childNodes = arguments.element.getChildNodes();
 		var counter = 0;
@@ -264,7 +268,7 @@
 
 			if(child.getNodeType() eq getNode().ELEMENT_NODE)
 			{
-				local.value = parsePropertySubElement(child);
+				local.value = parsePropertySubElement(child, arguments.beanDefinition);
 
 				if(structKeyExists(local, "value"))
 				{
@@ -279,6 +283,7 @@
 
 <cffunction name="parseMapElement" hint="parses a Map element" access="public" returntype="coldspring.beans.support.MapValue" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the list element" type="any" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 		var mapValue = createObject("component", "coldspring.beans.support.MapValue").init();
@@ -314,7 +319,7 @@
 				}
 				else
 				{
-					local.value = parsePropertySubElements(local.child);
+					local.value = parsePropertySubElements(local.child, arguments.beanDefinition);
 				}
 
 				if(structKeyExists(local, "key") AND structKeyExists(local, "value"))
@@ -330,6 +335,7 @@
 
 <cffunction name="parsePropertySubElements" hint="parses property or constructor-arg for common sub elements of such as ref, bean, map etc and returns a AbstractValue is it find something" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the parent element" type="any" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
@@ -353,7 +359,7 @@
 
 				if(local.element.getNodeType() eq getNode().ELEMENT_NODE)
 				{
-					local.value = parsePropertySubElement(local.element);
+					local.value = parsePropertySubElement(local.element, arguments.beanDefinition);
 
 					//could be a Meta or Description element, which is ignored
 					if(structKeyExists(local, "value"))
@@ -368,7 +374,18 @@
 
 <cffunction name="parsePropertySubElement" hint="parses a common sub element such as ref, bean, map etc and returns a AbstractValue is it find something" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the parent element" type="any" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
+		var local = {};
+
+		if(!isDefaultNamespace(arguments.element.getNamespaceURI()))
+		{
+			local.beanDef = parseNestedCustomElement(arguments.element, arguments.beanDefinition);
+			getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
+
+			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getId(), getBeanDefinitionRegistry());
+		}
+
 		if(arguments.element.getLocalName() eq instance.static.REF_ELEMENT)
 		{
 			local.beanName = arguments.element.getAttribute(instance.static.BEAN_ATTRIBUTE);
@@ -388,11 +405,11 @@
 		}
 		else if(arguments.element.getLocalName() eq instance.static.LIST_ELEMENT)
 		{
-			return parseListElement(arguments.element);
+			return parseListElement(argumentCollection=arguments);
 		}
 		else if(arguments.element.getLocalName() eq instance.static.MAP_ELEMENT)
 		{
-			return parseMapElement(arguments.element);
+			return parseMapElement(argumentCollection=arguments);
 		}
     </cfscript>
 </cffunction>
@@ -431,6 +448,40 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="isDefaultNamespace" hint="utility method for determining if the namespace is the default beans namespace" access="public" returntype="boolean" output="false">
+	<cfargument name="namespaceUri" hint="the namespace uri" type="string" required="Yes">
+	<cfscript>
+		return arguments.namespaceUri eq instance.static.BEANS_NAMESPACE_URI;
+    </cfscript>
+</cffunction>
+
+<cffunction name="parseCustomElement" hint="parses a custom element, and returns the bean definitions that it returns" access="public" returntype="any" output="false">
+	<cfargument name="element" hint="the org.w3c.dom.Element to be parsed" type="any" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfscript>
+		var namespaceHandler = getReaderContext().getXMLParser().getNamespaceHandler(arguments.element.getNamespaceURI());
+		var parser = 0;
+		var parserContext = 0;
+
+		if(namespaceHandler.hasBeanDefinitionParser(arguments.element))
+		{
+			parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), this);
+
+			parserContext.setNamespaceHandler(namespaceHandler);
+			parserContext.setContainingBeanDefinition(arguments.beanDefinition);
+
+			parser = namespaceHandler.getBeanDefinitionParser(arguments.element);
+
+			return parser.parse(arguments.element, parserContext);
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="getReaderContext" hint="get the current context for reading the current xml document"
+	access="public" returntype="ReaderContext" output="false">
+	<cfreturn instance.readerContext />
+</cffunction>
+
 <cffunction name="getNode" hint="Access to 'org.w3c.dom.Node' static values" access="public" returntype="any" output="false">
 	<cfreturn instance.node />
 </cffunction>
@@ -447,6 +498,27 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="parseNestedCustomElement" hint="parses a nested custom element, and throws an exception if anything but a single beanDefinition is returned" access="private"
+			returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+	<cfargument name="element" hint="the org.w3c.dom.Element to be parsed" type="any" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition that wraps this custom element" type="any" required="Yes">
+	<cfscript>
+		var local = {};
+
+		local.beanDef = parseCustomElement(argumentCollection=arguments);
+
+		if(!structKeyExists(local, "beanDef") OR !isInstanceOf(local.beanDef, "coldspring.beans.support.AbstractBeanDefinition"))
+		{
+			createObject("component", "coldspring.beans.xml.exception.InvalidInnerBeanException").init(arguments.element, arguments.containingBeanDef);
+		}
+
+		//set the id, as it won't have one as it's an inner bean
+		local.beanDef.setId(createUUID());
+
+		return local.beanDef;
+    </cfscript>
+</cffunction>
+
 <cffunction name="getBeanDefinitionRegistry" access="private" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">
 	<cfreturn instance.beanDefinitionRegistry />
 </cffunction>
@@ -454,6 +526,11 @@
 <cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">
 	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfset instance.beanDefinitionRegistry = arguments.beanDefinitionRegistry />
+</cffunction>
+
+<cffunction name="setReaderContext" access="private" returntype="void" output="false">
+	<cfargument name="readerContext" type="ReaderContext" required="true">
+	<cfset instance.readerContext = arguments.readerContext />
 </cffunction>
 
 <cffunction name="getDefaultAutorwireMode" access="private" returntype="string" output="false">
@@ -473,7 +550,6 @@
 	<cfargument name="defaultLazyInit" type="string" required="true">
 	<cfset instance.defaultLazyInit = arguments.defaultLazyInit />
 </cffunction>
-
 
 <cffunction name="setNode" access="private" returntype="void" output="false">
 	<cfargument name="node" type="any" required="true">

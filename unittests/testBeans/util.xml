@@ -45,5 +45,21 @@
 			<value>1</value>
 		</entry>
 		<entry key="bar" value="2"/>
-	</util:map>	
+	</util:map>
+	
+	<bean id="engine" class="unittests.testBeans.Engine"/>
+	
+	<bean id="carWithMap" class="unittests.testBeans.Car">
+		<constructor-arg name="engine" ref="engine"/>
+		<property name="wheels">
+			<util:map>
+				<entry key="1" value-ref="wheel"/>
+				<entry key="2" value-ref="wheel"/>
+				<entry key="3" value-ref="wheel"/>
+				<entry key="4" value-ref="wheel"/>
+			</util:map>
+		</property>
+	</bean>		
+	
+	<bean id="wheel" class="unittests.testBeans.Wheel" scope="prototype"/>
 </beans>

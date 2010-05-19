@@ -103,6 +103,24 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testFactoryInnerBean" hint="test using util:map as an inner bean" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.car = instance.factory.getBean("carWithMap");
+
+		local.wheels = local.car.getWheels();
+
+		assertTrue(isStruct(local.wheels), "Should be a struct");
+		assertEquals(4, structCount(local.wheels));
+
+		local.array = [1,2,3,4];
+		assertArrayEqualsNonOrdered(local.array, structKeyArray(local.wheels));
+
+		assertEquals("unittests.testBeans.wheel", getMetadata(local.wheels["1"]).name);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

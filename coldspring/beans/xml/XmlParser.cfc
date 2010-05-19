@@ -70,11 +70,12 @@
 		var document = xmlFileReader.parseToDocument();
 		var delegate = 0;
 		var parserContext = 0;
+		var readerContext = createObject("component", "ReaderContext").init(document, xmlFileReader, this);
 
 		document.normalize();
 
-		delegate = createObject("component", "coldspring.beans.xml.BeanDefinitionParserDelegate").init(document, getBeanDefinitionRegistry());
-		parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), this, xmlFileReader, delegate);
+		delegate = createObject("component", "coldspring.beans.xml.BeanDefinitionParserDelegate").init(getBeanDefinitionRegistry(), readerContext);
+		parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), delegate);
 
 		parseRootLevelElement(document.getDocumentElement(), parserContext);
     </cfscript>
@@ -120,36 +121,6 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<!---
-	/**
-	 * Parse the elements at the root level in the document:
-	 * "import", "alias", "bean".
-	 * @param root the DOM root element of the document
-	 */
-	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
-		if (delegate.isDefaultNamespace(root.getNamespaceURI())) {
-			NodeList nl = root.getChildNodes();
-			for (int i = 0; i < nl.getLength(); i++) {
-				Node node = nl.item(i);
-				if (node instanceof Element) {
-					Element ele = (Element) node;
-					String namespaceUri = ele.getNamespaceURI();
-					if (delegate.isDefaultNamespace(namespaceUri)) {
-						parseDefaultElement(ele, delegate);
-					}
-					else {
-						delegate.parseCustomElement(ele);
-					}
-				}
-			}
-		}
-		else {
-			delegate.parseCustomElement(root);
-		}
-	}
-
- --->
 
 <cffunction name="parseRootLevelElement" hint="parses elements at the root level of the document." access="private" returntype="void" output="false">
 	<cfargument name="element" hint="The root org.w3c.dom.Element of the document, to parse" type="any" required="Yes">

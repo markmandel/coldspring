@@ -33,7 +33,7 @@
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
 	<cfscript>
 		var beanDef = super.parse(argumentCollection=arguments);
-		var value = arguments.parserContext.getDelegate().parseMapElement(arguments.element);
+		var value = arguments.parserContext.getDelegate().parseMapElement(arguments.element, beanDef);
 		var property = createObject("component", "coldspring.beans.support.Property").init("sourceMap", value);
 
 		beanDef.setClassName(instance.static.MAP_FACTORY_BEAN_CLASS);

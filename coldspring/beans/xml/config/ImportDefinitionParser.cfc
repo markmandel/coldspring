@@ -33,9 +33,10 @@
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
 	<cfscript>
-		var xmlParser = arguments.parserContext.getXmlParser();
+		var readerContext = arguments.parserContext.getDelegate().getReaderContext();
+		var xmlParser = readerContext.getXmlParser();
 		var resource = arguments.element.getAttribute(instance.static.RESOURCE_ATTRIBUTE);
-		var path = arguments.parserContext.getXMLFileReader().getPath();
+		var path = readerContext.getXMLFileReader().getPath();
 
 		path = getDirectoryFromPath(path) & resource;
 
