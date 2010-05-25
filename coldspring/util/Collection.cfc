@@ -1,5 +1,5 @@
 ﻿<cfcomponent hint="A Collection class for the Closure library.
-			<br/>This is very rudimentary for now, as it only has what is needed, but will be expanded in the future (Contributions welcome!)" output="false">
+			<br/>This is very rudimentary for now, as it only has what is needed for CS, but will be expanded in the future (Contributions welcome!)" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

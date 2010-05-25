@@ -32,8 +32,7 @@
 
 <cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
 			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
-			<br/><strong>NOTE: This method introspects top-level beans only.</strong> It does not  check nested beans which might match the specified type as well.<br/>
-			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized. If the object created by the FactoryBean doesn't match, the raw FactoryBean itself will be matched against the type.
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.
 			"
 			access="public" returntype="array" output="false">
 	<cfargument name="className" hint="the class type" type="string" required="Yes">

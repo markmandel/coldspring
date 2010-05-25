@@ -253,6 +253,9 @@
 		//fire RegistryPost Processor (do this before bean post processors go into effect, as you may need a hook to remove them from the meta)
 		getRegistryPostProcessorObservable().postProcessBeanDefinitionRegistry(this);
 
+		//refresh the type cache, as things may have changed behind the scenes without anyone knowing.
+		refreshTypeCache();
+
 		//get this here, as it may be different, due to the processors
 		beanDefinitions = getBeanDefinitions();
 
@@ -297,6 +300,29 @@
 		//bean post processors
 		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanFactoryAwarePostProcessor").init(getBeanFactory()));
 		addBeanPostProcessor(createObject("component", "coldspring.beans.factory.BeanNameAwarePostProcessor").init());
+    </cfscript>
+</cffunction>
+
+<cffunction name="refreshTypeCache" hint="clear the type cache, and repopulate it with the types from all the beans" access="private" returntype="void" output="false">
+	<cfscript>
+		var beanDefinitions = getBeanDefinitions();
+		var id = 0;
+		var beanDefinition = 0;
+		var args = 0;
+
+		//reset the type name cache
+		structClear(getTypeNameCache());
+
+		for(id in beanDefinitions)
+		{
+			beanDefinition = beanDefinitions[id];
+
+			if(beanDefinition.hasClassName())
+			{
+				args = {id = id};
+				getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getCacheNameAgainstTypeClosure(), args);
+			}
+		}
     </cfscript>
 </cffunction>
 
