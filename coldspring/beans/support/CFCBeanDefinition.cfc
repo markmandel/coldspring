@@ -146,17 +146,9 @@
 	<cfargument name="func" hint="the function meta data" type="struct" required="Yes">
 	<cfargument name="meta" hint="the original meta data" type="struct" required="Yes">
 	<cfscript>
-		var ref = 0;
-		var property = 0;
-		var name = 0;
-		var type = 0;
-		var counter = 1;
-		var len = 0;
-		var param = 0;
-		var constructorArg = 0;
-		var class = 0;
-		var array = 0;
-		var package = getPackage(arguments.meta.name);
+		var local = {};
+
+		local.package = getPackage(arguments.meta.name);
 
 		/*
 		Constructor autowire metadata
@@ -167,38 +159,49 @@
 			arguments.func.access = "public";
 		}
 
+		if(getAutowire() eq "byType")
+		{
+			local.closure = createObject("component", "coldspring.util.Closure").init(isBeanNameAutoWireCandidate);
+			local.closure.bind("beanRegistry", getBeanDefinitionRegistry());
+		}
+
 		if(arguments.func.access eq "public"
 			AND LCase(arguments.func.name) eq "init")
 		{
-			len = arraylen(arguments.func.parameters);
-			for(; counter lte len; counter++)
+			local.len = arraylen(arguments.func.parameters);
+			for(local.counter = 1; local.counter lte local.len; local.counter++)
 			{
-				param = arguments.func.parameters[counter];
+				local.param = arguments.func.parameters[local.counter];
 
 				//don't overwrite if we have the constructor arg
-				if(NOT hasConstructorArgsByName(param.name))
+				if(NOT hasConstructorArgsByName(local.param.name))
 				{
 					if(getAutowire() eq "byName")
 					{
-						if(getBeanDefinitionRegistry().containsBeanDefinition(param.name))
+						//need to make sure we ignore non autowire candidates
+						if(getBeanDefinitionRegistry().containsBeanDefinition(local.param.name)
+							AND getBeanDefinitionRegistry().getBeanDefinition(local.param.name).isAutowireCandidate())
 						{
-							ref = createObject("component", "RefValue").init(param.name, getBeanDefinitionRegistry());
-							constructorArg = createObject("component", "ConstructorArg").init(param.name, ref);
-							addConstructorArg(constructorArg);
+							local.ref = createObject("component", "RefValue").init(local.param.name, getBeanDefinitionRegistry());
+							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.name, local.ref);
+							addConstructorArg(local.constructorArg);
 						}
 					}
-					else if(getAutowire() eq "byType" AND structKeyExists(param, "type"))
+					else if(getAutowire() eq "byType" AND structKeyExists(local.param, "type"))
 					{
-						class = resolveClassName(param.type, package);
-						array = getBeanDefinitionRegistry().getBeanNamesForType(class);
+						local.class = resolveClassName(local.param.type, local.package);
+						local.array = getBeanDefinitionRegistry().getBeanNamesForType(local.class);
 
-						if(ArrayLen(array) eq 1)
+						local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
+						local.collection = local.collection.select(local.closure);
+
+						if(local.collection.length() eq 1)
 						{
-							ref = createObject("component", "RefValue").init(array[1], getBeanDefinitionRegistry());
-							constructorArg = createObject("component", "ConstructorArg").init(param.name, ref);
-							addConstructorArg(constructorArg);
+							local.ref = createObject("component", "RefValue").init(local.collection.get(1), getBeanDefinitionRegistry());
+							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.name, local.ref);
+							addConstructorArg(local.constructorArg);
 						}
-						else if(ArrayLen(array) gt 1)
+						else if(ArrayLen(local.array) gt 1)
 						{
 							createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(getID(), param.type);
 						}
@@ -218,32 +221,37 @@
 			AND ArrayLen(arguments.func.parameters) eq 1
 			)
 		{
-			name = replaceNoCase(arguments.func.name, "set", "");
+			local.name = replaceNoCase(arguments.func.name, "set", "");
 
 			//don't overwrite if we already have the property
-			if(NOT hasPropertyByName(name))
+			if(NOT hasPropertyByName(local.name))
 			{
 				if(getAutowire() eq "byName")
 				{
-					if(getBeanDefinitionRegistry().containsBeanDefinition(name))
+					if(getBeanDefinitionRegistry().containsBeanDefinition(local.name)
+							AND getBeanDefinitionRegistry().getBeanDefinition(local.name).isAutowireCandidate())
 					{
-						ref = createObject("component", "RefValue").init(name, getBeanDefinitionRegistry());
-						property = createObject("component", "Property").init(name, ref);
-						addProperty(property);
+						local.ref = createObject("component", "RefValue").init(local.name, getBeanDefinitionRegistry());
+						local.property = createObject("component", "Property").init(local.name, local.ref);
+						addProperty(local.property);
 					}
 				}
 				else if(getAutowire() eq "byType" AND structKeyExists(arguments.func.parameters[1], "type"))
 				{
-					class = resolveClassName(arguments.func.parameters[1].type, package);
+					local.class = resolveClassName(arguments.func.parameters[1].type, local.package);
 
-					array = getBeanDefinitionRegistry().getBeanNamesForType(class);
-					if(ArrayLen(array) eq 1)
+					local.array = getBeanDefinitionRegistry().getBeanNamesForType(local.class);
+
+					local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
+					local.collection = local.collection.select(local.closure);
+
+					if(local.collection.length() eq 1)
 					{
-						ref = createObject("component", "RefValue").init(array[1], getBeanDefinitionRegistry());
-						property = createObject("component", "Property").init(name, ref);
-						addProperty(property);
+						local.ref = createObject("component", "RefValue").init(local.collection.get(1), getBeanDefinitionRegistry());
+						local.property = createObject("component", "Property").init(local.name, local.ref);
+						addProperty(local.property);
 					}
-					else if(ArrayLen(array) gt 1)
+					else if(ArrayLen(local.array) gt 1)
 					{
 						createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(getID(), arguments.func.parameters[1].type);
 					}
@@ -311,5 +319,16 @@
 </cffunction>
 
 <!--- /mixins --->
+
+<!--- closures --->
+
+<cffunction name="isBeanNameAutoWireCandidate" hint="is the given bean name an autowireable candidate" access="private" returntype="boolean" output="false">
+	<cfargument name="name" hint="the bean definition name" type="string" required="Yes">
+	<cfscript>
+		return variables.beanRegistry.getBeanDefinition(arguments.name).isAutowireCandidate();
+    </cfscript>
+</cffunction>
+
+<!--- /closures --->
 
 </cfcomponent>

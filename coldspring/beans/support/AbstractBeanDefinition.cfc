@@ -345,6 +345,16 @@
 	<cfreturn StructKeyExists(instance, "parentName") />
 </cffunction>
 
+<cffunction name="isAutowireCandidate" access="public" returntype="boolean" output="false">
+	<cfreturn instance.isAutowireCandidate />
+</cffunction>
+
+<cffunction name="setAutowireCandidate" access="public" returntype="void" output="false">
+	<cfargument name="isAutowireCandidate" type="boolean" required="true">
+	<cfset instance.isAutowireCandidate = arguments.isAutowireCandidate />
+</cffunction>
+
+
 <cffunction name="getMeta" hint="Return custom object meta data" access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
 	<cfreturn instance.meta />
@@ -374,6 +384,7 @@
 		setProperties(StructNew());
 		setAbstract(false);
 		setMeta(structNew());
+		setAutowireCandidate(true);
 
 		return this;
 	</cfscript>

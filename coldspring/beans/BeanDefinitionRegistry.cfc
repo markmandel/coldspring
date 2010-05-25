@@ -25,7 +25,7 @@
 </cfscript>
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionRegistry" output="false">
-	<cfargument name="beanFactory" hint="the containing bean factory" type="coldspring.beans.AbstractBeanFactory" required="Yes">
+	<cfargument name="beanFactory" hint="the containing bean factory" type="coldspring.beans.BeanFactory" required="Yes">
 	<cfargument name="beanCache" hint="The actual bean cache. Needed for AbstractBeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfscript>
 		setBeanDefinitions(StructNew());
@@ -130,33 +130,12 @@
 		{
 			getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getRemoveNameAgainstTypeClosure(), args);
 		}
-
-		/*
-		Keeping this in case I need it, but don't be removing aliases, unless explicitly asked
-
-		//remove aliases
-		if(isAlias(arguments.name))
-		{
-			removeAlias(arguments.name);
-		}
-		else
-		{
-			local.aliases = getAliases(arguments.name);
-			local.len = ArrayLen(local.aliases);
-            for(local.counter=1; local.counter lte local.len; local.counter++)
-            {
-            	local.alias = local.aliases[local.counter];
-				removeAlias(local.alias);
-            }
-		}
-		*/
     </cfscript>
 </cffunction>
 
 <cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
 			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
-			<br/><strong>NOTE: This method introspects top-level beans only.</strong> It does not  check nested beans which might match the specified type as well.<br/>
-			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized. If the object created by the FactoryBean doesn't match, the raw FactoryBean itself will be matched against the type.
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.
 			"
 			access="public" returntype="array" output="false">
 	<cfargument name="className" hint="the class type" type="string" required="Yes">
@@ -274,7 +253,7 @@
 		//fire RegistryPost Processor (do this before bean post processors go into effect, as you may need a hook to remove them from the meta)
 		getRegistryPostProcessorObservable().postProcessBeanDefinitionRegistry(this);
 
-		//get this here, as it may be different, do to the processors
+		//get this here, as it may be different, due to the processors
 		beanDefinitions = getBeanDefinitions();
 
 		//notify complete

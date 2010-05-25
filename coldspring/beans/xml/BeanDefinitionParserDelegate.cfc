@@ -455,7 +455,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="parseCustomElement" hint="parses a custom element, and returns the bean definitions that it returns" access="public" returntype="any" output="false">
+<cffunction name="parseCustomElement" hint="parses a custom element, and returns the bean definitions that it returns (if any)" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element to be parsed" type="any" required="Yes">
 	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
 	<cfscript>
