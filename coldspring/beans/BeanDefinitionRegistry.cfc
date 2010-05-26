@@ -89,7 +89,8 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="containsBeanDefinition" hint="Returns true if a bean definition exists" access="public" returntype="boolean" output="false">
+<cffunction name="containsBeanDefinition" hint="Check if this bean factory contains a bean definition with the given name."
+		access="public" returntype="boolean" output="false">
 	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfscript>
 		var beanDefs = getBeanDefinitions();

@@ -19,7 +19,15 @@
 	<cfargument name="name" hint="the name of the bean to get" type="string" required="Yes">
 </cffunction>
 
-<cffunction name="containsBeanDefinition" hint="Returns true if a bean (definition) exists" access="public" returntype="boolean" output="false">
+<cffunction name="containsBean" hint="Does this bean factory contain a bean with the given name? More specifically, is getBean(java.lang.String) able to obtain a bean instance for the given name?<br/>
+	Translates aliases back to the corresponding canonical bean name. Will ask the parent factory if the bean cannot be found in this factory instance. "
+	access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
+</cffunction>
+
+<cffunction name="containsBeanDefinition" hint="Check if this bean factory contains a bean definition with the given name.<br/>
+		Does not consider any hierarchy this factory may participate in, and ignores any singleton beans that have been registered by other means than bean definitions."
+		access="public" returntype="boolean" output="false">
 	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 </cffunction>
 

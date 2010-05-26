@@ -383,4 +383,16 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="containsTest" hint="" access="public" returntype="any" output="false">
+	<cfscript>
+		var local = {};
+
+		assertTrue(instance.factory.containsBean("engine"));
+		assertTrue(instance.factory.containsBeanDefinition("engine"));
+
+		assertFalse(instance.factory.containsBean("fubar"));
+		assertFalse(instance.factory.containsBeanDefinition("fubar"));
+    </cfscript>
+</cffunction>
+
 </cfcomponent>
