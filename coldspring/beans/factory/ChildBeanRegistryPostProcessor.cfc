@@ -47,7 +47,7 @@
 
 <cffunction name="processChildBeanDefinition" hint="Processes a bean definition if it is a child, and has yet to be processed. Recurses up to the parent if it is a parent and has yet to be set."
 	access="private" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the child bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the child bean definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfargument name="registry" type="coldspring.beans.BeanDefinitionRegistry" required="yes" />
 	<cfscript>
 		var parentBeanDefinition = 0;
@@ -79,14 +79,14 @@
 </cffunction>
 
 <cffunction name="isProcessed" hint="have we processed this bean definition?" access="public" returntype="boolean" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to see if it is processed" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to see if it is processed" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		return structKeyExists(getProcessed(), arguments.beanDefinition.getID());
     </cfscript>
 </cffunction>
 
 <cffunction name="markProcessed" hint="mark this bean as being processed" access="private" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to mark as processed" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to mark as processed" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		structInsert(getProcessed(), arguments.beanDefinition.getID(), 1);
     </cfscript>

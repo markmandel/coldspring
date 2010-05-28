@@ -26,7 +26,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionRegistry" output="false">
 	<cfargument name="beanFactory" hint="the containing bean factory" type="coldspring.beans.BeanFactory" required="Yes">
-	<cfargument name="beanCache" hint="The actual bean cache. Needed for AbstractBeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
+	<cfargument name="beanCache" hint="The actual bean cache. Needed for BeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfscript>
 		setBeanDefinitions(StructNew());
 		setTypeNameCache(StructNew());
@@ -54,7 +54,7 @@
 </cffunction>
 
 <cffunction name="registerBeanDefinition" hint="add a bean definition to the registry" access="public" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var typeNameCache = getTypeNameCache();
 		var args = {id = arguments.beanDefinition.getID()};
@@ -70,7 +70,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
@@ -241,7 +241,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="notifyComplete" hint="Called when all the BeanDefinitions have been added to the registry, and calls notifyComplete() on all AbstractBeanDefinitions to allow them to do post processing"
+<cffunction name="notifyComplete" hint="Called when all the BeanDefinitions have been added to the registry, and calls notifyComplete() on all BeanDefinitions to allow them to do post processing"
 			access="public" returntype="void" output="false">
 	<cfscript>
 		var beanDefinitions = 0;
@@ -427,12 +427,12 @@
 <!--- /closure functions --->
 
 <cffunction name="getBeanDefinitions" access="private" returntype="struct" output="false"
-			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+			colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfreturn instance.beanDefinitions />
 </cffunction>
 
 <cffunction name="setBeanDefinitions" access="private" returntype="void" output="false">
-	<cfargument name="beanDefinitions" type="struct" required="true" colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+	<cfargument name="beanDefinitions" type="struct" required="true" colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfset instance.beanDefinitions = arguments.beanDefinitions />
 </cffunction>
 

@@ -35,7 +35,7 @@
 	<cfset instance.beanName = arguments.beanName />
 </cffunction>
 
-<cffunction name="getBeanDefinition" access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+<cffunction name="getBeanDefinition" access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfreturn instance.beanDefinition />
 </cffunction>
 
@@ -59,7 +59,7 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="setBeanDefinition" hint="The actual bean definition" access="private" returntype="void" output="false">
-	<cfargument name="beanDefinition" type="coldspring.beans.support.AbstractBeanDefinition" required="true">
+	<cfargument name="beanDefinition" type="coldspring.beans.support.BeanDefinition" required="true">
 	<cfset instance.beanDefinition = arguments.beanDefinition />
 </cffunction>
 

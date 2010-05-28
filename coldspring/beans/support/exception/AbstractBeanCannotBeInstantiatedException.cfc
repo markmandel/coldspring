@@ -16,7 +16,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition in question" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition in question" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		super.init("It is not possible to instantiate a bean marked as 'abstract'", "The bean definition '#arguments.beanDefinition.getID()#' is marked as abstract, and cannot be instantiated");
 	</cfscript>

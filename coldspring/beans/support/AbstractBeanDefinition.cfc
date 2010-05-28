@@ -11,7 +11,8 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="An abstract bean definition for any sort of bean that can be setup in ColdSpring" output="false"
+<cfcomponent hint="An abstract bean definition for any sort of bean that can be setup in ColdSpring"
+			 implements="BeanDefinition" output="false"
 			 colddoc:abstract="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -104,7 +105,7 @@
 			* Will override meta data, if it exists"
 
 	access="public" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to overwrite with" type="AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to overwrite with" type="BeanDefinition" required="Yes">
 	<cfscript>
 		var len = 0;
 		var counter = 0;
@@ -190,12 +191,12 @@
 	<cfset instance.id = arguments.id />
 </cffunction>
 
-<cffunction name="getClassName" access="public" returntype="any" output="false">
+<cffunction name="getClassName" access="public" returntype="string" output="false">
 	<cfreturn instance.class />
 </cffunction>
 
 <cffunction name="setClassName" access="public" returntype="void" output="false">
-	<cfargument name="class" type="any" required="true">
+	<cfargument name="class" type="string" required="true">
 	<cfset instance.class = arguments.class />
 </cffunction>
 
@@ -360,7 +361,7 @@
 	<cfreturn instance.meta />
 </cffunction>
 
-<cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractBeanDefinition" output="false">
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="BeanDefinition" output="false">
 	<cfscript>
 		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
 

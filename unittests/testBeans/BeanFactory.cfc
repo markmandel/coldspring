@@ -26,7 +26,7 @@
 </cffunction>
 
 <cffunction name="addBeanDefinition" hint="add a bean definition to the registry" access="public" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfset getBeanDefinitionRegistry().registerBeanDefinition(argumentCollection=arguments)>
 </cffunction>
 

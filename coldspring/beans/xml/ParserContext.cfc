@@ -35,12 +35,12 @@
 	<cfset instance.namespaceHandler = arguments.namespaceHandler />
 </cffunction>
 
-<cffunction name="getContainingBeanDefinition" hint="The parent bean defintion that was created from a parent element of this one" access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+<cffunction name="getContainingBeanDefinition" hint="The parent bean defintion that was created from a parent element of this one" access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfreturn instance.containingBeanDefinition />
 </cffunction>
 
 <cffunction name="setContainingBeanDefinition" access="public" returntype="void" output="false">
-	<cfargument name="containingBeanDefinition" type="coldspring.beans.support.AbstractBeanDefinition" required="true">
+	<cfargument name="containingBeanDefinition" type="coldspring.beans.support.BeanDefinition" required="true">
 	<cfset instance.containingBeanDefinition = arguments.containingBeanDefinition />
 </cffunction>
 

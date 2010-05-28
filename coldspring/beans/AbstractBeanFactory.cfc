@@ -103,7 +103,7 @@
 	<cfreturn getBeanDefinitionRegistry().getBeanNamesForType(argumentCollection=arguments) />
 </cffunction>
 
-<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
 	<cfreturn getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments) />
 </cffunction>

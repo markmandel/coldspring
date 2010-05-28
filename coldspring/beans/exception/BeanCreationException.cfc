@@ -16,7 +16,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean defintion for which the creation failed" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean defintion for which the creation failed" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfargument name="exception" hint="the cfcatch exception" type="any" required="Yes">
 	<cfscript>
 		var detail = 0;

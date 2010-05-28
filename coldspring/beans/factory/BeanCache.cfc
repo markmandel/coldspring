@@ -39,7 +39,7 @@
 </cffunction>
 
 <cffunction name="getCache" hint="gets a cache (struct) for a given scope. We use a simple struct for performance" access="public" returntype="struct" output="false"
-	colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+	colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfargument name="scope" hint="the bean scope" type="string" required="Yes">
 	<cfscript>
 		var call = structFind(getCacheCommandMap(), arguments.scope);
@@ -49,7 +49,7 @@
 </cffunction>
 
 <cffunction name="getLockName" hint="returns the required lock name for creating a cached version of a given bean" access="public" returntype="string" output="false">
-	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var call = StructFind(getLockNameCommandMap(), arguments.beanDef.getScope());
 
@@ -88,7 +88,7 @@
 </cffunction>
 
 <cffunction name="getSessionCache" hint="gets a cache for the session scope" access="private" returntype="struct" output="false"
-			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+			colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfif NOT StructKeyExists(session, instance.static.SCOPE_KEY)>
     	<cflock name="coldspring.beans.beancache.getsessioncache.#getSystem().identityHashCode(session)#" throwontimeout="true" timeout="60">
     	<cfscript>
@@ -103,14 +103,14 @@
 </cffunction>
 
 <cffunction name="getSessionLockName" hint="gets the locking name for a session scoped bean" access="private" returntype="string" output="false">
-	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		return "coldspring.beans.support.beandefinition.createInstance.#arguments.beanDef.getID()#.#getSystem().identityHashCode(session)#";
     </cfscript>
 </cffunction>
 
 <cffunction name="getRequestCache" hint="gets a cache for the request scope" access="private" returntype="struct" output="false"
-			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+			colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfif NOT StructKeyExists(request, instance.static.SCOPE_KEY)>
     	<cflock name="coldspring.beans.beancache.getrequestcache.#getSystem().identityHashCode(request)#" throwontimeout="true" timeout="60">
     	<cfscript>
@@ -125,33 +125,33 @@
 </cffunction>
 
 <cffunction name="getRequestLockName" hint="gets the locking name for a request scoped bean" access="private" returntype="string" output="false">
-	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		return "coldspring.beans.support.beandefinition.createInstance.#arguments.beanDef.getID()#.#getSystem().identityHashCode(request)#";
     </cfscript>
 </cffunction>
 
 <cffunction name="getPrototypeCache" hint="returns the cache for the prototype cache, which caches nothing" access="private" returntype="struct" output="false"
-			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+			colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfscript>
 		return instance.prototypeCache;
     </cfscript>
 </cffunction>
 
 <cffunction name="getPrototypeLockName" hint="gets the locking name for a prototype scoped bean" access="private" returntype="string" output="false">
-	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		return "coldspring.beans.support.beandefinition.createInstance.#arguments.beanDef.getID()#.#getThread().currentThread().getName()#";
     </cfscript>
 </cffunction>
 
 <cffunction name="getSingletonCache" access="private" returntype="struct" output="false"
-			colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+			colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfreturn instance.singletonCache />
 </cffunction>
 
 <cffunction name="getSingletonLockName" hint="gets the locking name for a singleton scoped bean" access="private" returntype="string" output="false">
-	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDef" hint="the bean Definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		//do identity hash code on this, so multiple CS's with the same bean name don't clash
 		return "coldspring.beans.support.beandefinition.createInstance.#arguments.beanDef.getID()#.#getSystem().identityHashCode(this)#";
@@ -160,7 +160,7 @@
 
 <cffunction name="setSingletonCache" access="private" returntype="void" output="false">
 	<cfargument name="singletonCache" type="struct" required="true"
-				colddoc:generic="string,coldspring.beans.support.AbstractBeanDefinition">
+				colddoc:generic="string,coldspring.beans.support.BeanDefinition">
 	<cfset instance.singletonCache = arguments.singletonCache />
 </cffunction>
 

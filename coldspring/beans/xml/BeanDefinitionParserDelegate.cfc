@@ -88,7 +88,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="parseBeanDefinitionElement" hint="parse a <bean> element and returns a bean definition" access="public" returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+<cffunction name="parseBeanDefinitionElement" hint="parse a <bean> element and returns a bean definition" access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
 	<cfscript>
 		var id = 0;
@@ -179,7 +179,7 @@
 
 <cffunction name="parseConstructorArgElements" hint="parse all constructor arg sub-elements on a given element" access="public" returntype="void" output="false">
 	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the bean def to add the constructor args to" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean def to add the constructor args to" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var constructorArgs = arguments.beanElement.getElementsByTagName(instance.static.CONSTRUCTOR_ARG_ELEMENT);
 		var counter = 0;
@@ -193,7 +193,7 @@
 
 <cffunction name="parseConstructorArgElement" hint="parses a single constructor-arg element" access="public" returntype="void" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the constructor arg" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the bean def to add the constructor arg to" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean def to add the constructor arg to" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
@@ -216,7 +216,7 @@
 
 <cffunction name="parsePropertyElements" hint="parse all property sub-elements on a given element" access="public" returntype="void" output="false">
 	<cfargument name="beanElement" hint="the org.w3c.dom.Element that we are looking for sub elements" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the bean def to add the properties to" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean def to add the properties to" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var properties = arguments.beanElement.getElementsByTagName(instance.static.PROPERTY_ELEMENT);
 		var counter = 0;
@@ -230,7 +230,7 @@
 
 <cffunction name="parsePropertyElement" hint="parses a single property element" access="public" returntype="void" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the property" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the bean def to add the property to" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean def to add the property to" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
@@ -253,7 +253,7 @@
 
 <cffunction name="parseListElement" hint="parses a list element" access="public" returntype="coldspring.beans.support.ListValue" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the list element" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var childNodes = arguments.element.getChildNodes();
 		var counter = 0;
@@ -283,7 +283,7 @@
 
 <cffunction name="parseMapElement" hint="parses a Map element" access="public" returntype="coldspring.beans.support.MapValue" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the list element" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 		var mapValue = createObject("component", "coldspring.beans.support.MapValue").init();
@@ -335,7 +335,7 @@
 
 <cffunction name="parsePropertySubElements" hint="parses property or constructor-arg for common sub elements of such as ref, bean, map etc and returns a AbstractValue is it find something" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the parent element" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
@@ -374,7 +374,7 @@
 
 <cffunction name="parsePropertySubElement" hint="parses a common sub element such as ref, bean, map etc and returns a AbstractValue is it find something" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element that is the parent element" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
@@ -457,7 +457,7 @@
 
 <cffunction name="parseCustomElement" hint="parses a custom element, and returns the bean definitions that it returns (if any)" access="public" returntype="any" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element to be parsed" type="any" required="Yes">
-	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.AbstractBeanDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the containing bean definition" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var namespaceHandler = getReaderContext().getXMLParser().getNamespaceHandler(arguments.element.getNamespaceURI());
 		var parser = 0;
@@ -499,7 +499,7 @@
 </cffunction>
 
 <cffunction name="parseNestedCustomElement" hint="parses a nested custom element, and throws an exception if anything but a single beanDefinition is returned" access="private"
-			returntype="coldspring.beans.support.AbstractBeanDefinition" output="false">
+			returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element to be parsed" type="any" required="Yes">
 	<cfargument name="beanDefinition" hint="the bean definition that wraps this custom element" type="any" required="Yes">
 	<cfscript>
@@ -507,7 +507,7 @@
 
 		local.beanDef = parseCustomElement(argumentCollection=arguments);
 
-		if(!structKeyExists(local, "beanDef") OR !isInstanceOf(local.beanDef, "coldspring.beans.support.AbstractBeanDefinition"))
+		if(!structKeyExists(local, "beanDef") OR !isInstanceOf(local.beanDef, "coldspring.beans.support.BeanDefinition"))
 		{
 			createObject("component", "coldspring.beans.xml.exception.InvalidInnerBeanException").init(arguments.element, arguments.containingBeanDef);
 		}
