@@ -49,6 +49,10 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="getValueArray" access="public" returntype="array" output="false"	colddoc:generic="AbstractValue">
+	<cfreturn instance.valueArray />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -61,10 +65,6 @@
 
 		variables.instance = arguments.instance;
     </cfscript>
-</cffunction>
-
-<cffunction name="getValueArray" access="private" returntype="array" output="false"	colddoc:generic="AbstractValue">
-	<cfreturn instance.valueArray />
 </cffunction>
 
 <cffunction name="setValueArray" access="private" returntype="void" output="false">

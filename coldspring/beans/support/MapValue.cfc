@@ -71,6 +71,10 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="getValueMap" access="public" returntype="struct" output="false" colddoc:generic="AbstractValue,AbstractValue">
+	<cfreturn instance.valueMap />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -83,10 +87,6 @@
 
 		variables.instance = arguments.instance;
     </cfscript>
-</cffunction>
-
-<cffunction name="getValueMap" access="private" returntype="struct" output="false" colddoc:generic="AbstractValue,AbstractValue">
-	<cfreturn instance.valueMap />
 </cffunction>
 
 <cffunction name="setValueMap" access="private" returntype="void" output="false">
