@@ -157,6 +157,12 @@
 		{
 			setInitMethod(arguments.beanDefinition.getInitMethod());
 		}
+
+		//keep the parent name for posterities sake
+		if(arguments.beanDefinition.hasParentName())
+		{
+			setParentName(arguments.beanDefinition.getParentName());
+		}
     </cfscript>
 </cffunction>
 

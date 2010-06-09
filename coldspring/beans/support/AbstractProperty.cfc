@@ -16,17 +16,22 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getName" access="public" returntype="string" output="false">
-	<cfreturn instance.Name />
+<cffunction name="getName" hint="The property name on the object" access="public" returntype="string" output="false">
+	<cfreturn instance.name />
+</cffunction>
+
+<cffunction name="setName" access="public" returntype="void" output="false">
+	<cfargument name="Name" type="string" required="true">
+	<cfset instance.Name = arguments.name />
 </cffunction>
 
 <cffunction name="getValue" access="public" returntype="AbstractValue" output="false">
-	<cfreturn instance.Value />
+	<cfreturn instance.value />
 </cffunction>
 
 <cffunction name="getMeta" hint="Return custom object meta data" access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
-	<cfreturn instance.Meta />
+	<cfreturn instance.meta />
 </cffunction>
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractProperty" output="false">
@@ -35,6 +40,10 @@
 
 		return cloneable.clone(this);
     </cfscript>
+</cffunction>
+
+<cffunction name="create" hint="create an instance of the underlying value" access="public" returntype="any" output="false">
+	<cfreturn getValue().getValue() />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -56,24 +65,20 @@
 	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
 	<cfscript>
 		arguments.instance.value = arguments.instance.value.clone();
+		arguments.instance.meta = duplicate(arguments.instance.meta);
 
 		variables.instance = arguments.instance;
     </cfscript>
 </cffunction>
 
-<cffunction name="setName" access="private" returntype="void" output="false">
-	<cfargument name="Name" type="string" required="true">
-	<cfset instance.Name = arguments.Name />
-</cffunction>
-
 <cffunction name="setValue" access="private" returntype="void" output="false">
 	<cfargument name="Value" type="AbstractValue" required="true">
-	<cfset instance.Value = arguments.Value />
+	<cfset instance.value = arguments.value />
 </cffunction>
 
 <cffunction name="setMeta" access="private" returntype="void" output="false">
 	<cfargument name="Meta" type="struct" required="true" colddoc:generic="string,string">
-	<cfset instance.Meta = arguments.Meta />
+	<cfset instance.meta = arguments.meta />
 </cffunction>
 
 </cfcomponent>

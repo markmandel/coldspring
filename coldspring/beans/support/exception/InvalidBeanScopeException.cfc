@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
 <cfcomponent hint="Exception for an invalid bean scope" extends="coldspring.exception.Exception" output="false">
 
@@ -18,7 +18,7 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
 	<cfargument name="scope" hint="the scope attempted to be set" type="string" required="Yes">
 	<cfscript>
-		super.init("The Bean Scope being set is invalid", "The bean scope '#arguments.scope#' is not one of the valid scopes, singleton, prototype, request, session or globalSession");			
+		super.init("The Bean Scope being set is invalid", "The bean scope '#arguments.scope#' is not one of the valid scopes, singleton, prototype, request, or session");
 	</cfscript>
 </cffunction>
 

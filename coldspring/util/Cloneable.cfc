@@ -36,7 +36,11 @@
 
 		clone = arguments.object.__cloneObject(this);
 
-		getMethodInjector().removeMethod(arguments.object, "cloneObject");
+		/*
+			This is actually really important, as otherwise objects that are used as keys
+			in Maps generate a different hash(), and can no longer find their values.
+		*/
+		getMethodInjector().removeMethod(arguments.object, "__cloneObject");
 
 		getMethodInjector().stop(arguments.object);
 

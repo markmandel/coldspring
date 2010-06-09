@@ -29,6 +29,11 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="setValue" hint="Make set value public for this" access="public" returntype="void" output="false">
+	<cfargument name="value" type="string" required="true">
+	<cfset instance.value = arguments.value />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

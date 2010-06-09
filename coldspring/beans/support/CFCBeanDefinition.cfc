@@ -54,7 +54,7 @@
 
 	<cfloop array="#constructorArgs#" index="arg">
 		<cfscript>
-			initArgs[arg.getName()] = arg.getValue();
+			initArgs[arg.getName()] = arg.create();
         </cfscript>
 	</cfloop>
 
@@ -82,9 +82,9 @@
 		<cfif structKeyExists(arguments.bean, setterName)>
 
 			<cfscript>
-				//move this up here, in case something goes wrong in getValue()
+				//move this up here, in case something goes wrong in create()
 				args = {};
-				args[getMetaData(arguments.bean[setterName]).parameters[1].name] = property.getValue();
+				args[getMetaData(arguments.bean[setterName]).parameters[1].name] = property.create();
             </cfscript>
 
 			<cftry>
@@ -301,7 +301,7 @@
 
 	<cfloop array="#constructorArgs#" index="arg">
 		<cfscript>
-			initArgs[arg.getName()] = arg.getValue();
+			initArgs[arg.getName()] = arg.create();
         </cfscript>
 	</cfloop>
 

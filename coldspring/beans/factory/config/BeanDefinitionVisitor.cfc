@@ -18,7 +18,7 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionVisitor.cfc" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionVisitor" output="false">
 	<cfargument name="valueResolver" hint="the StringValueResolver for visiting each of the string property values, and manipulating them"
 		type="any" required="Yes" colddoc:generic="coldspring.util.StringValueResolver">
 	<cfscript>
@@ -32,12 +32,12 @@
 	access="public" returntype="void" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to visit" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
-		visitAutowire(argumentCollection=arguments);
 		visitClassName(argumentCollection=arguments);
 		visitFactoryBeanName(argumentCollection=arguments);
 		visitFactoryMethodName(argumentCollection=arguments);
 		visitParentName(argumentCollection=arguments);
 		visitScope(argumentCollection=arguments);
+		visitInitMethod(argumentCollection=arguments);
 		visitMap(arguments.beanDefinition.getMeta());
 		visitMap(arguments.beanDefinition.getConstructorArgs());
 		visitMap(arguments.beanDefinition.getProperties());
@@ -47,21 +47,6 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="visitAutowire" hint="visit the autowire mode" access="private" returntype="void" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to visit" type="coldspring.beans.support.BeanDefinition" required="Yes">
-	<cfscript>
-		var local = {};
-
-		local.autowire = arguments.beanDefinition.getAutowire();
-		local.resolvedAutowire = getValueResolver().resolveStringValue(local.autowire);
-
-		if(structKeyExists(local, "resolvedAutowire") && compare(local.autowire, local.resolvedAutowire) != 0)
-		{
-			arguments.beanDefinition.setAutowire(local.resolvedAutowire);
-		}
-    </cfscript>
-</cffunction>
 
 <cffunction name="visitClassName" hint="visit the class name" access="private" returntype="void" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to visit" type="coldspring.beans.support.BeanDefinition" required="Yes">
@@ -73,9 +58,27 @@
 			local.className = arguments.beanDefinition.getClassName();
 			local.resolvedClassName = getValueResolver().resolveStringValue(local.className);
 
-			if(StrutKeyExists(local, "resolvedClassName") && compare(local.className, local.resolvedClassName) != 0)
+			if(StructKeyExists(local, "resolvedClassName") && compare(local.className, local.resolvedClassName) != 0)
 			{
 				arguments.beanDefinition.setClassName(local.resolvedClassName);
+			}
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="visitInitMethod" hint="visit the Init Method" access="private" returntype="void" output="false">
+	<cfargument name="beanDefinition" hint="the bean definition to visit" type="coldspring.beans.support.BeanDefinition" required="Yes">
+	<cfscript>
+		var local = {};
+
+		if(arguments.beanDefinition.hasInitMethod())
+		{
+			local.initMethod = arguments.beanDefinition.getInitMethod();
+			local.resolvedInitMethod = getValueResolver().resolveStringValue(local.initMethod);
+
+			if(StructKeyExists(local, "resolvedInitMethod") && compare(local.initMethod, local.resolvedInitMethod) != 0)
+			{
+				arguments.beanDefinition.setInitMethod(local.resolvedInitMethod);
 			}
 		}
     </cfscript>
@@ -100,36 +103,36 @@
 </cffunction>
 
 <cffunction name="visitFactoryMethodName" hint="visit the factory Method name" access="private" returntype="void" output="false">
-	<cfargument name="MethodDefinition" hint="the Method definition to visit" type="coldspring.Methods.support.MethodDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to visit" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
-		if(arguments.MethodDefinition.hasFactoryMethodName())
+		if(arguments.beanDefinition.hasFactoryMethodName())
 		{
-			local.methodName = arguments.MethodDefinition.getFactoryMethodName();
+			local.methodName = arguments.beanDefinition.getFactoryMethodName();
 			local.resolveMethodName = getValueResolver().resolveStringValue(local.factory);
 
 			if(StructKeyExists(local, "resolveMethodName") && compare(local.methodName, local.resolveMethodName) != 0)
 			{
-				arguments.MethodDefinition.setFactoryMethodName(local.resolveMethodName);
+				arguments.beanDefinition.setFactoryMethodName(local.resolveMethodName);
 			}
 		}
     </cfscript>
 </cffunction>
 
 <cffunction name="visitParentName" hint="visit the parent name" access="private" returntype="void" output="false">
-	<cfargument name="MethodDefinition" hint="the Method definition to visit" type="coldspring.Methods.support.MethodDefinition" required="Yes">
+	<cfargument name="beanDefinition" hint="the bean definition to visit" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var local = {};
 
-		if(arguments.MethodDefinition.hasParentName())
+		if(arguments.beanDefinition.hasParentName())
 		{
-			local.name = arguments.MethodDefinition.getParentName();
+			local.name = arguments.beanDefinition.getParentName();
 			local.resolvedName = getValueResolver().resolveStringValue(local.name);
 
 			if(StructKeyExists(local, "resolvedName") && compare(local.name, local.resolvedName) != 0)
 			{
-				arguments.MethodDefinition.setParentName(local.resolvedName);
+				arguments.beanDefinition.setParentName(local.resolvedName);
 			}
 		}
     </cfscript>
@@ -151,18 +154,19 @@
 </cffunction>
 
 <cffunction name="visitMap" hint="visit a Map structure" access="private" returntype="void" output="false">
-	<cfargument name="meta" hint="the metadata struct" type="struct" required="Yes">
+	<cfargument name="map" hint="the Map in question" type="struct" required="Yes">
 	<cfscript>
 		var local = {};
 
 		local.newContent = {};
 		local.modified = false;
 
-		for(local.key in arguments.meta)
+		for(local.key in arguments.map)
 		{
-			local.item = arguments.meta[local.key];
-			local.resolvedKey = getValueResolver().resolveStringValue(key);
-			local.resolvedItem = resolveValue(item);
+			local.resolvedKey = resolveValue(local.key);
+
+			local.item = arguments.map.get(local.key);
+			local.resolvedItem = resolveValue(local.item);
 
 			if(structKeyExists(local, "resolvedKey"))
 			{
@@ -179,6 +183,9 @@
 
 			if(structKeyExists(local, "resolvedItem"))
 			{
+				/*
+					we can get away with this here, as objects don't need to be returned, only strings
+				*/
 				if(compare(local.item, local.resolvedItem) != 0)
 				{
 					local.modified = true;
@@ -190,28 +197,28 @@
 				local.actualItem = local.item;
 			}
 
-			local.newContent[local.actualKey] = local.actualItem;
+			local.newContent.put(local.actualKey, local.actualItem);
 		}
 
 		if(local.modified)
 		{
-			structClear(arguments.meta);
-			structAppend(arguments.meta, local.newContent);
+			structClear(arguments.map);
+			structAppend(arguments.map, local.newContent);
 		}
     </cfscript>
 </cffunction>
 
-<cffunction name="visitArray" hint="visit the contents of an array" access="public" returntype="void" output="false">
+<cffunction name="visitArray" hint="visit the contents of an array" access="private" returntype="void" output="false">
 	<cfargument name="array" hint="the array to visit" type="array" required="Yes">
 	<cfscript>
 		var item = 0;
     </cfscript>
-	<cfloop collection="#arguments.array#" index="item">
+	<cfloop collection="#arguments.array#" item="item">
 		<cfset resolveValue(item)>
 	</cfloop>
 </cffunction>
 
-<cffunction name="resolveValue" hint="generic resolve value method, that resolves properties based on the object type" access="public" returntype="any" output="false">
+<cffunction name="resolveValue" hint="generic resolve value method, that resolves properties based on the object type" access="private" returntype="any" output="false">
 	<cfargument name="value" hint="the value to resolve" type="any" required="Yes">
 	<cfscript>
 		var local = {};
@@ -237,7 +244,7 @@
 
 			if(StructKeyExists(local, "resolvedValue") && compare(arguments.value.getValue(), local.resolvedValue) != 0)
 			{
-				local.value.setValue(local.resolvedValue);
+				arguments.value.setValue(local.resolvedValue);
 			}
 		}
 		else if(isInstanceOf(arguments.value, "coldspring.beans.support.RefValue"))
@@ -246,7 +253,7 @@
 
 			if(structKeyExists(local, "resolvedBeanName") && compare(arguments.value.getBeanName(), local.resolvedBeanName) != 0)
 			{
-				local.value.setBeanName(local.resolvedBeanName);
+				arguments.value.setBeanName(local.resolvedBeanName);
 			}
 		}
 		else if(isInstanceOf(arguments.value, "coldspring.beans.support.MapValue"))
