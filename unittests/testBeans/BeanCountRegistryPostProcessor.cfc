@@ -1,4 +1,4 @@
-﻿<cfcomponent hint="contains how many beans tehre are" implements="coldspring.beans.BeanDefinitionRegistryPostProcessor,coldspring.beans.factory.config.BeanFactoryPostProcessor" output="false">
+﻿<cfcomponent hint="contains how many beans tehre are" implements="coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor,coldspring.beans.factory.config.BeanFactoryPostProcessor" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

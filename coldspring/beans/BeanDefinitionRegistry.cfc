@@ -19,7 +19,7 @@
 	//constants
 	instance.static = {};
 
-	instance.static.REGISTRY_POST_PROCESSOR_CLASS = "coldspring.beans.BeanDefinitionRegistryPostProcessor";
+	instance.static.REGISTRY_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor";
 	instance.static.BEAN_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanPostProcessor";
 	instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanFactoryPostProcessor";
 </cfscript>
@@ -295,6 +295,13 @@
 <cffunction name="initDefaultPostProcessors" hint="Add the default post processors to their appropriate observables" access="private" returntype="void" output="false">
 	<cfscript>
 		//registry post processors
+
+		//only add it if there are dynamic properties
+		if(!structIsEmpty(getBeanFactory().getDynamicProperties()))
+		{
+			getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.DynamicPropertyRegistryPostProcessor").init(getBeanFactory().getDynamicProperties()));
+		}
+
 		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.ChildBeanRegistryPostProcessor").init());
 		getRegistryPostProcessorObservable().addObserver(createObject("component", "coldspring.beans.factory.FactoryBeanRegistryPostProcessor").init());
 
@@ -490,12 +497,12 @@
 	<cfset instance.cacheNameAgainstTypeClosure = arguments.cacheNameAgainstTypeClosure />
 </cffunction>
 
-<cffunction name="getRegistryPostProcessorObservable" access="private" returntype="coldspring.util.Observable" output="false" colddoc:generic="coldspring.beans.BeanDefinitionRegistryPostProcessor">
+<cffunction name="getRegistryPostProcessorObservable" access="private" returntype="coldspring.util.Observable" output="false" colddoc:generic="coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor">
 	<cfreturn instance.registryPostProcessorObservable />
 </cffunction>
 
 <cffunction name="setRegistryPostProcessorObservable" access="private" returntype="void" output="false">
-	<cfargument name="registryPostProcessorObservable" type="coldspring.util.Observable" required="true" colddoc:generic="coldspring.beans.BeanDefinitionRegistryPostProcessor">
+	<cfargument name="registryPostProcessorObservable" type="coldspring.util.Observable" required="true" colddoc:generic="coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor">
 	<cfset instance.registryPostProcessorObservable = arguments.registryPostProcessorObservable />
 </cffunction>
 

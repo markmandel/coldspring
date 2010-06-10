@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Post processor for handling beans with 'parent' attributes" implements="coldspring.beans.BeanDefinitionRegistryPostProcessor" output="false">
+<cfcomponent hint="Post processor for handling beans with 'parent' attributes" implements="coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

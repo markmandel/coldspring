@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="BeanDefinitionRegistry Post Processor that does the work to enable FactoryBeans to work" implements="coldspring.beans.BeanDefinitionRegistryPostProcessor" output="false">
+<cfcomponent hint="BeanDefinitionRegistry Post Processor that does the work to enable FactoryBeans to work" implements="coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

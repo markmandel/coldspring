@@ -108,8 +108,12 @@
 	<cfreturn getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments) />
 </cffunction>
 
+<cffunction name="getDynamicProperties" access="public" returntype="struct" output="false">
+	<cfreturn instance.dynamicProperties />
+</cffunction>
+
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
-	<cfreturn "0.2.a">
+	<cfreturn "0.3">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -117,8 +121,11 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="private" returntype="void" output="false">
+	<cfargument name="dynamicProperties" hint="A struct of key value pairs, for which the keys will be used to translate '${key}' string values in BeanDefinitions properties into their corresponding values."
+				type="struct" required="no" default="#StructNew()#">
 	<cfscript>
 		setJavaLoader(createObject("component", "coldspring.util.java.JavaLoader").init(getVersion()));
+		setDynamicProperties(arguments.dynamicProperties);
 	</cfscript>
 </cffunction>
 
@@ -190,6 +197,11 @@
 <cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">
 	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfset instance.beanDefinitionRegistry = arguments.beanDefinitionRegistry />
+</cffunction>
+
+<cffunction name="setDynamicProperties" access="private" returntype="void" output="false">
+	<cfargument name="dynamicProperties" type="struct" required="true">
+	<cfset instance.dynamicProperties = arguments.dynamicProperties />
 </cffunction>
 
 </cfcomponent>

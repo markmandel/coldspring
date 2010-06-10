@@ -208,12 +208,12 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="visitArray" hint="visit the contents of an array" access="private" returntype="void" output="false">
+<cffunction name="visitList" hint="visit the contents of an array" access="private" returntype="void" output="false">
 	<cfargument name="array" hint="the array to visit" type="array" required="Yes">
 	<cfscript>
 		var item = 0;
     </cfscript>
-	<cfloop collection="#arguments.array#" item="item">
+	<cfloop array="#arguments.array#" index="item">
 		<cfset resolveValue(item)>
 	</cfloop>
 </cffunction>
@@ -262,7 +262,7 @@
 		}
 		else if(isInstanceOf(arguments.value, "coldspring.beans.support.ListValue"))
 		{
-			visitList(argumetns.value.getValueArray());
+			visitList(arguments.value.getValueArray());
 		}
     </cfscript>
 </cffunction>

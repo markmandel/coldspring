@@ -9,6 +9,8 @@
 
 		//this is lazy, but I'll just create an abstract bean factory. (This should be mocked later, but I'm on a deadline)
 		var factory = createObject("component", "coldspring.beans.AbstractBeanFactory");
+		makePublic(factory, "init");
+		factory.init(StructNew());
 
 		instance.registry = createObject("component", "coldspring.beans.BeanDefinitionRegistry").init(factory, beanCache);
     </cfscript>

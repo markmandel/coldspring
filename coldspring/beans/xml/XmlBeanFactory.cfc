@@ -18,8 +18,10 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="XMLBeanFactory" output="false">
 	<cfargument name="configLocations" hint="optional string path, list path, or array of absolute paths to ColdSpring XML files. Can use setConfigLocations() instead, followed by a call to refresh()"
 				type="any" required="no">
+	<cfargument name="dynamicProperties" hint="A struct of key value pairs, for which the keys will be used to translate '${key}' string values in BeanDefinitions properties into their corresponding values."
+				type="struct" required="no" default="#StructNew()#">
 	<cfscript>
-		super.init();
+		super.init(argumentCollection=arguments);
 
 		setXMLParser(createObject("component", "XmlParser").init(getJavaLoader()));
 
