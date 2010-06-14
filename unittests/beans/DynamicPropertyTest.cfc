@@ -20,6 +20,8 @@
 		var props =
 			{
 				colour = "red"
+				,root = "unittests.testBeans"
+				,wheelClass = "${root}.Wheel"
 			};
 
 		instance.factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/dynamic-properties.xml"), props);
@@ -33,6 +35,20 @@
 		local.car = instance.factory.getBean("car1");
 
 		assertEquals("red", local.car.getColor().getName());
+
+		assertEquals("${ignored}", local.car.getMake());
+    </cfscript>
+</cffunction>
+
+<cffunction name="testRecursiveProperties" hint="test recursive properties" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.car = instance.factory.getBean("car1");
+
+		local.wheels = local.car.getWheels();
+
+		assertEquals("unittests.testBeans.Wheel", getMetadata(local.wheels[1]).name);
     </cfscript>
 </cffunction>
 

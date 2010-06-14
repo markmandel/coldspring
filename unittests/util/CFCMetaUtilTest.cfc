@@ -28,6 +28,31 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testClassToPath" hint="testing converstion of a class to a path" access="public" returntype="any" output="false">
+	<cfscript>
+		var local = {};
+
+		local.class = "coldspring.beans.factory.BeanCache";
+		local.path = expandPath("/coldspring/beans/factory/BeanCache.cfc");
+
+		assertEquals(local.path, instance.cfcmetaUtil.classToFile(local.class));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testClassExists" hint="testing converstion of a class to a path" access="public" returntype="any" output="false">
+	<cfscript>
+		var local = {};
+
+		local.class = "coldspring.beans.xml.config.AliasBeanDefinitionParser";
+
+		assertTrue(instance.cfcmetaUtil.classExists(local.class), "Class should exist: #local.class#");
+
+		local.class = "coldspring.beans.foo.what.Thing";
+
+		assertFalse(instance.cfcmetaUtil.classExists(local.class), "Class should NOT exist: #local.class#");
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

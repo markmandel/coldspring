@@ -23,14 +23,14 @@
 	<bean id="car1" name="anotherNameForCar1, myCarBoogaLoo" class="unittests.testBeans.Car" init-method="configure">
 		<constructor-arg name="engine" ref="engine"/>
 		<property name="color" ref="colour" />
-		<property name="make" value="Mustang"/>
+		<property name="make" value="${ignored}"/>
 		<property name="wheels">
 			<map>
 				<entry key="1">
-					<bean class="unittests.testBeans.Wheel"/>
+					<bean class="${wheelClass}"/>
 				</entry>
 				<entry key="2">
-					<bean class="unittests.testBeans.Wheel"/>
+					<bean class="${wheelClass}"/>
 				</entry>
 				<entry key="3">
 					<bean class="unittests.testBeans.Wheel"/>

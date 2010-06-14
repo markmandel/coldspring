@@ -31,8 +31,16 @@
 	<cfargument name="args" hint="optional arguments to also pass through to the callback" type="struct" required="No" default="#structNew()#">
 	<cfscript>
 		var local = {};
-		var meta = getComponentMetadata(arguments.className);
+		var meta = 0;
 		var queue = 0;
+
+		//break out if the class doesn't exist, which is may not, due to dynamic properties
+		if(!classExists(arguments.className))
+		{
+			return;
+		}
+
+		meta = getComponentMetadata(arguments.className);
 
 		while(structKeyExists(meta, "extends"))
 		{
@@ -112,6 +120,22 @@
 		cache[key] = args.result.value;
 
 		return args.result.value;
+    </cfscript>
+</cffunction>
+
+<cffunction name="classExists" hint="check to see if a given class exists" access="public" returntype="boolean" output="false">
+	<cfargument name="class" hint="a dot notated class path" type="string" required="Yes">
+	<cfscript>
+		return fileExists(classToFile(argumentCollection=arguments));
+    </cfscript>
+</cffunction>
+
+<cffunction name="classToFile" hint="converts a classpath to a filename" access="public" returntype="string" output="false">
+	<cfargument name="class" hint="a dot notated class path" type="string" required="Yes">
+	<cfscript>
+		var path = "/" & replace(arguments.class, ".", "/", "all") & ".cfc";
+
+		return expandPath(path);
     </cfscript>
 </cffunction>
 

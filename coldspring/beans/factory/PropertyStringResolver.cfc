@@ -26,9 +26,9 @@
 
 		setPropertyRegex(regex);
 
-		resolveRecursiveProperties(arguments.dynamicProperties);
-
 		setDynamicProperties(arguments.dynamicProperties);
+
+		resolveRecursiveProperties();
 
 		return this;
 	</cfscript>
@@ -56,26 +56,26 @@
 	<cfset instance.dynamicProperties = arguments.dynamicProperties />
 </cffunction>
 
-<cffunction name="resolveRecursiveProperties" hint="goes through the current dynamic properties, and resolves any recursiveness" access="private" returntype="any" output="false">
-	<cfargument name="dynamicProperties" type="struct" hint="The dynamic properties" required="true">
+<cffunction name="resolveRecursiveProperties" hint="goes through the current dynamic properties, and resolves any recursiveness" access="private" returntype="void" output="false">
 	<cfscript>
 		var matchFound = true;
 		var key = 0;
 		var value = 0;
 		var results = 0;
+		var properties = getDynamicProperties();
 
 		while(matchFound)
 		{
 			matchFound = false;
-			for(key in arguments.dynamicProperties)
+			for(key in properties)
 			{
-				value = arguments.dynamicProperties[key];
+				value = properties[key];
 				results = reMatchNoCase(getPropertyRegex(), value);
 
 				if(!arrayIsEmpty(results))
 				{
 					matchFound = true;
-					arguments.dynamicProperties[key] = replacePropertyValues(results, value);
+					properties[key] = replacePropertyValues(results, value);
 				}
 			}
 		}
