@@ -16,7 +16,7 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getValue" hint="The value this obejct is" access="public" returntype="any" output="false">
+<cffunction name="getValue" hint="The value this object is" access="public" returntype="any" output="false">
 	<cfreturn instance.value />
 </cffunction>
 

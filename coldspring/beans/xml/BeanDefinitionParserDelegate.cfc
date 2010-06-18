@@ -29,6 +29,7 @@
 	instance.static.LIST_ELEMENT = "list";
 	instance.static.MAP_ELEMENT = "map";
 	instance.static.META_ELEMENT = "meta";
+	instance.static.NULL_ELEMENT = "null";
 
 	instance.static.ID_ATTRIBUTE = "id";
 	instance.static.CLASS_ATTRIBUTE = "class";
@@ -399,6 +400,10 @@
 		else if(arguments.element.getLocalName() eq instance.static.BEAN_ELEMENT)
 		{
 			local.beanDef = parseBeanDefinitionElement(arguments.element);
+
+			//inner bean, so is not a candidate for autowire.
+			local.beanDef.setAutowireCandidate(false);
+
 			getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
 
 			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getID(), getBeanDefinitionRegistry());
@@ -410,6 +415,10 @@
 		else if(arguments.element.getLocalName() eq instance.static.MAP_ELEMENT)
 		{
 			return parseMapElement(argumentCollection=arguments);
+		}
+		else if(arguments.element.getLocalName() eq instance.static.NULL_ELEMENT)
+		{
+			return createObject("component", "coldspring.beans.support.NullValue").init();
 		}
     </cfscript>
 </cffunction>

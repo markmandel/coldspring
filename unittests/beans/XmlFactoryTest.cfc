@@ -395,4 +395,13 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="nullTest" hint="test <null> element" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.engine = instance.factory.getBean("engineNoGears");
+
+		assertFalse(local.engine.hasGears(), "Should have no gears");
+    </cfscript>
+</cffunction>
+
 </cfcomponent>

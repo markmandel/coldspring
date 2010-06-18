@@ -232,6 +232,12 @@
 		</property>
 	</bean>
 
+	<bean id="engineNoGears" class="unittests.testBeans.Engine">
+		<property name="gears">
+			<null/>
+		</property>
+	</bean>
+
 	<bean id="color" class="unittests.testBeans.Color">
 		<constructor-arg name="name" value="blue"/>
 	</bean>

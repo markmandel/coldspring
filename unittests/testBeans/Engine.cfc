@@ -42,6 +42,11 @@
 	<cfset instance.Gears = arguments.Gears />
 </cffunction>
 
+<cffunction name="hasGears" hint="whether this object has a gears" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "gears") />
+</cffunction>
+
+
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="Engine" output="false">
 	<cfscript>
 		var cloneable = createObject("component", "coldspring.util.Cloneable").init();

@@ -1,4 +1,4 @@
-<!---
+﻿<!---
    Copyright 2010 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -11,33 +11,25 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Is a simple value, such as a string, or a number" extends="AbstractValue" output="false">
+<cfcomponent hint="Value that returns Java null always" extends="AbstractValue" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="SimpleValue" output="false">
-	<cfargument name="value" hint="the simple value to pass in" type="string" required="Yes">
+<cffunction name="init" hint="Constructor" access="public" returntype="NullValue" output="false">
 	<cfscript>
 		super.init();
-
-		if(NOT isSimpleValue(arguments.value))
-		{
-			createObject("component", "coldspring.beans.support.exception.NotSimpleValueException").init("#arguments.value#");
-		}
-
-		setValue(arguments.value);
 
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="setValue" hint="Make set value public for this" access="public" returntype="void" output="false">
-	<cfargument name="value" type="string" required="true">
-	<cfset instance.value = arguments.value />
+<cffunction name="getValue" hint="Returns null" access="public" returntype="any" output="false">
+	<cfreturn JavaCast("null", "") />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
 
 </cfcomponent>
