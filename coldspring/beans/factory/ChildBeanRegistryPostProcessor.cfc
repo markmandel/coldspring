@@ -54,13 +54,13 @@
 		var mergedBeanDefinition = 0;
 		if(beanDefinition.hasParentName() AND NOT isProcessed(arguments.beanDefinition))
 		{
-			parentBeanDefinition = arguments.registry.getBeanDefinition(beanDefinition.getParentName());
+			parentBeanDefinition = arguments.registry.getBeanDefinitionIncludingAncestor(beanDefinition.getParentName());
 
 			//make sure the parent gets processed first
 			processChildBeanDefinition(parentBeanDefinition, arguments.registry);
 
 			//get it again, as it may have been replaced
-			parentBeanDefinition = arguments.registry.getBeanDefinition(beanDefinition.getParentName());
+			parentBeanDefinition = arguments.registry.getBeanDefinitionIncludingAncestor(beanDefinition.getParentName());
 
 			//remove the child, as we are going to replace him
 			arguments.registry.removeBeanDefinition(arguments.beanDefinition.getID());

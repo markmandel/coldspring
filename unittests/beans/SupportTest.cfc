@@ -26,18 +26,18 @@
 		var local = {};
 
 		//car needs an engine
-		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car", instance.factory.getBeanDefinitionRegistry());
+		local.car = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("car");
 		local.car.setClassName("unittests.testBeans.Car");
 
-		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine", instance.factory.getBeanDefinitionRegistry());
+		local.engine = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("engine");
 		local.engine.setClassName("unittests.testBeans.Engine");
 
-		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color", instance.factory.getBeanDefinitionRegistry());
+		local.color = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("color");
 		local.color.setClassName("unittests.testBeans.Color");
 
 		//constructor arg to point to the engine and color
-		local.engineRef = createObject("component", "coldspring.beans.support.RefValue").init("engine", instance.factory.getBeanDefinitionRegistry());
-		local.colorRef = createObject("component", "coldspring.beans.support.RefValue").init("color", instance.factory.getBeanDefinitionRegistry());
+		local.engineRef = createObject("component", "coldspring.beans.support.RefValue").init("engine", instance.factory);
+		local.colorRef = createObject("component", "coldspring.beans.support.RefValue").init("color", instance.factory);
 
 		local.engineArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("engine", local.engineRef);
 		local.colorProp = createObject("component", "coldspring.beans.support.Property").init("color", local.colorRef);
@@ -61,8 +61,6 @@
 		AssertEquals(local.engineInst, local.engineInstRef);
 		// same with color and colorRef
 		AssertEquals(local.colorInst, local.colorInstRef);
-		// and the engine beandef should be the same as the one in the ref
-		AssertEquals(local.engineRef.getBeanDefinition(), local.engine);
 
 		local.carInst = instance.factory.getBean("car");
 

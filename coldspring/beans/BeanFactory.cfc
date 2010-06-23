@@ -15,7 +15,9 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getBean" hint="gets a bean by a given id" access="public" returntype="any" output="false">
+<cffunction name="getBean" hint="Return an instance, which may be shared or independent, of the specified bean.<br/>
+			This method allows a ColdSpring BeanFactory to be used as a replacement for the Singleton or Prototype design pattern. Callers may retain references to returned objects in the case of Singleton beans.<br/>
+			Translates aliases back to the corresponding canonical bean name. Will ask the parent factory if the bean cannot be found in this factory instance. " access="public" returntype="any" output="false">
 	<cfargument name="name" hint="the name of the bean to get" type="string" required="Yes">
 </cffunction>
 
@@ -31,19 +33,37 @@
 	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 </cffunction>
 
-<cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in this bean factory." access="public" returntype="numeric" output="false">
+<cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in this bean factory.<br/>Does not consider any hierarchy this factory may participate in."
+	access="public" returntype="numeric" output="false">
 </cffunction>
 
-<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this bean factory" access="public" returntype="array" output="false"
+<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this bean factory.<br/>Does not consider any hierarchy this factory may participate in."
+			access="public" returntype="array" output="false"
 			colddoc:generic="string">
 </cffunction>
 
 <cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
 			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
-			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.
-			"
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.<br/>
+			Does not consider any hierarchy this factory may participate in."
 			access="public" returntype="array" output="false">
 	<cfargument name="className" hint="the class type" type="string" required="Yes">
+</cffunction>
+
+<cffunction name="getBeanNamesForTypeIncludingAncestor" hint="Get all bean names for the given type, including those defined in ancestor factories. Will return unique names in case of overridden bean definitions.<br/>
+		    Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized."
+	access="public" returntype="array" output="false">
+	<cfargument name="className" hint="the class type" type="string" required="Yes">
+</cffunction>
+
+<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist.<br/>Does not consider any hierarchy this bean factor may participate in."
+	access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
+	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
+</cffunction>
+
+<cffunction name="getBeanDefinitionIncludingAncestor" hint="Get a bean definition from the registry, including those that may be in an ancesor factory."
+	access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
+	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
 </cffunction>
 
 <cffunction name="getAliases"
@@ -54,6 +74,18 @@
 	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
 </cffunction>
 
+<cffunction name="isAutowireCandidate" hint="Determine whether the specified bean qualifies as an autowire candidate, to be injected into other beans which declare a dependency of matching type/name.<br/>
+	This method checks ancestor factories as well. Throws an exception if the bean is not found."
+	access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the bean to check" type="string" required="Yes">
+</cffunction>
+
+<cffunction name="getParentBeanFactory" hint="Returns the parent BeanFactory that can be considered for hierarchical bean factories"
+	access="public" returntype="any" output="false">
+</cffunction>
+
+<cffunction name="hasParentBeanFactory" hint="whether this bean factory has a parent" access="public" returntype="boolean" output="false">
+</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 

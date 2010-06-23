@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2010 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<beans xmlns="http://www.coldspringframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"
+	   default-autowire="no"
+	   >
+	   
+	<bean id="car2" parent="abstractCar">
+		<constructor-arg name="engine">
+			<ref bean="engine"/>
+		</constructor-arg>
+		<property name="color">
+			<ref bean="red"/>
+		</property>
+		<property name="make">
+			<value>Celica</value>
+		</property>
+		<property name="wheels">
+			<map>
+				<entry key="1" value-ref="wheel"/>
+				<entry key="2" value-ref="wheel"/>
+				<entry key="3" value-ref="wheel"/>
+				<entry key="4" value-ref="wheel"/>
+				<entry key="spare" value-ref="wheel"/>
+			</map>
+		</property>
+	</bean>
+	   
+	<bean id="red" class="unittests.testBeans.Color">
+		<constructor-arg name="name" value="red"/>
+	</bean>
+
+	<bean id="car3" class="unittests.testBeans.Car" autowire="byName">
+		<property name="make">
+			<value>Celica</value>
+		</property>
+		<property name="wheels">
+			<map>
+				<entry key="1">
+					<ref bean="wheel"/>
+				</entry>
+				<entry key="2">
+					<ref bean="wheel"/>
+				</entry>
+				<entry key="3">
+					<ref bean="wheel"/>
+				</entry>
+				<entry key="4">
+					<ref bean="wheel"/>
+				</entry>
+				<entry key="spare">
+					<ref bean="wheel"/>
+				</entry>
+			</map>
+		</property>		
+	</bean>
+	   
+</beans>

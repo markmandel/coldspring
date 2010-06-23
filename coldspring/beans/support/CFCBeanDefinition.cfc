@@ -142,7 +142,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="autowireCallback" hint="Callback for each to autowire the CFC" access="private" returntype="void" output="false">
+<cffunction name="autowireCallback" hint="Callback for each function to autowire the CFC" access="private" returntype="void" output="false">
 	<cfargument name="func" hint="the function meta data" type="struct" required="Yes">
 	<cfargument name="meta" hint="the original meta data" type="struct" required="Yes">
 	<cfscript>
@@ -179,10 +179,10 @@
 					if(getAutowire() eq "byName")
 					{
 						//need to make sure we ignore non autowire candidates
-						if(getBeanDefinitionRegistry().containsBeanDefinition(local.param.name)
-							AND getBeanDefinitionRegistry().getBeanDefinition(local.param.name).isAutowireCandidate())
+						if(getBeanDefinitionRegistry().containsBean(local.param.name)
+							AND getBeanDefinitionRegistry().isAutowireCandidate(local.param.name))
 						{
-							local.ref = createObject("component", "RefValue").init(local.param.name, getBeanDefinitionRegistry());
+							local.ref = createObject("component", "RefValue").init(local.param.name, getBeanDefinitionRegistry().getBeanFactory());
 							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.name, local.ref);
 							addConstructorArg(local.constructorArg);
 						}
@@ -190,14 +190,14 @@
 					else if(getAutowire() eq "byType" AND structKeyExists(local.param, "type"))
 					{
 						local.class = resolveClassName(local.param.type, local.package);
-						local.array = getBeanDefinitionRegistry().getBeanNamesForType(local.class);
+						local.array = getBeanDefinitionRegistry().getBeanNamesForTypeIncludingAncestor(local.class);
 
 						local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
 						local.collection = local.collection.select(local.closure);
 
 						if(local.collection.length() eq 1)
 						{
-							local.ref = createObject("component", "RefValue").init(local.collection.get(1), getBeanDefinitionRegistry());
+							local.ref = createObject("component", "RefValue").init(local.collection.get(1), getBeanDefinitionRegistry().getBeanFactory());
 							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.name, local.ref);
 							addConstructorArg(local.constructorArg);
 						}
@@ -228,10 +228,10 @@
 			{
 				if(getAutowire() eq "byName")
 				{
-					if(getBeanDefinitionRegistry().containsBeanDefinition(local.name)
-							AND getBeanDefinitionRegistry().getBeanDefinition(local.name).isAutowireCandidate())
+					if(getBeanDefinitionRegistry().containsBean(local.name)
+							AND getBeanDefinitionRegistry().isAutowireCandidate(local.name))
 					{
-						local.ref = createObject("component", "RefValue").init(local.name, getBeanDefinitionRegistry());
+						local.ref = createObject("component", "RefValue").init(local.name, getBeanDefinitionRegistry().getBeanFactory());
 						local.property = createObject("component", "Property").init(local.name, local.ref);
 						addProperty(local.property);
 					}
@@ -240,14 +240,14 @@
 				{
 					local.class = resolveClassName(arguments.func.parameters[1].type, local.package);
 
-					local.array = getBeanDefinitionRegistry().getBeanNamesForType(local.class);
+					local.array = getBeanDefinitionRegistry().getBeanNamesForTypeIncludingAncestor(local.class);
 
 					local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
 					local.collection = local.collection.select(local.closure);
 
 					if(local.collection.length() eq 1)
 					{
-						local.ref = createObject("component", "RefValue").init(local.collection.get(1), getBeanDefinitionRegistry());
+						local.ref = createObject("component", "RefValue").init(local.collection.get(1), getBeanDefinitionRegistry().getBeanFactory());
 						local.property = createObject("component", "Property").init(local.name, local.ref);
 						addProperty(local.property);
 					}
@@ -325,7 +325,7 @@
 <cffunction name="isBeanNameAutoWireCandidate" hint="is the given bean name an autowireable candidate" access="private" returntype="boolean" output="false">
 	<cfargument name="name" hint="the bean definition name" type="string" required="Yes">
 	<cfscript>
-		return variables.beanRegistry.getBeanDefinition(arguments.name).isAutowireCandidate();
+		return variables.beanRegistry.isAutowireCandidate(arguments.name);
     </cfscript>
 </cffunction>
 

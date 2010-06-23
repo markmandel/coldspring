@@ -20,6 +20,7 @@
 	<cfargument name="delegate" type="coldspring.beans.xml.BeanDefinitionParserDelegate" required="true">
 	<cfscript>
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
+		setBeanFactory(arguments.beanDefinitionRegistry.getBeanFactory());
 		setDelegate(arguments.delegate);
 
 		return this;
@@ -52,6 +53,10 @@
 	<cfreturn instance.beanDefinitionRegistry />
 </cffunction>
 
+<cffunction name="getBeanFactory" access="public" returntype="coldspring.beans.BeanFactory" output="false">
+	<cfreturn instance.beanFactory />
+</cffunction>
+
 <cffunction name="getDelegate" access="public" hint="Access to the bean defintion parser delegate, for easy access to Bean Definition parsing routines"
 	returntype="coldspring.beans.xml.BeanDefinitionParserDelegate" output="false">
 	<cfreturn instance.delegate />
@@ -68,6 +73,11 @@
 
 		return clone;
     </cfscript>
+</cffunction>
+
+<cffunction name="setBeanFactory" access="private" returntype="void" output="false">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="true">
+	<cfset instance.beanFactory = arguments.beanFactory />
 </cffunction>
 
 <cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">

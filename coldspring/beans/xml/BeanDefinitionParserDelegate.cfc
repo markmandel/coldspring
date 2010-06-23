@@ -59,6 +59,7 @@
 		setReaderContext(arguments.readerContext);
 		initDefaultValues(getReaderContext().getDocument().getDocumentElement());
 		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
+		setBeanFactory(arguments.beanDefinitionRegistry.getBeanFactory());
 		setNode(createObject("java", "org.w3c.dom.Node"));
 
 		return this;
@@ -305,7 +306,7 @@
 				else if(local.child.hasAttribute(instance.static.KEY_REF_ATTRIBUTE))
 				{
 					local.beanName = local.child.getAttribute(instance.static.KEY_REF_ATTRIBUTE);
-					local.key = createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
+					local.key = createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanFactory());
 				}
 
 				//work out value
@@ -316,7 +317,7 @@
 				else if(local.child.hasAttribute(instance.static.VALUE_REF_ATTRIBUTE))
 				{
 					local.beanName = local.child.getAttribute(instance.static.VALUE_REF_ATTRIBUTE);
-					local.value = createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
+					local.value = createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanFactory());
 				}
 				else
 				{
@@ -343,7 +344,7 @@
 		if(arguments.element.hasAttribute(instance.static.REF_ATTRIBUTE))
 		{
 			local.beanName = arguments.element.getAttribute(instance.static.REF_ATTRIBUTE);
-			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
+			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanFactory());
 		}
 		else if(arguments.element.hasAttribute(instance.static.VALUE_ATTRIBUTE))
 		{
@@ -384,13 +385,13 @@
 			local.beanDef = parseNestedCustomElement(arguments.element, arguments.beanDefinition);
 			getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
 
-			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getId(), getBeanDefinitionRegistry());
+			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getId(), getBeanFactory());
 		}
 
 		if(arguments.element.getLocalName() eq instance.static.REF_ELEMENT)
 		{
 			local.beanName = arguments.element.getAttribute(instance.static.BEAN_ATTRIBUTE);
-			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanDefinitionRegistry());
+			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanName, getBeanFactory());
 		}
 		else if(arguments.element.getLocalName() eq instance.static.VALUE_ELEMENT)
 		{
@@ -406,7 +407,7 @@
 
 			getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
 
-			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getID(), getBeanDefinitionRegistry());
+			return createObject("component", "coldspring.beans.support.RefValue").init(local.beanDef.getID(), getBeanFactory());
 		}
 		else if(arguments.element.getLocalName() eq instance.static.LIST_ELEMENT)
 		{
@@ -535,6 +536,15 @@
 <cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">
 	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
 	<cfset instance.beanDefinitionRegistry = arguments.beanDefinitionRegistry />
+</cffunction>
+
+<cffunction name="setBeanFactory" access="private" returntype="void" output="false">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="true">
+	<cfset instance.beanFactory = arguments.beanFactory />
+</cffunction>
+
+<cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.BeanFactory" output="false">
+	<cfreturn instance.beanFactory />
 </cffunction>
 
 <cffunction name="setReaderContext" access="private" returntype="void" output="false">

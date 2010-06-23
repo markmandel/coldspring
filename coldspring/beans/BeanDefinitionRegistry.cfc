@@ -34,6 +34,11 @@
 		setAliasCache(structNew());
 		setBeanFactory(arguments.beanFactory);
 
+		if(getBeanFactory().hasParentBeanFactory())
+		{
+			setParentBeanFactory(getBeanFactory().getParentBeanFactory());
+		}
+
 		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
 
 		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
@@ -89,7 +94,37 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="containsBeanDefinition" hint="Check if this bean factory contains a bean definition with the given name."
+<cffunction name="getBeanDefinitionIncludingAncestor" hint="Get a bean definition from the registry, including those that may be in an ancesor factory."
+	access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
+	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
+	<cfscript>
+		if(!hasParentBeanFactory() or containsBeanDefinition(argumentCollection=arguments))
+		{
+			return getBeanDefinition(argumentCollection=arguments);
+		}
+
+		return getParentBeanFactory().getBeanDefinitionIncludingAncestor(arguments.name);
+    </cfscript>
+</cffunction>
+
+<cffunction name="containsBean" hint="Does this bean factory contain a bean with the given name? More specifically, is getBean(java.lang.String) able to obtain a bean instance for the given name?<br/>
+	Translates aliases back to the corresponding canonical bean name. Will ask the parent factory if the bean cannot be found in this factory instance. "
+	access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
+	<cfscript>
+		var result = containsBeanDefinition(argumentCollection=arguments);
+
+		if(!result && hasParentBeanFactory())
+		{
+			return getParentBeanFactory().containsBean(arguments.name);
+		}
+
+		return result;
+    </cfscript>
+</cffunction>
+
+<cffunction name="containsBeanDefinition" hint="Check if this bean factory contains a bean definition with the given name.<br/>
+		Does not consider any hierarchy this factory may participate in, and ignores any singleton beans that have been registered by other means than bean definitions."
 		access="public" returntype="boolean" output="false">
 	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfscript>
@@ -108,11 +143,13 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in the registry." access="public" returntype="numeric" output="false">
+<cffunction name="getBeanDefinitionCount" hint="Return the number of beans defined in this bean factory.<br/>Does not consider any hierarchy this factory may participate in."
+	access="public" returntype="numeric" output="false">
 	<cfreturn structCount(getBeanDefinitions()) />
 </cffunction>
 
-<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this registry" access="public" returntype="array" output="false"
+<cffunction name="getBeanDefinitionNames" hint="Return the names of all beans defined in this bean factory.<br/>Does not consider any hierarchy this factory may participate in."
+			access="public" returntype="array" output="false"
 			colddoc:generic="string">
 	<cfreturn structKeyArray(getBeanDefinitions()) />
 </cffunction>
@@ -136,8 +173,8 @@
 
 <cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
 			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
-			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.
-			"
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.<br/>
+			Does not consider any hierarchy this factory may participate in."
 			access="public" returntype="array" output="false">
 	<cfargument name="className" hint="the class type" type="string" required="Yes">
 	<cfscript>
@@ -151,10 +188,26 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="getBeanNamesForTypeIncludingAncestor" hint="Get all bean names for the given type, including those defined in ancestor factories. Will return unique names in case of overridden bean definitions.<br/>
+		    Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized."
+	access="public" returntype="array" output="false">
+	<cfargument name="className" hint="the class type" type="string" required="Yes">
+	<cfscript>
+		var result = getBeanNamesForType(argumentCollection=arguments);
+		if(hasParentBeanFactory())
+		{
+			result.addAll(getParentBeanFactory().getBeanNamesForTypeIncludingAncestor(arguments.className));
+		}
+
+		return result;
+    </cfscript>
+</cffunction>
+
 <cffunction name="getAliases"
 	hint="Return the aliases for the given bean name, if any. All of those aliases point to the same bean when used in a getBean(java.lang.String) call.<br/>
 	If the given name is an alias, the corresponding original bean name and other aliases (if any) will be returned, with the original bean name being the first element in the array.<br/>
-	Will ask the parent factory if the bean cannot be found in this factory instance." access="public" returntype="array" output="false">
+	Will ask the parent factory if the bean cannot be found in this factory instance."
+	access="public" returntype="array" output="false">
 	<cfargument name="name" hint="name - the bean name to check for aliases " type="string" required="Yes">
 	<cfscript>
 		var aliasCache = getAliasCache();
@@ -184,6 +237,12 @@
 			{
 				arrayAppend(aliases, alias);
 			}
+		}
+
+		//hierarchy support
+		if(hasParentBeanFactory())
+		{
+			aliases.addAll(getParentBeanFactory().getAliases(arguments.name));
 		}
 
 		return aliases;
@@ -223,6 +282,20 @@
 	<cfargument name="alias" hint="the alias to remove" type="string" required="Yes">
 	<cfscript>
 		structDelete(getAliasCache(), arguments.alias);
+    </cfscript>
+</cffunction>
+
+<cffunction name="isAutowireCandidate" hint="Determine whether the specified bean qualifies as an autowire candidate, to be injected into other beans which declare a dependency of matching type/name.<br/>
+	This method checks ancestor factories as well. Thrown an exception if the bean is not found"
+	access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the bean to check" type="string" required="Yes">
+	<cfscript>
+		if(!hasParentBeanFactory() or containsBeanDefinition(argumentCollection=arguments))
+		{
+			return getBeanDefinition(argumentCollection=arguments).isAutowireCandidate();
+		}
+
+		return getParentBeanFactory().isAutowireCandidate(arguments.name);
     </cfscript>
 </cffunction>
 
@@ -286,6 +359,20 @@
 <cffunction name="addBeanFactoryPostProcessor" hint="programatically add a beanFactory post processor" access="public" returntype="void" output="false">
 	<cfargument name="postProcessor" hint="the post processor in question" type="coldspring.beans.factory.config.BeanFactoryPostProcessor" required="Yes">
 	<cfset getBeanFactoryPostProcessorObservable().addObserver(arguments.postProcessor)>
+</cffunction>
+
+<cffunction name="getBeanFactory" access="public" returntype="coldspring.beans.BeanFactory" output="false">
+	<cfreturn instance.beanFactory />
+</cffunction>
+
+<cffunction name="getParentBeanFactory"  hint="Returns the parent BeanFactory that can be considered for hierarchical bean factories"
+	access="public" returntype="any" output="false"
+	colddoc:generic="BeanFactory">
+	<cfreturn instance.parent />
+</cffunction>
+
+<cffunction name="hasParentBeanFactory" hint="whether this abstract bean factory has a parent" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "parent") />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -526,13 +613,15 @@
 	<cfset instance.BeanFactoryPostProcessorObservable = arguments.BeanFactoryPostProcessorObservable />
 </cffunction>
 
-<cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.AbstractBeanFactory" output="false">
-	<cfreturn instance.beanFactory />
+<cffunction name="setBeanFactory" access="private" returntype="void" output="false">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="true">
+	<cfset instance.beanFactory = arguments.beanFactory />
 </cffunction>
 
-<cffunction name="setBeanFactory" access="private" returntype="void" output="false">
-	<cfargument name="beanFactory" type="coldspring.beans.AbstractBeanFactory" required="true">
-	<cfset instance.beanFactory = arguments.beanFactory />
+<cffunction name="setParentBeanFactory" access="private" returntype="void" output="false">
+	<cfargument name="parent" type="any" required="Yes"
+	colddoc:generic="BeanFactory">
+	<cfset instance.parent = arguments.parent />
 </cffunction>
 
 </cfcomponent>

@@ -16,23 +16,42 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="setParent" access="public" returntype="void" output="false">
-	<cfargument name="parent" type="BeanFactory" required="Yes">
+<cffunction name="setParentBeanFactory" access="public" returntype="void" output="false">
+	<cfargument name="parent" type="any" required="Yes"
+	colddoc:generic="BeanFactory">
 	<cfset instance.parent = arguments.parent />
 </cffunction>
 
-<cffunction name="getParent" access="public" returntype="BeanFactory" output="false">
+<cffunction name="getParentBeanFactory"  hint="Returns the parent BeanFactory that can be considered for hierarchical bean factories"
+	access="public" returntype="any" output="false"
+	colddoc:generic="BeanFactory">
 	<cfreturn instance.parent />
 </cffunction>
 
-<cffunction name="hasParent" hint="whether this abstract bean factory has a parent" access="public" returntype="boolean" output="false">
+<cffunction name="hasParentBeanFactory" hint="whether this abstract bean factory has a parent" access="public" returntype="boolean" output="false">
 	<cfreturn StructKeyExists(instance, "parent") />
 </cffunction>
 
-<cffunction name="getBean" hint="gets a bean by a given id" access="public" returntype="any" output="false">
+<cffunction name="getBean" hint="Return an instance, which may be shared or independent, of the specified bean.<br/>
+			This method allows a ColdSpring BeanFactory to be used as a replacement for the Singleton or Prototype design pattern. Callers may retain references to returned objects in the case of Singleton beans.<br/>
+			Translates aliases back to the corresponding canonical bean name. Will ask the parent factory if the bean cannot be found in this factory instance. " access="public" returntype="any" output="false">
 	<cfargument name="name" hint="the name of the bean to get" type="string" required="Yes">
 	<cfscript>
-		return getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments).getInstance();
+		/*
+			This is the only time in which the BeanFactory goes up to the parent
+			all other hierarchical support is done through the BeanDefinitionRegistry.
+
+			Since this method is one of the few non-proxy methods for the Registry,
+			we manage this here.
+		*/
+
+		if(!hasParentBeanFactory() OR containsBeanDefinition(argumentCollection=arguments))
+		{
+			return getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments).getInstance();
+		}
+
+		//go up to parent
+		return getParentBeanFactory().getBean(arguments.name);
     </cfscript>
 </cffunction>
 
@@ -41,14 +60,7 @@
 	access="public" returntype="boolean" output="false">
 	<cfargument name="name" hint="the name of the bean to check for" type="string" required="Yes" />
 	<cfscript>
-		var result = containsBeanDefinition(argumentCollection=arguments);
-
-		if(!result && hasParent())
-		{
-			return getParent().containsBean(arguments.name);
-		}
-
-		return result;
+		return getBeanDefinitionRegistry().containsBean(argumentCollection=arguments);
     </cfscript>
 </cffunction>
 
@@ -96,16 +108,37 @@
 
 <cffunction name="getBeanNamesForType" hint="Return the names of beans matching the given type (including subclasses),
 			judging from either bean definitions or the value of getObjectType in the case of FactoryBeans.<br/>
-			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.
-			"
+			Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized.<br/>
+			Does not consider any hierarchy this factory may participate in."
 			access="public" returntype="array" output="false">
 	<cfargument name="className" hint="the class type" type="string" required="Yes">
 	<cfreturn getBeanDefinitionRegistry().getBeanNamesForType(argumentCollection=arguments) />
 </cffunction>
 
-<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist." access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
+<cffunction name="getBeanNamesForTypeIncludingAncestor" hint="Get all bean names for the given type, including those defined in ancestor factories. Will return unique names in case of overridden bean definitions.<br/>
+		    Does consider objects created by FactoryBeans, which means that FactoryBeans will get initialized."
+	access="public" returntype="array" output="false">
+	<cfargument name="className" hint="the class type" type="string" required="Yes">
+	<cfreturn getBeanDefinitionRegistry().getBeanNamesForTypeIncludingAncestor(argumentCollection=arguments) />
+</cffunction>
+
+<cffunction name="getBeanDefinition" hint="Get a bean definition from the registry. Throws a BeanDefinitionNotFoundException if it doesn't exist.<br/>Does not consider any hierarchy this bean factor may participate in."
+	access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
 	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
 	<cfreturn getBeanDefinitionRegistry().getBeanDefinition(argumentCollection=arguments) />
+</cffunction>
+
+<cffunction name="getBeanDefinitionIncludingAncestor" hint="Get a bean definition from the registry, including those that may be in an ancesor factory."
+	access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
+	<cfargument name="name" hint="the name of the bean definition to get" type="string" required="Yes">
+	<cfreturn getBeanDefinitionRegistry().getBeanDefinitionIncludingAncestor(argumentCollection=arguments) />
+</cffunction>
+
+<cffunction name="isAutowireCandidate" hint="Determine whether the specified bean qualifies as an autowire candidate, to be injected into other beans which declare a dependency of matching type/name.<br/>
+	This method checks ancestor factories as well. Thrown an exception if the bean is not found"
+	access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the bean to check" type="string" required="Yes">
+	<cfreturn getBeanDefinitionRegistry().isAutowireCandidate(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="getDynamicProperties" access="public" returntype="struct" output="false">

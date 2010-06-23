@@ -17,10 +17,10 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="RefValue" output="false">
 	<cfargument name="beanName" hint="the name of the bean this references" type="string" required="Yes">
-	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
+	<cfargument name="beanFactory" hint="The bean factor that is used to create this bean instance" type="coldspring.beans.BeanFactory" required="true">
 	<cfscript>
 		setBeanName(arguments.beanName);
-		setBeanDefinitionRegistry(arguments.beanDefinitionRegistry);
+		setBeanFactory(arguments.beanFactory);
 
 		return this;
 	</cfscript>
@@ -35,33 +35,15 @@
 	<cfset instance.beanName = arguments.beanName />
 </cffunction>
 
-<cffunction name="getBeanDefinition" access="public" returntype="coldspring.beans.support.BeanDefinition" output="false">
-	<cfreturn instance.beanDefinition />
-</cffunction>
-
-<cffunction name="hasBeanDefinition" hint="whether this object has a beanDefinition" access="public" returntype="boolean" output="false">
-	<cfreturn StructKeyExists(instance, "beanDefinition") />
-</cffunction>
-
 <cffunction name="getValue" hint="The value this object is, returned from the referenced bean definition" access="public" returntype="any" output="false">
 	<cfscript>
-		if(NOT hasBeanDefinition())
-		{
-			setBeanDefinition(getBeanDefinitionRegistry().getBeanDefinition(getBeanName()));
-		}
-
-		return getBeanDefinition().getInstance();
+		return getBeanFactory().getBean(getBeanName());
     </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="setBeanDefinition" hint="The actual bean definition" access="private" returntype="void" output="false">
-	<cfargument name="beanDefinition" type="coldspring.beans.support.BeanDefinition" required="true">
-	<cfset instance.beanDefinition = arguments.beanDefinition />
-</cffunction>
 
 <cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
 	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
@@ -71,13 +53,13 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getBeanDefinitionRegistry" access="private" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">
-	<cfreturn instance.beanDefinitionRegistry />
+<cffunction name="setBeanFactory" access="private" returntype="void" output="false">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="true">
+	<cfset instance.beanFactory = arguments.beanFactory />
 </cffunction>
 
-<cffunction name="setBeanDefinitionRegistry" access="private" returntype="void" output="false">
-	<cfargument name="beanDefinitionRegistry" type="coldspring.beans.BeanDefinitionRegistry" required="true">
-	<cfset instance.beanDefinitionRegistry = arguments.beanDefinitionRegistry />
+<cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.BeanFactory" output="false">
+	<cfreturn instance.beanFactory />
 </cffunction>
 
 </cfcomponent>
