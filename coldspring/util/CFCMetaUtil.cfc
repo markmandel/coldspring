@@ -28,7 +28,7 @@
 				If the closure returns 'false', processing is stopped" access="public" returntype="void" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfargument name="closure" hint="the closure to fire for each class type found a" type="coldspring.util.Closure" required="Yes">
-	<cfargument name="args" hint="optional arguments to also pass through to the callback" type="struct" required="No" default="#structNew()#">
+	<cfargument name="args" hint="optional arguments to also pass through to the closure" type="struct" required="No" default="#structNew()#">
 	<cfscript>
 		var local = {};
 		var meta = 0;
@@ -94,6 +94,35 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="eachMetaFunction" hint="calls a Closure for each function that is found in meta data, with 'func' as the argument name" access="public" returntype="void" output="false">
+	<cfargument name="meta" hint="the meta data to loop through for functions" type="struct" required="Yes">
+	<cfargument name="closure" hint="the Closure to call for each function that is found" type="Closure" required="Yes">
+	<cfargument name="args" hint="optional arguments to also pass through to the closure" type="struct" required="No" default="#structNew()#">
+	<cfscript>
+		var local = {};
+
+		while(StructKeyExists(arguments.meta, "extends"))
+		{
+			if(StructKeyExists(arguments.meta, "functions"))
+			{
+				local.len = ArrayLen(arguments.meta.functions);
+		        for(local.counter = 1; local.counter lte local.len; local.counter++)
+		        {
+					arguments.args.func = meta.functions[local.counter];
+					local.continue = arguments.closure.call(argumentCollection=arguments.args);
+
+					if(StructKeyExists(local, "continue") && !local.continue)
+					{
+						return;
+					}
+		        }
+			}
+
+			meta = meta.extends;
+		}
+    </cfscript>
+</cffunction>
+
 <cffunction name="isAssignableFrom" hint="Whether or not you can assign class1 as class2, i.e if class2 is an interface or super class of class 1" access="public" returntype="boolean" output="false">
 	<cfargument name="class1" hint="the implementing class / interface" type="string" required="Yes">
 	<cfargument name="class2" hint="the super class / interface" type="string" required="Yes">
@@ -120,6 +149,32 @@
 		cache[key] = args.result.value;
 
 		return args.result.value;
+    </cfscript>
+</cffunction>
+
+<cffunction name="resolveClassName" hint="resolves a class name that may not be full qualified" access="public" returntype="string" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfargument name="package" hint="the package the class comes from" type="string" required="Yes">
+	<cfscript>
+		if(ListLen(arguments.className, ".") eq 1)
+		{
+			arguments.className = arguments.package & "." & arguments.className;
+		}
+
+		return arguments.className;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getPackage" hint="returns the package this class belongs to" access="public" returntype="string" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfscript>
+		//have to do this stupid juggling because CF8 'can't find 'setLength() on a Builder'
+		var builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
+
+		//builder.setLength(builder.lastIndexOf(".")); << CF8 fails on this because it can't resolve Java Methods. Grrr.
+		builder.delete(javacast("int", builder.lastIndexOf(".")), len(arguments.className));
+
+		return builder.toString();
     </cfscript>
 </cffunction>
 
