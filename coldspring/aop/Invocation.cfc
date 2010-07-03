@@ -11,15 +11,33 @@
    limitations under the License.
  --->
 
-<cfinterface extends="Joinpoint">
+<cfcomponent extends="Joinpoint" hint="This interface represents an invocation in the program.<br/>
+	An invocation is a joinpoint and can be intercepted by an interceptor." output="false"
+	colddoc:abstract="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getArguments" hint="Get the arguments as an array object. It is possible to change element values within this array to change the arguments." access="public" returntype="struct" output="false">
+<cffunction name="getArguments" hint="Get the arguments as a struct. It is possible to change element values within this struct to change the arguments." access="public" returntype="struct" output="false">
+	<cfreturn instance.arguments />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-</cfinterface>
+<cffunction name="setArguments" access="private" returntype="void" output="false">
+	<cfargument name="args" type="struct" required="true">
+	<cfset instance.arguments = arguments.args />
+</cffunction>
+
+<cffunction name="init" hint="Constructor" access="private" returntype="void" output="false">
+	<cfargument name="target" hint="the original object" type="any" required="Yes">
+	<cfargument name="proxy" hint="the AOP proxy for the target" type="any" required="Yes">
+	<cfargument name="args" hint="the arguments to go through to the function" type="struct" required="Yes">
+	<cfscript>
+		super.init(arguments.target, arguments.proxy);
+		setArguments(arguments.args);
+    </cfscript>
+</cffunction>
+
+</cfcomponent>

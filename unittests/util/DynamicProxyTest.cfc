@@ -45,6 +45,10 @@
 
 		assertEquals(args.bar, result.args.bar);
 		assertEquals(args.foo, result.args.foo);
+
+		result = proxy.testMethodInvocation(argumentCollection=args);
+		assertEquals(args.bar, result.args.bar);
+		assertEquals(args.foo, result.args.foo);
     </cfscript>
 </cffunction>
 

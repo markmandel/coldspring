@@ -110,12 +110,25 @@
 
 <cffunction name="clean" hint="clean the CFC out of all it's previous stuff - UDFs, variables, etc" access="private" returntype="void" output="false">
 	<cfscript>
-		//var thisScope = variables.this;
+		var thisScope = variables.this;
+		var key = 0;
 
-		structClear(variables);
-		structClear(this);
+		/**
+		 * we do it this way, as StructClear doesn't
+		 * actually manage to remove the methods
+		 * as far as onMM is concerned
+		 */
+		for(key in variables)
+		{
+			StructDelete(variables, key);
+		}
 
-		variables.this = this;
+		for(key in this)
+		{
+			StructDelete(this, key);
+		}
+
+		variables.this = thisScope;
     </cfscript>
 </cffunction>
 
