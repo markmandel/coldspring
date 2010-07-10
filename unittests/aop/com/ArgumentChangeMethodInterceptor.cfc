@@ -31,7 +31,7 @@
 			args[1] = "_" & args[1];
 		}
 
-		return arguments.methodInvocation.proceed();;
+		return arguments.methodInvocation.proceed();
     </cfscript>
 </cffunction>
 

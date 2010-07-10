@@ -11,28 +11,12 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" output="false">
+<cfinterface hint="Common marker interface for after advice, such as AfterReturningAdvice and ThrowsAdvice." extends="Advice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
-
-<cffunction name="init" hint="Constructor" access="public" returntype="Hello" output="false">
-	<cfscript>
-		return this;
-	</cfscript>
-</cffunction>
-
-<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
-	<cfargument name="str" hint="" type="string" required="no" default="hello">
-
-	<cfif Lcase(arguments.str).startsWith("exception")>
-		<cfthrow type="#arguments.str#" message="Threw an exception!" />
-	</cfif>
-
-	<cfreturn arguments.str />
-</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-</cfcomponent>
+</cfinterface>

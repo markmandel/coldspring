@@ -11,28 +11,19 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" output="false">
+<cfinterface hint="Tag interface for throws advice." extends="AfterAdvice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="Hello" output="false">
-	<cfscript>
-		return this;
-	</cfscript>
-</cffunction>
-
-<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
-	<cfargument name="str" hint="" type="string" required="no" default="hello">
-
-	<cfif Lcase(arguments.str).startsWith("exception")>
-		<cfthrow type="#arguments.str#" message="Threw an exception!" />
-	</cfif>
-
-	<cfreturn arguments.str />
+<cffunction name="afterThrowing" hint="Callback after a method throws an exception." access="public" returntype="void" output="false">
+	<cfargument name="method" hint="method being invoked" type="coldspring.reflect.Method" required="Yes">
+	<cfargument name="args" hint="the arguments for the method" type="struct" required="Yes">
+	<cfargument name="target" hint="target of the method invocation" type="any" required="Yes">
+	<cfargument name="exception" hint="the exception structure that was thrown" type="struct" required="Yes">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-</cfcomponent>
+</cfinterface>

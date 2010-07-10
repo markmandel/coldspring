@@ -11,28 +11,21 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" output="false">
+<cfinterface hint="After returning advice is invoked only on normal method return, not if an exception is thrown.
+	<br/>Such advice can see the return value, but cannot change it."
+	extends="AfterAdvice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="Hello" output="false">
-	<cfscript>
-		return this;
-	</cfscript>
-</cffunction>
-
-<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
-	<cfargument name="str" hint="" type="string" required="no" default="hello">
-
-	<cfif Lcase(arguments.str).startsWith("exception")>
-		<cfthrow type="#arguments.str#" message="Threw an exception!" />
-	</cfif>
-
-	<cfreturn arguments.str />
+<cffunction name="afterReturning" hint="Callback after a given method successfully returned. " access="public" returntype="void" output="false">
+	<cfargument name="returnValue" hint="the value returned by the method, if any" type="any" required="No">
+	<cfargument name="method" hint="method being invoked" type="coldspring.reflect.Method" required="Yes">
+	<cfargument name="args" hint="the arguments for the method" type="struct" required="Yes">
+	<cfargument name="target" hint="target of the method invocation" type="any" required="Yes">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-</cfcomponent>
+</cfinterface>

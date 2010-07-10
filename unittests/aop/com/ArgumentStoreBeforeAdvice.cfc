@@ -11,28 +11,35 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" output="false">
+<cfcomponent hint="stores the arguments that it used" implements="coldspring.aop.MethodBeforeAdvice" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="Hello" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="ArgumentStoreBeforeAdvice" output="false">
 	<cfscript>
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
-	<cfargument name="str" hint="" type="string" required="no" default="hello">
+<cffunction name="before" hint="Callback before a given method is invoked." access="public" returntype="void" output="false">
+	<cfargument name="method" type="coldspring.reflect.Method" required="yes" />
+	<cfargument name="args" type="struct" required="yes" />
+	<cfargument name="target" type="any" required="yes" />
+	<cfscript>
+		setArgs(arguments.args);
+    </cfscript>
+</cffunction>
 
-	<cfif Lcase(arguments.str).startsWith("exception")>
-		<cfthrow type="#arguments.str#" message="Threw an exception!" />
-	</cfif>
-
-	<cfreturn arguments.str />
+<cffunction name="getArgs" access="public" returntype="any" output="false">
+	<cfreturn instance.Args />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
-
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="setArgs" access="private" returntype="void" output="false">
+	<cfargument name="Args" type="any" required="true">
+	<cfset instance.Args = arguments.Args />
+</cffunction>
 
 </cfcomponent>

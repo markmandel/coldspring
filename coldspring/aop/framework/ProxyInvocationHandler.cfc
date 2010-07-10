@@ -88,12 +88,12 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="getMethodAdvice" access="private" returntype="struct" output="false">
+<cffunction name="getMethodAdvice" access="private" returntype="struct" output="false" colddoc:generic="string,MethodInterceptor">
 	<cfreturn instance.methodAdvice />
 </cffunction>
 
 <cffunction name="setMethodAdvice" access="private" returntype="void" output="false">
-	<cfargument name="methodAdvice" type="struct" required="true">
+	<cfargument name="methodAdvice" type="struct" required="true" colddoc:generic="string,MethodInterceptor">
 	<cfset instance.methodAdvice = arguments.methodAdvice />
 </cffunction>
 
@@ -131,7 +131,9 @@
 <cffunction name="applyPointcutAdvice" hint="closure methods for applying pointcut advice" access="public" returntype="void" output="false">
 	<cfargument name="func" hint="the function meta data" type="any" required="Yes">
 	<cfscript>
+		var advisor = 0;
 		var advice = 0;
+		var interceptor = 0;
 
 		//if you get non-method types of AOP, may want to do type checking on pointcuts and advice
     </cfscript>
@@ -144,7 +146,27 @@
 					variables.methodAdvice[arguments.func.name] = [];
 				}
 
-				ArrayAppend(variables.methodAdvice[arguments.func.name], advisor.getAdvice());
+				advice = advisor.getAdvice();
+
+				//depending on type, switch it out for the implementing MethodInterceptor
+				if(isInstanceOf(advice, "coldspring.aop.AfterReturningAdvice"))
+				{
+					interceptor = createObject("component", "coldspring.aop.framework.adapter.AfterReturningAdviceInterceptor").init(advice);
+				}
+				else if(isInstanceOf(advice, "coldspring.aop.MethodBeforeAdvice"))
+				{
+					interceptor = createObject("component", "coldspring.aop.framework.adapter.MethodBeforeAdviceInterceptor").init(advice);
+				}
+				else if(isInstanceOf(advice, "coldspring.aop.ThrowsAdvice"))
+				{
+					interceptor = createObject("component", "coldspring.aop.framework.adapter.ThrowsAdviceInterceptor").init(advice);
+				}
+				else
+				{
+					interceptor = advice;
+				}
+
+				ArrayAppend(variables.methodAdvice[arguments.func.name], interceptor);
 			}
         </cfscript>
 	</cfloop>
