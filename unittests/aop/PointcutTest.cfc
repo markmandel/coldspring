@@ -17,7 +17,7 @@
 
 <cffunction name="setup" hint="" access="public" returntype="void" output="false">
 	<cfscript>
-		instance.meta = local.meta = getMetaData(this);
+		instance.meta = getMetaData(this);
 		instance.funcMeta = getMetaData(this.setup);
     </cfscript>
 </cffunction>

@@ -189,7 +189,7 @@
 						}
 						else if(ArrayLen(local.array) gt 1)
 						{
-							createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(variables.id, param.type);
+							createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(variables.id, local.param.type);
 						}
 					}
 				}
