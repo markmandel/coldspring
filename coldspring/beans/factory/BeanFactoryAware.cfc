@@ -21,7 +21,7 @@
 			Invoked after the population of normal bean properties but before an initialization callback such as
 			a custom init-method."
 			returntype="void" output="false">
-	<cfargument name="beanFactory" type="coldspring.beans.AbstractBeanFactory" required="true">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="true">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -23,7 +23,7 @@
 <cffunction name="setBeanFactory" access="public" hint="Callback that supplies the owning factory to a bean instance.
 		Invoked after the population of normal bean properties but before an initialization callback such as
 		a custom init-method." returntype="void" output="false">
-	<cfargument name="beanFactory" type="coldspring.beans.AbstractBeanFactory" required="yes" />
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="yes" />
 	<cfset instance.beanFactory = arguments.beanFactory />
 </cffunction>
 
