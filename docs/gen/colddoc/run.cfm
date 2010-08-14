@@ -10,9 +10,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  --->
+
+<!--- 
+normally it doesn't take this long, but when
+I'm on a plane, and my m17x is on 65W of power
+it takes a while.
+ --->
+<cfsetting requesttimeout="9600">
+
 <cfoutput>
 <cfscript>
-
 	base = expandPath("/coldspring");
 	path = expandPath("../../api/coldspring");
 

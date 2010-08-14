@@ -182,7 +182,7 @@
 		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.after);
 		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
 
-		local.throws = createObject("component", "unittests.aop.com.ExceptionStoreThrowsAdvice").init();
+		local.throws = createObject("component", "unittests.aop.com.ExceptionStoreThrowsAdvice").init(); 
 		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.throws);
 		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
 
@@ -224,6 +224,26 @@
 
 		assertEquals(local.exc.type, local.throws.getExxception().type);
 		assertEquals(local.exc.message, local.throws.getExxception().message);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testAddAdvice" hint="testing adding just some advice, it should go to the DefaultPoincutAdvisor" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+
+		instance.proxyFactory.addAdvice(local.interceptor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
     </cfscript>
 </cffunction>
 

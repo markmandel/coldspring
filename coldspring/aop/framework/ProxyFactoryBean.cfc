@@ -17,6 +17,10 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ProxyFactoryBean" output="false">
 	<cfscript>
+		setSingleton(true);
+		setProxyFactory(createObject("component", "ProxyFactory").init());
+		setInterceptorsBuilt(false);
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -25,6 +29,25 @@
 	Invoked when clients obtain beans from this factory bean.
 	Create an instance of the AOP proxy to be returned by this factory.
 	The instance will be cached for a singleton, and create on each call to getObject() for a proxy. " access="public" returntype="any" output="false">
+	<cfscript>
+		if(NOT isInterceptorsBuilt())
+		{
+			buildInterceptors();
+		}
+
+		//store singleton
+		if(isSingleton())
+		{
+			if(!hasProxySingleton())
+			{
+				setProxySingleton(getProxyFactory().getProxy(getTarget()));
+			}
+
+			return getProxySingleton();
+		}
+
+		return getProxyFactory().getProxy(getTarget());
+    </cfscript>
 </cffunction>
 
 <cffunction name="getObjectType" access="public" returntype="string" output="false" hint="
@@ -69,7 +92,44 @@
 </cffunction>
 
 <cffunction name="getTarget" access="public" returntype="any" output="false">
-	<cfreturn instance.target />
+	<cfscript>
+		var target = 0;
+
+		//target will only get stored if this is singleton
+		if(hasTarget())
+		{
+			return instance.target;
+		}
+
+		target = getBeanFactory().getBean(getTargetName());
+
+		if(isSingleton())
+		{
+			setTarget(target);
+		}
+
+		return target;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getInterceptorNames" access="public" returntype="array" output="false">
+	<cfreturn instance.interceptorNames />
+</cffunction>
+
+<cffunction name="setInterceptorNames" hint="Set the list of Advice/Advisor bean names. This can be set, as either a string list, or as an array,
+	must always be set to use this factory bean in a bean factory.<br/>
+	The referenced beans should be of type Advisor or Advice."
+	access="public" returntype="void" output="false">
+	<cfargument name="interceptorNames" type="any" required="true">
+
+	<cfscript>
+		if(isSimpleValue(arguments.interceptorNames))
+		{
+			arguments.interceptorNames = listToArray(arguments.interceptorNames);
+		}
+
+		instance.interceptorNames = arguments.interceptorNames;
+    </cfscript>
 </cffunction>
 
 <cffunction name="setTarget" access="public" returntype="void" output="false">
@@ -98,6 +158,35 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<cffunction name="buildInterceptors" hint="add all the interceptor named Advice/Advisor to the ProxyFactory" access="public" returntype="void" output="false">
+	<cfscript>
+		var interceptor = 0;
+		var name = 0;
+    </cfscript>
+	<cflock name="coldspring.aop.framework.proxyFactoryBean.buildInterceptors" timeout="60" throwontimeout="true">
+		<cfif NOT isInterceptorsBuilt()>
+			<cfloop array="#getInterceptorNames()#" index="name">
+				<cfscript>
+					interceptor = getBeanFactory().getBean(name);
+
+					if(isInstanceOf(interceptor, "coldspring.aop.Advisor"))
+					{
+						getProxyFactory().addAdvisor(interceptor);
+					}
+					else if(isInstanceOf(interceptor, "coldspring.aop.Advise"))
+					{
+						getProxyFactory().addAdvise(interceptor);
+					}
+					else
+					{
+						createObject("component", "coldspring.aop.framework.exception.InvaidInterceptorException").init(name, interceptor);
+					}
+                </cfscript>
+			</cfloop>
+		</cfif>
+	</cflock>
+</cffunction>
+
 <cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.BeanFactory" output="false">
 	<cfreturn instance.beanFactory />
 </cffunction>
@@ -106,17 +195,35 @@
 	<cfreturn StructKeyExists(instance, "beanFactory") />
 </cffunction>
 
-<cffunction name="getSingletonInstance" access="private" returntype="any" output="false">
-	<cfreturn instance.singletonInstance />
+<cffunction name="getProxySingleton" access="private" returntype="any" output="false">
+	<cfreturn instance.proxySingleton />
 </cffunction>
 
-<cffunction name="setSingletonInstance" access="private" returntype="void" output="false">
-	<cfargument name="SingletonInstance" type="any" required="true">
-	<cfset instance.singletonInstance = arguments.singletonInstance />
+<cffunction name="setProxySingleton" access="private" returntype="void" output="false">
+	<cfargument name="proxySingleton" type="any" required="true">
+	<cfset instance.proxySingleton = arguments.proxySingleton />
 </cffunction>
 
-<cffunction name="hasSingletonInstance" hint="whether this object has a singletonInstance" access="public" returntype="boolean" output="false">
-	<cfreturn StructKeyExists(instance, "singletonInstance") />
+<cffunction name="hasProxySingleton" hint="whether this object has a proxy Singleton" access="private" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "proxySingleton") />
+</cffunction>
+
+<cffunction name="getProxyFactory" access="private" returntype="coldspring.aop.framework.ProxyFactory" output="false">
+	<cfreturn instance.proxyFactory />
+</cffunction>
+
+<cffunction name="setProxyFactory" access="private" returntype="void" output="false">
+	<cfargument name="proxyFactory" type="coldspring.aop.framework.ProxyFactory" required="true">
+	<cfset instance.proxyFactory = arguments.proxyFactory />
+</cffunction>
+
+<cffunction name="isInterceptorsBuilt" access="private" returntype="boolean" output="false">
+	<cfreturn instance.interceptorsBuilt />
+</cffunction>
+
+<cffunction name="setInterceptorsBuilt" access="private" returntype="void" output="false">
+	<cfargument name="interceptorsBuilt" type="boolean" required="true">
+	<cfset instance.interceptorsBuilt = arguments.interceptorsBuilt />
 </cffunction>
 
 </cfcomponent>

@@ -17,10 +17,14 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="PointcutAdvisor" output="false">
 	<cfargument name="pointcut" hint="the pointcuts to apply this advice to" type="Pointcut" required="Yes">
-	<cfargument name="advice" hint="the advice to apply" type="Advice" required="Yes">
+	<cfargument name="advice" hint="the advice to apply" type="Advice" required="no">
 	<cfscript>
 		setPointcut(arguments.pointcut);
-		setAdvice(arguments.advice);
+
+		if(structKeyExists(arguments, "advice"))
+		{
+			setAdvice(arguments.advice);
+		}
 
 		return this;
 	</cfscript>
@@ -28,6 +32,11 @@
 
 <cffunction name="getAdvice" access="public" returntype="Advice" output="false">
 	<cfreturn instance.advice />
+</cffunction>
+
+<cffunction name="setAdvice" access="public" returntype="void" output="false">
+	<cfargument name="advice" type="Advice" required="true">
+	<cfset instance.advice = arguments.advice />
 </cffunction>
 
 <cffunction name="getPointcut" access="public" returntype="pointcut" output="false">
@@ -38,10 +47,6 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="setAdvice" access="private" returntype="void" output="false">
-	<cfargument name="advice" type="Advice" required="true">
-	<cfset instance.advice = arguments.advice />
-</cffunction>
 
 <cffunction name="setPointcut" access="private" returntype="void" output="false">
 	<cfargument name="pointcut" type="pointcut" required="true">
