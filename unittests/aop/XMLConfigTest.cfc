@@ -8,7 +8,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testReverseAdvice" hint="test simple reverse advice" access="public" returntype="void" output="false">
+<cffunction name="testReverseAdvisor" hint="test simple reverse advice with advisor" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
@@ -21,6 +21,29 @@
 		local.string = "Gobble, Gobble";
 
 		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testReverseAdvice" hint="test simple reverse advice, without an advisor" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.proxy = instance.factory.getBean("helloWithAdvice");
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testInvalidInterceptor" hint="tests the error for an invalid interceptor" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.beans.exception.BeanCreationException">
+	<cfscript>
+		instance.factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/errorXML/aop-invalid-interceptor.xml"));
     </cfscript>
 </cffunction>
 

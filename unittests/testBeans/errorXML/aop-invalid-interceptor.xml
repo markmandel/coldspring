@@ -20,30 +20,10 @@
 		<property name="target" ref="helloTarget"/>
 		<property name="interceptorNames">
 			<list>
-				<value>reverseAdvisor</value>
+				<value>helloTarget</value>
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="helloWithAdvice" class="coldspring.aop.framework.ProxyFactoryBean">
-		<property name="target" ref="helloTarget"/>
-		<property name="interceptorNames">
-			<list>
-				<value>reverseAdvice</value>
-			</list>
-		</property>
-	</bean>	
-	
-	<bean id="reverseAdvice" class="unittests.aop.com.ReverseMethodInterceptor"/>
-	
-	<bean id="reverseAdvisor" class="coldspring.aop.support.NamedMethodPointcutAdvisor">  
-		<property name="advice">  
-			<ref bean="reverseAdvice" />  
-		</property>
-		<property name="mappedName">  
-			<value>*</value>
-		</property>
-	</bean> 	
 	
 	<bean id="helloTarget" class="unittests.aop.com.Hello"/>
 	   

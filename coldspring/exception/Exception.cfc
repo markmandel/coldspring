@@ -9,9 +9,9 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- ---> 
+ --->
 
-<cfcomponent hint="Throws a given exception" output="false">
+<cfcomponent hint="Exception base class. Classes that extend this Exception type throw an exception type that matches their class on init()" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

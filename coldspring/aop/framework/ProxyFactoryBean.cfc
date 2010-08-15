@@ -173,9 +173,9 @@
 					{
 						getProxyFactory().addAdvisor(interceptor);
 					}
-					else if(isInstanceOf(interceptor, "coldspring.aop.Advise"))
+					else if(isInstanceOf(interceptor, "coldspring.aop.Advice"))
 					{
-						getProxyFactory().addAdvise(interceptor);
+						getProxyFactory().addAdvice(interceptor);
 					}
 					else
 					{
