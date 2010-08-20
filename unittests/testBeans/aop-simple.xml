@@ -32,7 +32,12 @@
 				<value>reverseAdvice</value>
 			</list>
 		</property>
-	</bean>	
+	</bean>
+	
+	<bean id="helloWithTwoAdvice" class="coldspring.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="helloTarget"/>
+		<property name="interceptorNames" value="reverseAdvice,reverseAdvisor"/>
+	</bean>
 	
 	<bean id="reverseAdvice" class="unittests.aop.com.ReverseMethodInterceptor"/>
 	

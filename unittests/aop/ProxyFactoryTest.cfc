@@ -182,7 +182,7 @@
 		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.after);
 		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
 
-		local.throws = createObject("component", "unittests.aop.com.ExceptionStoreThrowsAdvice").init(); 
+		local.throws = createObject("component", "unittests.aop.com.ExceptionStoreThrowsAdvice").init();
 		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.throws);
 		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
 
@@ -245,6 +245,31 @@
 
 		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
     </cfscript>
+</cffunction>
+
+<cffunction name="testReverseRegexAdvice" hint="test simple reverse advice, using a regex pointcut" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.RegexMethodPointcut").init();
+
+		local.pointcut.setPattern("say.*");
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -40,6 +40,23 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testDoubleReverseAdvice" hint="test two reverse advice applied" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.proxy = instance.factory.getBean("helloWithTwoAdvice");
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+
 <cffunction name="testInvalidInterceptor" hint="tests the error for an invalid interceptor" access="public" returntype="void" output="false"
 	mxunit:expectedException="coldspring.beans.exception.BeanCreationException">
 	<cfscript>

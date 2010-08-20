@@ -36,7 +36,7 @@
 <cffunction name="setMappedNames" hint="List, or array of mapped names" access="public" returntype="void" output="false">
 	<cfargument name="mappedNames" type="any" required="true">
 	<cfscript>
-		getPointcut().setMappedNames();
+		getPointcut().setMappedNames(arguments.mappedNames);
     </cfscript>
 </cffunction>
 

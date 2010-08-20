@@ -14,7 +14,12 @@
 <cfcomponent implements="coldspring.aop.Pointcut" output="false">
 
 <cfscript>
-	instance.static.WILDCARD = "*";
+	meta = getMetadata(this);
+
+	if(!structKeyExists(meta, "static"))
+	{
+		meta.static.WILDCARD = "*";
+	}
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -33,7 +38,7 @@
     </cfscript>
 	<cfloop array="#getMappedNames()#" index="methodName">
 		<cfscript>
-			if(arguments.methodMetadata.name == methodname || methodName == instance.static.WILDCARD)
+			if(arguments.methodMetadata.name == methodname || methodName == meta.static.WILDCARD)
 			{
 				return true;
 			}
@@ -62,13 +67,13 @@
 	<cfset instance.mappedNames = arguments.mappedNames />
 </cffunction>
 
-<!------------------------------------------- PACKAGE ------------------------------------------->
-
-<!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="getMappedNames" access="private" returntype="array" output="false"
+<cffunction name="getMappedNames" access="public" returntype="array" output="false"
 	colddoc:generic="string">
 	<cfreturn instance.mappedNames />
 </cffunction>
+
+<!------------------------------------------- PACKAGE ------------------------------------------->
+
+<!------------------------------------------- PRIVATE ------------------------------------------->
 
 </cfcomponent>
