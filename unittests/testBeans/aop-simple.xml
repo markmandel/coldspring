@@ -51,5 +51,22 @@
 	</bean> 	
 	
 	<bean id="helloTarget" class="unittests.aop.com.Hello"/>
+
+	<bean id="reverseRegexAdvisor" class="coldspring.aop.support.RegexMethodPointcutAdvisor">  
+		<property name="advice">  
+			<ref bean="reverseAdvice" />  
+		</property>
+		<property name="patterns">
+			<list>
+				<value>(.*?)Hello</value>
+				<value>stuff</value>
+			</list>
+		</property>  
+	</bean>
+	
+	<bean id="helloWithRegexAdvice" class="coldspring.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="helloTarget"/>
+		<property name="interceptorNames" value="reverseRegexAdvisor"/>
+	</bean>
 	   
 </beans>

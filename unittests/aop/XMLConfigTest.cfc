@@ -64,6 +64,22 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testReverseRegexAdvisor" hint="test simple reverse advice with a regex based advisor" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.proxy = instance.factory.getBean("helloWithRegexAdvice");
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
