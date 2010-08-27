@@ -11,16 +11,22 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Utility for interacting with CFC Meta data" output="false">
+<cfcomponent hint="Utility for interacting with CFC Meta data. Singleton." output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="CFCMetaUtil" output="false">
+<cffunction name="init" hint="Constructor - Always returns a singleton" access="public" returntype="CFCMetaUtil" output="false">
+	<cfscript>
+		var singleton = createObject("component", "Singleton").init();
+
+		return singleton.createInstance(getMetaData(this).name);
+	</cfscript>
+</cffunction>
+
+<cffunction name="configure" hint="Configure method for static configuration" access="public" returntype="void" output="false">
 	<cfscript>
 		variables.instance = {};
 		setAssignableCache(StructNew());
-
-		return this;
 	</cfscript>
 </cffunction>
 
