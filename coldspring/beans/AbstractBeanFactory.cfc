@@ -157,6 +157,7 @@
 	<cfargument name="dynamicProperties" hint="A struct of key value pairs, for which the keys will be used to translate '${key}' string values in BeanDefinitions properties into their corresponding values."
 				type="struct" required="no" default="#StructNew()#">
 	<cfscript>
+		initSingletons();
 		setJavaLoader(createObject("component", "coldspring.util.java.JavaLoader").init(getVersion()));
 		setDynamicProperties(arguments.dynamicProperties);
 	</cfscript>
@@ -202,6 +203,17 @@
 				getBean(name);
 			}
         }
+    </cfscript>
+</cffunction>
+
+<cffunction name="initSingletons" hint="create the singletons that are used by this framework" access="private" returntype="void" output="false">
+	<cfscript>
+		var singleton = createObject("component", "coldspring.util.Singleton").init();
+
+	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
+		singleton.createInstance("coldspring.util.Cloneable");
+		singleton.createInstance("coldspring.util.MethodInjector");
+		singleton.createInstance("coldspring.reflect.MethodFactory");
     </cfscript>
 </cffunction>
 

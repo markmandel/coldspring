@@ -13,15 +13,13 @@
  --->
 <cfcomponent name="MethodInjector" hint="Injects methods into CFCs" output="false">
 
-<cfscript>
-	instance = StructNew();
-</cfscript>
-
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="MethodInjector" output="false">
 	<cfscript>
-		return this;
+		var singleton = createObject("component", "Singleton").init();
+
+		return singleton.createInstance(getMetaData(this).name);
 	</cfscript>
 </cffunction>
 

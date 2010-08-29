@@ -369,7 +369,7 @@
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="BeanDefinition" output="false">
 	<cfscript>
-		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+		var cloneable = getComponentMetadata("coldspring.util.Cloneable").static.instance;
 
 		return cloneable.clone(this);
     </cfscript>
@@ -421,7 +421,7 @@
 
 		if(isAbstract())
 		{
-			methodInjector = createObject("component", "coldspring.util.MethodInjector").init();
+			methodInjector = getComponentMetadata("coldspring.util.MethodInjector").static.instance;
 
 			methodInjector.start(this);
 			methodInjector.injectMethod(this, getInstance_Abstract, "public", "getInstance");

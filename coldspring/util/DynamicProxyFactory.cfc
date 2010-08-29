@@ -23,7 +23,7 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="DynamicProxyFactory" output="false">
 	<cfscript>
 		setProxyPrototypeCache(StructNew());
-		setMethodInjector(createObject("component", "MethodInjector").init());
+		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").static.instance);
 
 		return this;
 	</cfscript>

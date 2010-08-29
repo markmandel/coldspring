@@ -22,7 +22,7 @@
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractValue" output="false">
 	<cfscript>
-		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+		var cloneable = getComponentMetadata("coldspring.util.Cloneable").static.instance;
 
 		return cloneable.clone(this);
     </cfscript>

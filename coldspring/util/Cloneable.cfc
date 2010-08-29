@@ -17,9 +17,15 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="Cloneable" output="false">
 	<cfscript>
-		setMethodInjector(createObject("component", "MethodInjector").init());
+		var singleton = createObject("component", "Singleton").init();
 
-		return this;
+		return singleton.createInstance(getMetaData(this).name);
+	</cfscript>
+</cffunction>
+
+<cffunction name="configure" hint="Configure method for static configuration" access="public" returntype="void" output="false">
+	<cfscript>
+		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").static.instance);
 	</cfscript>
 </cffunction>
 

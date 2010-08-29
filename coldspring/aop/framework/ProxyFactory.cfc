@@ -20,7 +20,7 @@
 	<cfscript>
 		//don't need to worry about concurency, and don't want to pass by value
 		setDynamicProxyFactory(createObject("component", "coldspring.util.DynamicProxyFactory").init());
-		setMethodFactory(createObject("component", "coldspring.reflect.MethodFactory").init());
+		setMethodFactory(getComponentMetadata("coldspring.reflect.MethodFactory").static.instance);
 		setHandlerCache(structNew());
 		setAdvisors(createObject("java", "java.util.ArrayList").init());
 
@@ -46,16 +46,16 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="addAdvice" hint="Add the given AOP Alliance advice to the tail of the advice (interceptor) chain.<br/> 
-		This will be wrapped in a DefaultPointcutAdvisor with a pointcut that always applies, and returned from the getAdvisors() method in this wrapped form.<br/> 
-		Note that the given advice will apply to all invocations on the proxy! 
-		Use appropriate advice implementations or specify appropriate pointcuts to apply to a narrower set of methods." 
+<cffunction name="addAdvice" hint="Add the given AOP Alliance advice to the tail of the advice (interceptor) chain.<br/>
+		This will be wrapped in a DefaultPointcutAdvisor with a pointcut that always applies, and returned from the getAdvisors() method in this wrapped form.<br/>
+		Note that the given advice will apply to all invocations on the proxy!
+		Use appropriate advice implementations or specify appropriate pointcuts to apply to a narrower set of methods."
 	access="public" returntype="void" output="false">
 <cfargument name="advice" hint="The Advice to apply" type="coldspring.aop.Advice" required="Yes">
 	<cfscript>
 		advisor = createObject("component", "coldspring.aop.support.DefaultPointcutAdvisor").init(arguments.advice);
-		
-		addAdvisor(advisor);    	    
+
+		addAdvisor(advisor);
     </cfscript>
 </cffunction>
 

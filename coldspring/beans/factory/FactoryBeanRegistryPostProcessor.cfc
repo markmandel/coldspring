@@ -22,7 +22,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="FactoryBeanRegistryPostProcessor" output="false">
 	<cfscript>
-		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
+		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
 
 		return this;
 	</cfscript>

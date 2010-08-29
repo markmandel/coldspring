@@ -21,7 +21,7 @@
 				colddoc:generic="coldspring.aop.Advisor">
 	<cfargument name="methodFactory" hint="the method factory" type="coldspring.reflect.MethodFactory" required="Yes">
 	<cfscript>
-		var cfcMetaUtil = createObject("component", "coldspring.util.CFCMetaUtil").init();
+		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance;
 		var pointCutClosure = createObject("component", "coldspring.util.Closure").init(applyPointcutAdvice);
 		var meta = getComponentMetadata(arguments.className);
 
@@ -78,7 +78,7 @@
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="ProxyInvocationHandler" output="false">
 	<cfscript>
-		var cloneable = createObject("component", "coldspring.util.Cloneable").init();
+		var cloneable = getComponentMetadata("coldspring.util.Cloneable").static.instance;
 
 		return cloneable.clone(this);
     </cfscript>

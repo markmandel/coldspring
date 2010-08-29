@@ -15,15 +15,11 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="MethodFactory" output="false">
+<cffunction name="init" hint="Constructor - always returns singleton" access="public" returntype="MethodFactory" output="false">
 	<cfscript>
-		var closure = createObject("component", "coldspring.util.Closure").init(findMethod);
+		var singleton = createObject("component", "coldspring.util.Singleton").init();
 
-		setFindMethodClosure(closure);
-		setMethodCache(StructNew());
-		setCFCMetaUtil(createObject("component", "coldspring.util.CFCMetaUtil").init());
-
-		return this;
+		return singleton.createInstance(getMetaData(this).name);
 	</cfscript>
 </cffunction>
 
@@ -45,6 +41,16 @@
 		return cache[key];
     </cfscript>
 
+</cffunction>
+
+<cffunction name="configure" hint="Configure method for static configuration" access="public" returntype="void" output="false">
+	<cfscript>
+		var closure = createObject("component", "coldspring.util.Closure").init(findMethod);
+
+		setFindMethodClosure(closure);
+		setMethodCache(StructNew());
+		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
