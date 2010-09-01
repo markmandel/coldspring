@@ -210,9 +210,9 @@
 	<cfscript>
 		var singleton = createObject("component", "coldspring.util.Singleton").init();
 
+		singleton.createInstance("coldspring.util.MethodInjector");
 	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
 		singleton.createInstance("coldspring.util.Cloneable");
-		singleton.createInstance("coldspring.util.MethodInjector");
 		singleton.createInstance("coldspring.reflect.MethodFactory");
     </cfscript>
 </cffunction>
