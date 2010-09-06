@@ -1,16 +1,3 @@
-<!---
-   Copyright 2010 Mark Mandel
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
- ---> 
-
 <cfcomponent hint="Compiles Java source dirs to an array of .jar files." output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -53,6 +40,7 @@
 <cffunction name="compile" hint="compiles Java to bytecode, and returns a JAR" access="public" returntype="any" output="false">
 	<cfargument name="directoryArray" hint="array of directories to compile" type="array" required="Yes">
 	<cfargument name="classLoader" hint="a optional URLClassloader to use as the parent for compilation" type="any" required="false">
+    <cfargument name="jarName" hint="The name of the jar file. Defaults to a UUID" type="string" required="false" default="#createUUID()#.jar">
 	<cfscript>
 		//setup file manager with default exception handler, default locale, and default character set
 		var fileManager = getCompiler().getStandardFileManager(JavaCast("null", ""), JavaCast("null", ""), JavaCast("null", ""));
@@ -60,10 +48,10 @@
 		var fileArray = [];
 		var directoryToCompile = 0;
 		var fileObjects = 0;
-		var jarName = getJarDirectory() & "/" & createUUID() & ".jar";
 		var osw = createObject("java", "java.io.StringWriter").init();
 		var options = [];
 		var compilePass = 0;
+		var jarPath = getJarDirectory() & "/" & arguments.jarName;
     </cfscript>
 
 	<cfloop array="#arguments.directoryArray#" index="directoryToCompile">
@@ -95,20 +83,20 @@
 		}
     </cfscript>
 
-	<!--- wrap it up in a har --->
+	<!--- wrap it up in a jar --->
 	<cfloop array="#arguments.directoryArray#" index="directoryToCompile">
 		<!--- do this again, as if there ARE files in it, we should create a .jar --->
 		<cfdirectory action="list" directory="#directoryToCompile#" name="qFiles">
 
 		<!--- can't do zips on empty directories --->
 		<cfif qFiles.recordCount>
-			<cfzip action="zip" file="#jarName#" recurse="yes" source="#directoryToCompile#" overwrite="no">
+			<cfzip action="zip" file="#jarPath#" recurse="yes" source="#directoryToCompile#" overwrite="no">
 		</cfif>
 	</cfloop>
 
 	<!--- we won't bother with an manifest, as we don't really need one --->
 
-	<cfreturn jarName />
+	<cfreturn jarPath />
 </cffunction>
 
 <cffunction name="getVersion" hint="returns the version number" access="public" returntype="string" output="false">
@@ -125,7 +113,7 @@
 	<cfargument name="directoryArray" hint="array of directories to compile" type="array" required="Yes">
 	<cfscript>
 		var urls = 0;
-		var url = 0;
+		var uri = 0;
 		var classPaths = createObject("java", "java.lang.StringBuilder").init();
 		var File = createObject("java", "java.io.File");
 		var path = 0;
@@ -134,9 +122,9 @@
 	<!--- add in the classloader, and all its parents --->
 	<cfloop condition="#structKeyExists(arguments, "classLoader")#">
 		<cfset urls = arguments.classLoader.getURLs()>
-		<cfloop array="#urls#" index="url">
+		<cfloop array="#urls#" index="uri">
 			<cfscript>
-				classPaths.append(url.getFile()).append(File.pathSeparator);
+				classPaths.append(uri.getFile()).append(File.pathSeparator);
             </cfscript>
 		</cfloop>
 		<cfset arguments.classLoader = arguments.classLoader.getParent()>

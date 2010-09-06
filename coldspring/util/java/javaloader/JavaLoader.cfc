@@ -10,19 +10,6 @@ Website:    http://www.compoundtheory.com
 Purpose:    Utlitity class for loading Java Classes
 
 ------------------------------------------------------------------------------->
-<!---
-   Copyright 2010 Mark Mandel
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
- ---> 
-
 <cfcomponent name="JavaLoader" hint="Loads External Java Classes, while providing access to ColdFusion classes">
 
 <cfscript>
@@ -69,6 +56,8 @@ Purpose:    Utlitity class for loading Java Classes
 			setSourceDirectories(arguments.sourceDirectories);
 			setCompileDirectory(arguments.compileDirectory);
 
+            setTrustedSource(arguments.trustedSource);
+
 			compileSource();
 
 			setSourceLastModified(calculateSourceLastModified());
@@ -109,7 +98,7 @@ Purpose:    Utlitity class for loading Java Classes
 </cffunction>
 
 <cffunction name="getVersion" hint="Retrieves the version of the loader you are using" access="public" returntype="string" output="false">
-	<cfreturn "1.0.b2">
+	<cfreturn "1.0">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -176,16 +165,33 @@ Purpose:    Utlitity class for loading Java Classes
 <cffunction name="compileSource" hint="compile dynamic source" access="private" returntype="void" output="false">
 	<cfscript>
 		var dir = 0;
-		var path = getCompileDirectory() & "/" & createUUID();
+		var path = 0;
 
 		var paths = 0;
-		var jar = 0;
 		var file = 0;
 		var counter = 1;
 		var len = 0;
 		var directories = 0;
+
+		//do check to see if the compiled jar is already there
+		var jarName = calculateJarName(getSourceDirectories());
+		var jar = getCompileDirectory() & "/" & jarName;
     </cfscript>
+
+    <cfif fileExists(jar)>
+        <cfif isTrustedSource()>
+            <!--- add that jar to the classloader --->
+            <cfset file = createObject("java", "java.io.File").init(jar)>
+            <cfset getURLClassLoader().addURL(file.toURL())>
+            <cfreturn />
+        <cfelse>
+            <cffile action="delete" file="#jar#"/>
+        </cfif>
+    </cfif>
+
 	<cftry>
+	    <cfset path = getCompileDirectory() & "/" & createUUID()/>
+
 		<cfdirectory action="create" directory="#path#">
 
 		<cfscript>
@@ -203,7 +209,7 @@ Purpose:    Utlitity class for loading Java Classes
 			paths = ArrayNew(1); //have to write it this way so CF7 compiles
 			ArrayAppend(paths, path);
 
-			jar = getJavaCompiler().compile(paths, getURLClassLoader());
+			jar = getJavaCompiler().compile(paths, getURLClassLoader(), jarName);
         </cfscript>
 
 		<!--- add that jar to the classloader --->
@@ -215,7 +221,8 @@ Purpose:    Utlitity class for loading Java Classes
 			<cfdirectory action="delete" recurse="true" directory="#path#">
 		</cfif>
 
-		<cfif fileExists(jar)>
+        <!--- save the file for when trusted source is on ---->
+		<cfif fileExists(jar) AND NOT isTrustedSource()>
 			<cffile action="delete" file="#jar#" />
 		</cfif>
 
@@ -228,6 +235,15 @@ Purpose:    Utlitity class for loading Java Classes
 			<cfrethrow>
 		</cfcatch>
 	</cftry>
+</cffunction>
+
+<cffunction name="calculateJarName" hint="returns the jar file name for a directory array" access="private" returntype="string" output="false">
+    <cfargument name="directoryArray" hint="array of directories to compile" type="array" required="Yes">
+    <cfscript>
+        var file = hash(arrayToList(arguments.directoryArray)) & ".jar";
+
+        return file;
+    </cfscript>
 </cffunction>
 
 <cffunction name="calculateSourceLastModified" hint="returns what the source last modified was" access="private" returntype="date" output="false">
@@ -437,6 +453,15 @@ Purpose:    Utlitity class for loading Java Classes
 	<cfargument name="message" hint="The message to accompany the exception" type="string" required="Yes">
 	<cfargument name="detail" type="string" hint="The detail message for the exception" required="No" default="">
 		<cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#">
+</cffunction>
+
+<cffunction name="isTrustedSource" access="private" returntype="boolean" output="false">
+	<cfreturn instance.isTrustedSource />
+</cffunction>
+
+<cffunction name="setTrustedSource" access="private" returntype="void" output="false">
+	<cfargument name="isTrustedSource" type="boolean" required="true">
+	<cfset instance.isTrustedSource = arguments.isTrustedSource />
 </cffunction>
 
 <!---
