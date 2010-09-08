@@ -48,7 +48,7 @@
 				*/
 				injectPropertyDependencies(bean);
 
-				local.postBean = getBeanPostProcessorObservable().notifyBeforeUpdate(bean, getID());
+				local.postBean = getBeanPostProcessorObservable().postProcessBeforeInitialization(bean, getID());
 
 				if(structKeyExists(local, "postBean"))
 				{
@@ -60,7 +60,7 @@
 					invokeInitMethod(bean);
 				}
 
-				local.postBean = getBeanPostProcessorObservable().notifyAfterUpdate(bean, getID());
+				local.postBean = getBeanPostProcessorObservable().postProcessAfterInitialization(bean, getID());
 
 				if(structKeyExists(local, "postBean"))
 				{

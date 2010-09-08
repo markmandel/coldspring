@@ -16,9 +16,18 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="Observable" output="false">
+	<cfargument name="notifyCallback" hint="a function to call as each observer is notified of the update.<br/>
+	The function should take the following arguments: methodName, methodArguments, observer, result(optional) and return a boolean value.<br/>
+	If 'false' is returned, then no following observers will be called, and the current observer returned value will be returned, if one exists"
+	type="any" required="no">
 	<cfscript>
 		setCollection(createObject("java", "java.util.ArrayList").init());
 		setSystem(createObject("java", "java.lang.System"));
+
+		if(structKeyExists(arguments, "notifyCallback"))
+		{
+			variables.notifyCallback = arguments.notifyCallback;
+		}
 
 		return this;
 	</cfscript>
@@ -61,20 +70,38 @@
 	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
 	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
 	<cfscript>
+		var local = {};
 		var collection = 0;
 		var observer = 0;
-		var local = {};
     </cfscript>
 	<cflock name="coldspring.util.Observer.#getSystem().identityHashCode(this)#" type="readonly" timeout="60">
 		<cfset collection = getCollection()>
 		<cfloop array="#collection#" index="observer">
 			<cfinvoke component="#observer#" method="#arguments.missingMethodName#" argumentcollection="#missingMethodArguments#" returnvariable="local.return">
+			<cfscript>
+				//don't abstract, as we want speed
+				if(structKeyExists(variables, "notifyCallback"))
+				{
+					local.continue = notifyCallback(arguments.missingMethodName, arguments.missingMethodArguments, observer, local.get("return"));
+
+					if(NOT local.continue)
+					{
+						break;
+					}
+				}
+
+				//store the current value, as it is what gets returned
+				if(structKeyExists(local, "return"))
+				{
+					local.currentValue = local.return;
+				}
+            </cfscript>
 		</cfloop>
 	</cflock>
 	<cfscript>
-		if(structKeyExists(local, "return"))
+		if(structKeyExists(local, "currentValue"))
 		{
-			return local.return;
+			return local.currentValue;
 		}
     </cfscript>
 </cffunction>
@@ -84,7 +111,7 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="removeOnMissingMethod" hint="If you are extending this Observable,
-			this convenience method is hear to make it easier to clear off the onMM implementation, so you can write your own observer notification
+			this convenience method is here to make it easier to clear off the onMM implementation, so you can write your own observer notification
 			implementation" access="private" returntype="void" output="false">
 	<cfscript>
 		structDelete(variables, "onMissingMethod");

@@ -12,82 +12,65 @@
 
  --->
 
-<cfcomponent hint="Implementation of Observable for BeanPostProcessors, as their notifyUpdate requires the pass through of possible wrapper bean instances" extends="coldspring.util.Observable" output="false">
+<cfcomponent hint="Implementation of Observable for BeanPostProcessors, the intelligently dispathes events, depending on the type of BeanPostProcessor is in each collection" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cfscript>
-	instance.static.BEFORE_EVENT_METHOD = "postProcessBeforeInitialization";
-	instance.static.AFTER_EVENT_METHOD = "postProcessAfterInitialization";
-</cfscript>
-
-
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanPostProcessorObservable" output="false">
 	<cfscript>
-		super.init();
-
-		removeOnMissingMethod();
+		setBaseObservable(createObject("component", "coldspring.util.Observable").init(baseProcessorNotifyCallback));
 
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="notifyBeforeUpdate" hint="Fire postProcessBeforeInitialization() on all the observers that are currently registered. Stops if null is returned from a observer."
-			access="public" returntype="any" output="false">
-	<cfargument name="bean" hint="the new bean instance" type="any" required="Yes">
-	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
-	<cfreturn notifyUpdate(instance.static.BEFORE_EVENT_METHOD, arguments.bean, arguments.beanName) />
+<cffunction name="addObserver" hint="Adds an observer" access="public" returntype="void" output="false">
+	<cfargument name="observer" hint="The observer to be added" type="coldspring.beans.factory.config.BeanPostProcessor" required="Yes">
+	<cfscript>
+		getBaseObservable().addObserver(arguments.observer);
+    </cfscript>
 </cffunction>
 
-<cffunction name="notifyAfterUpdate" hint="Stops if null is returned from a observer."
+<cffunction name="postProcessBeforeInitialization" hint="Fires postProcessBeforeInitialization() on all BeanPostProcessors. Stops processing if null is returned from a processor."
 			access="public" returntype="any" output="false">
 	<cfargument name="bean" hint="the new bean instance" type="any" required="Yes">
 	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
-	<cfreturn notifyUpdate(instance.static.AFTER_EVENT_METHOD, arguments.bean, arguments.beanName) />
+	<cfreturn getBaseObservable().postProcessBeforeInitialization(arguments.bean, arguments.beanName) />
+</cffunction>
+
+<cffunction name="postProcessAfterInitialization" hint="Fires postProcessBeforeInitialization() on all BeanPostProcessors. Stops processing if null is returned from a processor."
+			access="public" returntype="any" output="false">
+	<cfargument name="bean" hint="the new bean instance" type="any" required="Yes">
+	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
+	<cfreturn getBaseObservable().postProcessAfterInitialization(arguments.bean, arguments.beanName) />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction	name="onMissingMethod" access="private" returntype="any" output="false" hint="Removed from implementation">
-	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
-	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
+<cffunction name="baseProcessorNotifyCallback" hint="notify method for each call to the observer" access="private" returntype="any" output="false">
+	<cfargument name="methodName" hint="the notify method being called" type="string" required="Yes">
+	<cfargument name="methodArguments" hint="the method arguments" type="struct" required="Yes">
+	<cfargument name="observer" hint="the observer" type="any" required="Yes">
+	<cfargument name="return" hint="the returning value, if there is one" type="any" required="No">
+	<cfscript>
+		if(structKeyExists(arguments, "return"))
+		{
+			return true;
+		}
+
+		return false;
+    </cfscript>
 </cffunction>
 
-<cffunction	name="notifyUpdate" access="private" returntype="any" output="false" hint="notify all observers, with the post processor rules">
-	<cfargument name="methodName" hint="the name of the method to invoke" type="string" required="Yes">
-	<cfargument name="bean" hint="the new bean instance" type="any" required="Yes">
-	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
-	<cfscript>
-		var local = {};
-		var collection = 0;
-		var observer = 0;
-		var method = arguments.methodName;
-		var args = {
-			bean = arguments.bean
-			,beanName = arguments.beanName
-		};
-    </cfscript>
-	<cflock name="coldspring.util.Observer.#getSystem().identityHashCode(this)#" type="readonly" timeout="60">
-		<cfset collection = getCollection()>
-		<cfloop array="#collection#" index="observer">
-			<cfinvoke component="#observer#" method="#method#" argumentcollection="#args#" returnvariable="local.return">
-			<cfscript>
-				if(structKeyExists(local, "return"))
-				{
-					args.bean = local.return;
-				}
-				else
-				{
-					return args.bean;
-				}
-            </cfscript>
-		</cfloop>
-	</cflock>
-	<cfscript>
-		return args.bean;
-    </cfscript>
+<cffunction name="getBaseObservable" access="private" returntype="coldspring.util.Observable" output="false">
+	<cfreturn instance.baseObservable />
+</cffunction>
+
+<cffunction name="setBaseObservable" access="private" returntype="void" output="false">
+	<cfargument name="baseObservable" type="coldspring.util.Observable" required="true">
+	<cfset instance.baseObservable = arguments.baseObservable />
 </cffunction>
 
 </cfcomponent>
