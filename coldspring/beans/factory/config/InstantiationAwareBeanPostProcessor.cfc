@@ -23,14 +23,16 @@
 	The returned bean object may be a proxy to use instead of the target bean, effectively suppressing default instantiation of the target bean.<br/>
 	If a non-null object is returned by this method, the bean creation process will be short-circuited.<br/>
 	The only further processing applied is the BeanPostProcessor.postProcessAfterInitialization(java.lang.Object, java.lang.String) callback from the configured BeanPostProcessors.<br/>
-	This callback will only be applied to bean definitions with a bean class. In particular, it will not be applied to beans with a 'factory-method'.<br/>
-	"
+	This callback will only be applied to bean definitions with a bean class. In particular, it will not be applied to beans with a 'factory-method'."
 	access="public" returntype="any" output="false">
-
+	<cfargument name="beanMetaData" hint="The class and/or meta data information of the bean about to be instantiated.
+				For CFCs this will be the results of getMetaData(), for Java objects it will be an instance of java.lang.Class"
+				type="any" required="Yes">
+	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
 </cffunction>
 
 <cffunction name="postProcessAfterInstantiation" hint="Perform operations after the bean has been instantiated, via a constructor or factory method,
-	but before Spring property population (from explicit properties or autowiring) occurs.<br/>
+	but before ColdSpring property population (from explicit properties or autowiring) occurs.<br/>
     This is the ideal callback for performing field injection on the given bean instance.<br/>
 	Return true if properties should be set on the bean; false if property population should be skipped.
 	Normal implementations should return true. Returning false will also prevent any subsequent InstantiationAwareBeanPostProcessor instances being invoked on this bean instance."

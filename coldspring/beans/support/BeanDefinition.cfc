@@ -176,6 +176,9 @@
 			colddoc:generic="string,string">
 </cffunction>
 
+<cffunction name="getClassMetaData" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
+</cffunction>
+
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="BeanDefinition" output="false">
 </cffunction>
 

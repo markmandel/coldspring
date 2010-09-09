@@ -84,13 +84,31 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="instantiaionBeanPostProessorTest" hint="test instantiation aware bean post procssors" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.factoryBean = instance.factory.getBean("&myMapFactoryBean");
+		local.marker = instance.factory.getBean("instantiationMarkerBeanPostProcessor");
+
+		local.key = local.marker.getKey();
+
+		assertTrue(structKeyExists(local.factoryBean, key & "_afterInstantiation"), "_afterInstantiation does not exist on bean");
+
+		assertTrue(structKeyExists(getMetadata(local.factoryBean), key & "_BeforeInstantiation"), "_BeforeInstantiation does not exist on meta");
+
+		assertTrue(structKeyExists(local.factoryBean, key & "_BeforeInitialization"), "_BeforeInitialization does not exist on bean");
+		assertTrue(structKeyExists(local.factoryBean, key & "_AfterInitialization"), "_AfterInitialization does not exist on bean");
+    </cfscript>
+</cffunction>
+
 <cffunction name="registryAndBeanFactoryPostProcessorTest" hint="testing post processing" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
 		local.counter = instance.factory.getBean("beanCounter");
 
-		assertEquals(16, local.counter.getRegistryCount());
+		assertEquals(17, local.counter.getRegistryCount());
 		assertEquals(local.counter.getFactoryCount(), local.counter.getRegistryCount());
     </cfscript>
 </cffunction>

@@ -26,6 +26,8 @@
 		var cache = getBeanCache().getCache(getScope());
 		var id = getID();
 		var completeKey = id & ":complete";
+		//pull it out into a variable for speed
+		var beanPostProcessorObservable = getBeanPostProcessorObservable();
 	</cfscript>
 
 	<!---
@@ -37,18 +39,41 @@
     	<cfscript>
     		if(NOT StructKeyExists(cache, id))
     		{
-				bean = create();
 
-				//add it to the cache
-				cache[id] = bean;
+				/*
+					processing for InstantiationAwareBeanPostProcessor.
+					if it returns a bean, use that instead.
+				*/
+				if(hasClassName())
+				{
+					local.postBean = beanPostProcessorObservable.postProcessBeforeInstantiation(getClassMetaData(), getID());
+				}
+
+				if(StructKeyExists(local, "postBean"))
+				{
+					bean = local.postBean;
+				}
+				else
+				{
+					bean = create();
+				}
 
 				/*
 					Add it to the cache first, as we may need to
 					reconcile a circular dependency.
 				*/
-				injectPropertyDependencies(bean);
+				cache[id] = bean;
 
-				local.postBean = getBeanPostProcessorObservable().postProcessBeforeInitialization(bean, getID());
+				/*
+					processing for InstantiationAwareBeanPostProcessor.
+					Allow for processing before properties get set, and short circuiting.
+				*/
+				if(beanPostProcessorObservable.postProcessAfterInstantiation(bean, getID()))
+				{
+					injectPropertyDependencies(bean);
+				}
+
+				local.postBean = beanPostProcessorObservable.postProcessBeforeInitialization(bean, getID());
 
 				if(structKeyExists(local, "postBean"))
 				{
@@ -60,7 +85,7 @@
 					invokeInitMethod(bean);
 				}
 
-				local.postBean = getBeanPostProcessorObservable().postProcessAfterInitialization(bean, getID());
+				local.postBean = beanPostProcessorObservable.postProcessAfterInitialization(bean, getID());
 
 				if(structKeyExists(local, "postBean"))
 				{
@@ -373,6 +398,10 @@
 
 		return cloneable.clone(this);
     </cfscript>
+</cffunction>
+
+<cffunction name="getClassMetaData" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("getClassMetaData", this)>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -41,6 +41,10 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="getClassMetaData" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
+	<cfreturn getComponentMetadata(getClassName()) />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
