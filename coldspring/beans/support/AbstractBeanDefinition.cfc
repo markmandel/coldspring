@@ -17,7 +17,7 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getInstance" hint="Returns an instance of the bean this represents. Calls the private method 'create' to create the instance.
+<cffunction name="getInstance" hint="Returns an instance of the bean this represents as managed By ColdSpring. Calls the private method 'create' to create the instance.
 									<br/>on notifyComplete, if isAbstract() this gets switched with a method that throws an Exception."
 			access="public" returntype="any" output="false">
 	<cfscript>
@@ -108,6 +108,12 @@
 	<cfscript>
 		return cache[id];
     </cfscript>
+</cffunction>
+
+<cffunction name="create" hint="abstract method: creates a new object instance, with any constructor args it has (Not managed by ColdSpring).
+	This is generally used by classes that need to create proxies of beans, or internally by the BeanDefinition"
+	access="public" returntype="any" output="false">
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("create", this)>
 </cffunction>
 
 <cffunction name="configure" hint="configure after this bean definition has been registered" access="public" returntype="void" output="false">
@@ -475,10 +481,6 @@
 
 <cffunction name="autowire" hint="abstract method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("autowire", this)>
-</cffunction>
-
-<cffunction name="create" hint="vitual method: creates the object intsance" access="private" returntype="any" output="false">
-	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("create", this)>
 </cffunction>
 
 <cffunction name="injectPropertyDependencies" hint="abstract method: inject all the properpty values into the given bean" access="private" returntype="void" output="false">

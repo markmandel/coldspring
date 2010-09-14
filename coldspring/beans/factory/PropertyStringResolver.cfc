@@ -70,12 +70,17 @@
 			for(key in properties)
 			{
 				value = properties[key];
-				results = reMatchNoCase(getPropertyRegex(), value);
 
-				if(!arrayIsEmpty(results))
+				//make sure it's only for simple values, in case we get extra stuff from frameworks
+				if(isSimpleValue(value))
 				{
-					matchFound = true;
-					properties[key] = replacePropertyValues(results, value);
+					results = reMatchNoCase(getPropertyRegex(), value);
+
+					if(!arrayIsEmpty(results))
+					{
+						matchFound = true;
+						properties[key] = replacePropertyValues(results, value);
+					}
 				}
 			}
 		}

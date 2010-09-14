@@ -20,6 +20,8 @@
 	The function should take the following arguments: methodName, methodArguments, observer, result(optional) and return a boolean value.<br/>
 	If 'false' is returned, then no following observers will be called, and the current observer returned value will be returned, if one exists"
 	type="any" required="no">
+	<cfargument name="returnLastValueOnBreak" hint="Instead of returning the current value when breaking, return tha last valid value. Useful for notifyCallbacks that look for 'null' to stop processing."
+				type="boolean" required="No" default="false">
 	<cfscript>
 		setCollection(createObject("java", "java.util.ArrayList").init());
 		setSystem(createObject("java", "java.lang.System"));
@@ -27,6 +29,8 @@
 		if(structKeyExists(arguments, "notifyCallback"))
 		{
 			variables.notifyCallback = arguments.notifyCallback;
+
+			setReturnLastValueOnBreak(arguments.returnLastValueOnBreak);
 		}
 
 		return this;
@@ -86,11 +90,16 @@
 
 					if(NOT local.continue)
 					{
+						if(!getReturnLastValueOnBreak() AND structKeyExists(local,"return"))
+						{
+							return local.return;
+						}
+
 						break;
 					}
 				}
 
-				//store the current value, as it is what gets returned
+				//store the current value, as it is may be what gets returned
 				if(structKeyExists(local, "return"))
 				{
 					local.currentValue = local.return;
@@ -136,5 +145,15 @@
 	<cfargument name="System" type="any" required="true">
 	<cfset instance.System = arguments.System />
 </cffunction>
+
+<cffunction name="getReturnLastValueOnBreak" access="private" returntype="boolean" output="false">
+	<cfreturn instance.returnLastValueOnBreak />
+</cffunction>
+
+<cffunction name="setReturnLastValueOnBreak" access="private" returntype="void" output="false">
+	<cfargument name="returnLastValueOnBreak" type="boolean" required="true">
+	<cfset instance.returnLastValueOnBreak = arguments.returnLastValueOnBreak />
+</cffunction>
+
 
 </cfcomponent>

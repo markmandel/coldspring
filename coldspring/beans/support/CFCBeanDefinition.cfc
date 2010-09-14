@@ -21,6 +21,29 @@
 	<cfreturn this />
 </cffunction>
 
+<cffunction name="create" hint="Constructs a cfc instance, with any constructor args it has (Not managed by ColdSpring).
+	This is generally used by classes that need to create proxies of beans, or internally by the BeanDefinition"
+	access="public" returntype="any" output="false">
+	<cfscript>
+		var constructorArgs = getConstructorArgsAsArray();
+		var arg = 0;
+		var initArgs = {};
+	</cfscript>
+
+	<cfloop array="#constructorArgs#" index="arg">
+		<cfscript>
+			initArgs[arg.getName()] = arg.create();
+        </cfscript>
+	</cfloop>
+
+	<cftry>
+		<cfreturn createObject("component", getClassName()).init(argumentCollection=initArgs)/>
+		<cfcatch>
+			<cfset createObject("component", "coldspring.beans.exception.BeanCreationException").init(this, cfcatch)>
+		</cfcatch>
+	</cftry>
+</cffunction>
+
 <cffunction name="notifyComplete" hint="Called when all the beans are added to the Factory, and post processing can occur." access="public" returntype="void" output="false">
 	<cfscript>
 		var methodInjector = 0;
@@ -48,27 +71,6 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="create" hint="constructs the cfc instance" access="private" returntype="any" output="false">
-	<cfscript>
-		var constructorArgs = getConstructorArgsAsArray();
-		var arg = 0;
-		var initArgs = {};
-	</cfscript>
-
-	<cfloop array="#constructorArgs#" index="arg">
-		<cfscript>
-			initArgs[arg.getName()] = arg.create();
-        </cfscript>
-	</cfloop>
-
-	<cftry>
-		<cfreturn createObject("component", getClassName()).init(argumentCollection=initArgs)/>
-		<cfcatch>
-			<cfset createObject("component", "coldspring.beans.exception.BeanCreationException").init(this, cfcatch)>
-		</cfcatch>
-	</cftry>
-</cffunction>
 
 <cffunction name="injectPropertyDependencies" hint="inject all the properpty values into the given bean" access="private" returntype="void" output="false">
 	<cfargument name="bean" hint="the bean to inject the properties into" type="any" required="Yes">

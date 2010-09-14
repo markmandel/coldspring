@@ -31,7 +31,6 @@ This callback will only be applied to bean definitions with a bean class. In par
 	<cfargument name="beanMetaData" type="any" required="yes" />
 	<cfargument name="beanName" type="string" required="yes" />
 	<cfscript>
-		writeLog(arguments.beanName);
 		arguments.beanMetaData[getKey()& "_BeforeInstantiation"] = 1;
     </cfscript>
 </cffunction>

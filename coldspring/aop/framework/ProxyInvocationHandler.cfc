@@ -88,6 +88,17 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		StructDelete(arguments.instance, "target");
+		structDelete(arguments.instance, "targetClass");
+
+		variables.instance = arguments.instance;
+    </cfscript>
+</cffunction>
+
 <cffunction name="getMethodAdvice" access="private" returntype="struct" output="false" colddoc:generic="string,MethodInterceptor">
 	<cfreturn instance.methodAdvice />
 </cffunction>
@@ -113,17 +124,6 @@
 <cffunction name="setTargetClass" access="private" returntype="void" output="false">
 	<cfargument name="targetClass" type="string" required="true">
 	<cfset instance.targetClass = arguments.targetClass />
-</cffunction>
-
-<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
-	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
-	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
-	<cfscript>
-		StructDelete(arguments.instance, "target");
-		structDelete(arguments.instance, "targetClass");
-
-		variables.instance = arguments.instance;
-    </cfscript>
 </cffunction>
 
 <!--- closure methods --->

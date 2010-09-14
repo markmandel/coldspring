@@ -15,7 +15,12 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getInstance" hint="Returns an instance of the bean this represents." access="public" returntype="any" output="false">
+<cffunction name="getInstance" hint="Returns an instance of the bean this represents as managed By ColdSpring." access="public" returntype="any" output="false">
+</cffunction>
+
+<cffunction name="create" hint="Creates a new object intsance, with any constructor args it has (Not managed by ColdSpring).
+	This is generally used by classes that need to create proxies of beans"
+	access="public" returntype="any" output="false">
 </cffunction>
 
 <cffunction name="configure" hint="configure after this bean definition has been registered" access="public" returntype="void" output="false">

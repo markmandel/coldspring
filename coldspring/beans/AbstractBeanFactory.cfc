@@ -214,6 +214,7 @@
 	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
 		singleton.createInstance("coldspring.util.Cloneable");
 		singleton.createInstance("coldspring.reflect.MethodFactory");
+		singleton.createInstance("coldspring.util.DynamicProxyFactory");
     </cfscript>
 </cffunction>
 

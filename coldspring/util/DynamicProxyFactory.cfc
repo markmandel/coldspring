@@ -22,11 +22,18 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="DynamicProxyFactory" output="false">
 	<cfscript>
-		setProxyPrototypeCache(StructNew());
-		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").static.instance);
+		var singleton = createObject("component", "Singleton").init();
 
-		return this;
+		return singleton.createInstance(getMetaData(this).name);
 	</cfscript>
+</cffunction>
+
+<cffunction name="configure" hint="configure method for singleton" access="public" returntype="void" output="false">
+	<cfscript>
+		setProxyPrototypeCache(StructNew());
+
+		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").static.instance);
+    </cfscript>
 </cffunction>
 
 <cffunction name="createProxy" hint="creates a dynamic proxy for a specific type of component.

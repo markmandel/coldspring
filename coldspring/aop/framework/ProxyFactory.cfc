@@ -19,7 +19,7 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="ProxyFactory" output="false">
 	<cfscript>
 		//don't need to worry about concurency, and don't want to pass by value
-		setDynamicProxyFactory(createObject("component", "coldspring.util.DynamicProxyFactory").init());
+		setDynamicProxyFactory(getComponentMetadata("coldspring.util.DynamicProxyFactory").static.instance);
 		setMethodFactory(getComponentMetadata("coldspring.reflect.MethodFactory").static.instance);
 		setHandlerCache(structNew());
 		setAdvisors(createObject("java", "java.util.ArrayList").init());

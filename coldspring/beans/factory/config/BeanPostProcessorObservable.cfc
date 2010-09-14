@@ -24,7 +24,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanPostProcessorObservable" output="false">
 	<cfscript>
-		setBaseObservable(createObject("component", "coldspring.util.Observable").init(baseProcessorNotifyCallback));
+		setBaseObservable(createObject("component", "coldspring.util.Observable").init(baseProcessorNotifyCallback, true));
 		setBeforeInstantiationObservable(createObject("component", "coldspring.util.Observable").init(beforeInstantiationCallback));
 		setAfterInstantiationObservable(createObject("component", "coldspring.util.Observable").init(afterInstantiationCallback));
 
