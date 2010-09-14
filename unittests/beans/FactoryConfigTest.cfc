@@ -93,12 +93,12 @@
 
 		local.key = local.marker.getKey();
 
-		assertTrue(structKeyExists(local.factoryBean, key & "_afterInstantiation"), "_afterInstantiation does not exist on bean");
+		assertTrue(structKeyExists(local.factoryBean, local.key & "_afterInstantiation"), "_afterInstantiation does not exist on bean");
 
-		assertTrue(structKeyExists(getMetadata(local.factoryBean), key & "_BeforeInstantiation"), "_BeforeInstantiation does not exist on meta");
+		assertTrue(structKeyExists(getMetadata(local.factoryBean), local.key & "_BeforeInstantiation"), "_BeforeInstantiation does not exist on meta");
 
-		assertTrue(structKeyExists(local.factoryBean, key & "_BeforeInitialization"), "_BeforeInitialization does not exist on bean");
-		assertTrue(structKeyExists(local.factoryBean, key & "_AfterInitialization"), "_AfterInitialization does not exist on bean");
+		assertTrue(structKeyExists(local.factoryBean, local.key & "_BeforeInitialization"), "_BeforeInitialization does not exist on bean");
+		assertTrue(structKeyExists(local.factoryBean, local.key & "_AfterInitialization"), "_AfterInitialization does not exist on bean");
     </cfscript>
 </cffunction>
 

@@ -2,6 +2,17 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
+<cffunction name="setup" hint="setup method" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		super.setup();
+		//make sure the method injector is in the singleton scope
+		local.singleton = createObject("component", "coldspring.util.Singleton").init();
+
+		local.singleton.createInstance("coldspring.util.MethodInjector");
+    </cfscript>
+</cffunction>
+
 <cffunction name="testDuplicateClone" hint="tests to see if cloning happens through duplication" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
