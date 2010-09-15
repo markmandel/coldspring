@@ -43,15 +43,15 @@ component
 	 */
 	public any function onMissingMethod(required String missingMethodName, required struct missingMethodArguments)
 	{
-		arguments.missingMethodName = lCase(arguments.missingMethodName);
+		var lName = lcase(arguments.missingMethodName);
 
-		if(arguments.missingMethodName.startsWith("get"))
+		if(lName.startsWith("get"))
 		{
-			local.class = replace(arguments.missingMethodName, "get", "");
+			local.class = replaceNoCase(arguments.missingMethodName, "get", "");
 
-			if(Find("by", local.class))
+			if(findNoCase("by", local.class))
 			{
-				local.split = local.class.split("by");
+				local.split = local.class.split("(?i)by");
 
 				local.class = local.split[1];
 
@@ -80,47 +80,47 @@ component
 
 			return local.return;
 		}
-		else if(arguments.missingMethodName.startsWith("new"))
+		else if(lName.startsWith("new"))
 		{
-			local.class = replace(arguments.missingMethodName, "new", "");
+			local.class = replaceNoCase(arguments.missingMethodName, "new", "");
 
 			return entityNew(local.class);
 		}
-		else if(arguments.missingMethodName.startsWith("save"))
+		else if(lName.startsWith("save"))
 		{
 			entitySave(arguments.missingMethodArguments[1]);
 			return;
 		}
-		else if(arguments.missingMethodName.startsWith("delete"))
+		else if(lName.startsWith("delete"))
 		{
 			entityDelete(arguments.missingMethodArguments[1]);
 
 			return;
 		}
-		else if(arguments.missingMethodName.startsWith("list"))
+		else if(lName.startsWith("list"))
 		{
-		    local.class = replace(arguments.missingMethodName, "list", "");
+		    local.class = replaceNoCase(arguments.missingMethodName, "list", "");
 
 		    local.filter = {};
 		    local.sortorder = "";
 
 		    //filterby comes first
-		    if(Find("filterby", local.class))
+		    if(FindNoCase("filterby", local.class))
 		    {
-		        local.split = local.class.split("filterby");
+		        local.split = local.class.split("(?i)filterby");
 		        local.class = local.split[1];
 		        local.filterBy = local.split[2];
 
-		        if(Find("orderby", local.filterBy))
+		        if(FindNoCase("orderby", local.filterBy))
 		        {
-		            local.split = local.filterBy.split("orderby");
+		            local.split = local.filterBy.split("(?i)orderby");
 					local.filterBy = local.split[1];
 		            local.orderBy = local.split[2];
 		        }
 		    }
-		    else if(Find("orderby", local.class))
+		    else if(FindNoCase("orderby", local.class))
 		    {
-		        local.split = local.class.split("orderby");
+		        local.split = local.class.split("(?i)orderby");
 		        local.class = local.split[1];
 		        local.orderBy = local.split[2];
 		    }
@@ -132,12 +132,12 @@ component
 
 		    if(StructKeyExists(local, "orderBy"))
 		    {
-		        local.sortorder = replace(local.orderBy, "_", " ", "all");
+		        local.sortorder = replaceNoCase(local.orderBy, "_", " ", "all");
 		    }
 
 		    return EntityLoad(local.class, local.filter, local.sortorder);
 		}
-		else if(arguments.missingMethodName.startsWith("enableFilter"))
+		else if(lName.startsWith("enableFilter"))
 		{
 			local.filterName = ReplaceNoCase(arguments.missingMethodName, "enableFilter", "");
 

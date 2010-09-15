@@ -11,12 +11,23 @@
    limitations under the License.
 
  --->
+
+<cfscript>
+	exclude = "";
+
+	if(server.coldfusion.productName != "ColdFusion Server" OR !server.coldfusion.productVersion.startsWith("9"))
+	{
+		exclude = "cf9";
+	}
+</cfscript>
+
+
 <cfinvoke component="mxunit.runner.DirectoryTestSuite"
 			method="run"
 			directory="#expandPath('/unittests')#"
 			componentPath="unittests"
 			recurse="true"
-			excludes=""
+			excludes="#exclude#"
 			returnvariable="results" />
 
- <cfoutput> #results.getResultsOutput('extjs')# </cfoutput>
+<cfoutput> #results.getResultsOutput('extjs')# </cfoutput>
