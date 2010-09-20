@@ -272,6 +272,138 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testClassAnnotationPointcutAny" hint="tests a * on a class based pointcut" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();
+
+		local.classAnnotation =
+		{
+			dostuff = "*"
+		};
+
+		local.pointcut.setClassAnnotations(local.classAnnotation);
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals(reverse("goodbye"), local.value);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testClassAnnotationPointcutNone" hint="tests a value on on a class based pointcut (therefore reverse should not apply)" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();
+
+		local.classAnnotation =
+		{
+			dostuff = "false"
+		};
+
+		local.pointcut.setClassAnnotations(local.classAnnotation);
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals("goodbye", local.value);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testMethodAnnotationPointcutAny" hint="tests a * on a method based pointcut" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();
+
+		local.methodAnnotation =
+		{
+			dostuff = "*"
+		};
+
+		local.pointcut.setMethodAnnotations(local.methodAnnotation);
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals(reverse("goodbye"), local.value);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testMethodAnnotationPointcutNone" hint="tests a value on a method based pointcut" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();
+
+		local.methodAnnotation =
+		{
+			dostuff = "false"
+		};
+
+		local.pointcut.setMethodAnnotations(local.methodAnnotation);
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals("goodbye", local.value);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" output="false">
+<cfcomponent hint="say hello" output="false" dostuff="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -27,6 +27,12 @@
 	<cfif Lcase(arguments.str).startsWith("exception")>
 		<cfthrow type="#arguments.str#" message="Threw an exception!" />
 	</cfif>
+
+	<cfreturn arguments.str />
+</cffunction>
+
+<cffunction name="sayGoodbye" hint="" access="public" returntype="string" output="false" dostuff="true">
+	<cfargument name="str" hint="" type="string" required="no" default="goodbye">
 
 	<cfreturn arguments.str />
 </cffunction>

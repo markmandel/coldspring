@@ -30,7 +30,8 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="eachClassInTypeHierarchy" hint="Calls the closure for each class type in inheritence, and also for each interface it implements.
+<cffunction name="eachClassInTypeHierarchy" hint="Calls the closure for each class type in inheritence, and also for each interface it implements
+				with 'className' as the argument.<br/>
 				If the closure returns 'false', processing is stopped" access="public" returntype="void" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfargument name="closure" hint="the closure to fire for each class type found a" type="coldspring.util.Closure" required="Yes">

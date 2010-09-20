@@ -32,6 +32,8 @@ component  extends="unittests.AbstractTestCase"
      */
     public void function testGetByID()
     {
+		debug(instance.gateway);
+
 		local.foo = instance.gateway.getFoo(1);
 
 		assertEquals(local.foo.getName(), "Han Solo");
