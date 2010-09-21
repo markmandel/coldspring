@@ -68,5 +68,21 @@
 		<property name="target" ref="helloTarget"/>
 		<property name="interceptorNames" value="reverseRegexAdvisor"/>
 	</bean>
-	   
+	
+	<bean id="reverseAnnotationAdvisor" class="coldspring.aop.support.AnnotationPointcutAdvisor">  
+		<property name="advice">  
+			<ref bean="reverseAdvice" />  
+		</property>
+		<property name="methodAnnotations">
+			<map>
+				<entry key="dostuff" value="*"/>
+			</map>
+		</property>  
+	</bean>
+	
+	<bean id="helloWithAnnotationAdvice" class="coldspring.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="helloTarget"/>
+		<property name="interceptorNames" value="reverseAnnotationAdvisor"/>
+	</bean>	
+	
 </beans>

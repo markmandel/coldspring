@@ -116,50 +116,8 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="xsddoc" depends="xsddoc-clean">
 		<mkdir dir="${docs.xsddoc}/beans"/>
-    	<mkdir dir="${docs.xsddoc}/util"/>
     	
     	<!-- beans documentation -->
-    	<antcall target="xsddoc-gen">
-			<param name="xsdfile" value="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
-			<param name="xsdout" value="beans"/>
-    		<param name="xsdtitle" value="ColdSpring ${coldspring.version} Beans Schema"/>
-		</antcall>
-		<antcall target="xsddoc-gen">
-			<param name="xsdfile" value="${src}/beans/xml/config/coldspring-util-${coldspring.version}.xsd"/>
-			<param name="xsdout" value="util"/>
-    		<param name="xsdtitle" value="ColdSpring ${coldspring.version} Util Schema"/>
-		</antcall>
-    </target>	
-	
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: xsddoc-clean                      
-         - - - - - - - - - - - - - - - - - -->
-    <target name="xsddoc-clean">
-		<delete dir="${docs.xsddoc}/beans"/>
-    	<delete dir="${docs.xsddoc}/util"/>
-    </target>
-	
-	<target name="upload-documentation">
-		<input addproperty="upload-documentation.do" message="Should we upload the Documentation to Sourceforge?" validargs="Y,N" />
-		<antcall target="upload-documentation-${upload-documentation.do}" />		
-	</target>
-	<target name="upload-documentation-N"/>
-	
-	<target name="upload-documentation-Y">
-		<input addproperty="upload-documentation.user" message="What is the Sourceforge Username?"></input>
-		
-		<echo message="Rsync Schemas from ${coldspring.sourceforge.server}"/>
-		<property name="rsync.line" value="-rv --delete --exclude=/gen ./ ${upload-documentation.user}@${coldspring.sourceforge.server}:${coldspring.sourceforge.docs}"/>
-		<echo message="rsync ${rsync.line}"/>
-		<exec executable="rsync" dir="${docs}" logerror="true">
-			<arg line="${rsync.line}"/>
-		</exec>
-	</target>
-	
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: xsddoc-gen                      
-         - - - - - - - - - - - - - - - - - -->
-	<target name="xsddoc-gen">
 		<property name="cp" value="${xsddoc.lib}/xml-apis.jar;${xsddoc.lib}/xercesImpl.jar;${xsddoc.lib}/docflex-xml-re.jar"/>
 		<!--
 		   Execute the DocFlex/XML generator.
@@ -187,7 +145,7 @@
 			
 			<!-- specify the output directory -->
 			<arg value="-d"/>
-			<arg value="${docs.xsddoc}/${xsdout}"/>
+			<arg value="${docs.xsddoc}/beans"/>
 			
 			<!-- specify to not launch the generator GUI -->
 			<arg value="-nodialog"/>
@@ -196,14 +154,41 @@
 			<arg value="-launchviewer=false"/>
 			
 			<!-- pass the template parameter (the documentation title, in this case) -->
-			<arg value="-p:docTitle=${xsdtitle}"/> 
+			<arg value="-p:docTitle=ColdSpring ${coldspring.version} Schemas"/> 
 			<arg value="-p:html.renderLineBreaks=true"/>
 			<!-- 
 			  Specify the data source XML file to be processed by the specified template. 
 			  (In this case, it is the XML schema to be documented.)
+			  
+			  Easiest to grab it all off the web, as then it all resolves nicely.
 			-->
-			<arg value="${xsdfile}"/>
+			<arg value="http://${coldspring.server}/schema/coldspring-beans-${coldspring.version}.xsd"/>
+			<arg value="http://${coldspring.server}/schema/coldspring-util-${coldspring.version}.xsd"/>
+		</java>    	
+    	
+    </target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: xsddoc-clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="xsddoc-clean">
+		<delete dir="${docs.xsddoc}/beans"/>
+    </target>
+	
+	<target name="upload-documentation">
+		<input addproperty="upload-documentation.do" message="Should we upload the Documentation to Sourceforge?" validargs="Y,N" />
+		<antcall target="upload-documentation-${upload-documentation.do}" />		
+	</target>
+	<target name="upload-documentation-N"/>
+	
+	<target name="upload-documentation-Y">
+		<input addproperty="upload-documentation.user" message="What is the Sourceforge Username?"></input>
 		
-		</java>
+		<echo message="Rsync Schemas from ${coldspring.sourceforge.server}"/>
+		<property name="rsync.line" value="-rv --delete --exclude=/gen ./ ${upload-documentation.user}@${coldspring.sourceforge.server}:${coldspring.sourceforge.docs}"/>
+		<echo message="rsync ${rsync.line}"/>
+		<exec executable="rsync" dir="${docs}" logerror="true">
+			<arg line="${rsync.line}"/>
+		</exec>
 	</target>
 </project>
