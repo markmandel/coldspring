@@ -210,6 +210,7 @@
 		*/
 		if(arguments.func.access eq "public"
 			AND JavaCast("string", LCase(arguments.func.name)).startsWith("set")
+			AND StructKeyExists(arguments.func, "parameters")
 			AND ArrayLen(arguments.func.parameters) eq 1
 			)
 		{

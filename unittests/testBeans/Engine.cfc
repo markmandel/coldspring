@@ -16,7 +16,7 @@
 
 <cfset this.id = CreateUUId() />
 
-<cffunction name="init" hint="Constructor" access="public" returntype="Engine" output="false">
+<cffunction name="init" hint="Constructor" returntype="Engine" output="false">
 	<cfscript>
 		setType("Default engine");
 

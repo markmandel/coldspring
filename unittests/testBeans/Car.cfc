@@ -29,7 +29,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="setColor" access="public" returntype="void" output="false">
+<cffunction name="setColor" returntype="void" output="false">
 	<cfargument name="color" type="Color" required="Yes" />
 	<cfset instance.color = arguments.color />
 </cffunction>
@@ -52,7 +52,7 @@
 </cffunction>
 
 <cffunction name="setMake" access="public" returntype="void" output="false">
-	<cfargument name="Make" type="string" required="true">
+	<cfargument name="Make" required="true">
 	<cfset instance.Make = arguments.Make />
 </cffunction>
 
