@@ -67,7 +67,7 @@
 	<cfargument name="debugMode" hint="turns on extra debugging, that can be seeing in the trace view, if you can't work out why a bean isn't being injected"
 				type="boolean" required="No" default="false">
 	<cfscript>
-		setBeanNameCache(StructNew(1));
+		setBeanNameCache(StructNew());
 		setDebugMode(arguments.debugMode);
 	</cfscript>
 </cffunction>
@@ -81,7 +81,7 @@
 <cffunction name="attemptInitialWire" hint="attempt to wire up the bean with the passed in details. Returns only the details that injected successfully."
 			access="private" returntype="array" output="false">
 	<cfargument name="object" hint="the target object" type="any" required="Yes">
-	<cfargument name="injectDetails" hint="the array of structs that represent the beans that will be injected" type="struct" required="Yes">
+	<cfargument name="injectDetails" hint="the array of structs that represent the beans that will be injected" type="array" required="Yes" colddoc:generic="struct">
 	<cfscript>
 		var bean = 0;
 		var detail = 0;

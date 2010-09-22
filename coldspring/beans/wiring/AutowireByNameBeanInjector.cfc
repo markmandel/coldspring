@@ -49,7 +49,7 @@
 			{
 				propertyName = replace(key, "set", "");
 
-				if(getBeanFactory().containsBean(propertyName) AND getBeanFactory().isAutowireCandidate(propertyName));
+				if(getBeanFactory().containsBean(propertyName) AND getBeanFactory().isAutowireCandidate(propertyName))
 				{
 					funcMeta = getMetadata(arguments.object[key]);
 					if(StructKeyExists(funcMeta, "parameters")
