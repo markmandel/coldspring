@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Bean Injector that autowires by setter property names" extends="AbstractBaseBeanInjector" output="false">
+<cfcomponent hint="Bean Injector that autowires by setter property names" extends="AbstractBeanInjector" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -21,8 +21,24 @@
 	<cfscript>
 		super.init(arguments.debugMode);
 
+		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
+
+		setCalculateDependencyClosure(createObject("component", "coldspring.util.Closure").init(isMethodInjectable));
+
 		return this;
 	</cfscript>
+</cffunction>
+
+<cffunction name="setBeanFactory" access="public" hint="Callback that supplies the owning factory to a bean instance.
+		Invoked after the population of normal bean properties but before an initialization callback such as
+		a custom init-method." returntype="void" output="false">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="yes" />
+	<cfscript>
+		super.setBeanFactory(arguments.beanFactory);
+
+		//make the bean factory visible to the closure
+		getCalculateDependencyClosure().bind("beanFactory", arguments.beanFactory);
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -33,43 +49,68 @@
 	colddoc:generic="struct">
 	<cfargument name="object" hint="the target object" type="any" required="Yes">
 	<cfscript>
-		var funcMeta = 0;
-		var key = 0;
-		var injectDetails = [];
-		var detail = 0;
+		var args = {};
+
+		//pass by reference please
+		args.injectDetails = createObject("java", "java.util.ArrayList").init();
+
+		getCFCMetaUtil().eachMetaFunction(getMetadata(arguments.object), getCalculateDependencyClosure(), args);
+
+		return args.injectDetails;
+    </cfscript>
+</cffunction>
+
+<!--- closure method --->
+
+<cffunction name="isMethodInjectable" hint="is this method useful for autowiring?, if it is, adds the details to the injectDetails method"
+			access="private" returntype="void" output="false">
+	<cfargument name="func" hint="the function meta data" type="struct" required="Yes">
+	<cfargument name="injectDetails" hint="the injection details array" type="array" required="Yes" colddoc:generic="struct">
+	<cfscript>
 		var propertyName = 0;
+		var detail = 0;
 
-		//beanName, methodName, argumentName
-
-		//let's go the easy way for this object, loop around the functions on it
-		for(key in arguments.object)
+		if(Lcase(arguments.func.name).startsWith("set") AND arguments.func.access eq "public")
 		{
-			key = Lcase(key);
-			if(isCustomFunction(arguments.object[key]) AND key.startsWith("set"))
+			propertyName = replaceNoCase(arguments.func.name, "set", "");
+
+			if(variables.beanFactory.containsBean(propertyName) AND variables.beanFactory.isAutowireCandidate(propertyName))
 			{
-				propertyName = replace(key, "set", "");
-
-				if(getBeanFactory().containsBean(propertyName) AND getBeanFactory().isAutowireCandidate(propertyName))
+				if(StructKeyExists(arguments.func, "parameters")
+					AND ArrayLen(arguments.func.parameters) eq 1)
 				{
-					funcMeta = getMetadata(arguments.object[key]);
-					if(StructKeyExists(funcMeta, "parameters")
-						AND ArrayLen(funcMeta.parameters) eq 1)
+					detail =
 					{
-						detail =
-						{
-							beanName = propertyName
-							,methodName = key
-							,argumentName = funcMeta.parameters[1].name
-						};
+						beanName = propertyName
+						,methodName = arguments.func.name
+						,argumentName = arguments.func.parameters[1].name
+					};
 
-						arrayAppend(injectDetails, detail);
-					}
+					arrayAppend(arguments.injectDetails, detail);
 				}
 			}
 		}
-
-		return injectDetails;
     </cfscript>
+</cffunction>
+
+<!--- /closure method --->
+
+<cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
+	<cfreturn instance.cfcMetaUtil />
+</cffunction>
+
+<cffunction name="setCFCMetaUtil" access="private" returntype="void" output="false">
+	<cfargument name="cfcMetaUtil" type="coldspring.util.CFCMetaUtil" required="true">
+	<cfset instance.cfcMetaUtil = arguments.cfcMetaUtil />
+</cffunction>
+
+<cffunction name="getCalculateDependencyClosure" access="private" returntype="coldspring.util.Closure" output="false">
+	<cfreturn instance.calculateDependencyClosure />
+</cffunction>
+
+<cffunction name="setCalculateDependencyClosure" access="private" returntype="void" output="false">
+	<cfargument name="calculateDependencyClosure" type="coldspring.util.Closure" required="true">
+	<cfset instance.calculateDependencyClosure = arguments.calculateDependencyClosure />
 </cffunction>
 
 </cfcomponent>

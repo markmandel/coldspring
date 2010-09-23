@@ -25,6 +25,22 @@
 	this.ormSettings.cfclocation = expandPath("/unittests/cf9/hibernate/com/");
 	this.ormSettings.dbcreate = "dropcreate";
 	this.ormSettings.sqlscript = expandPath("/unittests/cf9/hibernate/com/import.sql");
+
+	this.ormsettings.eventhandling = true;
+	this.ormsettings.eventhandler = "coldspring.orm.hibernate.BeanInjectorEventHandler";
+
+	//createObject("component", "coldspring.orm.hibernate.BeanInjectorEventHandler").init();
 </cfscript>
+
+<cffunction name="onRequestStart" returnType="boolean">
+    <cfargument type="string" name="targetPage" required=true/>
+
+	<cfscript>
+		//use this if you need to autowire
+		application.coldspring = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/beanInjector-name-bean.xml"));
+    </cfscript>
+
+    <cfreturn true>
+</cffunction>
 
 </cfcomponent>

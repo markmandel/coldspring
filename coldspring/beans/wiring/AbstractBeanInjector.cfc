@@ -32,6 +32,7 @@
 	    		<cfscript>
 					injectDetails = calculateDependencyInjection(arguments.object);
 					injectDetails = attemptInitialWire(arguments.object, injectDetails);
+
 					cache[className] = injectDetails;
                 </cfscript>
 	    	</cfif>
@@ -98,7 +99,7 @@
 				<cfinvokeargument name="#detail.argumentName#" value="#bean#">
 			</cfinvoke>
 
-			<cfset arrayAppend(validDetails, details)>
+			<cfset arrayAppend(validDetails, detail)>
 
 			<cfcatch>
 				<cfif getDebugMode()>

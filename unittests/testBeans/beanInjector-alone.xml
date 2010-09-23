@@ -1,4 +1,5 @@
-﻿/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
    Copyright 2010 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -9,11 +10,14 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
-component persistent="true"
-{
-	property name="id" type="numeric" fieldtype="id" generator="native";
-	property name="name" type="string";
-
-	property name="inject" persistent="false";
-}
+-->
+<beans xmlns="http://www.coldspringframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd 
+	">
+	
+	<description>This is useful for mocking tests that just need an injector, but no need to wire</description>	
+	
+	<bean id="beanInjector" class="coldspring.beans.wiring.AutowireByNameBeanInjector" />
+	   
+</beans>
