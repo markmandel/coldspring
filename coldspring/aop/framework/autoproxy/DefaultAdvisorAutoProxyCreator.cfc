@@ -7,7 +7,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="DefaultAdvisorAutoProxyCreator" output="false">
 	<cfscript>
-		setCFCMetaUtils(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
+		setCFCMetaUtils(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
 		setAOPCandidateClosure(createObject("component", "coldspring.util.Closure").init(testAdviceAgainstFunction));
 

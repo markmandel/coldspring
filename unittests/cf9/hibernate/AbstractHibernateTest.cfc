@@ -10,21 +10,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-component persistent="true"
+
+component  extends="unittests.AbstractTestCase" hint="Test case for Hibernate based orm tests"
 {
-	property name="id" type="numeric";
-	property name="name" type="string";
-
-	property name="inject" persistent="false";
-
 	/**
-     * Constructor
+     * setup
      */
-    public Foo function init()
+    public void function setup()
     {
-		setName("I am new!");
-
-    	return this;
+		super.setup();
+		ormReload();
+		ormGetSession().beginTransaction();
     }
 
+	/**
+     * teardown
+     */
+    public void function teardown()
+    {
+		if(ormGetSession().getTransaction().isActive())
+		{
+			ormGetSession().getTransaction().rollback();
+			ormClearSession();
+		}
+    }
 }
+

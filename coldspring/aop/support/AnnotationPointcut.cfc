@@ -19,18 +19,17 @@
 <cfscript>
 	meta = getMetadata(this);
 
-	//not going to worry too much about locking at this point
-	if(!structKeyExists(meta, "static"))
+	if(!structKeyExists(meta, "const"))
 	{
-		static =
+		const =
 		{
 			WILDCARD = "*"
 			,CLASS_MATCHES_CLOSURE = createObject("component", "coldspring.util.Closure").init(checkClassForAnnotation)
 		};
 
-		static.CLASS_MATCHES_CLOSURE.bind("WILDCARD", static.WILDCARD);
+		const.CLASS_MATCHES_CLOSURE.bind("WILDCARD", const.WILDCARD);
 
-		meta.static = static;
+		meta.const = const;
 	}
 </cfscript>
 
@@ -59,7 +58,7 @@
 			if(structKeyExists(arguments.methodMetadata, annotation)
 				AND
 				(
-					annotations[annotation] == meta.static.WILDCARD
+					annotations[annotation] == meta.const.WILDCARD
 					||
 					annotations[annotation] == arguments.methodMetadata[annotation]
 				)
@@ -74,8 +73,8 @@
 		args.annotations = getClassAnnotations();
 
 		//need to define this first, dunno why, cf doesn't like me calling methods on meta data based singletons.
-		cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance;
-		cfcMetaUtil.eachClassInTypeHierarchy(arguments.classMetadata.name, meta.static.CLASS_MATCHES_CLOSURE, args);
+		cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
+		cfcMetaUtil.eachClassInTypeHierarchy(arguments.classMetadata.name, meta.const.CLASS_MATCHES_CLOSURE, args);
 
 		return args.result.result;
     </cfscript>

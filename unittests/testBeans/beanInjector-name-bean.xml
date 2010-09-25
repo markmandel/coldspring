@@ -22,6 +22,7 @@
 		]]>
 	</util:json>
 	
+	<alias name="beanInjector" alias="hibernate-beanInjector"/>
 	<bean id="beanInjector" class="coldspring.beans.wiring.AutowireByNameBeanInjector">
 		<property name="debugMode" value="true"/>
 	</bean>

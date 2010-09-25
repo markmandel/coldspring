@@ -14,7 +14,7 @@
 /**
  * class for unit testing the abstract gateway
  */
-component  extends="unittests.AbstractTestCase"
+component  extends="AbstractHibernateTest"
 {
 	/**
      * setup method
@@ -22,8 +22,6 @@ component  extends="unittests.AbstractTestCase"
     public void function setup()
     {
 		super.setup();
-		ormReload();
-
 		instance.gateway = new coldspring.orm.hibernate.AbstractGateway();
     }
 
@@ -32,8 +30,6 @@ component  extends="unittests.AbstractTestCase"
      */
     public void function testGetByID()
     {
-		debug(instance.gateway);
-
 		local.foo = instance.gateway.getFoo(1);
 
 		assertEquals(local.foo.getName(), "Han Solo");
@@ -48,6 +44,18 @@ component  extends="unittests.AbstractTestCase"
 		local.foo = instance.gateway.getFooByName(local.value);
 
 		assertEquals(local.foo.getName(), local.value);
+    }
+
+	/**
+     * test gettings something that doesn't exist, you get a new one
+     */
+    public void function testGetNonExistant()
+    {
+		local.value = "John Lock";
+		local.foo = instance.gateway.getFooByName(local.value);
+
+		assertNotEquals(local.foo.getName(), local.value);
+		assertTrue(isNull(local.foo.getID()));
     }
 
 	/**
@@ -90,6 +98,107 @@ component  extends="unittests.AbstractTestCase"
 
 		assertEquals(1, ArrayLen(local.result));
 		assertEquals("Darth Vader", local.result[1].getName());
+    }
+
+	/**
+     * test NewXXX
+     */
+    public void function testNew()
+    {
+		local.object = instance.gateway.newFoo();
+
+		assertEquals("I am new!", local.object.getName());
+    }
+
+	/**
+     * test saveXXX
+     */
+    public void function testSave()
+    {
+		local.result = instance.gateway.getFooByName("Darth Vader");
+
+		local.result.setName("Mark Mandel");
+
+		instance.gateway.saveFoo(local.result);
+
+		ormFlush();
+		ormClearSession();
+
+		local.result = instance.gateway.getFooByName("Mark Mandel");
+
+		assertEquals("Mark Mandel", local.result.getName());
+    }
+
+	/**
+     * test deleteXXX
+     */
+    public void function testDelete()
+    {
+		local.result = instance.gateway.listFoo();
+
+		assertEquals(3, Arraylen(local.result));
+
+		local.result = instance.gateway.getFooByName("Darth Vader");
+
+		instance.gateway.deleteFoo(local.result);
+
+		ormFlush();
+
+		local.result = instance.gateway.listFoo();
+
+		assertEquals(2, Arraylen(local.result));
+    }
+
+	/**
+     * test enable filter
+     */
+    public void function testEnableFilter()
+    {
+		local.result = instance.gateway.listFoo();
+		assertEquals(3, Arraylen(local.result));
+
+		instance.gateway.enableFilterName(name="Darth Vader");
+
+		local.result = instance.gateway.listFoo();
+		assertEquals(1, Arraylen(local.result));
+
+		assertEquals("Darth Vader", local.result[1].getName());
+
+		//turn this off after the test, otherwise other tests fail.
+		instance.gateway.disableFilterName();
+    }
+
+	/**
+     * test disable filter
+     */
+    public void function testDisableFilter()
+    {
+		instance.gateway.enableFilterName(name="Darth Vader");
+
+		local.result = instance.gateway.listFoo();
+		assertEquals(1, Arraylen(local.result));
+
+		assertEquals("Darth Vader", local.result[1].getName());
+
+		instance.gateway.disableFilterName();
+
+		local.result = instance.gateway.listFoo();
+		assertEquals(3, Arraylen(local.result));
+    }
+
+	/**
+     * test dependency injection on new
+     */
+    public void function testNewDI()
+    {
+		var injector = application.coldspring.getBean("beanInjector");
+		var sessionWrapper = new coldspring.orm.hibernate.SessionWrapper(injector);
+
+		gateway = new coldspring.orm.hibernate.AbstractGateway(sessionWrapper);
+
+		var foo = gateway.newFoo();
+
+		assertEquals("Gandalf", local.foo.getInject());
     }
 
 }

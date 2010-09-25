@@ -36,7 +36,7 @@
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="AbstractProperty" output="false">
 	<cfscript>
-		var cloneable = getComponentMetadata("coldspring.util.Cloneable").static.instance;
+		var cloneable = getComponentMetadata("coldspring.util.Cloneable").singleton.instance;
 
 		return cloneable.clone(this);
     </cfscript>

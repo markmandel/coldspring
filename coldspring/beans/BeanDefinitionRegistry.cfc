@@ -39,7 +39,7 @@
 			setParentBeanFactory(getBeanFactory().getParentBeanFactory());
 		}
 
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
+		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
 		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
 		setBeanFactoryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());

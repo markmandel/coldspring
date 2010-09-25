@@ -23,7 +23,7 @@
  * When implemented via Application.cfc, this Event Handler assumes 2 things:<br/>
  * <ol>
  * 	<li>That ColdSpring is in the application scope, under the key 'coldspring'.</li>
- *  <li>That ColdSpring has a class that extends AbstractBeanInjector under the id 'beanInjector', such as AutowireByNameBeanInjector</li>
+ *  <li>That ColdSpring has a class that extends AbstractBeanInjector under the id 'hibernate-beanInjector', such as AutowireByNameBeanInjector</li>
  * </ol>
  *
  * To overwrite any of these default settings, extend this class and overwrite 'getBeanFactory()' and/or 'getBeanInjector()'.
@@ -115,7 +115,7 @@ component implements="cfide.orm.IEventHandler"
 	    	return variables.beanInjector;
 		}
 
-		return getBeanFactory().getBean("beanInjector");
+		return getBeanFactory().getBean("hibernate-beanInjector");
     }
 
 	/**

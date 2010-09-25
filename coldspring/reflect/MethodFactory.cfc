@@ -49,7 +49,7 @@
 
 		setFindMethodClosure(closure);
 		setMethodCache(StructNew());
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
+		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 	</cfscript>
 </cffunction>
 

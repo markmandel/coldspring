@@ -51,7 +51,7 @@
 		//if we are a factory bean, overwrite how create() works.
 		if(hasFactoryBeanName() AND hasFactoryMethodName())
 		{
-			methodInjector = getComponentMetadata("coldspring.util.MethodInjector").static.instance;
+			methodInjector = getComponentMetadata("coldspring.util.MethodInjector").singleton.instance;
 
 			methodInjector.start(this);
 
@@ -108,7 +108,7 @@
 <cffunction name="autowire" hint="autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
 		var meta = getComponentMetadata(getClassName());
-		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance;
+		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
 		var closure = createObject("component", "coldspring.util.Closure").init(autowireByMode);
 
 		closure.curry("meta", meta);

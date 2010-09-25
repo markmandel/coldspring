@@ -16,7 +16,10 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="Singleton" output="false">
 	<cfscript>
-		return this;
+		//get a little sneaky, and remove the init
+		var singleton = createObject("component", "Singleton");
+
+		return singleton.createInstance(getMetaData(this).name);
 	</cfscript>
 </cffunction>
 
@@ -29,20 +32,20 @@
 		var meta = getComponentMetadata(arguments.class);
 		var instance = 0;
     </cfscript>
-	<cfif NOT StructKeyExists(meta, "static")>
-    	<cflock name="coldspring.util.Singleton.static.#arguments.class#" throwontimeout="true" timeout="60">
+	<cfif NOT StructKeyExists(meta, "singleton")>
+    	<cflock name="coldspring.util.Singleton.singleton.#arguments.class#" throwontimeout="true" timeout="60">
     	<cfscript>
-    		if(NOT StructKeyExists(meta, "static"))
+    		if(NOT StructKeyExists(meta, "singleton"))
     		{
-				meta.static = {};
+				meta.singleton = {};
     		}
     	</cfscript>
     	</cflock>
     </cfif>
-	<cfif NOT StructKeyExists(meta.static, arguments.key)>
+	<cfif NOT StructKeyExists(meta.singleton, arguments.key)>
     	<cflock name="coldspring.util.Singleton.#arguments.key#.#arguments.class#" throwontimeout="true" timeout="60">
     	<cfscript>
-    		if(NOT StructKeyExists(meta, arguments.key))
+    		if(NOT StructKeyExists(meta.singleton, arguments.key))
     		{
 				instance = createObject("component", arguments.class);
 
@@ -51,13 +54,13 @@
 					instance.configure(argumentCollection=args);
 				}
 
-				meta.static[arguments.key] = instance;
+				meta.singleton[arguments.key] = instance;
     		}
     	</cfscript>
     	</cflock>
     </cfif>
 
-	<cfreturn meta.static[arguments.key] />
+	<cfreturn meta.singleton[arguments.key] />
 
 </cffunction>
 

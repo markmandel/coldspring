@@ -32,7 +32,7 @@
 	<cfscript>
 		setProxyPrototypeCache(StructNew());
 
-		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").static.instance);
+		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").singleton.instance);
     </cfscript>
 </cffunction>
 

@@ -16,9 +16,9 @@
 <cfscript>
 	meta = getMetadata(this);
 
-	if(!structKeyExists(meta, "static"))
+	if(!structKeyExists(meta, "const"))
 	{
-		meta.static.WILDCARD = "*";
+		meta.const.WILDCARD = "*";
 	}
 </cfscript>
 
@@ -38,7 +38,7 @@
     </cfscript>
 	<cfloop array="#getMappedNames()#" index="methodName">
 		<cfscript>
-			if(arguments.methodMetadata.name == methodname || methodName == meta.static.WILDCARD)
+			if(arguments.methodMetadata.name == methodname || methodName == meta.const.WILDCARD)
 			{
 				return true;
 			}

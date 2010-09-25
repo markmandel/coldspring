@@ -25,7 +25,7 @@
 
 <cffunction name="configure" hint="Configure method for static configuration" access="public" returntype="void" output="false">
 	<cfscript>
-		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").static.instance);
+		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").singleton.instance);
 	</cfscript>
 </cffunction>
 

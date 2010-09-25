@@ -25,6 +25,10 @@
 	this.ormSettings.cfclocation = expandPath("/unittests/cf9/hibernate/com/");
 	this.ormSettings.dbcreate = "dropcreate";
 	this.ormSettings.sqlscript = expandPath("/unittests/cf9/hibernate/com/import.sql");
+	this.ormSettings.dialect = "MySQLwithInnoDB";
+
+	this.ormSettings.flushatrequestend = false;
+	this.ormSettings.automanageSession = false;
 
 	this.ormsettings.eventhandling = true;
 	this.ormsettings.eventhandler = "coldspring.orm.hibernate.BeanInjectorEventHandler";

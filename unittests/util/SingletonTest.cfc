@@ -29,8 +29,8 @@
 
 		assertSame(local.engine1, local.engine2);
 
-		assertSame(local.engine1, getMetadata(local.engine1).static.instance);
-		assertSame(local.engine1, getComponentMetaData("unittests.testBeans.Engine").static.instance);
+		assertSame(local.engine1, getMetadata(local.engine1).singleton.instance);
+		assertSame(local.engine1, getComponentMetaData("unittests.testBeans.Engine").singleton.instance);
 
 		local.engine3 = instance.singleton.createInstance(class="unittests.testBeans.Engine", key="foo");
 
@@ -40,8 +40,8 @@
 
 		assertSame(local.engine3, local.engine4);
 
-		assertSame(local.engine3, getMetadata(local.engine3).static.foo);
-		assertSame(local.engine3, getComponentMetaData("unittests.testBeans.Engine").static.foo);
+		assertSame(local.engine3, getMetadata(local.engine3).singleton.foo);
+		assertSame(local.engine3, getComponentMetaData("unittests.testBeans.Engine").singleton.foo);
     </cfscript>
 </cffunction>
 
@@ -54,8 +54,8 @@
 
 		assertSame(local.cfcMetaUtil1, local.cfcMetaUtil2);
 
-		assertSame(local.cfcMetaUtil1, getMetadata(local.cfcMetaUtil1).static.instance);
-		assertSame(local.cfcMetaUtil1, getComponentMetaData("coldspring.util.CFCMetaUtil").static.instance);
+		assertSame(local.cfcMetaUtil1, getMetadata(local.cfcMetaUtil1).singleton.instance);
+		assertSame(local.cfcMetaUtil1, getComponentMetaData("coldspring.util.CFCMetaUtil").singleton.instance);
     </cfscript>
 </cffunction>
 

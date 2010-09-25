@@ -19,11 +19,41 @@
  */
 component
 {
+	meta = getMetadata(this);
+	if(!structKeyExists(meta, "const"))
+	{
+		const = {};
+		const.GET_PREFIX = "get";
+		const.NEW_PREFIX = "new";
+		const.SAVE_PREFIX = "save";
+		const.DELETE_PREFIX = "delete";
+		const.LIST_PREFIX = "list";
+		const.DISABLE_FILTER_PREFIX = "disablefilter";
+		const.ENABLE_FILTER_PREFIX = "enablefilter";
+
+		meta.const = const;
+	}
+
 	/**
      * Constructor
+	 *
+	 * @sessionWrapper The Hibernate SessionWrapper to use when interacting with the CF9 ORM. If not provided, the a singleton instance of the default SessionWrapper is used.
+	 * @sesionWrapper.coldoc:generic coldspring.orm.hibernate.SessionWrapper
      */
-    public AbstractGateway function init()
+    public AbstractGateway function init(any sessionWrapper)
     {
+		if(structKeyExists(arguments, "sessionWrapper"))
+		{
+			setSessionWrapper(arguments.sessionWrapper);
+		}
+		else
+		{
+			var singleton = getComponentMetadata("coldspring.util.Singleton").singleton.instance;
+			var defaultSessionWrapper = singleton.createInstance("coldspring.orm.hibernate.SessionWrapper");
+
+			setSessionWrapper(defaultSessionWrapper);
+		}
+
     	return this;
     }
 
@@ -38,122 +68,221 @@ component
 	 *  <li> listXXX[FilterByYYY][OrderByZZZ](): returns a list of the XXX entity.
 	 *		<br/>Optionally filters by YYY, for which you need to pass in a value. Optionally orders by property ZZZ
 	 *  </li>
-	 *  <li> enableFilterXXX(params): enables the filter XXX. The param struct argument passed in keys-values are set as parameters on the filter.</li>
+	 *  <li> enableFilterXXX(params): enables the filter XXX and returns it. The param struct argument passed in keys-values are set as parameters on the filter.</li>
 	 * </ul>
 	 */
 	public any function onMissingMethod(required String missingMethodName, required struct missingMethodArguments)
 	{
 		var lName = lcase(arguments.missingMethodName);
 
-		if(lName.startsWith("get"))
-		{
-			local.class = replaceNoCase(arguments.missingMethodName, "get", "");
+		/*
+		TODO:
+		,split into functions
+		*/
 
-			if(findNoCase("by", local.class))
+		if(lName.startsWith(meta.const.GET_PREFIX))
+		{
+			return executeGet(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+		else if(lName.startsWith(meta.const.NEW_PREFIX))
+		{
+			return executeNew(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+		else if(lName.startsWith(meta.const.SAVE_PREFIX))
+		{
+			return executeSave(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+		else if(lName.startsWith(meta.const.DELETE_PREFIX))
+		{
+			return executeDelete(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+		else if(lName.startsWith(meta.const.LIST_PREFIX))
+		{
+		   return executeList(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+		else if(lName.startsWith(meta.const.ENABLE_FILTER_PREFIX))
+		{
+			return executeEnableFilter(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+		else if(lName.startsWith(meta.const.DISABLE_FILTER_PREFIX))
+		{
+			return executeDisableFilter(arguments.missingMethodName, arguments.missingMethodArguments);
+		}
+
+		//throw an exception if the method is not found
+		new coldspring.exception.MethodNotFoundException(this, arguments.missingMethodName);
+	}
+
+	/**
+     * execute a save operation
+     */
+    private void function executeSave(required string missingMethodName, required struct missingMethodArguments)
+    {
+		getSessionWrapper().save(arguments.missingMethodArguments[1]);
+    }
+
+	/**
+     * executes a new operation
+     */
+    private any function executeNew(required string missingMethodName, required struct missingMethodArguments)
+    {
+		local.class = replaceNoCase(arguments.missingMethodName, meta.const.NEW_PREFIX, "");
+
+		return getSessionWrapper().new(local.class);
+	}
+
+	/**
+     * executes an entity get operation
+     */
+    private any function executeGet(required string missingMethodName, required struct missingMethodArguments)
+    {
+		local.class = replaceNoCase(arguments.missingMethodName, meta.const.GET_PREFIX, "");
+
+		if(findNoCase("by", local.class))
+		{
+			local.split = local.class.split("(?i)by");
+
+			local.class = local.split[1];
+
+			local.filter = {};
+			local.filter[local.split[2]] = arguments.missingMethodArguments[1];
+
+			local.return = getSessionWrapper().get(local.class, local.filter);
+		}
+		else
+		{
+			local.id = arguments.missingMethodArguments[1];
+
+			if(not len(local.id) OR local.id lte 0)
 			{
-				local.split = local.class.split("(?i)by");
-
-				local.class = local.split[1];
-
-				local.filter = {};
-				local.filter[local.split[2]] = arguments.missingMethodArguments[1];
-
-				local.return = entityLoad(local.class, local.filter, true);
-			}
-			else
-			{
-				local.id = arguments.missingMethodArguments[1];
-
-				if(not len(local.id) OR local.id lte 0)
-				{
-					return entityNew(local.class);
-				}
-
-				local.return = entityLoad(local.class, local.id, true);
-
+				return getSessionWrapper().new(local.class);
 			}
 
-			if(isNull(local.return))
-			{
-				return entityNew(local.class);
-			}
-
-			return local.return;
+			local.return = getSessionWrapper().get(local.class, local.id);
 		}
-		else if(lName.startsWith("new"))
-		{
-			local.class = replaceNoCase(arguments.missingMethodName, "new", "");
 
-			return entityNew(local.class);
+		if(isNull(local.return))
+		{
+			return getSessionWrapper().new(local.class);;
 		}
-		else if(lName.startsWith("save"))
-		{
-			entitySave(arguments.missingMethodArguments[1]);
-			return;
-		}
-		else if(lName.startsWith("delete"))
-		{
-			entityDelete(arguments.missingMethodArguments[1]);
 
-			return;
-		}
-		else if(lName.startsWith("list"))
-		{
-		    local.class = replaceNoCase(arguments.missingMethodName, "list", "");
+		return local.return;
+    }
 
-		    local.filter = {};
-		    local.sortorder = "";
+	/**
+     * execute a delete operation
+     */
+    private void function executeDelete(required string missingMethodName, required struct missingMethodArguments)
+    {
+		getSessionWrapper().delete(arguments.missingMethodArguments[1]);
+    }
 
-		    //filterby comes first
-		    if(FindNoCase("filterby", local.class))
-		    {
-		        local.split = local.class.split("(?i)filterby");
-		        local.class = local.split[1];
-		        local.filterBy = local.split[2];
+	/**
+     * executes enabling a filter
+     */
+    private any function executeEnableFilter(required string missingMethodName, required struct missingMethodArguments)
+    {
+			local.filterName = ReplaceNoCase(arguments.missingMethodName, meta.const.ENABLE_FILTER_PREFIX, "");
 
-		        if(FindNoCase("orderby", local.filterBy))
-		        {
-		            local.split = local.filterBy.split("(?i)orderby");
-					local.filterBy = local.split[1];
-		            local.orderBy = local.split[2];
-		        }
-		    }
-		    else if(FindNoCase("orderby", local.class))
-		    {
-		        local.split = local.class.split("(?i)orderby");
-		        local.class = local.split[1];
-		        local.orderBy = local.split[2];
-		    }
+			local.filterName = findFilterName(local.filterName);
 
-		    if(StructKeyExists(local, "filterBy"))
-		    {
-		        local.filter[local.filterBy] = arguments.missingMethodArguments[1];
-		    }
-
-		    if(StructKeyExists(local, "orderBy"))
-		    {
-		        local.sortorder = replaceNoCase(local.orderBy, "_", " ", "all");
-		    }
-
-		    return EntityLoad(local.class, local.filter, local.sortorder);
-		}
-		else if(lName.startsWith("enableFilter"))
-		{
-			local.filterName = ReplaceNoCase(arguments.missingMethodName, "enableFilter", "");
-
-			local.filter = ormGetSession().enableFilter(local.filterName);
+			local.filter = getSessionWrapper().enableFilter(local.filterName);
 
 			for(local.key in arguments.missingMethodArguments)
 			{
 				local.filter.setParameter(local.key, arguments.missingMethodArguments[local.key]);
 			}
 
-			return;
+			return local.filter;
+    }
+
+	/**
+     * executes a list operation
+     */
+    private array function executeList(required string missingMethodName, required struct missingMethodArguments)
+    {
+		local.class = replaceNoCase(arguments.missingMethodName, meta.const.LIST_PREFIX, "");
+
+	    local.filter = {};
+	    local.sortorder = "";
+
+	    //filterby comes first
+	    if(FindNoCase("filterby", local.class))
+	    {
+	        local.split = local.class.split("(?i)filterby");
+	        local.class = local.split[1];
+	        local.filterBy = local.split[2];
+
+	        if(FindNoCase("orderby", local.filterBy))
+	        {
+	            local.split = local.filterBy.split("(?i)orderby");
+				local.filterBy = local.split[1];
+	            local.orderBy = local.split[2];
+	        }
+	    }
+	    else if(FindNoCase("orderby", local.class))
+	    {
+	        local.split = local.class.split("(?i)orderby");
+	        local.class = local.split[1];
+	        local.orderBy = local.split[2];
+	    }
+
+	    if(StructKeyExists(local, "filterBy"))
+	    {
+	        local.filter[local.filterBy] = arguments.missingMethodArguments[1];
+	    }
+
+	    if(StructKeyExists(local, "orderBy"))
+	    {
+	        local.sortorder = replaceNoCase(local.orderBy, "_", " ", "all");
+	    }
+
+	    return getSessionWrapper().list(local.class, local.filter, local.sortorder);
+    }
+
+	/**
+     * executes disabeling a filter
+     */
+    private void function executeDisableFilter(required string missingMethodName, required struct missingMethodArguments)
+    {
+		var filterName = ReplaceNoCase(arguments.missingMethodName, meta.const.DISABLE_FILTER_PREFIX, "");
+
+		local.filterName = findFilterName(local.filterName);
+
+		getSessionWrapper().disableFilter(filterName);
+    }
+
+
+	/**
+     * non case sensitive lookup for filters
+	 *
+	 * @filterName the name of the filter
+     */
+    private string function findFilterName(required string filtername)
+    {
+		var filterNames = getSessionWrapper().getSessionFactory().getDefinedFilterNames().iterator();
+
+		while(filterNames.hasNext())
+		{
+			var filter = filterNames.next();
+
+			if(filter == arguments.filtername)
+			{
+				return filter;
+			}
 		}
 
-		throw(type="MethodDoesNotExistException",
-			message="The method you are trying to invoke does not exist on this component",
-			detail="On component #getMetaData(this).name#, the function '#arguments.missingMethodName#' does not exist");
-	}
+		return arguments.filterName;
+    }
+
+	private any function getSessionWrapper()
+    {
+    	return variables.sessionWrapper;
+    }
+
+    private void function setSessionWrapper(required any sessionWrapper)
+    {
+    	variables.sessionWrapper = arguments.sessionWrapper;
+    }
 
 }

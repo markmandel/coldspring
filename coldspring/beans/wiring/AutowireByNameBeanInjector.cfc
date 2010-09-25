@@ -21,7 +21,7 @@
 	<cfscript>
 		super.init(arguments.debugMode);
 
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").static.instance);
+		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
 		setCalculateDependencyClosure(createObject("component", "coldspring.util.Closure").init(isMethodInjectable));
 

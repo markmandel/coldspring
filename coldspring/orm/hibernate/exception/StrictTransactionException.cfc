@@ -10,21 +10,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-component persistent="true"
+
+/**
+ * Exception for when a persistence method is fired outside of a transaction block
+ */
+component  extends="coldspring.exception.Exception"
 {
-	property name="id" type="numeric";
-	property name="name" type="string";
-
-	property name="inject" persistent="false";
-
 	/**
      * Constructor
+	 *
+	 * @method the name of the method that was invoked
      */
-    public Foo function init()
+    public StrictTransactionException function init(required string method)
     {
-		setName("I am new!");
+		super.init("Persistence ORM methods must be invoked from within a transaction block.",
+			"The method '#arguments.method#' must be invoked from within a transaction block.");
 
     	return this;
     }
+
 
 }
