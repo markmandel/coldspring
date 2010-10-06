@@ -1,0 +1,35 @@
+gunit AopExpression;
+
+
+//------------------- prog
+prog:
+
+"execution(public * *(..))"  -> (execution public * * (ARGUMENTS ..))
+
+"execution(* set*(..))"  -> (execution * set* (ARGUMENTS ..))
+
+"execution(* com.xyz.service.AccountService.*(..))"  -> (execution * com.xyz.service.AccountService.* (ARGUMENTS ..))
+
+"execution(* com.xyz.service.*.*(..))"  -> (execution * com.xyz.service.*.* (ARGUMENTS ..))
+
+"execution(* com.xyz.service..*.*(..))"  -> (execution * com.xyz.service..*.* (ARGUMENTS ..))
+
+"execution(public string *(string))"  -> (execution public string * (ARGUMENTS string))
+
+"execution(public string *(string, com.foo.*))"  -> (execution public string * (ARGUMENTS string com.foo.*))
+
+"within(com.xyz.service.*)"  -> (within com.xyz.service.*)
+
+"within(com.xyz.service..*)"  -> (within com.xyz.service..*)
+
+"target(com.xyz.service.AccountService)"  -> (target com.xyz.service.AccountService)
+
+"bean(tradeService)"  -> (bean tradeService)
+
+"@target(transaction)"  -> (@target transaction)
+
+"@target(transaction=\"true\")"  -> (@target transaction "true")
+
+"@annotation(transaction) "  -> (@annotation transaction)
+
+"bean(*Service) "  -> (bean *Service)

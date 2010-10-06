@@ -38,6 +38,8 @@
 	<property name="xsddoc" location="${docs}/gen/xsddoc"/>
 	<property name="xsddoc.lib" location="${xsddoc}/lib"/>
 	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
+	<property name="antlr.src" location="./antlr"/>
+	<property name="antlr.lib" location="${antlr.src}/lib"/>
 	
 	<!-- ================================= 
           target: deploy              
@@ -191,4 +193,42 @@
 			<arg line="${rsync.line}"/>
 		</exec>
 	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: aop-parser                      
+         - - - - - - - - - - - - - - - - - -->	
+	<target name="aop-parser" depends="aop-parser-clean">
+		
+		<property name="cp" location="${antlr.lib}/antlr-3.2.jar"/>
+		
+		<echo message="Generating Lexer &amp; Parser"/>
+		<java classname="org.antlr.Tool" classpath="${cp}" fork="true" dir="${antlr.src}">
+			<arg value="-report"/>
+			<arg value="${antlr.src}/AopExpression.g"/>
+		</java>
+		
+		<javac classpath="${cp}" srcdir="${antlr.src}" debug="true" debuglevel="lines,vars,source">
+		</javac>
+		
+		<echo message="Running gUnit Tests"/>
+		<java classname="org.antlr.gunit.Interp" classpath="${cp};${antlr.src};" fork="true">
+			<arg value="${antlr.src}/AopExpression.gunit"/>
+		</java>
+		
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: aop-parser-clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="aop-parser-clean">
+		<delete dir="${antlr.src}">
+			<include name="*.java"/>
+			<include name="*.class"/>
+			<include name="*.tokens"/>
+		</delete>
+    	
+    	<delete dir="${antlr.src}/output"/>
+    </target>
+
+	
 </project>
