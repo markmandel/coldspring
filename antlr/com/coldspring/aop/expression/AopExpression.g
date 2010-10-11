@@ -10,9 +10,17 @@ tokens
 	ARGUMENTS;
 }
 
+@lexer::header {
+	package com.coldspring.aop.expression;
+}
+
 @lexer::members 
 {
 	boolean expressionStart = false;
+}
+
+@parser::header {
+	package com.coldspring.aop.expression;
 }
 
 /* parser */
@@ -24,20 +32,24 @@ expr	: 	(NOT?(executionExpr | simpleExpr | annotationExr))^ ((AND | OR) expr)?
 	;
 
 simpleExpr
-	:	EXPRESSION_TYPE^ '('! DESCRIPTOR ')'!
+	:	EXPRESSION_TYPE^ '('! DESCRIPTOR CLOSE_PAREN!
 	;
 
 executionExpr 
-	:	EXECUTION_EXPRESSION_TYPE^ '('! SCOPE type? type executionArgs ')'!
+	:	EXECUTION_EXPRESSION_TYPE^ '('! SCOPE type? type executionArgs CLOSE_PAREN!
 	;
 	
 executionArgs
-	: 	'(' ANY_ARGUMENT ')' -> ^(ARGUMENTS ANY_ARGUMENT)
-	| 	'(' type (',' type)* ')' -> ^(ARGUMENTS type+)
+	: 	'(' ANY_ARGUMENT CLOSE_PAREN -> ^(ARGUMENTS ANY_ARGUMENT)
+	| 	'(' type (',' type)* CLOSE_PAREN -> ^(ARGUMENTS type+)
 	;
 
 annotationExr
-	: 	ANNOTATION_EXPRESSION_TYPE^ '('! DESCRIPTOR ('='! STRING)? ')'!
+	: 	ANNOTATION_EXPRESSION_TYPE^ '('! DESCRIPTOR ('='! string)? CLOSE_PAREN!
+	;
+
+string
+	: STRING_DOUBLE_QUOTE | STRING_SINGLE_QUOTE
 	;
 
 type 	:	CF_TYPE | DESCRIPTOR
@@ -81,15 +93,20 @@ ANY_ARGUMENT
 	{System.out.println("ANY_ARGUMENT");}
 	;
 
-AND	:	'&&'
+AND	:	'&&' | 'and' | 'AND'
 	{ expressionStart = false; }
 	;
 	
-OR	:	'||'
+OR	:	'||' | 'or' | 'OR'
 	{ expressionStart = false; }
 	;
 
 NOT	:	'!'
+	;
+
+CLOSE_PAREN
+	:	')'
+	{ expressionStart = false; }	
 	;
 	
 WS  :   ( ' '
@@ -99,10 +116,22 @@ WS  :   ( ' '
         ) {$channel=HIDDEN;}
     ;
     
-STRING
+
+STRING_DOUBLE_QUOTE
     :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
-    {System.out.println("STRING");}
+    {
+    	setText(getText().substring(1, getText().length()-1));
+    	System.out.println("STRING_DOUBLE:" + getText());
+    }
     ;
+    
+STRING_SINGLE_QUOTE
+    :  '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\''
+    {
+   	setText(getText().substring(1, getText().length()-1));
+   	System.out.println("STRING_SINGLE: " + getText());
+    }
+    ;    
 
 fragment
 HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;

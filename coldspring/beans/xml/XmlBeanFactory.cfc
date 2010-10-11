@@ -23,7 +23,7 @@
 	<cfscript>
 		super.init(argumentCollection=arguments);
 
-		setXMLParser(createObject("component", "XmlParser").init(getJavaLoader()));
+		setXMLParser(createObject("component", "XmlParser").init());
 
 		initDefaultNamespaceHandlers();
 
@@ -70,6 +70,7 @@
 	<cfscript>
 		addNamespaceHandler(createObject("component", "coldspring.beans.xml.config.BeansNamespaceHandler").init());
 		addNamespaceHandler(createObject("component", "coldspring.beans.xml.config.UtilNamespaceHandler").init());
+		addNamespaceHandler(createObject("component", "coldspring.aop.config.AOPNamespaceHandler").init());
     </cfscript>
 </cffunction>
 

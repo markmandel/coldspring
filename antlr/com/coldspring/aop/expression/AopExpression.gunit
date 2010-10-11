@@ -1,4 +1,5 @@
 gunit AopExpression;
+@header{package com.coldspring.aop.expression;}
 
 
 //------------------- prog
@@ -28,7 +29,9 @@ prog:
 
 "@target(transaction)"  -> (@target transaction)
 
-"@target(transaction=\"true\")"  -> (@target transaction "true")
+"@target(transaction=\"true\")"  -> (@target transaction true)
+
+"@target(transaction='true')"  -> (@target transaction true)
 
 "@annotation(transaction) "  -> (@annotation transaction)
 

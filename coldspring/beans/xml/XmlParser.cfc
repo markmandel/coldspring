@@ -16,14 +16,13 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="XmlParser" output="false">
-	<cfargument name="javaLoader" hint="the javaloader lib" type="coldspring.util.java.JavaLoader" required="true">
 	<cfscript>
 		setNamespaceHandlers(StructNew());
 
 		setConfigLocations(ArrayNew(1)); //have a default value, to prevent error
 		setSchemaMap(StructNew());
 
-		setJavaLoader(arguments.javaLoader);
+		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
 
 		return this;
 	</cfscript>
@@ -66,7 +65,7 @@
 <cffunction name="parseXMLToBeanDefinitions" hint="Parse a specific XML document into bean definitions, and add them to the registry" access="public" returntype="void" output="false">
 	<cfargument name="path" hint="the absolute path to the XML configuration file" type="string" required="Yes">
 	<cfscript>
-		var xmlFileReader = createObject("component", "coldspring.io.XMLFileReader").init(arguments.path, getJavaLoader(), getSchemaMap());
+		var xmlFileReader = createObject("component", "coldspring.io.XMLFileReader").init(arguments.path, getSchemaMap());
 		var document = xmlFileReader.parseToDocument();
 		var delegate = 0;
 		var parserContext = 0;

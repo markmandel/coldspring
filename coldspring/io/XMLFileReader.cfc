@@ -17,10 +17,9 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="XMLFileReader" output="false">
 	<cfargument name="path" hint="the absolute path to the XML file" type="string" required="Yes">
-	<cfargument name="javaloader" hint="The JavaLoader library" type="coldspring.util.java.JavaLoader" required="Yes">
 	<cfargument name="schemaMap" hint="map for XSDs to be mapped to local resources" type="struct" required="false" default="#StructNew()#">
 	<cfscript>
-		setJavaLoader(arguments.javaloader);
+		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
 		setSchemaMap(arguments.schemaMap);
 		setPath(arguments.path);
 

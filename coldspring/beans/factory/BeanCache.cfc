@@ -21,9 +21,8 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanCache" output="false">
-	<cfargument name="javaLoader" hint="accesss to loaded java libraries" type="coldspring.util.java.JavaLoader" required="true">
 	<cfscript>
-		setJavaLoader(arguments.javaLoader);
+		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
 
 		setSingletonCache(StructNew());
 		setPrototypeCache(getJavaLoader().create("org.coldspring.util.DummyMap").init());

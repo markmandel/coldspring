@@ -146,7 +146,7 @@
 </cffunction>
 
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
-	<cfreturn "0.3">
+	<cfreturn "0.5">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -158,14 +158,13 @@
 				type="struct" required="no" default="#StructNew()#">
 	<cfscript>
 		initSingletons();
-		setJavaLoader(createObject("component", "coldspring.util.java.JavaLoader").init(getVersion()));
 		setDynamicProperties(arguments.dynamicProperties);
 	</cfscript>
 </cffunction>
 
 <cffunction name="prepareRefresh" hint="prepares the refresh method, should be called at the beginning of refresh()" access="private" returntype="void" output="false">
 	<cfscript>
-		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init(getJavaLoader()));
+		setBeanCache(createObject("component", "coldspring.beans.factory.BeanCache").init());
 		setBeanDefinitionRegistry(createObject("component", "BeanDefinitionRegistry").init(this, getBeanCache()));
     </cfscript>
 </cffunction>
@@ -210,6 +209,8 @@
 	<cfscript>
 		var singleton = createObject("component", "coldspring.util.Singleton").init();
 
+		var args = {version=getVersion()};
+		singleton.createInstance("coldspring.util.java.JavaLoader", args);
 		singleton.createInstance("coldspring.util.Singleton");
 		singleton.createInstance("coldspring.util.MethodInjector");
 	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
@@ -226,15 +227,6 @@
 <cffunction name="setBeanCache" access="private" returntype="void" output="false">
 	<cfargument name="beanCache" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfset instance.beanCache = arguments.beanCache />
-</cffunction>
-
-<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.java.JavaLoader" output="false">
-	<cfreturn instance.JavaLoader />
-</cffunction>
-
-<cffunction name="setJavaLoader" access="private" returntype="void" output="false">
-	<cfargument name="JavaLoader" type="coldspring.util.java.JavaLoader" required="true">
-	<cfset instance.JavaLoader = arguments.JavaLoader />
 </cffunction>
 
 <cffunction name="getBeanDefinitionRegistry" access="private" returntype="coldspring.beans.BeanDefinitionRegistry" output="false">

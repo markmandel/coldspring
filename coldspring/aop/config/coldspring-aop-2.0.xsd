@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+   Copyright 2010 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --> 
+<xsd:schema xmlns="http://www.coldspringframework.org/schema/aop"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		targetNamespace="http://www.coldspringframework.org/schema/aop"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified">
+
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+	Credits to the Spring XML AOP Schema, version 2.5, on which this is heavily based, and much
+	of the documentation and schema code was lifted.		
+		
+	Defines the configuration elements for the ColdSpring Framework's AOP support.
+		]]></xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="config">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+	A section (compartmentalization) of AOP-specific configuration (including
+	aspects, pointcuts, etc).
+			]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="pointcut" type="pointcutType" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[
+	A named pointcut definition.
+						]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="advisor" type="advisorType" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation source="coldfusion:coldspring.aop.Advisor"><![CDATA[
+	A named advisor definition.
+						]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="aspect" type="aspectType" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[
+	A named aspect definition.
+						]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="aspectType">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="pointcut" type="pointcutType">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	A named pointcut definition.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="before" type="basicAdviceType">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	A before advice definition.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="after-returning" type="afterReturningAdviceType">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	An after-returning advice definition.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="after-throwing" type="afterThrowingAdviceType">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	An after-throwing advice definition.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="around" type="basicAdviceType">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	An around advice definition.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:choice>
+		<xsd:attribute name="id" type="xsd:ID">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The unique identifier for an aspect.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ref" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The name of the (backing) bean that encapsulates the aspect.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="pointcutType">
+		<xsd:attribute name="id" type="xsd:ID" use="required">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The unique identifier for a pointcut.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="expression" use="required" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The pointcut expression.
+	
+	For example : 'execution(* com.xyz.myapp.service.*.*(..))'
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="basicAdviceType">
+		<xsd:attribute name="pointcut" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The associated pointcut expression.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="pointcut-ref" type="pointcutRefType">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The name of an associated pointcut definition.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="method" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The name of the method that defines the logic of the advice.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="arg-names" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The comma-delimited list of advice method argument (parameter) names 
+	that will be matched from pointcut parameters.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="afterReturningAdviceType">
+		<xsd:complexContent>
+			<xsd:extension base="basicAdviceType">
+				<xsd:attribute name="returning" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[
+	The name of the method parameter to which the return value must
+	be passed.
+						]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="afterThrowingAdviceType">
+		<xsd:complexContent>
+			<xsd:extension base="basicAdviceType">
+				<xsd:attribute name="throwing" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[
+	The name of the method parameter to which the thrown exception must
+	be passed.	
+						]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="advisorType">
+		<xsd:attribute name="id" type="xsd:ID"/>
+		<xsd:attribute name="advice-ref" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	A reference to an advice bean.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="pointcut" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	A pointcut expression.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="pointcut-ref" type="pointcutRefType">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	A reference to a pointcut definition.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:simpleType name="pointcutRefType">
+		<xsd:union memberTypes="xsd:string"/>
+	</xsd:simpleType>
+
+</xsd:schema>

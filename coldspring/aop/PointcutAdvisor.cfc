@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Abstract base class for Pointcuts that are driven by an advisor" implements="Advisor" output="false">
+<cfcomponent hint="Base class for Pointcuts that are driven by an advisor" implements="Advisor" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

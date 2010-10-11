@@ -40,11 +40,13 @@
 	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
 	<property name="antlr.src" location="./antlr"/>
 	<property name="antlr.lib" location="${antlr.src}/lib"/>
+	<property name="antlr.jar" location="${src}/util/java/lib/" />
 	
 	<!-- ================================= 
           target: deploy              
          ================================= -->
     <target name="deploy" depends="" description="Deploy the current build of ColdSpring">
+    	<antcall target="aop-parser" />
     	<antcall target="unittest" />
     	<antcall target="upload-schemas"/>
     	<antcall target="xsddoc"/>
@@ -83,6 +85,7 @@
 			 remotedir="${coldspring.server.schema}">
 			<fileset file="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
 			<fileset file="${src}/beans/xml/config/coldspring-util-${coldspring.version}.xsd"/>
+			<fileset file="${src}/aop/config/coldspring-aop-${coldspring.version}.xsd"/>
 		</ftp>
     </target>	
 	<target name="upload-schemas-N"/>
@@ -166,6 +169,7 @@
 			-->
 			<arg value="http://${coldspring.server}/schema/coldspring-beans-${coldspring.version}.xsd"/>
 			<arg value="http://${coldspring.server}/schema/coldspring-util-${coldspring.version}.xsd"/>
+			<arg value="http://${coldspring.server}/schema/coldspring-aop-${coldspring.version}.xsd"/>
 		</java>    	
     	
     </target>	
@@ -204,7 +208,7 @@
 		<echo message="Generating Lexer &amp; Parser"/>
 		<java classname="org.antlr.Tool" classpath="${cp}" fork="true" dir="${antlr.src}">
 			<arg value="-report"/>
-			<arg value="${antlr.src}/AopExpression.g"/>
+			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.g"/>
 		</java>
 		
 		<javac classpath="${cp}" srcdir="${antlr.src}" debug="true" debuglevel="lines,vars,source">
@@ -212,9 +216,12 @@
 		
 		<echo message="Running gUnit Tests"/>
 		<java classname="org.antlr.gunit.Interp" classpath="${cp};${antlr.src};" fork="true">
-			<arg value="${antlr.src}/AopExpression.gunit"/>
+			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.gunit"/>
 		</java>
 		
+		<jar destfile="${antlr.jar}/aop-parser.jar" basedir="${antlr.src}" >
+			<include name="**/*.class"/>
+		</jar>
 	</target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -222,9 +229,9 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="aop-parser-clean">
 		<delete dir="${antlr.src}">
-			<include name="*.java"/>
-			<include name="*.class"/>
-			<include name="*.tokens"/>
+			<include name="**/*.java"/>
+			<include name="**/*.class"/>
+			<include name="**/*.tokens"/>
 		</delete>
     	
     	<delete dir="${antlr.src}/output"/>

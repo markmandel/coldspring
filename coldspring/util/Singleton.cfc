@@ -26,7 +26,7 @@
 <cffunction name="createInstance" hint="create a singleton instance of an object, or if already created, return the already existing object" access="public" returntype="any" output="false">
 	<cfargument name="class" hint="the class name of the CFC to create" type="string" required="Yes">
 	<cfargument name="args" hint="the arguments to pass to an optional 'configures' method that configures the static instance" type="struct" required="No" default="#StructNew()#">
-	<cfargument name="key" hint="The key to use on the 'static' struct that will be created on the metadata for the given cfc.<br/>Defaults to 'instance'."
+	<cfargument name="key" hint="The key to use on the 'singleton' struct that will be created on the metadata for the given cfc.<br/>Defaults to 'instance'."
 				type="string" required="No" default="instance">
 	<cfscript>
 		var meta = getComponentMetadata(arguments.class);

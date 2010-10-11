@@ -19,7 +19,17 @@
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
+
 <cffunction name="init" hint="Constructor" access="public" returntype="JavaLoader" output="false">
+	<cfargument name="version" hint="the version of the bean factory in question" type="string" required="Yes">
+	<cfscript>
+		var singleton = createObject("component", "coldspring.util.Singleton").init();
+
+		return singleton.createInstance(getMetaData(this).name, arguments);
+	</cfscript>
+</cffunction>
+
+<cffunction name="configure" hint="config for singleton construction" access="public" returntype="JavaLoader" output="false">
 	<cfargument name="version" hint="the version of the bean factory in question" type="string" required="Yes">
 	<cfscript>
 		var local = {};
