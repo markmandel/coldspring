@@ -54,7 +54,7 @@
 		var parser = 0;
     </cfscript>
 	<cfif !hasExpressionPointcut()>
-    	<cflock name="coldspring.aop.expression.ExpressionPointcut.buildExpressionPointcut.#getExpression()#" throwontimeout="true" timeout="60">
+    	<cflock name="coldspring.aop.expression.ExpressionPointcut.buildExpressionPointcut.#createObject('java', 'java.lang.System').identityHashCode(this)#" throwontimeout="true" timeout="60">
     	<cfscript>
     		if(!hasExpressionPointcut())
     		{

@@ -21,6 +21,14 @@
 	instance.static.METHOD_ANNOTATION = "@annotation";
 </cfscript>
 
+<!---
+TODO:
+	Error handling
+	Should <aop:aspect ref> be required?
+	Unsupported Exception - for * and private, and for bean()
+	throw an error on MethodInvocationAdvice if the adviecType is not 'before,afterReturning,around,throws'
+ --->
+
 <cffunction name="init" hint="Constructor" access="public" returntype="ExpressionParser" output="false">
 	<cfscript>
 		var singleton = createObject("component", "Singleton").init();
