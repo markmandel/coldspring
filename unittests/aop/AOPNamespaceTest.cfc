@@ -29,10 +29,9 @@
 		local.proxy = factory.getBean("hello");
 
 		local.value = local.proxy.sayHello();
+		assertEquals("hello", local.value);
 
 		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
-
-		assertEquals("hello", local.value);
 
 		local.string = "Gobble, Gobble";
 
@@ -49,10 +48,10 @@
 		local.proxy = factory.getBean("hello");
 
 		local.value = local.proxy.sayHello();
+		assertEquals("hello", local.value);
 
 		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
 
-		assertEquals("hello", local.value);
 
 		local.string = "Gobble, Gobble";
 

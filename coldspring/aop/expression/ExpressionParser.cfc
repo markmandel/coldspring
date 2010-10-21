@@ -69,7 +69,7 @@ TODO:
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 
-<cffunction name="parseSingleExpression" hint="parses a single expression, and returns a pointcut" access="public" returntype="coldspring.aop.Pointcut" output="false">
+<cffunction name="parseSingleExpression" hint="parses a single expression, and returns a pointcut" access="private" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
@@ -80,7 +80,7 @@ TODO:
     </cfscript>
 </cffunction>
 
-<cffunction name="parseAnnotation" hint="parses an annotation pointcut - @target or @annotation" access="public" returntype="coldspring.aop.Pointcut" output="false">
+<cffunction name="parseAnnotation" hint="parses an annotation pointcut - @target or @annotation" access="private" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
