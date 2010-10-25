@@ -15,6 +15,20 @@
 			implements="coldspring.aop.Pointcut"
 			output="false">
 
+<cfscript>
+	meta = getMetadata(this);
+
+	if(!structKeyExists(meta, "const"))
+	{
+		const = {};
+
+		const.AND = 1;
+		const.OR = 2;
+
+		meta.const = const;
+	}
+</cfscript>
+
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="CompositePointcut" output="false">
@@ -23,6 +37,7 @@
 	<cfscript>
 		setInitialPointcut(arguments.initialPointcut);
 		setNegateInitialPointcut(arguments.negate);
+		setPointcutCollection(createObject("java", "java.util.ArrayList").init());
 
 		return this;
 	</cfscript>
@@ -33,16 +48,56 @@
 	<cfargument name="classMetadata" type="struct" required="yes" />
 
 	<cfscript>
-		var match = getInitialPointcut().matches(arguments.methodMetadata, arguments.classMetadata);
+		var finalMatch = getInitialPointcut().matches(arguments.methodMetadata, arguments.classMetadata);
+		var match = 0;
+		var pointcutCollection = getPointcutCollection();
+		var pointcutData = 0;
 
 		if(getNegateInitialPointcut())
 		{
-			match = !match;
+			finalMatch = !finalMatch;
 		}
+    </cfscript>
 
-		return match;
+	<cfloop array="#pointcutCollection#" index="pointcutData">
+		<cfscript>
+			match = pointcutData.pointcut.matches(arguments.methodMetadata, arguments.classMetadata);
+
+			if(pointcutData.negate)
+			{
+				match = !match;
+			}
+
+			if(pointcutData.operator == meta.const.AND)
+			{
+				finalMatch = finalMatch && match;
+			}
+			else if(pointcutData.operator == meta.const.OR)
+			{
+				finalMatch = finalMatch || match;
+			}
+        </cfscript>
+	</cfloop>
+
+	<cfreturn finalMatch />
+</cffunction>
+
+<cffunction name="addAndPointcut" hint="add a pointcut that will be added to the set of pointcuts under AND boolean logic" access="public" returntype="void" output="false">
+	<cfargument name="pointcut" hint="the pointcut to add to the logic set" type="coldspring.aop.Pointcut" required="Yes">
+	<cfargument name="negate" hint="whether to switch the matching of the pointcut, i.e. !pointcut.match()" type="boolean" required="No" default="false">
+	<cfscript>
+		addPointcut(arguments.pointcut, arguments.negate, meta.const.AND);
     </cfscript>
 </cffunction>
+
+<cffunction name="addOrPointcut" hint="add a pointcut that will be added to the set of pointcuts under OR boolean logic" access="public" returntype="void" output="false">
+	<cfargument name="pointcut" hint="the pointcut to add to the logic set" type="coldspring.aop.Pointcut" required="Yes">
+	<cfargument name="negate" hint="whether to switch the matching of the pointcut, i.e. !pointcut.match()" type="boolean" required="No" default="false">
+	<cfscript>
+		addPointcut(arguments.pointcut, arguments.negate, meta.const.OR);
+    </cfscript>
+</cffunction>
+
 
 <cffunction name="getInitialPointcut" access="public" returntype="coldspring.aop.Pointcut" output="false">
 	<cfreturn instance.initialPointcut />
@@ -65,5 +120,24 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="addPointcut" hint="add a pointcut that will be added to the set of pointcuts under AND boolean logic" access="public" returntype="void" output="false">
+	<cfargument name="pointcut" hint="the pointcut to add to the logic set" type="coldspring.aop.Pointcut" required="Yes">
+	<cfargument name="negate" hint="whether to switch the matching of the pointcut, i.e. !pointcut.match()" type="boolean" required="No" default="false">
+	<cfargument name="operator" hint="the boolean operator to use" type="numeric" required="Yes">
+	<cfscript>
+		arrayAppend(getPointcutCollection(), arguments);
+    </cfscript>
+</cffunction>
+
+<cffunction name="getPointcutCollection" access="private" returntype="array" output="false">
+	<cfreturn instance.pointcutCollection />
+</cffunction>
+
+<cffunction name="setPointcutCollection" access="private" returntype="void" output="false">
+	<cfargument name="pointcutCollection" type="array" required="true">
+	<cfset instance.pointcutCollection = arguments.pointcutCollection />
+</cffunction>
+
 
 </cfcomponent>

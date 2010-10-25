@@ -56,10 +56,16 @@ TODO:
 
 		var tree = result.getTree();
 
+		//writeOutput(htmlDisplayTree(tree)); abort;
+
 		//then we know we only have 1 element, and it's not negated, no point creating a composite
-		if(tree.getType() > 0)
+		if(tree.getType() > 0 && tree.getType() != parser.NOT)
 		{
 			return parseSingleExpression(tree, parser);
+		}
+		else
+		{
+			return parseCompositeExpression(tree, parser);
 		}
     </cfscript>
 </cffunction>
@@ -68,6 +74,29 @@ TODO:
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<cffunction name="parseCompositeExpression" hint="parse multipe expressions that are composite" access="public" returntype="coldspring.aop.Pointcut" output="false">
+	<cfargument name="tree" hint="the AST" type="any" required="Yes">
+	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
+	<cfscript>
+		var counter = 0;
+		var child = 0;
+		var singlePointcut = 0;
+		var negate = false;
+		var compositePointcut = 0;
+
+		//setup initial pointcut
+		if(tree.getType() == parser.NOT)
+		{
+			negate = true;
+		}
+
+		singlePointcut = parseSingleExpression(tree.getChild(0), parser);
+
+		compositePointcut = createObject("component", "coldspring.aop.support.CompositePointcut").init(singlePointcut, negate);
+
+		return compositePointcut;
+    </cfscript>
+</cffunction>
 
 <cffunction name="parseSingleExpression" hint="parses a single expression, and returns a pointcut" access="private" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">

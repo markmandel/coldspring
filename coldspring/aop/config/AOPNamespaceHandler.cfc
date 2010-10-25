@@ -29,8 +29,10 @@
 			colddoc:generic="string,string">
 	<cfscript>
 		var map = {};
+		var path = getDirectoryFromPath(getMetadata(this).path) & "/coldspring-aop-2.0.xsd";
 
-		map["http://coldspringframework.org/schema/coldspring-aop-2.0.xsd"] = getDirectoryFromPath(getMetadata(this).path) & "/coldspring-aop-2.0.xsd";
+		map["http://www.coldspringframework.org/schema/coldspring-aop-2.0.xsd"] = path;
+		map["http://coldspringframework.org/schema/coldspring-aop-2.0.xsd"] = path;
 
 		return map;
     </cfscript>

@@ -15,7 +15,7 @@
 
 <cfscript>
 	instance = StructNew();
-	instance.static.SCOPE_KEY = "coldspring.AC603836-094D-3CAD-9BC441EF13B60E25";
+	instance.static.SCOPE_KEY = "coldspring.2C703836-094D-3DAD-9BC441EF13B60E25";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -45,6 +45,7 @@
 				{
 					local.args = {};
 					local.args.loadPaths = queryJars();
+
 					local.args.sourceDirectories = [ getDirectoryFromPath(getMetadata(this).path) & "/src/" ];
 					local.args.trustedSource = true; //only need to set this to false during java dev
 
