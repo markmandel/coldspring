@@ -97,13 +97,13 @@
 
 		local.value = local.proxy.sayHello();
 
-		assertEquals("hello", local.value);
+		assertEquals(reverse("hello"), local.value);
 
 		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
 
 		local.string = "Gobble, Gobble";
 
-		assertEquals(local.string, local.proxy.sayHello(local.string));
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
 	</cfscript>
 </cffunction>
 
@@ -121,13 +121,13 @@
 
 		local.value = local.proxy.sayHello();
 
-		assertEquals(reverse("hello"), local.value);
+		assertEquals("hello", local.value);
 
 		assertEquals("Goodbye", local.proxy.sayGoodbye());
 
 		local.string = "Gobble, Gobble";
 
-		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+		assertEquals(local.string, local.proxy.sayHello(local.string));
 	</cfscript>
 </cffunction>
 

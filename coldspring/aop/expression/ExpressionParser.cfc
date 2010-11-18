@@ -83,6 +83,10 @@ TODO:
 		var singlePointcut = 0;
 		var negate = false;
 		var compositePointcut = 0;
+		var counter = 1;
+		var len = 0;
+		var booleanLogic = 0;
+
 
 		//setup initial pointcut
 		if(tree.getType() == parser.NOT)
@@ -90,9 +94,51 @@ TODO:
 			negate = true;
 		}
 
-		singlePointcut = parseSingleExpression(tree.getChild(0), parser);
+		writeOutput(htmlDisplayTree(arguments.tree));
+
+		singlePointcut = parseSingleExpression(arguments.tree.getChild(0), arguments.parser);
 
 		compositePointcut = createObject("component", "coldspring.aop.support.CompositePointcut").init(singlePointcut, negate);
+
+		len = arguments.tree.getChildCount();
+		for(; counter < len; counter++)
+		{
+			negate = false;
+
+			child = arguments.tree.getChild(counter);
+
+			//what sort of boolean logic are we using?
+			if(child.getType() == parser.AND)
+			{
+				booleanLogic = "and";
+			}
+			else if(child.getType() == parser.OR)
+			{
+				booleanLogic = "or";
+			}
+
+			//are we negating?
+			if(child.getChild(0).getType() eq arguments.parser.NOT)
+			{
+				negate = true;
+
+				//pass it down one level
+				child = child.getChild(0);
+			}
+
+			singlePointcut = parseSingleExpression(child.getChild(0), arguments.parser);
+
+			switch(booleanLogic)
+			{
+				case "and":
+					compositePointcut.addAndPointcut(singlePointcut, negate);
+				break;
+
+				case "or":
+					compositePointcut.addOrPointcut(singlePointcut, negate);
+				break;
+			}
+		}
 
 		return compositePointcut;
     </cfscript>
