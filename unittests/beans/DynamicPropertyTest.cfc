@@ -28,6 +28,7 @@
 				,metaValue = "myMetaValue"
 				,spareKey = "mySpareKey"
 				,gearValue = "17"
+				,colourMethod = "getColor"
 			};
 
 		instance.factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/dynamic-properties.xml"), props);
@@ -103,6 +104,18 @@
 
 		assertEquals(17, local.gears[3]);
 	</cfscript>
+</cffunction>
+
+<cffunction name="testFactoryBean" hint="test implementation of factory bean and method" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.colour = instance.factory.getBean("colorChild");
+
+		assertEquals(getMetaData(local.colour).name, "unittests.testBeans.Color");
+
+		assertEquals("red", local.colour.getName());
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

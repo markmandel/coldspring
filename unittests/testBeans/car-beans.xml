@@ -195,7 +195,7 @@
 	</bean>
 	
 	<bean id="colorChild" factory-bean="carFactory" factory-method="getColor">
-		<property name="name" value="blue"/>
+		<property name="name" value="purple"/>
 	</bean>
 	
 	<bean id="wheelChild" factory-bean="carFactory" factory-method="getWheel" scope="request"/>

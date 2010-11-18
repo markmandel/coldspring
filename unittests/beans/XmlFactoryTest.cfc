@@ -77,15 +77,27 @@
 	<cfscript>
 		var local = {};
 
+		//lets also test individual items as well
+		local.wheel = instance.factory.getBean("wheelChild");
+
+		assertEquals(getMetaData(local.wheel).name, "unittests.testBeans.Wheel");
+
+		local.colour = instance.factory.getBean("colorChild");
+
+		assertEquals(getMetaData(local.colour).name, "unittests.testBeans.Color");
+
+		assertEquals("purple", local.colour.getName());
+
 		local.car = instance.factory.getBean("car5");
 
-		testCar(local.car, true);
+		testCar(local.car, true, "purple");
     </cfscript>
 </cffunction>
 
 <cffunction name="testCar" hint="test out a car" access="private" returntype="void" output="false">
 	<cfargument name="car" hint="the car to test" type="any" required="Yes">
 	<cfargument name="sameWheels" hint="all wheels are the same object?" type="boolean" required="No" default="false">
+	<cfargument name="colour" hint="the colour" type="string" required="No" default="blue">
 	<cfscript>
 		var local = {};
 
@@ -108,7 +120,7 @@
 
 		assertEquals(getMetaData(local.colour).name, "unittests.testBeans.Color");
 
-		assertEquals("blue", local.colour.getName());
+		assertEquals(arguments.colour, local.colour.getName());
 
 		local.wheels = arguments.car.getWheels();
 
