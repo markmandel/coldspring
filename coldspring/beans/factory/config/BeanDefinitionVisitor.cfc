@@ -110,7 +110,7 @@
 		if(arguments.beanDefinition.hasFactoryMethodName())
 		{
 			local.methodName = arguments.beanDefinition.getFactoryMethodName();
-			local.resolveMethodName = getValueResolver().resolveStringValue(local.factory);
+			local.resolveMethodName = getValueResolver().resolveStringValue(local.methodName);
 
 			if(StructKeyExists(local, "resolveMethodName") && compare(local.methodName, local.resolveMethodName) != 0)
 			{

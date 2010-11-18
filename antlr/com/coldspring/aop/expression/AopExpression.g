@@ -28,7 +28,11 @@ tokens
 prog	:	expr
 	;
 
-expr	: 	(NOT?(executionExpr | simpleExpr | annotationExr))^ ((AND | OR) expr)?
+expr	: 	(NOT^?(executionExpr | simpleExpr | annotationExr))^ logicExpr?
+	;
+	
+logicExpr
+	:	((AND | OR)^ expr)
 	;
 
 simpleExpr

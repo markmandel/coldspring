@@ -21,7 +21,7 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
+<cffunction name="sayHello" hint="" access="public" returntype="string" output="false" dothings='true'>
 	<cfargument name="str" hint="" type="string" required="no" default="hello">
 
 	<cfif Lcase(arguments.str).startsWith("exception")>

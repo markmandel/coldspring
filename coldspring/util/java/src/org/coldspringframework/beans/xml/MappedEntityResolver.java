@@ -43,13 +43,19 @@ public class MappedEntityResolver implements EntityResolver
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
 	{
-		//System id is the one that points to the XSD path.
+		System.out.println("Attempting to resolve: " + systemId);
+		
+		//System id is the one that points to the XSD pgetEntityMap().get(systemId)ath.
 		if(getEntityMap().containsKey(systemId))
 		{
+			System.out.println("Resolved to: " + getEntityMap().get(systemId));
+			
 			FileInputStream inputStream = new FileInputStream(getEntityMap().get(systemId));
 			
 			return new InputSource(inputStream);
 		}
+		
+		System.out.println("Could not resolve: " + systemId);
 		
 		return null;
 	}

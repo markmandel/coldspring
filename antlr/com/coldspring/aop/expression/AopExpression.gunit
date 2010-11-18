@@ -36,3 +36,7 @@ prog:
 "@annotation(transaction) "  -> (@annotation transaction)
 
 "bean(*Service) "  -> (bean *Service)
+
+"!@annotation(transaction) "  -> (! (@annotation transaction))
+
+"!@annotation(transaction='true') && !@annotation(dostuff='true') OR @annotation(transaction='true')" -> (! (@annotation transaction true) (&& (! (@annotation dostuff true) (OR (@annotation transaction true)))))

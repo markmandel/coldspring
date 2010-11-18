@@ -85,4 +85,9 @@
 	</bean>
 
 	<bean id="wheel" class="unittests.testBeans.Wheel" scope="prototype"/>
+	
+	<bean id="carFactory" class="unittests.testBeans.factory.CarFactory"/>
+	<bean id="colorChild" factory-bean="carFactory" factory-method="${colourMethod}">
+		<property name="name" value="${colour}"/>
+	</bean>	
 </beans>
