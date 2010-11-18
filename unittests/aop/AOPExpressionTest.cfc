@@ -6,6 +6,7 @@
 	<cfscript>
 		proxyFactory = createObject("component", "coldspring.aop.framework.ProxyFactory").init();
 		hello = createObject("component", "unittests.aop.com.Hello").init();
+		goodbye = createObject("component", "unittests.aop.com.Goodbye").init();
 		interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
 		pointcut = createObject("component", "coldspring.aop.expression.ExpressionPointcut").init();
     </cfscript>
@@ -63,7 +64,31 @@
 	<cfscript>
 		var local = {};
 
-		pointcut.setExpression("@annotation(dostuff='true') AND @annotation(dothings='true')");
+		pointcut.setExpression("@annotation(dostuff='true') AND @target(dothings='true')");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+	</cfscript>
+</cffunction>
+
+<cffunction name="testTripleAndExpression" hint="test a 3 deep and and then ! expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("@annotation(dostuff='true') AND @target(dothings='true') AND !@target(notdothings)");
 
 		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
 
@@ -128,6 +153,18 @@
 		local.string = "Gobble, Gobble";
 
 		assertEquals(local.string, local.proxy.sayHello(local.string));
+
+		local.proxy = proxyFactory.getProxy(goodbye);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
 	</cfscript>
 </cffunction>
 
@@ -153,6 +190,82 @@
 
 		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
 	</cfscript>
+</cffunction>
+
+<cffunction name="testTargetExpression" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("target(unittests.aop.com.Hello)");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+
+		//goodbye
+		local.proxy = proxyFactory.getProxy(goodbye);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNegateTargetExpression" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("!target(unittests.aop.com.Hello)");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		local.proxy = proxyFactory.getProxy(hello);
+
+		//hello
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+
+		//goodbye
+		local.proxy = proxyFactory.getProxy(goodbye);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

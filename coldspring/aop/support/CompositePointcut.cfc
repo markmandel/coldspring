@@ -121,7 +121,7 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="addPointcut" hint="add a pointcut that will be added to the set of pointcuts under AND boolean logic" access="public" returntype="void" output="false">
+<cffunction name="addPointcut" hint="add a pointcut that will be added to the set of pointcuts under AND boolean logic" access="private" returntype="void" output="false">
 	<cfargument name="pointcut" hint="the pointcut to add to the logic set" type="coldspring.aop.Pointcut" required="Yes">
 	<cfargument name="negate" hint="whether to switch the matching of the pointcut, i.e. !pointcut.match()" type="boolean" required="No" default="false">
 	<cfargument name="operator" hint="the boolean operator to use" type="numeric" required="Yes">
@@ -138,6 +138,5 @@
 	<cfargument name="pointcutCollection" type="array" required="true">
 	<cfset instance.pointcutCollection = arguments.pointcutCollection />
 </cffunction>
-
 
 </cfcomponent>

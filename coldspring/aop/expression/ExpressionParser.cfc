@@ -19,6 +19,7 @@
 
 	instance.static.CLASS_ANNOTATION = "@target";
 	instance.static.METHOD_ANNOTATION = "@annotation";
+	instance.static.TARGET = "target";
 </cfscript>
 
 <!---
@@ -94,7 +95,7 @@ TODO:
 			negate = true;
 		}
 
-		writeOutput(htmlDisplayTree(arguments.tree));
+		//writeOutput(htmlDisplayTree(arguments.tree));
 
 		singlePointcut = parseSingleExpression(arguments.tree.getChild(0), arguments.parser);
 
@@ -152,6 +153,14 @@ TODO:
 		{
 			return parseAnnotation(arguments.tree, arguments.parser);
 		}
+		else if(tree.getType() eq parser.EXPRESSION_TYPE)
+		{
+			//target, within, bean (bean not supported right now)
+			if(arguments.tree.getText() eq instance.static.TARGET)
+			{
+				return parseTarget(arguments.tree, arguments.parser);
+			}
+		}
     </cfscript>
 </cffunction>
 
@@ -178,6 +187,17 @@ TODO:
 		{
 			pointcut.setClassAnnotations(annotation);
 		}
+
+		return pointcut;
+    </cfscript>
+</cffunction>
+
+<cffunction name="parseTarget" hint="parses a Target pointcut - target" access="public" returntype="coldspring.aop.Pointcut" output="false">
+	<cfargument name="tree" hint="the AST" type="any" required="Yes">
+	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
+	<cfscript>
+		var instanceType = arguments.tree.getChild(0).getText();
+		var pointcut = createObject("component", "coldspring.aop.support.TargetPointcut").init(instanceType);
 
 		return pointcut;
     </cfscript>
