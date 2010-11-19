@@ -11,26 +11,37 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Pointcut to match all methods on a given class / interface" implements="coldspring.aop.Pointcut" output="false">
+<cfcomponent hint="Pointcut that can match against a wide variety of execution joinpoints, including package, method name, return types, etc" implements="coldspring.aop.Pointcut" output="false">
+
+<cfscript>
+	meta = getMetadata(this);
+	if(!StructKeyExists(meta, "const"))
+	{
+		const = {};
+		const.ANY = "*";
+
+		meta.const = const;
+	}
+</cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="TargetPointcut" output="false">
-	<cfargument name="instanceType" hint="the name of the class or interface that this pointcut should match all methods on" type="string" required="Yes">
+<cffunction name="init" hint="Constructor" access="public" returntype="ExecutionPointcut" output="false">
 	<cfscript>
-		setInstanceType(arguments.instanceType);
+		setInstanceType(meta.const.ANY);
 		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="matches" hint="Can the currently class instance type be assigned to the provided class / interface" access="public" returntype="boolean" output="false">
+<cffunction name="matches" hint="Can the current set of metadata match the execution pointcut that has been defined here?" access="public" returntype="boolean" output="false">
 	<cfargument name="methodMetadata" type="struct" required="yes" />
 	<cfargument name="classMetadata" type="struct" required="yes" />
 
-	<cfreturn getCFCMetaUtil().isAssignableFrom(arguments.classMetadata.name, getInstanceType()) />
-
+	<cfscript>
+		return matchInstanceType(arguments.methodMetadata, arguments.classMetadata);
+    </cfscript>
 </cffunction>
 
 <cffunction name="getInstanceType" access="public" returntype="string" output="false">
@@ -45,6 +56,20 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="matchInstanceType" hint="Can the currently class instance type be assigned to the provided class / interface" access="private" returntype="boolean" output="false">
+	<cfargument name="methodMetadata" type="struct" required="yes" />
+	<cfargument name="classMetadata" type="struct" required="yes" />
+
+	<cfscript>
+		if(getInstanceType() == meta.const.ANY)
+		{
+			return true;
+		}
+
+		return getCFCMetaUtil().isAssignableFrom(arguments.classMetadata.name, getInstanceType());
+    </cfscript>
+</cffunction>
 
 <cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
 	<cfreturn instance.cfcMetaUtil />

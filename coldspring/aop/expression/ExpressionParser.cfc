@@ -196,8 +196,8 @@ TODO:
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
-		var instanceType = arguments.tree.getChild(0).getText();
-		var pointcut = createObject("component", "coldspring.aop.support.TargetPointcut").init(instanceType);
+		var pointcut = createObject("component", "coldspring.aop.support.ExecutionPointcut").init();
+		pointcut.setInstanceType(arguments.tree.getChild(0).getText());
 
 		return pointcut;
     </cfscript>
