@@ -24,7 +24,6 @@
 
 <!---
 TODO:
-	Error handling
 	Should <aop:aspect ref> be required?
 	Unsupported Exception - for * and private, and for bean()
 	throw an error on MethodInvocationAdvice if the adviecType is not 'before,afterReturning,around,throws'
@@ -57,6 +56,8 @@ TODO:
 
 		var tree = result.getTree();
 
+		checkParserForErrors(arguments.expression, parser);
+
 		//writeOutput(htmlDisplayTree(tree)); abort;
 
 		//then we know we only have 1 element, and it's not negated, no point creating a composite
@@ -74,6 +75,26 @@ TODO:
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="checkParserForErrors" hint="check to see if there was an error in parsing, and if so, throw the required exception" access="private" returntype="void" output="false">
+	<cfargument name="expression" hint="the original expression" type="string" required="Yes">
+	<cfargument name="parser" hint="the parser in question." type="any" required="Yes">
+	<cfscript>
+		var local = {};
+		var errorList = parser.getErrorList();
+
+		if(!arrayIsEmpty(errorList))
+		{
+			//may be more than 1 error, but we'll deal with 1 at a time for now.
+			local.error = errorList[1];
+			local.exception = local.error[arguments.parser.EXCEPTION_KEY];
+			local.message = local.error[arguments.parser.MESSAGE_KEY];
+
+			createObject("component", "coldspring.aop.expression.exception.InvalidExpressionException").init(arguments.expression, local.exception.line,
+																										local.exception.charPositionInLine, local.message);
+		}
+    </cfscript>
+</cffunction>
 
 <cffunction name="parseCompositeExpression" hint="parse multipe expressions that are composite" access="public" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">

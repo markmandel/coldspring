@@ -10,8 +10,34 @@ tokens
 	ARGUMENTS;
 }
 
+@members 
+{
+    private List<Map<String, Object>> errorList = new ArrayList<Map<String, Object>>();
+    public static final String EXCEPTION_KEY = "exception";
+    public static final String MESSAGE_KEY = "message";
+
+    public void displayRecognitionError(String[] tokenNames, RecognitionException e) 
+    {   	
+        Map<String, Object> error = new HashMap<String, Object>();
+        
+        error.put(MESSAGE_KEY, getErrorMessage(e, tokenNames));
+	error.put(EXCEPTION_KEY, e);
+	
+	errorList.add(error);
+                
+        super.displayRecognitionError(tokenNames, e);
+    }
+    
+    public List<Map<String, Object>> getErrorList()
+    {
+    	return errorList;
+    }
+}
+
 @lexer::header {
 	package com.coldspring.aop.expression;
+	
+	//import java.util.*;
 }
 
 @lexer::members 
@@ -21,6 +47,11 @@ tokens
 
 @parser::header {
 	package com.coldspring.aop.expression;
+	
+	import java.util.List;
+	import java.util.Map;
+	import java.util.ArrayList;
+	import java.util.HashMap;
 }
 
 /* parser */
