@@ -268,6 +268,34 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testBadExpression" hint="test an errornous message" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		//we will do this as a check exception, as we want to make sure the right message comes out.
+		local.check = false;
+
+		try
+		{
+			pointcut.setExpression("!@annotation(dostuff=true') AND !@annotation(dothings='true')");
+			makePublic(pointcut, "buildExpressionPointcut");
+			pointcut.buildExpressionPointcut();
+		}
+		catch(coldspring.aop.expression.exception.InvalidExpressionException exc)
+		{
+			local.check = true;
+
+			assertEquals("Invalid expression syntax found near 'true')'", exc.message);
+			assertEquals("At line 1, 21 an error occured: mismatched input 'true' expecting set null", exc.detail);
+		}
+
+		if(!local.check)
+		{
+			fail("This bad expression did not throw an error!");
+		}
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
