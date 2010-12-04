@@ -179,7 +179,7 @@
 					}
 					else
 					{
-						createObject("component", "coldspring.aop.framework.exception.InvaidInterceptorException").init(name, interceptor);
+						createObject("component", "coldspring.aop.framework.exception.InvalidInterceptorException").init(name, interceptor);
 					}
                 </cfscript>
 			</cfloop>
