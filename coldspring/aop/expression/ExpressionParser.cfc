@@ -20,6 +20,7 @@
 	instance.static.CLASS_ANNOTATION = "@target";
 	instance.static.METHOD_ANNOTATION = "@annotation";
 	instance.static.TARGET = "target";
+	instance.static.WITHIN = "within";
 </cfscript>
 
 <!---
@@ -63,11 +64,11 @@ TODO:
 		//then we know we only have 1 element, and it's not negated, no point creating a composite
 		if(tree.getType() > 0 && tree.getType() != parser.NOT)
 		{
-			return parseSingleExpression(tree, parser);
+			return parseSingleExpression(arguments.expression, tree, parser);
 		}
 		else
 		{
-			return parseCompositeExpression(tree, parser);
+			return parseCompositeExpression(arguments.expression, tree, parser);
 		}
     </cfscript>
 </cffunction>
@@ -96,7 +97,8 @@ TODO:
     </cfscript>
 </cffunction>
 
-<cffunction name="parseCompositeExpression" hint="parse multipe expressions that are composite" access="public" returntype="coldspring.aop.Pointcut" output="false">
+<cffunction name="parseCompositeExpression" hint="parse multipe expressions that are composite" access="private" returntype="coldspring.aop.Pointcut" output="false">
+	<cfargument name="expression" hint="the original expression" type="string" required="Yes">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
@@ -118,7 +120,7 @@ TODO:
 
 		//writeOutput(htmlDisplayTree(arguments.tree));
 
-		singlePointcut = parseSingleExpression(arguments.tree.getChild(0), arguments.parser);
+		singlePointcut = parseSingleExpression(arguments.expression, arguments.tree.getChild(0), arguments.parser);
 
 		compositePointcut = createObject("component", "coldspring.aop.support.CompositePointcut").init(singlePointcut, negate);
 
@@ -148,7 +150,7 @@ TODO:
 				child = child.getChild(0);
 			}
 
-			singlePointcut = parseSingleExpression(child.getChild(0), arguments.parser);
+			singlePointcut = parseSingleExpression(arguments.expression, child.getChild(0), arguments.parser);
 
 			switch(booleanLogic)
 			{
@@ -167,6 +169,7 @@ TODO:
 </cffunction>
 
 <cffunction name="parseSingleExpression" hint="parses a single expression, and returns a pointcut" access="private" returntype="coldspring.aop.Pointcut" output="false">
+	<cfargument name="expression" hint="the original expression" type="string" required="Yes">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
@@ -180,6 +183,10 @@ TODO:
 			if(arguments.tree.getText() eq instance.static.TARGET)
 			{
 				return parseTarget(arguments.tree, arguments.parser);
+			}
+			else if(arguments.tree.getText() eq instance.static.WITHIN)
+			{
+				return parseWithin(arguments.expression, arguments.tree, arguments.parser);
 			}
 		}
     </cfscript>
@@ -213,7 +220,7 @@ TODO:
     </cfscript>
 </cffunction>
 
-<cffunction name="parseTarget" hint="parses a Target pointcut - target" access="public" returntype="coldspring.aop.Pointcut" output="false">
+<cffunction name="parseTarget" hint="parses a Target pointcut - target" access="private" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
@@ -221,6 +228,42 @@ TODO:
 		pointcut.setInstanceType(arguments.tree.getChild(0).getText());
 
 		return pointcut;
+    </cfscript>
+</cffunction>
+
+<cffunction name="parseWithin" hint="parses an within pointcut - within()" access="private" returntype="coldspring.aop.Pointcut" output="false">
+	<cfargument name="expression" hint="the original expression" type="string" required="Yes">
+	<cfargument name="tree" hint="the AST" type="any" required="Yes">
+	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
+	<cfscript>
+		var pointcut = createObject("component", "coldspring.aop.support.ExecutionPointcut").init();
+
+		var package = arguments.tree.getChild(0).getText();
+
+		if(package.endsWith("..*"))
+		{
+			package = Left(package, Len(package) - 3);
+
+			pointcut.setSubPackage(package);
+
+			return pointcut;
+		}
+		else if(package.endsWith(".*"))
+		{
+			package = Left(package, Len(package) - 2);
+
+			pointcut.setPackage(package);
+
+			return pointcut;
+		}
+		else
+		{
+			//there is an error!
+			createObject("component", "coldspring.aop.expression.exception.InvalidExpressionException").init(arguments.expression,
+																										arguments.tree.getChild(0).getLine(),
+																										arguments.tree.getChild(0).getCharPositionInLine(),
+																										"A within pointcut needs to end in either '.*' or '..*' to define if the Aspect should match to the specific package (.*), or that package and any sub package (..*)");
+		}
     </cfscript>
 </cffunction>
 

@@ -19,6 +19,7 @@
 	{
 		const = {};
 		const.ANY = "*";
+		const.NONE = "";
 
 		meta.const = const;
 	}
@@ -29,6 +30,9 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="ExecutionPointcut" output="false">
 	<cfscript>
 		setInstanceType(meta.const.ANY);
+		setSubPackage(meta.const.ANY);
+		setPackage(meta.const.ANY);
+
 		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
 		return this;
@@ -40,7 +44,12 @@
 	<cfargument name="classMetadata" type="struct" required="yes" />
 
 	<cfscript>
-		return matchInstanceType(arguments.methodMetadata, arguments.classMetadata);
+		return (matchInstanceType(arguments.methodMetadata, arguments.classMetadata)
+				AND
+				matchSubPackage(arguments.methodMetadata, arguments.classMetadata)
+				AND
+				matchPackage(arguments.methodMetadata, arguments.classMetadata)
+				);
     </cfscript>
 </cffunction>
 
@@ -48,9 +57,27 @@
 	<cfreturn instance.instanceType />
 </cffunction>
 
-<cffunction name="setInstanceType" access="public" returntype="void" output="false">
+<cffunction name="setInstanceType" access="public" hint="The class/interface type that the class meta data must match to" returntype="void" output="false">
 	<cfargument name="instanceType" type="string" required="true">
 	<cfset instance.instanceType = arguments.instanceType />
+</cffunction>
+
+<cffunction name="getSubPackage" access="public" returntype="string" output="false">
+	<cfreturn instance.subPackage />
+</cffunction>
+
+<cffunction name="setSubPackage" access="public" hint="Set the package that the class type must be part of, or of a sub package of" returntype="void" output="false">
+	<cfargument name="subPackage" type="string" required="true">
+	<cfset instance.subPackage = lcase(arguments.subPackage) />
+</cffunction>
+
+<cffunction name="getPackage" access="public" returntype="string" output="false">
+	<cfreturn instance.package />
+</cffunction>
+
+<cffunction name="setPackage" hint="set the package that the class must match explicitly" access="public" returntype="void" output="false">
+	<cfargument name="package" type="string" required="true">
+	<cfset instance.package = arguments.package />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -62,12 +89,60 @@
 	<cfargument name="classMetadata" type="struct" required="yes" />
 
 	<cfscript>
-		if(getInstanceType() == meta.const.ANY)
+		if(getInstanceType() == meta.const.NONE)
+		{
+			return false;
+		}
+		else if(getInstanceType() == meta.const.ANY)
 		{
 			return true;
 		}
 
 		return getCFCMetaUtil().isAssignableFrom(arguments.classMetadata.name, getInstanceType());
+    </cfscript>
+</cffunction>
+
+<cffunction name="matchSubPackage" hint="Does the package that the class type must be part of, or of a sub package of match" access="private" returntype="boolean" output="false">
+	<cfargument name="methodMetadata" type="struct" required="yes" />
+	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfscript>
+		var package = 0;
+		if(getSubPackage() == meta.const.NONE)
+		{
+			return false;
+		}
+		else if(getSubPackage() == meta.const.ANY)
+		{
+			return true;
+		}
+		else
+		{
+			package = getCFCMetaUtil().getPackage(arguments.classMetadata.name);
+
+			return Lcase(package).startsWith(getSubPackage());
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="matchPackage" hint="Does the package that the class type match our set package?" access="private" returntype="boolean" output="false">
+	<cfargument name="methodMetadata" type="struct" required="yes" />
+	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfscript>
+		var package = 0;
+		if(getPackage() == meta.const.NONE)
+		{
+			return false;
+		}
+		else if(getPackage() == meta.const.ANY)
+		{
+			return true;
+		}
+		else
+		{
+			package = getCFCMetaUtil().getPackage(arguments.classMetadata.name);
+
+			return package eq getPackage();
+		}
     </cfscript>
 </cffunction>
 
