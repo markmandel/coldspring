@@ -589,6 +589,81 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testSingleMethodWithWildcard" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public say*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testClassWithMethodWithWildcard" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop.com.Hello.say*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotMethod" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public sayG*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
 <cffunction name="testBadExecutionScope" hint="Test an expression that starts with '*'" access="public" returntype="void" output="false"
 	mxunit:expectedException="coldspring.aop.expression.exception.InvalidExpressionException">
 	<cfscript>
