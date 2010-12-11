@@ -206,7 +206,7 @@
 		else
 		{
 			//clean it up
-			if(!StructKeyExists(arguments.methodMetadata, returntype))
+			if(!StructKeyExists(arguments.methodMetadata, "returntype"))
 			{
 				arguments.methodMetadata.returntype = "any";
 			}

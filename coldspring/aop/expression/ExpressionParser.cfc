@@ -28,8 +28,8 @@
 <!---
 TODO:
 	Should <aop:aspect ref> be required?
-	Unsupported Exception - for * and private, and for bean()
 	throw an error on MethodInvocationAdvice if the adviecType is not 'before,afterReturning,around,throws'
+	Do execution() with arguments pointcut
  --->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ExpressionParser" output="false">
