@@ -702,6 +702,106 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testArgumentsPointcut" hint="test a execution expression with arguments" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public string *(string))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotArgumentsPointcut" hint="test a execution expression with arguments" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public string *(com.foo.Thing))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testArgumentsPointcutWildcard" hint="test a execution expression with arguments" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public string *(*))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotArgumentsPointcutWildcard" hint="test a execution expression with arguments" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public string *(*, *))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
