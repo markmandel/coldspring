@@ -21,6 +21,8 @@
 	instance.static.METHOD_ANNOTATION = "@annotation";
 	instance.static.TARGET = "target";
 	instance.static.WITHIN = "within";
+	instance.static.PUBLIC_SCOPE = "public";
+	instance.static.EXPRESSION_DELIMITER = ".";
 </cfscript>
 
 <!---
@@ -189,8 +191,108 @@ TODO:
 				return parseWithin(arguments.expression, arguments.tree, arguments.parser);
 			}
 		}
+		else if(tree.getType() eq parser.EXECUTION_EXPRESSION_TYPE)
+		{
+			return parseExecution(arguments.expression, arguments.tree, arguments.parser);
+		}
     </cfscript>
 </cffunction>
+
+<cffunction name="parseExecution" hint="parses an execution pointcut - execution()" access="private" returntype="coldspring.aop.Pointcut" output="false">
+	<cfargument name="expression" hint="the original expression" type="string" required="Yes">
+	<cfargument name="tree" hint="the AST" type="any" required="Yes">
+	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
+	<cfscript>
+		var pointcut = createObject("component", "coldspring.aop.support.ExecutionPointcut").init();
+
+		parseExecutionScope(arguments.expression, arguments.tree.getChild(0));
+
+		//4 items -> scope, return, package & method, arguments
+		if(arguments.tree.getChildCount() == 4)
+		{
+			pointcut.setReturnType(arguments.tree.getChild(1).getText());
+			parseExecutionPackageClassAndMethod(arguments.tree.getChild(2), pointcut);
+		}
+
+		//3 items -> scope, package & method, arguments
+		if(arguments.tree.getChildCount() == 3)
+		{
+			parseExecutionPackageClassAndMethod(arguments.tree.getChild(1), pointcut);
+		}
+
+		return pointcut;
+    </cfscript>
+</cffunction>
+
+<cffunction name="parseExecutionScope" hint="Parse the scope part of a execution() pointcut" access="private" returntype="void" output="false">
+	<cfargument name="expression" hint="the original expression" type="string" required="Yes">
+	<cfargument name="tree" hint="the scope part of the AST" type="any" required="Yes">
+	<cfscript>
+		//we only support public right now
+		if(arguments.tree.getText() != instance.static.PUBLIC_SCOPE)
+		{
+			//there is an error!
+			createObject("component", "coldspring.aop.expression.exception.InvalidExpressionException").init(arguments.expression,
+																										arguments.tree.getLine(),
+																										arguments.tree.getCharPositionInLine(),
+																										"Only the public scope is currently supported by ColdSpring. '*' and 'private' scoped pointcuts may be supported at a later date.");
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="parseExecutionPackageClassAndMethod" hint="parses the execution() pointcut package/class and method portion and sets the relevent details on the pointcut"
+	access="private" returntype="void" output="false">
+	<cfargument name="tree" hint="the package, class and method part of the AST" type="any" required="Yes">
+	<cfargument name="pointcut" hint="the expression pointcut" type="coldspring.aop.support.ExecutionPointcut" required="Yes">
+	<cfscript>
+		var local = {};
+		local.expression = arguments.tree.getText();
+
+		/*
+			Different options for the package, class and method section
+			unittests.aop..*.*
+			unittests.aop.com.Hello.*
+			unittests.aop.*.*
+			unittests.aop.com..*.*
+			set*
+		*/
+
+		local.len = ListLen(local.expression, instance.static.EXPRESSION_DELIMITER);
+
+		//if no '.', then is just a method declaration
+		if(local.len == 1)
+		{
+			arguments.pointcut.setMethodName(local.expression);
+		}
+		else
+		{
+			local.methodName = ListGetAt(local.expression, local.len, instance.static.EXPRESSION_DELIMITER);
+			arguments.pointcut.setMethodName(local.methodName);
+
+			//strip the method name off it.
+			local.expression = Left(local.expression, (Len(local.expression) - (Len(local.methodName) + 1)));
+
+			if(local.expression.endsWith("..*"))
+			{
+				local.package = Left(local.expression, Len(local.expression) - 3);
+
+				arguments.pointcut.setSubPackage(local.package);
+			}
+			else if(local.expression.endsWith(".*"))
+			{
+				local.package = Left(local.expression, Len(local.expression) - 2);
+
+				arguments.pointcut.setPackage(local.package);
+			}
+			else
+			{
+				//if it doesn't end with those values, must be a class def.
+				arguments.pointcut.setInstanceType(local.expression);
+			}
+		}
+    </cfscript>
+</cffunction>
+
 
 <cffunction name="parseAnnotation" hint="parses an annotation pointcut - @target or @annotation" access="private" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">

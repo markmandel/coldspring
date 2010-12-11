@@ -464,6 +464,144 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testExecutionSubPackage" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop..*.*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testExecutionClass" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop.com.Hello.*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotExecutionClass" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop.com.Goodbye.*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testExecutionSubPackageSamePackage" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop.com..*.*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testExecutionNotSubPackage" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop.NNN..*.*(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testBadExecutionScope" hint="Test an expression that starts with '*'" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.aop.expression.exception.InvalidExpressionException">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(* unittests.aop.NNN..*.*(..))");
+
+		//force the expressiont to be built.
+		makePublic(pointcut, "buildExpressionPointcut");
+		pointcut.buildExpressionPointcut();
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

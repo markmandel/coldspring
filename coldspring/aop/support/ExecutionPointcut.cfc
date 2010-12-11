@@ -32,6 +32,8 @@
 		setInstanceType(meta.const.ANY);
 		setSubPackage(meta.const.ANY);
 		setPackage(meta.const.ANY);
+		setMethodName(meta.const.ANY);
+		setReturnType(meta.const.ANY);
 
 		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
@@ -49,6 +51,10 @@
 				matchSubPackage(arguments.methodMetadata, arguments.classMetadata)
 				AND
 				matchPackage(arguments.methodMetadata, arguments.classMetadata)
+				AND
+				matchMethodName(arguments.methodMetadata, arguments.classMetadata)
+				AND
+				matchReturnType(arguments.methodMetadata, arguments.classMetadata)
 				);
     </cfscript>
 </cffunction>
@@ -80,9 +86,47 @@
 	<cfset instance.package = arguments.package />
 </cffunction>
 
+<cffunction name="getMethodName" access="public" returntype="string" output="false">
+	<cfreturn instance.methodName />
+</cffunction>
+
+<cffunction name="setMethodName" hint="set the method name that the method must match to. Allows the use of '*' as a wildcard in strings." access="public" returntype="void" output="false">
+	<cfargument name="methodName" type="string" required="true">
+	<!--- replace it with the regex for the wildcard --->
+	<cfset instance.methodName = replace(arguments.methodName, "*", "(.*?)") />
+</cffunction>
+
+<cffunction name="getReturnType" access="public" returntype="string" output="false">
+	<cfreturn instance.returnType />
+</cffunction>
+
+<cffunction name="setReturnType" access="public" returntype="void" output="false">
+	<cfargument name="returnType" type="string" required="true">
+	<cfset instance.returnType = arguments.returnType />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="matchMethodName" hint="Does the current method match the method name, including regex's" access="private" returntype="boolean" output="false">
+	<cfargument name="methodMetadata" type="struct" required="yes" />
+	<cfargument name="classMetadata" type="struct" required="yes" />
+
+	<cfscript>
+		if(getMethodName() == meta.const.NONE)
+		{
+			return false;
+		}
+		else if(getMethodName() == meta.const.ANY)
+		{
+			return true;
+		}
+
+		//use the underlying String object to match the whole string against the regex
+		return arguments.methodMetadata.name.matches(getMethodName());
+    </cfscript>
+</cffunction>
 
 <cffunction name="matchInstanceType" hint="Can the currently class instance type be assigned to the provided class / interface" access="private" returntype="boolean" output="false">
 	<cfargument name="methodMetadata" type="struct" required="yes" />
@@ -142,6 +186,32 @@
 			package = getCFCMetaUtil().getPackage(arguments.classMetadata.name);
 
 			return package eq getPackage();
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="matchReturnType" hint="Does the method data match the return type of the method?" access="private" returntype="boolean" output="false">
+	<cfargument name="methodMetadata" type="struct" required="yes" />
+	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfscript>
+		var package = 0;
+		if(getReturnType() == meta.const.NONE)
+		{
+			return false;
+		}
+		else if(getReturnType() == meta.const.ANY)
+		{
+			return true;
+		}
+		else
+		{
+			//clean it up
+			if(!StructKeyExists(arguments.methodMetadata, returntype))
+			{
+				arguments.methodMetadata.returntype = "any";
+			}
+
+			return getReturnType() eq arguments.methodMetadata.returntype;
 		}
     </cfscript>
 </cffunction>
