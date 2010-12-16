@@ -23,13 +23,13 @@
 	instance.static.WITHIN = "within";
 	instance.static.PUBLIC_SCOPE = "public";
 	instance.static.EXPRESSION_DELIMITER = ".";
+	instance.static.ANY_ARGUMENTS = "..";
 </cfscript>
 
 <!---
 TODO:
 	Should <aop:aspect ref> be required?
 	throw an error on MethodInvocationAdvice if the adviecType is not 'before,afterReturning,around,throws'
-	Do execution() with arguments pointcut
  --->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ExpressionParser" output="false">
@@ -212,12 +212,14 @@ TODO:
 		{
 			pointcut.setReturnType(arguments.tree.getChild(1).getText());
 			parseExecutionPackageClassAndMethod(arguments.tree.getChild(2), pointcut);
+			parseArguments(arguments.tree.getChild(3), pointcut);
 		}
 
 		//3 items -> scope, package & method, arguments
 		if(arguments.tree.getChildCount() == 3)
 		{
 			parseExecutionPackageClassAndMethod(arguments.tree.getChild(1), pointcut);
+			parseArguments(arguments.tree.getChild(2), pointcut);
 		}
 
 		return pointcut;
@@ -293,6 +295,31 @@ TODO:
     </cfscript>
 </cffunction>
 
+<cffunction name="parseArguments" hint="parse the argument section of the exectution pointcut" access="private" returntype="any" output="false">
+	<cfargument name="tree" hint="the package, class and method part of the AST" type="any" required="Yes">
+	<cfargument name="pointcut" hint="the expression pointcut" type="coldspring.aop.support.ExecutionPointcut" required="Yes">
+	<cfscript>
+		var local = {};
+		local.argumentCount = arguments.tree.getChildCount();
+
+		if(local.argumentCount == 0)
+		{
+			arguments.pointcut.setMatchAnyArguments(false);
+		}
+		else if(local.argumentCount == 1 AND arguments.tree.getChild(0).getText() eq instance.static.ANY_ARGUMENTS)
+		{
+			//true is default, but doesn't hurt
+			arguments.pointcut.setMatchAnyArguments(true);
+		}
+		else
+		{
+			for(local.counter = 1; local.counter <= local.argumentCount; local.counter++)
+			{
+				arguments.pointcut.addArgumentType(arguments.tree.getChild(0).getText());
+			}
+		}
+    </cfscript>
+</cffunction>
 
 <cffunction name="parseAnnotation" hint="parses an annotation pointcut - @target or @annotation" access="private" returntype="coldspring.aop.Pointcut" output="false">
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">

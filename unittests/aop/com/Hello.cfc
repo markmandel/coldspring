@@ -37,6 +37,11 @@
 	<cfreturn arguments.str />
 </cffunction>
 
+
+<cffunction name="sayStuff" hint="says 'stuff'" access="public" returntype="string" output="false">
+	<cfreturn "Stuff" />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

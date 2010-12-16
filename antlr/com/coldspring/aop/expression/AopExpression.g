@@ -75,7 +75,7 @@ executionExpr
 	;
 	
 executionArgs
-	: 	'(' ANY_ARGUMENT CLOSE_PAREN -> ^(ARGUMENTS ANY_ARGUMENT)
+	: 	'(' ANY_ARGUMENT? CLOSE_PAREN -> ^(ARGUMENTS ANY_ARGUMENT?)
 	| 	'(' type (',' type)* CLOSE_PAREN -> ^(ARGUMENTS type+)
 	;
 

@@ -803,6 +803,35 @@
 </cffunction>
 
 
+<cffunction name="testNoArguments" hint="test a execution expression with arguments" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public string say*())");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayStuff();
+
+		assertEquals(reverse("Stuff"), local.value);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
