@@ -7,6 +7,8 @@ prog:
 
 "execution(public * *(..))"  -> (execution public * * (ARGUMENTS ..))
 
+"execution(* set*())"  -> (execution * set* ARGUMENTS)
+
 "execution(* set*(..))"  -> (execution * set* (ARGUMENTS ..))
 
 "execution(* com.xyz.service.AccountService.*(..))"  -> (execution * com.xyz.service.AccountService.* (ARGUMENTS ..))

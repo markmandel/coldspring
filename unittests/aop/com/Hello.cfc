@@ -31,10 +31,15 @@
 	<cfreturn arguments.str />
 </cffunction>
 
-<cffunction name="sayGoodbye" hint="" access="public" returntype="string" output="false" dostuff="true">
+<cffunction name="sayGoodbye" hint="" access="public" returntype="any" output="false" dostuff="true">
 	<cfargument name="str" hint="" type="string" required="no" default="goodbye">
 
 	<cfreturn arguments.str />
+</cffunction>
+
+
+<cffunction name="sayStuff" hint="says 'stuff'" access="public" returntype="string" output="false">
+	<cfreturn "Stuff" />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

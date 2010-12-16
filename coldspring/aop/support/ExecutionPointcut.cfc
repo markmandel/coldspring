@@ -34,6 +34,8 @@
 		setPackage(meta.const.ANY);
 		setMethodName(meta.const.ANY);
 		setReturnType(meta.const.ANY);
+		setArgumentTypes(createObject("java", "java.util.ArrayList").init());
+		setMatchAnyArguments(true);
 
 		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
@@ -55,6 +57,8 @@
 				matchMethodName(arguments.methodMetadata, arguments.classMetadata)
 				AND
 				matchReturnType(arguments.methodMetadata, arguments.classMetadata)
+				AND
+				matchArguments(arguments.methodMetadata, arguments.classMetadata)
 				);
     </cfscript>
 </cffunction>
@@ -103,6 +107,32 @@
 <cffunction name="setReturnType" access="public" returntype="void" output="false">
 	<cfargument name="returnType" type="string" required="true">
 	<cfset instance.returnType = arguments.returnType />
+</cffunction>
+
+<cffunction name="getMatchAnyArguments" access="public" returntype="boolean" output="false">
+	<cfreturn instance.matchAnyArguments />
+</cffunction>
+
+<cffunction name="setMatchAnyArguments" hint="Whether or not to match any set of arguments on a given method. Defaults to true." access="public" returntype="void" output="false">
+	<cfargument name="matchAnyArguments" type="boolean" required="true">
+	<cfset instance.matchAnyArguments = arguments.matchAnyArguments />
+</cffunction>
+
+<cffunction name="getArgumentTypes" access="public" returntype="array" output="false">
+	<cfreturn instance.argumentTypes />
+</cffunction>
+
+<cffunction name="setArgumentTypes" access="public" returntype="void" output="false">
+	<cfargument name="argumentTypes" type="array" required="true">
+	<cfset instance.argumentTypes = arguments.argumentTypes />
+</cffunction>
+
+<cffunction name="addArgumentType" hint="convenience class that adds an argument type, and sets the matchAnyArguments to false in one go" access="public" returntype="void" output="false">
+	<cfargument name="argumentType" hint="the argument type, or '*' for a wildcard" type="string" required="Yes">
+	<cfscript>
+		setMatchAnyArguments(false);
+		arrayAppend(getArgumentTypes(), arguments.argumentType);
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -206,13 +236,56 @@
 		else
 		{
 			//clean it up
-			if(!StructKeyExists(arguments.methodMetadata, returntype))
+			if(!StructKeyExists(arguments.methodMetadata, "returntype"))
 			{
 				arguments.methodMetadata.returntype = "any";
 			}
 
 			return getReturnType() eq arguments.methodMetadata.returntype;
 		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="matchArguments" hint="Does the current set of arguments on the method match up to the required set in the pointcut" access="private" returntype="boolean" output="false">
+	<cfargument name="methodMetadata" type="struct" required="yes" />
+	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfscript>
+		var local = {};
+
+		if(getMatchAnyArguments())
+		{
+			return true;
+		}
+
+		local.argumentTypes = getArgumentTypes();
+		local.len = arraylen(local.argumentTypes);
+
+		if(local.len != ArrayLen(arguments.methodMetadata.parameters))
+		{
+			return false;
+		}
+
+		var len = ArrayLen(local.argumentTypes);
+        for(local.counter=1; local.counter <= len; local.counter++)
+        {
+        	local.type = local.argumentTypes[local.counter];
+			local.param = arguments.methodMetadata.parameters[counter];
+
+			if(!StructKeyExists(local.param, "type"))
+			{
+				local.param.type = "any";
+			}
+
+			if(local.type != meta.const.ANY)
+			{
+				if(local.type != local.param.type)
+				{
+					return false;
+				}
+			}
+        }
+
+		return true;
     </cfscript>
 </cffunction>
 

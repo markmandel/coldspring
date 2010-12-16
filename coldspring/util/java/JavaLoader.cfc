@@ -15,7 +15,7 @@
 
 <cfscript>
 	instance = StructNew();
-	instance.static.SCOPE_KEY = "coldspring.3C703836-194D-3DAD-9CC541EF13260E26";
+	instance.static.SCOPE_KEY = "coldspring.3C704836-194D-3DAD-9CC541EF13260E26";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
