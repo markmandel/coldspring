@@ -39,7 +39,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testReverseAnnotationAspect" hint="test simple reverse advice with a annotation based Aspect" access="public" returntype="void" output="false">
+<cffunction name="testReverseAspect" hint="test simple reverse advice with an Aspect" access="public" returntype="void" output="false">
 	<cfscript>
 		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
 
@@ -52,10 +52,46 @@
 
 		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
 
-
 		local.string = "Gobble, Gobble";
 
 		assertEquals(local.string, local.proxy.sayHello(local.string));
+
+		local.proxy = factory.getBean("helloNotWork");
+
+		local.value = local.proxy.sayHello();
+		assertEquals("hello", local.value);
+
+		local.value = local.proxy.sayGoodbye();
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+    </cfscript>
+</cffunction>
+
+<cffunction name="testBeforeAspect" hint="tests the before aspect" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+		var local = {};
+
+		local.proxy = factory.getBean("hello");
+		local.storeArguments = factory.getBean("storeBefore");
+
+		local.proxy.sayHello();
+
+		assertTrue(structIsEmpty(local.storeArguments.getArgs()));
+
+		local.proxy.sayHello("hello");
+
+		local.args = { 1="hello" };
+
+		local.storedArgs = local.storeArguments.getArgs();
+
+		//something weird is going on in the .toString that mxunit uses
+		//assertEquals(local.args, local.storeArguments.getArgs());
+		assertEquals(structKeyList(local.args), structKeyList(local.storedArgs));
+
+		for(local.key in local.storedArgs)
+		{
+			assertEquals(local.args[key], local.storedArgs[key]);
+		}
     </cfscript>
 </cffunction>
 

@@ -19,11 +19,20 @@
 	
 	<aop:config>
 		<aop:aspect id="reverseAspect" ref="reverse">
-			<aop:around method="reverse" pointcut="@annotation(dostuff='true')" />
+			<aop:around method="reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
+		</aop:aspect>
+		
+		<aop:aspect ref="storeBefore">
+			<aop:pointcut expression="!target(unittests.aop.com.sub.Hello) AND @target(dostuff)" id="notSubHello"/>
+			<aop:before method="store" pointcut-ref="notSubHello"/>
 		</aop:aspect>
 	</aop:config>
 	
 	<bean id="reverse" class="unittests.aop.com.Reverse" />
 	<bean id="hello" class="unittests.aop.com.Hello"/>
+	
+	<bean id="helloNotWork" class="unittests.aop.com.sub.Hello"/>
+	
+	<bean id="storeBefore" class="unittests.aop.com.StoreArguments"/>
 	
 </beans>

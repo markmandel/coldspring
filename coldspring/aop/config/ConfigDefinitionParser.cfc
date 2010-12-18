@@ -25,7 +25,9 @@
 
 		const.ADVISOR_ELEMENT = "advisor";
 		const.ASPECT_ELEMENT = "aspect";
+		const.BEFORE_ELEMENT = "before";
 		const.AROUND_ELEMENT = "around";
+		const.POINTCUT_ELEMENT = "pointcut";
 
 		const.ADVICE_REF_ATTRIBUTE = "advice-ref";
 		const.ID_ATTRIBUTE = "id";
@@ -33,12 +35,17 @@
 		const.METHOD_ATTRIBUTE = "method";
 		const.POINTCUT_ATTRIBUTE = "pointcut";
 		const.POINTCUT_REF_ATTRIBUTE = "pointcut-ref";
+		const.EXPRESSION_ATTRIBUTE = "expression";
 
 		const.EXPRESSION_POINTCUT_CLASS = "coldspring.aop.expression.ExpressionPointcut";
 		const.ADVISOR_CLASS = "coldspring.aop.PointcutAdvisor";
 		const.METHOD_INVOCATION_ADVICE_CLASS = "coldspring.aop.framework.adapter.MethodInvocationAdviceInterceptor";
 
-		const.AROUND_ADVICE_TYPE = "around";
+		const.ELEMENT_ADVISE_MAP =
+			{
+				around = "around"
+				,before = "before"
+			};
 
 		meta.const = const;
 	}
@@ -168,38 +175,61 @@
 
 			if(child.getNodeType() eq node.ELEMENT_NODE)
 			{
-				cloneAdvisorBeanDef = templateBeanDef.clone();
-				cloneAdvisorBeanDef.setID(templateBeanDef.getID() & "-" & counter);
-
-				cloneMethodInvokeBeanDef = templateMethodInvokeBeanDef.clone();
-				cloneMethodInvokeBeanDef.setID("MethodInvoke-" & createUUID());
-
-				value = createObject("component", "coldspring.beans.support.RefValue").init(cloneMethodInvokeBeanDef.getID(), arguments.parserContext.getBeanFactory());
-				constructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("advice", value);
-
-				cloneAdvisorBeanDef.addConstructorArg(constructorArg);
-
-				if(child.getLocalName() eq meta.const.AROUND_ELEMENT)
+				//this is for all advice (i.e. non pointcut def)
+				if(child.getLocalName() != meta.const.POINTCUT_ELEMENT)
 				{
+					cloneAdvisorBeanDef = templateBeanDef.clone();
+					cloneAdvisorBeanDef.setID(templateBeanDef.getID() & "-" & counter);
+
+					cloneMethodInvokeBeanDef = templateMethodInvokeBeanDef.clone();
+					cloneMethodInvokeBeanDef.setID("MethodInvoke-" & createUUID());
+
+					value = createObject("component", "coldspring.beans.support.RefValue").init(cloneMethodInvokeBeanDef.getID(), arguments.parserContext.getBeanFactory());
+					constructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("advice", value);
+
+					cloneAdvisorBeanDef.addConstructorArg(constructorArg);
+
 					//method
 					value = createObject("component", "coldspring.beans.support.SimpleValue").init(child.getAttribute(meta.const.METHOD_ATTRIBUTE));
 					constructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("method", value);
 
 					cloneMethodInvokeBeanDef.addConstructorArg(constructorArg);
 
-					//advice type
-					value = createObject("component", "coldspring.beans.support.SimpleValue").init(meta.const.AROUND_ADVICE_TYPE);
+					//maps which advice type the method invoking iterceptor actually fires.
+					value = createObject("component", "coldspring.beans.support.SimpleValue").init(meta.const.ELEMENT_ADVISE_MAP[child.getLocalName()]);
+
 					constructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("adviceType", value);
-
 					cloneMethodInvokeBeanDef.addConstructorArg(constructorArg);
-
 					parsePointcutAttributes(child, arguments.parserContext, cloneAdvisorBeanDef);
-				}
 
-				arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(cloneAdvisorBeanDef);
-				arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(cloneMethodInvokeBeanDef);
+					arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(cloneAdvisorBeanDef);
+					arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(cloneMethodInvokeBeanDef);
+				}
+				else
+				{
+					parsePointcut(child, arguments.parserContext.getBeanDefinitionRegistry());
+				}
 			}
 		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="parsePointcut" hint="parses a pointcut element into an ExpressionPointut, which is then added to he BeanDefinitionRegistry" access="private" returntype="void" output="false">
+	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the <aop:pointcut> XML Element" type="any" required="Yes">
+	<cfargument name="beanDefRegistry" hint="the bean definition registry" type="coldspring.beans.BeanDefinitionRegistry" required="Yes">
+	<cfscript>
+		var beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(arguments.element.getAttribute(meta.const.ID_ATTRIBUTE));
+		var value = createObject("component", "coldspring.beans.support.SimpleValue").init(arguments.element.getAttribute(meta.const.EXPRESSION_ATTRIBUTE));
+		var property = createObject("component", "coldspring.beans.support.Property").init("expression", value);
+
+		beanDef.addProperty(property);
+		beanDef.setClassName(meta.const.EXPRESSION_POINTCUT_CLASS);
+
+		/*
+			<aop:pointcut expression="!target(unittests.aop.com.sub.Hello) AND @target(dostuff)" id="notSubHello"/>
+		 */
+
+		arguments.beanDefRegistry.registerBeanDefinition(beanDef);
     </cfscript>
 </cffunction>
 

@@ -37,6 +37,11 @@
 	<cfargument name="method" hint="the AfterReturningAdvice to wrap" type="string" required="Yes">
 	<cfargument name="adviceType" hint="The advice type: before,afterReturning,around,throws" type="string" required="Yes">
 	<cfscript>
+		if(!arrayContains(meta.const.VALID_ADVICE_TYPES, arguments.adviceType))
+		{
+			createObject("component", "coldspring.aop.framework.adapter.exception.InvalidAdviceTypeException").init(arguments.adviceType);
+		}
+
 		setTarget(arguments.target);
 		setMethod(arguments.method);
 		setAdviceType(arguments.adviceType);
@@ -47,12 +52,18 @@
 
 <cffunction name="invokeMethod" hint="Implement this method to perform extra treatments before and after the invocation.<br/>Polite implementations would certainly like to invoke Joinpoint.proceed()." access="public" returntype="any" output="false">
 	<cfargument name="methodInvocation" type="coldspring.aop.MethodInvocation" required="yes" />
-	<cfset var local = {}>
-	<cfset var args = 0>
+	<cfscript>
+	   var local = {};
+	   local.type = getAdviceType();
+    </cfscript>
 
-	<cfif getAdviceType() eq meta.const.AROUND_ADVICE>
-		<cfset args = {1=arguments.methodInvocation}>
-		<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#args#" returnvariable="local.result">
+	<cfif local.type eq meta.const.BEFORE_ADVICE>
+		<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#arguments.methodInvocation.getArguments()#">
+	</cfif>
+
+	<cfif local.type eq meta.const.AROUND_ADVICE>
+		<cfset local.args = {1=arguments.methodInvocation}>
+		<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#local.args#" returnvariable="local.result">
 	<cfelse>
 		<cfset local.result = arguments.methodInvocation.proceed()>
 	</cfif>
