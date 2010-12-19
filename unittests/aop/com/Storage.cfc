@@ -15,15 +15,22 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="StoreArguments" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="Storage" output="false">
 	<cfscript>
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="store" hint="store arguments in me." access="public" returntype="void" output="false">
+<cffunction name="storeArgs" hint="store arguments in me." access="public" returntype="void" output="false">
 	<cfscript>
 		setArgs(arguments);
+    </cfscript>
+</cffunction>
+
+<cffunction name="storeReturn" hint="Callback after a given method successfully returned. " access="public" returntype="void" output="false">
+	<cfargument name="returnValue" type="any" required="no" />
+	<cfscript>
+		setReturn(arguments.returnValue);
     </cfscript>
 </cffunction>
 
@@ -31,12 +38,22 @@
 	<cfreturn instance.Args />
 </cffunction>
 
+<cffunction name="getReturn" access="public" returntype="any" output="false">
+	<cfreturn instance.return />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
+
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="setArgs" access="private" returntype="void" output="false">
 	<cfargument name="Args" type="any" required="true">
 	<cfset instance.Args = arguments.Args />
+</cffunction>
+
+<cffunction name="setReturn" access="private" returntype="void" output="false">
+	<cfargument name="return" type="any" required="true">
+	<cfset instance.return = arguments.return />
 </cffunction>
 
 </cfcomponent>

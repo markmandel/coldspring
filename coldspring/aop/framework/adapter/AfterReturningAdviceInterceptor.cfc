@@ -27,11 +27,20 @@
 <cffunction name="invokeMethod" hint="Implement this method to perform extra treatments before and after the invocation.<br/>Polite implementations would certainly like to invoke Joinpoint.proceed()." access="public" returntype="any" output="false">
 	<cfargument name="methodInvocation" type="coldspring.aop.MethodInvocation" required="yes" />
 	<cfscript>
-		var result = arguments.methodInvocation.proceed();
+		var args = {
+				method = arguments.methodInvocation.getMethod()
+				,args = arguments.methodInvocation.getArguments()
+				,target = arguments.methodInvocation.getTarget()
+			};
 
-		getAfterReturningAdvice().afterReturning(result, arguments.methodInvocation.getMethod(), arguments.methodInvocation.getArguments(), arguments.methodInvocation.getTarget());
+		args.returnValue = arguments.methodInvocation.proceed();
 
-		return result;
+		getAfterReturningAdvice().afterReturning(argumentCollection=args);
+
+		if(structKeyExists(args, "returnValue"))
+		{
+			return args.returnValue;
+		}
     </cfscript>
 </cffunction>
 

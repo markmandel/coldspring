@@ -22,9 +22,10 @@
 			<aop:around method="reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
 		</aop:aspect>
 		
-		<aop:aspect ref="storeBefore">
+		<aop:aspect ref="storage">
 			<aop:pointcut expression="!target(unittests.aop.com.sub.Hello) AND @target(dostuff)" id="notSubHello"/>
-			<aop:before method="store" pointcut-ref="notSubHello"/>
+			<aop:before method="storeArgs" pointcut-ref="notSubHello"/>
+			<aop:after-returning method="storeReturn" pointcut-ref="notSubHello"/>
 		</aop:aspect>
 	</aop:config>
 	
@@ -33,6 +34,6 @@
 	
 	<bean id="helloNotWork" class="unittests.aop.com.sub.Hello"/>
 	
-	<bean id="storeBefore" class="unittests.aop.com.StoreArguments"/>
+	<bean id="storage" class="unittests.aop.com.Storage"/>
 	
 </beans>

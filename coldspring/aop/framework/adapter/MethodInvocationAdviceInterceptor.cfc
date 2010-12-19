@@ -61,11 +61,29 @@
 		<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#arguments.methodInvocation.getArguments()#">
 	</cfif>
 
-	<cfif local.type eq meta.const.AROUND_ADVICE>
-		<cfset local.args = {1=arguments.methodInvocation}>
-		<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#local.args#" returnvariable="local.result">
-	<cfelse>
-		<cfset local.result = arguments.methodInvocation.proceed()>
+	<cftry>
+		<cfif local.type eq meta.const.AROUND_ADVICE>
+			<cfset local.args = {1=arguments.methodInvocation}>
+			<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#local.args#" returnvariable="local.result">
+		<cfelse>
+			<cfset local.result = arguments.methodInvocation.proceed()>
+		</cfif>
+	    <cfcatch type="Any" >
+			<cfif local.type eq meta.const.THROWS_ADVICE>
+				<cfset local.args = {1=cfcatch}>
+				<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#local.args#">
+			</cfif>
+
+	    	<cfrethrow>
+	    </cfcatch>
+    </cftry>
+
+	<cfif local.type eq meta.const.AFTER_RETURNING_ADVICE>
+		<cfset local.args = {}>
+		<cfif structKeyExists(local, "result")>
+			<cfset local.args[1] = local.result>
+		</cfif>
+		<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#local.args#">
 	</cfif>
 
 	<cfif structKeyExists(local, "result")>
@@ -104,8 +122,6 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-
 
 
 </cfcomponent>

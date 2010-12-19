@@ -72,9 +72,9 @@
 		var local = {};
 
 		local.proxy = factory.getBean("hello");
-		local.storeArguments = factory.getBean("storeBefore");
+		local.storeArguments = factory.getBean("storage");
 
-		local.proxy.sayHello();
+		local.value = local.proxy.sayHello();
 
 		assertTrue(structIsEmpty(local.storeArguments.getArgs()));
 
@@ -92,6 +92,29 @@
 		{
 			assertEquals(local.args[key], local.storedArgs[key]);
 		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="testReturnAspect" hint="tests returning aspects" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+		var local = {};
+
+		local.proxy = factory.getBean("hello");
+		local.storeArguments = factory.getBean("storage");
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		local.storeArguments = factory.getBean("storage");
+
+		assertEquals("hello", local.storeArguments.getReturn());
+
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals(reverse("Goodbye"), local.value);
+		assertEquals(reverse("Goodbye"), local.storeArguments.getReturn());
     </cfscript>
 </cffunction>
 

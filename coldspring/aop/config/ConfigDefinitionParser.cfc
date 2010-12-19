@@ -45,6 +45,7 @@
 			{
 				around = "around"
 				,before = "before"
+				,"after-returning" = "afterReturning"
 			};
 
 		meta.const = const;
