@@ -69,6 +69,7 @@
 
 		parseAspects(arguments.element, arguments.parserContext);
 		parseAdvisors(arguments.element, arguments.parserContext);
+		parsePointcuts(arguments.element, arguments.parserContext);
     </cfscript>
 </cffunction>
 
@@ -212,6 +213,21 @@
 					parsePointcut(child, arguments.parserContext.getBeanDefinitionRegistry());
 				}
 			}
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="parsePointcuts" hint="parse all pointcuts in the config block" access="private" returntype="void" output="false">
+	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the <aop:config> XML Element" type="any" required="Yes">
+	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
+	<cfscript>
+		var childNodes = arguments.element.getElementsByTagNameNS(meta.const.AOP_NAMESPACE_URI, meta.const.POINTCUT_ELEMENT);
+		var counter = 0;
+
+		for(;counter lt childNodes.getLength(); counter++)
+		{
+			child = childNodes.item(counter);
+			parsePointcut(child, arguments.parserContext.getBeanDefinitionRegistry());
 		}
     </cfscript>
 </cffunction>

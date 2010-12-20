@@ -18,16 +18,21 @@
 	http://www.coldspringframework.org/schema/aop http://www.coldspringframework.org/schema/coldspring-aop-2.0.xsd ">
 	
 	<aop:config>
+		<aop:pointcut expression="!target(unittests.aop.com.sub.Hello) AND @target(dostuff)" id="notSubHello"/>
+		
+		<aop:advisor advice-ref="exceptionStorage" pointcut-ref="notSubHello"/>
+		
 		<aop:aspect id="reverseAspect" ref="reverse">
 			<aop:around method="reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
 		</aop:aspect>
 		
 		<aop:aspect ref="storage">
-			<aop:pointcut expression="!target(unittests.aop.com.sub.Hello) AND @target(dostuff)" id="notSubHello"/>
+			<aop:pointcut expression="target(unittests.aop.com.Hello) AND @target(dostuff)" id="anotherPointcut"/>
 			<aop:before method="storeArgs" pointcut-ref="notSubHello" />
 			<aop:after-returning method="storeReturn" pointcut-ref="notSubHello" />
-			<aop:after-throwing method="storeException" pointcut-ref="notSubHello" />
+			<aop:after-throwing method="storeException" pointcut-ref="anotherPointcut" />
 		</aop:aspect>
+		
 	</aop:config>
 	
 	<bean id="reverse" class="unittests.aop.com.Reverse" />
@@ -36,5 +41,7 @@
 	<bean id="helloNotWork" class="unittests.aop.com.sub.Hello"/>
 	
 	<bean id="storage" class="unittests.aop.com.Storage"/>
+	
+	<bean id="exceptionStorage" class="unittests.aop.com.ExceptionStoreThrowsAdvice" /> 
 	
 </beans>
