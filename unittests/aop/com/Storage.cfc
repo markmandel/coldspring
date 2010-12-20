@@ -28,9 +28,16 @@
 </cffunction>
 
 <cffunction name="storeReturn" hint="Callback after a given method successfully returned. " access="public" returntype="void" output="false">
-	<cfargument name="returnValue" type="any" required="no" />
+	<cfargument name="value" type="any" required="no" />
 	<cfscript>
-		setReturn(arguments.returnValue);
+		setReturn(arguments.value);
+    </cfscript>
+</cffunction>
+
+<cffunction name="storeException" hint="Callback after a method throws an exception." access="public" returntype="void" output="false">
+	<cfargument name="exception" type="struct" required="yes" />
+	<cfscript>
+		setException(arguments.exception);
     </cfscript>
 </cffunction>
 
@@ -42,9 +49,18 @@
 	<cfreturn instance.return />
 </cffunction>
 
+<cffunction name="getException" access="public" returntype="any" output="false">
+	<cfreturn instance.Exception />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="setException" access="private" returntype="void" output="false">
+	<cfargument name="Exception" type="any" required="true">
+	<cfset instance.Exception = arguments.Exception />
+</cffunction>
 
 <cffunction name="setArgs" access="private" returntype="void" output="false">
 	<cfargument name="Args" type="any" required="true">

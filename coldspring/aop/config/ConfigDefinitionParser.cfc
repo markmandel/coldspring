@@ -46,6 +46,7 @@
 				around = "around"
 				,before = "before"
 				,"after-returning" = "afterReturning"
+				,"after-throwing" = "throws"
 			};
 
 		meta.const = const;

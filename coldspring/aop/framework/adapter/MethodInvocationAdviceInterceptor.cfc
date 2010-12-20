@@ -70,7 +70,7 @@
 		</cfif>
 	    <cfcatch type="Any" >
 			<cfif local.type eq meta.const.THROWS_ADVICE>
-				<cfset local.args = {1=cfcatch}>
+				<cfset local.args = {1=duplicate(cfcatch)}>
 				<cfinvoke component="#getTarget()#" method="#getMethod()#" argumentcollection="#local.args#">
 			</cfif>
 

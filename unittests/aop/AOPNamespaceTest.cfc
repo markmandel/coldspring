@@ -118,6 +118,26 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testExceptionAspect" hint="tests exception aspects" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+		var local = {};
+
+		local.proxy = factory.getBean("hello");
+		local.storage = factory.getBean("storage");
+
+		try
+		{
+			local.proxy.sayHello("exceptionFoo");
+		}
+		catch(exceptionFoo exc)
+		{
+			assertEquals(exc.message, local.storage.getException().message);
+			assertEquals(exc.type, local.storage.getException().type);
+		}
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
