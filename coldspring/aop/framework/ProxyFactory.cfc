@@ -53,7 +53,7 @@
 	access="public" returntype="void" output="false">
 <cfargument name="advice" hint="The Advice to apply" type="coldspring.aop.Advice" required="Yes">
 	<cfscript>
-		advisor = createObject("component", "coldspring.aop.support.DefaultPointcutAdvisor").init(arguments.advice);
+		var advisor = createObject("component", "coldspring.aop.support.DefaultPointcutAdvisor").init(arguments.advice);
 
 		addAdvisor(advisor);
     </cfscript>

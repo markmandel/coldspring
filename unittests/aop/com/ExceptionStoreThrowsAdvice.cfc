@@ -19,7 +19,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getException" access="public" returntype="any" output="false">
+<cffunction name="$getException" access="public" returntype="any" output="false">
 	<cfreturn instance.Exception />
 </cffunction>
 

@@ -104,7 +104,6 @@ TODO:
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
-		var counter = 0;
 		var child = 0;
 		var singlePointcut = 0;
 		var negate = false;

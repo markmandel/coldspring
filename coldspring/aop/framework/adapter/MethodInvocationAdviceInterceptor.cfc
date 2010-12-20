@@ -37,7 +37,7 @@
 	<cfargument name="method" hint="the AfterReturningAdvice to wrap" type="string" required="Yes">
 	<cfargument name="adviceType" hint="The advice type: before,afterReturning,around,throws" type="string" required="Yes">
 	<cfscript>
-		if(!arrayContains(meta.const.VALID_ADVICE_TYPES, arguments.adviceType))
+		if(!meta.const.VALID_ADVICE_TYPES.contains(arguments.adviceType))
 		{
 			createObject("component", "coldspring.aop.framework.adapter.exception.InvalidAdviceTypeException").init(arguments.adviceType);
 		}

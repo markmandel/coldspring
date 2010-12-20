@@ -279,9 +279,9 @@
 		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
 
 		//sub package
-		var hello = createObject("component", "unittests.aop.com.sub.Hello").init();
+		local.hello = createObject("component", "unittests.aop.com.sub.Hello").init();
 
-		local.proxy = proxyFactory.getProxy(hello);
+		local.proxy = proxyFactory.getProxy(local.hello);
 
 		local.value = local.proxy.sayHello();
 
@@ -344,9 +344,9 @@
 		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
 
 		//sub package
-		var hello = createObject("component", "unittests.aop.com.sub.Hello").init();
+		local.hello = createObject("component", "unittests.aop.com.sub.Hello").init();
 
-		local.proxy = proxyFactory.getProxy(hello);
+		local.proxy = proxyFactory.getProxy(local.hello);
 
 		local.value = local.proxy.sayHello();
 

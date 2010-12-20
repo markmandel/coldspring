@@ -45,9 +45,9 @@
 			{
 				around = "around"
 				,before = "before"
-				,"after-returning" = "afterReturning"
-				,"after-throwing" = "throws"
 			};
+		const.ELEMENT_ADVISE_MAP["after-returning"] = "afterReturning";
+		const.ELEMENT_ADVISE_MAP["after-throwing"] = "throws";
 
 		meta.const = const;
 	}

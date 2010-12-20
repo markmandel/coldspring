@@ -31,8 +31,8 @@
 
 		local.path = expandPath("/coldspring/beans/xml/config/coldspring-beans-2.0.xsd");
 
-		local.entityMap["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = path;
-		local.entityMap["http://www.coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = path;
+		local.entityMap["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = local.path;
+		local.entityMap["http://www.coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = local.path;
 
 		local.reader = createObject("component", "coldspring.io.XMLFileReader").init(expandPath("/unittests/testBeans/emptyBeans.xml"), local.entityMap);
 

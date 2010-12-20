@@ -265,11 +265,12 @@
 			return false;
 		}
 
-		var len = ArrayLen(local.argumentTypes);
-        for(local.counter=1; local.counter <= len; local.counter++)
+		local.len = ArrayLen(local.argumentTypes);
+
+        for(local.counter=1; local.counter <= local.len; local.counter++)
         {
         	local.type = local.argumentTypes[local.counter];
-			local.param = arguments.methodMetadata.parameters[counter];
+			local.param = arguments.methodMetadata.parameters[local.counter];
 
 			if(!StructKeyExists(local.param, "type"))
 			{

@@ -48,10 +48,10 @@
 	<cfargument name="methodMetadata" type="struct" required="yes" />
 	<cfargument name="classMetadata" type="struct" required="yes" />
 	<cfscript>
-		var annotation = 0;
 		var args = {};
 		var cfcMetaUtil = 0;
 		var annotations = getMethodAnnotations();
+		var annotation = 0;
 
 		for(annotation in getMethodAnnotations())
 		{
@@ -112,7 +112,6 @@
 	<cfargument name="annotations" hint="the annotations to check" type="struct" required="Yes" colddoc:generic="string,string">
 	<cfscript>
 		var meta = getComponentMetadata(arguments.className);
-		var annotation = 0;
 
 		//loop around and do stuff
 		var annotation = 0;
