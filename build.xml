@@ -31,7 +31,7 @@
 	<property name="xsddoc.templates" location="${xsddoc}/templates"/>
 	<property name="antlr.src" location="./antlr"/>
 	<property name="antlr.lib" location="${antlr.src}/lib"/>
-	<property name="antlr.jar" location="${src}/util/java/lib/" />
+	<property name="antlr.jar" location="${src}/core/java/lib/" />
 	<property name="build" location="./build" />
 
 	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${build}/mxunit-ant.jar"/>
