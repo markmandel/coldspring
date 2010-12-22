@@ -13,15 +13,6 @@
  --> 
 <project name="narwhal" default="deploy">
 	
-	<!--
-		The following dependencies are required to be the classpath  
-		for this ant build script to run.
-		
-		FTP Task: net-common-2.0.jar
-		MXUnit Task: mxunit-ant.jar
-	-->
-	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" /> 
-	
 	<!-- GENERAL PROPERTIES -->
 	<property name="src" location="./coldspring" />
 	<property name="tmp" location="/tmp" />
@@ -41,6 +32,19 @@
 	<property name="antlr.src" location="./antlr"/>
 	<property name="antlr.lib" location="${antlr.src}/lib"/>
 	<property name="antlr.jar" location="${src}/util/java/lib/" />
+	<property name="build" location="./build" />
+
+	<!--
+			The following dependencies are required to be the classpath  
+			for this ant build script to run.
+			
+			FTP Task: net-common-2.0.jar
+			MXUnit Task: mxunit-ant.jar
+		-->
+	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${build}/mxunit-ant.jar"/>
+	<taskdef resource="net/jtools/classloadertask/antlib.xml" classpath="${build}/ant-classloadertask.jar"/>
+	<classloader loader="system" classpath="${build}/commons-net-2.0.jar"/>
+	<taskdef name="ftp" classname="org.apache.tools.ant.taskdefs.optional.net.FTP"/>
 	
 	<!-- ================================= 
           target: deploy              
