@@ -11,11 +11,11 @@
    limitations under the License.
  --->
 
-<cfcomponent name="JavaLoader" hint="Loads External Java Classes for ColdSpring">
+<cfcomponent name="JavaLoader" hint="Facade for loading external Java Classes for ColdSpring">
 
 <cfscript>
 	instance = StructNew();
-	instance.static.SCOPE_KEY = "coldspring.3C704836-194D-3DAD-9CC541EF13260E26";
+	instance.static.SCOPE_KEY = "coldspring.3E704836-194D-3DAD-9CC541EF13260E26";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -39,7 +39,7 @@
 
 	<!--- double check lock for safety --->
 	<cfif NOT hasJavaLoader()>
-		<cflock name="coldspring.util.java.javaloader.init" throwontimeout="true" timeout="60">
+		<cflock name="coldspring.core.java.JavaLoader.init" throwontimeout="true" timeout="60">
 			<cfscript>
 				if(NOT hasJavaLoader())
 				{
@@ -49,7 +49,7 @@
 					local.args.sourceDirectories = [ getDirectoryFromPath(getMetadata(this).path) & "/src/" ];
 					local.args.trustedSource = true; //only need to set this to false during java dev
 
-					local.javaloader = createObject("component", "coldspring.util.java.javaloader.JavaLoader").init(argumentCollection=local.args);
+					local.javaloader = createObject("component", "coldspring.util.javaloader.JavaLoader").init(argumentCollection=local.args);
 
 					setJavaLoader(local.javaloader);
 				}
@@ -101,12 +101,12 @@
 	<cfreturn aJars>
 </cffunction>
 
-<cffunction name="getJavaLoader" access="public" returntype="coldspring.util.java.javaloader.JavaLoader" output="false">
+<cffunction name="getJavaLoader" access="public" returntype="coldspring.util.javaloader.JavaLoader" output="false">
 	<cfreturn StructFind(server, getJavaLoaderKey()) />
 </cffunction>
 
 <cffunction name="setJavaLoader" access="public" returntype="void" output="false">
-	<cfargument name="javaLoader" type="coldspring.util.java.javaloader.JavaLoader" required="true">
+	<cfargument name="javaLoader" type="coldspring.util.javaloader.JavaLoader" required="true">
 	<cfset StructInsert(server, getJavaLoaderKey(), arguments.javaLoader) />
 </cffunction>
 

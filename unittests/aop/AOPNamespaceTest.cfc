@@ -90,7 +90,7 @@
 
 		for(local.key in local.storedArgs)
 		{
-			assertEquals(local.args[key], local.storedArgs[key]);
+			assertEquals(local.args[local.key], local.storedArgs[local.key]);
 		}
     </cfscript>
 </cffunction>
@@ -132,8 +132,8 @@
 		}
 		catch(exceptionFoo exc)
 		{
-			assertEquals(exc.message, local.storage.getException().message);
-			assertEquals(exc.type, local.storage.getException().type);
+			assertEquals(exc.message, local.storage.$getException().message);
+			assertEquals(exc.type, local.storage.$getException().type);
 		}
     </cfscript>
 </cffunction>
@@ -152,8 +152,8 @@
 		}
 		catch(exceptionFoo exc)
 		{
-			assertEquals(exc.message, local.storage.getException().message);
-			assertEquals(exc.type, local.storage.getException().type);
+			assertEquals(exc.message, local.storage.$getException().message);
+			assertEquals(exc.type, local.storage.$getException().type);
 		}
     </cfscript>
 </cffunction>

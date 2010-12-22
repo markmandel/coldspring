@@ -30,6 +30,7 @@
 <cffunction name="storeReturn" hint="Callback after a given method successfully returned. " access="public" returntype="void" output="false">
 	<cfargument name="value" type="any" required="no" />
 	<cfscript>
+		println("Storing return: #arguments.value#");
 		setReturn(arguments.value);
     </cfscript>
 </cffunction>
@@ -49,7 +50,7 @@
 	<cfreturn instance.return />
 </cffunction>
 
-<cffunction name="getException" access="public" returntype="any" output="false">
+<cffunction name="$getException" access="public" returntype="any" output="false">
 	<cfreturn instance.Exception />
 </cffunction>
 
@@ -71,5 +72,13 @@
 	<cfargument name="return" type="any" required="true">
 	<cfset instance.return = arguments.return />
 </cffunction>
+
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
+</cffunction>
+
 
 </cfcomponent>

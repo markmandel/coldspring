@@ -23,7 +23,7 @@
 		<aop:advisor advice-ref="exceptionStorage" pointcut-ref="notSubHello"/>
 		
 		<aop:aspect id="reverseAspect" ref="reverse">
-			<aop:around method="reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
+			<aop:around method="$reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
 		</aop:aspect>
 		
 		<aop:aspect ref="storage">

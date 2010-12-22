@@ -42,7 +42,7 @@ TODO:
 
 <cffunction name="configure" hint="configure method for singleton setup" access="public" returntype="void" output="false">
 	<cfscript>
-		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
+		setJavaLoader(getComponentMetadata("coldspring.core.java.JavaLoader").singleton.instance);
     </cfscript>
 </cffunction>
 
@@ -104,7 +104,6 @@ TODO:
 	<cfargument name="tree" hint="the AST" type="any" required="Yes">
 	<cfargument name="parser" hint="the parser in question. Useful for constants" type="any" required="Yes">
 	<cfscript>
-		var counter = 0;
 		var child = 0;
 		var singlePointcut = 0;
 		var negate = false;
@@ -396,12 +395,12 @@ TODO:
     </cfscript>
 </cffunction>
 
-<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.java.JavaLoader" output="false">
+<cffunction name="getJavaLoader" access="private" returntype="coldspring.core.java.JavaLoader" output="false">
 	<cfreturn instance.JavaLoader />
 </cffunction>
 
 <cffunction name="setJavaLoader" access="private" returntype="void" output="false">
-	<cfargument name="JavaLoader" type="coldspring.util.java.JavaLoader" required="true">
+	<cfargument name="JavaLoader" type="coldspring.core.java.JavaLoader" required="true">
 	<cfset instance.JavaLoader = arguments.JavaLoader />
 </cffunction>
 

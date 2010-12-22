@@ -19,7 +19,7 @@
 
 <cffunction name="afterReturning" hint="Callback after a given method successfully returned. " access="public" returntype="void" output="false">
 	<cfargument name="returnValue" hint="the value returned by the method, if any" type="any" required="No">
-	<cfargument name="method" hint="method being invoked" type="coldspring.reflect.Method" required="Yes">
+	<cfargument name="method" hint="method being invoked" type="coldspring.core.reflect.Method" required="Yes">
 	<cfargument name="args" hint="the arguments for the method" type="struct" required="Yes">
 	<cfargument name="target" hint="target of the method invocation" type="any" required="Yes">
 </cffunction>

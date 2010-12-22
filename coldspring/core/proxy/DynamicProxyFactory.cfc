@@ -22,7 +22,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="DynamicProxyFactory" output="false">
 	<cfscript>
-		var singleton = createObject("component", "Singleton").init();
+		var singleton = createObject("component", "coldspring.util.Singleton").init();
 
 		return singleton.createInstance(getMetaData(this).name);
 	</cfscript>
@@ -159,14 +159,13 @@
 	<cfset instance.proxyPrototypeCache = arguments.proxyPrototypeCache />
 </cffunction>
 
-<cffunction name="getMethodInjector" access="private" returntype="MethodInjector" output="false">
+<cffunction name="getMethodInjector" access="private" returntype="coldspring.util.MethodInjector" output="false">
 	<cfreturn instance.methodInjector />
 </cffunction>
+
 <cffunction name="setMethodInjector" access="private" returntype="void" output="false">
-	<cfargument name="methodInjector" type="MethodInjector" required="true">
+	<cfargument name="methodInjector" type="coldspring.util.MethodInjector" required="true">
 	<cfset instance.methodInjector = arguments.methodInjector />
 </cffunction>
-
-
 
 </cfcomponent>

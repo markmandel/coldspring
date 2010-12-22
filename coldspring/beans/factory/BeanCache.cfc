@@ -22,7 +22,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanCache" output="false">
 	<cfscript>
-		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
+		setJavaLoader(getComponentMetadata("coldspring.core.java.JavaLoader").singleton.instance);
 
 		setSingletonCache(StructNew());
 		setPrototypeCache(getJavaLoader().create("org.coldspring.util.DummyMap").init());
@@ -204,12 +204,12 @@
 	<cfset instance.lockNameCommandMap = arguments.lockNameCommandMap />
 </cffunction>
 
-<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.java.JavaLoader" output="false">
+<cffunction name="getJavaLoader" access="private" returntype="coldspring.core.java.JavaLoader" output="false">
 	<cfreturn instance.javaLoader />
 </cffunction>
 
 <cffunction name="setJavaLoader" access="private" returntype="void" output="false">
-	<cfargument name="javaLoader" type="coldspring.util.java.JavaLoader" required="true">
+	<cfargument name="javaLoader" type="coldspring.core.java.JavaLoader" required="true">
 	<cfset instance.javaLoader = arguments.javaLoader />
 </cffunction>
 

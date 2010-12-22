@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Invocation Handler for AOP Proxies" implements="coldspring.util.InvocationHandler">
+<cfcomponent hint="Invocation Handler for AOP Proxies" implements="coldspring.core.proxy.InvocationHandler">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -19,7 +19,7 @@
 	<cfargument name="className" hint="the class name of the object that is being proxied" type="string" required="Yes">
 	<cfargument name="advisors" hint="array of ordered advisors to use to match against the target's methods" type="array" required="Yes"
 				colddoc:generic="coldspring.aop.Advisor">
-	<cfargument name="methodFactory" hint="the method factory" type="coldspring.reflect.MethodFactory" required="Yes">
+	<cfargument name="methodFactory" hint="the method factory" type="coldspring.core.reflect.MethodFactory" required="Yes">
 	<cfscript>
 		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
 		var pointCutClosure = createObject("component", "coldspring.util.Closure").init(applyPointcutAdvice);
@@ -108,12 +108,12 @@
 	<cfset instance.methodAdvice = arguments.methodAdvice />
 </cffunction>
 
-<cffunction name="getMethodFactory" access="private" returntype="coldspring.reflect.MethodFactory" output="false">
+<cffunction name="getMethodFactory" access="private" returntype="coldspring.core.reflect.MethodFactory" output="false">
 	<cfreturn instance.methodFactory />
 </cffunction>
 
 <cffunction name="setMethodFactory" access="private" returntype="void" output="false">
-	<cfargument name="methodFactory" type="coldspring.reflect.MethodFactory" required="true">
+	<cfargument name="methodFactory" type="coldspring.core.reflect.MethodFactory" required="true">
 	<cfset instance.methodFactory = arguments.methodFactory />
 </cffunction>
 

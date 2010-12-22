@@ -21,13 +21,14 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="reverse" hint="Reverse a string" access="public" returntype="any" output="false">
+<cffunction name="$reverse" hint="Reverse a string" access="public" returntype="any" output="false">
 	<cfargument name="methodInvocation" type="coldspring.aop.MethodInvocation"  required="yes" />
 	<cfscript>
 		var result = arguments.methodInvocation.proceed();
 
 		if(isSimpleValue(result))
 		{
+			println("reversing #result#");
 			return reverse(result);
 		}
 
@@ -38,5 +39,13 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
+</cffunction>
+
 
 </cfcomponent>

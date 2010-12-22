@@ -16,7 +16,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="afterThrowing" hint="Callback after a method throws an exception." access="public" returntype="void" output="false">
-	<cfargument name="method" hint="method being invoked" type="coldspring.reflect.Method" required="Yes">
+	<cfargument name="method" hint="method being invoked" type="coldspring.core.reflect.Method" required="Yes">
 	<cfargument name="args" hint="the arguments for the method" type="struct" required="Yes">
 	<cfargument name="target" hint="target of the method invocation" type="any" required="Yes">
 	<cfargument name="exception" hint="the exception structure that was thrown" type="struct" required="Yes">
