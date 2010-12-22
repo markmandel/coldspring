@@ -210,13 +210,13 @@
 		var singleton = createObject("component", "coldspring.util.Singleton").init();
 
 		var args = {version=getVersion()};
-		singleton.createInstance("coldspring.util.java.JavaLoader", args);
+		singleton.createInstance("coldspring.core.java.JavaLoader", args);
 		singleton.createInstance("coldspring.util.Singleton");
 		singleton.createInstance("coldspring.util.MethodInjector");
 	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
 		singleton.createInstance("coldspring.util.Cloneable");
-		singleton.createInstance("coldspring.reflect.MethodFactory");
-		singleton.createInstance("coldspring.util.DynamicProxyFactory");
+		singleton.createInstance("coldspring.core.reflect.MethodFactory");
+		singleton.createInstance("coldspring.core.proxy.DynamicProxyFactory");
     </cfscript>
 </cffunction>
 

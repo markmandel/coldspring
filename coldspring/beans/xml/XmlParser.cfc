@@ -22,7 +22,7 @@
 		setConfigLocations(ArrayNew(1)); //have a default value, to prevent error
 		setSchemaMap(StructNew());
 
-		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
+		setJavaLoader(getComponentMetadata("coldspring.core.java.JavaLoader").singleton.instance);
 
 		return this;
 	</cfscript>
@@ -65,7 +65,7 @@
 <cffunction name="parseXMLToBeanDefinitions" hint="Parse a specific XML document into bean definitions, and add them to the registry" access="public" returntype="void" output="false">
 	<cfargument name="path" hint="the absolute path to the XML configuration file" type="string" required="Yes">
 	<cfscript>
-		var xmlFileReader = createObject("component", "coldspring.io.XMLFileReader").init(arguments.path, getSchemaMap());
+		var xmlFileReader = createObject("component", "coldspring.core.io.XMLFileReader").init(arguments.path, getSchemaMap());
 		var document = xmlFileReader.parseToDocument();
 		var delegate = 0;
 		var parserContext = 0;
@@ -189,12 +189,12 @@
 	<cfset instance.namespaceHandlers = arguments.namespaceHandlers />
 </cffunction>
 
-<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.java.JavaLoader" output="false">
+<cffunction name="getJavaLoader" access="private" returntype="coldspring.core.java.JavaLoader" output="false">
 	<cfreturn instance.JavaLoader />
 </cffunction>
 
 <cffunction name="setJavaLoader" access="private" returntype="void" output="false">
-	<cfargument name="JavaLoader" type="coldspring.util.java.JavaLoader" required="true">
+	<cfargument name="JavaLoader" type="coldspring.core.java.JavaLoader" required="true">
 	<cfset instance.JavaLoader = arguments.JavaLoader />
 </cffunction>
 

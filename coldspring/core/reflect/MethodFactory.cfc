@@ -75,7 +75,7 @@
 			return createObject("component", "Method").init(args.result.result, classMeta);
 		}
 
-		createObject("component", "coldspring.reflect.exception.MethodNotFoundException").init(arguments.className, arguments.function);
+		createObject("component", "coldspring.core.reflect.exception.MethodNotFoundException").init(arguments.className, arguments.function);
     </cfscript>
 </cffunction>
 

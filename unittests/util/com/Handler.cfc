@@ -12,7 +12,7 @@
 
  --->
 
-<cfcomponent hint="handler that just passes out what comes in" implements="coldspring.util.InvocationHandler" output="false">
+<cfcomponent hint="handler that just passes out what comes in" implements="coldspring.core.proxy.InvocationHandler" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

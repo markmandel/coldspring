@@ -19,7 +19,7 @@
 	<cfargument name="path" hint="the absolute path to the XML file" type="string" required="Yes">
 	<cfargument name="schemaMap" hint="map for XSDs to be mapped to local resources" type="struct" required="false" default="#StructNew()#">
 	<cfscript>
-		setJavaLoader(getComponentMetadata("coldspring.util.java.JavaLoader").singleton.instance);
+		setJavaLoader(getComponentMetadata("coldspring.core.java.JavaLoader").singleton.instance);
 		setSchemaMap(arguments.schemaMap);
 		setPath(arguments.path);
 
@@ -51,7 +51,7 @@
 		}
 		catch(org.xml.sax.SAXParseException exc)
 		{
-			createObject("component", "coldspring.io.exception.InvalidXMLException").init(getPath(), getContent(), exc.lineNumber, exc.columnNumber, exc.message);
+			createObject("component", "coldspring.core.io.exception.InvalidXMLException").init(getPath(), getContent(), exc.lineNumber, exc.columnNumber, exc.message);
 		}
 
 		return document;
@@ -84,12 +84,12 @@
 	<cfset instance.schemaMap = arguments.schemaMap />
 </cffunction>
 
-<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.java.JavaLoader" output="false">
+<cffunction name="getJavaLoader" access="private" returntype="coldspring.core.java.JavaLoader" output="false">
 	<cfreturn instance.javaLoader />
 </cffunction>
 
 <cffunction name="setJavaLoader" access="private" returntype="void" output="false">
-	<cfargument name="javaLoader" type="coldspring.util.java.JavaLoader" required="true">
+	<cfargument name="javaLoader" type="coldspring.core.java.JavaLoader" required="true">
 	<cfset instance.javaLoader = arguments.javaLoader />
 </cffunction>
 

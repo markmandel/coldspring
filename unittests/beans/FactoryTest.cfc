@@ -23,7 +23,7 @@
 
 <cffunction name="beanCacheGetCacheTest" hint="tests for the bean cache" access="public" returntype="void" output="false">
 	<cfscript>
-		var jl = createObject("component", "coldspring.util.java.JavaLoader").init("unittests");
+		var jl = createObject("component", "coldspring.core.java.JavaLoader").init("unittests");
 		var local = {};
 
 		local.beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init(jl);
@@ -101,7 +101,7 @@
 
 <cffunction name="beanCacheGetLockNameTest" hint="tests the lock names coming out of the beanCache" access="public" returntype="void" output="false">
 	<cfscript>
-		var jl = createObject("component", "coldspring.util.java.JavaLoader").init("unittests");
+		var jl = createObject("component", "coldspring.core.java.JavaLoader").init("unittests");
 		var local = {};
 
 		local.beanCache = createObject("component", "coldspring.beans.factory.BeanCache").init(jl);

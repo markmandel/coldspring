@@ -17,7 +17,7 @@
 
 <cffunction name="setup" hint="" access="public" returntype="void" output="false">
 	<cfscript>
-		instance.javaloader = createObject("component", "coldspring.util.java.JavaLoader").init("unittest");
+		instance.javaloader = createObject("component", "coldspring.core.java.JavaLoader").init("unittest");
     </cfscript>
 </cffunction>
 
@@ -34,7 +34,7 @@
 		local.entityMap["http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = local.path;
 		local.entityMap["http://www.coldspringframework.org/schema/coldspring-beans-2.0.xsd"] = local.path;
 
-		local.reader = createObject("component", "coldspring.io.XMLFileReader").init(expandPath("/unittests/testBeans/emptyBeans.xml"), local.entityMap);
+		local.reader = createObject("component", "coldspring.core.io.XMLFileReader").init(expandPath("/unittests/testBeans/emptyBeans.xml"), local.entityMap);
 
 		local.document = local.reader.parseToDocument();
 
@@ -50,11 +50,11 @@
 </cffunction>
 
 <cffunction name="invalidXMLReaderTest" hint="test erronous XML document" access="public" returntype="void" output="false"
-	mxunit:expectedException="coldspring.io.exception.InvalidXMLException">
+	mxunit:expectedException="coldspring.core.io.exception.InvalidXMLException">
 	<cfscript>
 		var local = {};
 
-		local.reader = createObject("component", "coldspring.io.XMLFileReader").init(expandPath("/unittests/testBeans/errorXML/brokenBeans.xml"), instance.javaloader);
+		local.reader = createObject("component", "coldspring.core.io.XMLFileReader").init(expandPath("/unittests/testBeans/errorXML/brokenBeans.xml"), instance.javaloader);
 
 		local.document = local.reader.parseToDocument();
     </cfscript>

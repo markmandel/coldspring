@@ -5,7 +5,7 @@
 <cffunction name="setup" hint="unit test setup" access="public" returntype="void" output="false">
 	<cfscript>
 		instance.handler = createObject("component", "unittests.util.com.Handler").init();
-		instance.proxyFactory = createObject("component", "coldspring.util.DynamicProxyFactory").init();
+		instance.proxyFactory = createObject("component", "coldspring.core.proxy.DynamicProxyFactory").init();
     </cfscript>
 </cffunction>
 

@@ -20,7 +20,7 @@
 		FTP Task: net-common-2.0.jar
 		MXUnit Task: mxunit-ant.jar
 	-->
-	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" /> 
+	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" />
 	
 	<!-- GENERAL PROPERTIES -->
 	<property name="src" location="./coldspring" />

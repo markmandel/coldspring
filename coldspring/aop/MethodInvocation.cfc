@@ -17,7 +17,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="MethodInvocation" output="false">
-	<cfargument name="method" hint="The method being called" type="coldspring.reflect.Method" required="Yes">
+	<cfargument name="method" hint="The method being called" type="coldspring.core.reflect.Method" required="Yes">
 	<cfargument name="target" hint="the original object" type="any" required="Yes">
 	<cfargument name="proxy" hint="the AOP proxy for the target" type="any" required="Yes">
 	<cfargument name="args" hint="the arguments to go through to the function" type="struct" required="Yes">
@@ -31,7 +31,7 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="getMethod" access="public" returntype="coldspring.reflect.Method" output="false">
+<cffunction name="getMethod" access="public" returntype="coldspring.core.reflect.Method" output="false">
 	<cfreturn instance.method />
 </cffunction>
 
@@ -55,7 +55,7 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="setMethod" access="private" returntype="void" output="false">
-	<cfargument name="method" type="coldspring.reflect.Method" required="true">
+	<cfargument name="method" type="coldspring.core.reflect.Method" required="true">
 	<cfset instance.method = arguments.method />
 </cffunction>
 

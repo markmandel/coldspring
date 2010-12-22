@@ -10,7 +10,7 @@
 
 
 <cffunction name="afterThrowing" hint="Callback after a method throws an exception." access="public" returntype="void" output="false">
-	<cfargument name="method" type="coldspring.reflect.Method" required="yes" />
+	<cfargument name="method" type="coldspring.core.reflect.Method" required="yes" />
 	<cfargument name="args" type="struct" required="yes" />
 	<cfargument name="target" type="any" required="yes" />
 	<cfargument name="exception" type="struct" required="yes" />

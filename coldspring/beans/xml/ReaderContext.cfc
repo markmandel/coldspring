@@ -17,7 +17,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ReaderContext" output="false">
 	<cfargument name="document" hint="the configuration XML org.w3c.dom.Document for this context's XML config file" type="any" required="Yes">
-	<cfargument name="xmlFileReader" hint="The xml file reader for the current xml document" type="coldspring.io.XMLFileReader" required="true">
+	<cfargument name="xmlFileReader" hint="The xml file reader for the current xml document" type="coldspring.core.io.XMLFileReader" required="true">
 	<cfargument name="xmlParser" hint="The XML Parser used by ColdSpring" type="XmlParser" required="true">
 	<cfscript>
 		setDocument(arguments.document);
@@ -34,7 +34,7 @@
 </cffunction>
 
 <cffunction name="getXmlFileReader" hint="The xml file reader for the current xml document"
-	access="public" returntype="coldspring.io.XMLFileReader" output="false">
+	access="public" returntype="coldspring.core.io.XMLFileReader" output="false">
 	<cfreturn instance.xmlFileReader />
 </cffunction>
 
@@ -52,7 +52,7 @@
 </cffunction>
 
 <cffunction name="setXmlFileReader" access="private" returntype="void" output="false">
-	<cfargument name="xmlFileReader" type="coldspring.io.XMLFileReader" required="true">
+	<cfargument name="xmlFileReader" type="coldspring.core.io.XMLFileReader" required="true">
 	<cfset instance.xmlFileReader = arguments.xmlFileReader />
 </cffunction>
 

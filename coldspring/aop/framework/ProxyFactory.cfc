@@ -19,8 +19,8 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="ProxyFactory" output="false">
 	<cfscript>
 		//don't need to worry about concurency, and don't want to pass by value
-		setDynamicProxyFactory(getComponentMetadata("coldspring.util.DynamicProxyFactory").singleton.instance);
-		setMethodFactory(getComponentMetadata("coldspring.reflect.MethodFactory").singleton.instance);
+		setDynamicProxyFactory(getComponentMetadata("coldspring.core.proxy.DynamicProxyFactory").singleton.instance);
+		setMethodFactory(getComponentMetadata("coldspring.core.reflect.MethodFactory").singleton.instance);
 		setHandlerCache(structNew());
 		setAdvisors(createObject("java", "java.util.ArrayList").init());
 
@@ -94,21 +94,21 @@
 	<cfset instance.advisors = arguments.advisors />
 </cffunction>
 
-<cffunction name="getDynamicProxyFactory" access="private" returntype="coldspring.util.DynamicProxyFactory" output="false">
+<cffunction name="getDynamicProxyFactory" access="private" returntype="coldspring.core.proxy.DynamicProxyFactory" output="false">
 	<cfreturn instance.dynamicProxyFactory />
 </cffunction>
 
 <cffunction name="setDynamicProxyFactory" access="private" returntype="void" output="false">
-	<cfargument name="dynamicProxyFactory" type="coldspring.util.DynamicProxyFactory" required="true">
+	<cfargument name="dynamicProxyFactory" type="coldspring.core.proxy.DynamicProxyFactory" required="true">
 	<cfset instance.dynamicProxyFactory = arguments.dynamicProxyFactory />
 </cffunction>
 
-<cffunction name="getMethodFactory" access="private" returntype="coldspring.reflect.MethodFactory" output="false">
+<cffunction name="getMethodFactory" access="private" returntype="coldspring.core.reflect.MethodFactory" output="false">
 	<cfreturn instance.methodFactory />
 </cffunction>
 
 <cffunction name="setMethodFactory" access="private" returntype="void" output="false">
-	<cfargument name="methodFactory" type="coldspring.reflect.MethodFactory" required="true">
+	<cfargument name="methodFactory" type="coldspring.core.reflect.MethodFactory" required="true">
 	<cfset instance.methodFactory = arguments.methodFactory />
 </cffunction>
 

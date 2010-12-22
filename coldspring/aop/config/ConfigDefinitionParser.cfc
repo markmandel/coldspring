@@ -172,6 +172,8 @@
 		templateMethodInvokeBeanDef.setAutowire("no");
 		templateMethodInvokeBeanDef.setAutowireCandidate(false);
 
+		println("Aspect Found: #arguments.element.getAttribute(meta.const.REF_ATTRIBUTE)#");
+
 		for(;counter lt childNodes.getLength(); counter++)
 		{
 			child = childNodes.item(counter);
@@ -312,6 +314,13 @@
 			arguments.advisorBeanDef.addConstructorArg(constructorArg);
 		}
     </cfscript>
+</cffunction>
+
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
 </cffunction>
 
 </cfcomponent>

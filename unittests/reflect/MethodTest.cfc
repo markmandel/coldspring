@@ -23,7 +23,7 @@
 		local.meta = getMetadata(local.hello);
 		local.func = getMetadata(local.hello.sayHello);
 
-		local.method = createObject("component", "coldspring.reflect.Method").init(local.func, local.meta);
+		local.method = createObject("component", "coldspring.core.reflect.Method").init(local.func, local.meta);
 
 		AssertEquals("sayHello", local.method.getMethodName());
 
@@ -42,7 +42,7 @@
 	<cfscript>
 		var local = {};
 
-		local.methodFactory = createObject("component", "coldspring.reflect.MethodFactory").init();
+		local.methodFactory = createObject("component", "coldspring.core.reflect.MethodFactory").init();
 
 		local.method = local.methodFactory.createMethod("unittests.reflect.com.Hello", "sayHello");
 
