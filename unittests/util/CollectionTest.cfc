@@ -2,6 +2,31 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
+<cffunction name="setup" hint="setup function" access="public" returntype="void" output="false">
+	<cfscript>
+		var counter = 1;
+		var len = 0;
+		var counter2 = 1;
+		var string = 0;
+
+		strings = [];
+
+		//build 100 of these
+		for(; counter <= 100; counter++)
+		{
+			len = randRange (2,100);
+			string = [];
+			counter2 = 1;
+
+			for(; counter2 <= len; counter2++)
+			{
+				arrayAppend(string, repeatString ("d",randRange (1,20)));
+			}
+
+			ArrayAppend(strings, string);
+		}
+    </cfscript>
+</cffunction>
 
 <cffunction name="testBasicCollection" hint="test basic methods" access="public" returntype="any" output="false">
 	<cfscript>
@@ -38,6 +63,43 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testStringLengthSort" hint="test the a series of strings, we want sorted by their length" access="public" returntype="void" output="false"
+			mxunit:dataprovider="strings">
+	<cfargument name="string" hint="an array of strings" type="array" required="Yes">
+	<cfscript>
+		var local = {};
+
+		//gate the comparator
+		assertEquals(1, stringLengthComparator ("hello","bye"));
+		assertEquals(-1, stringLengthComparator ("hello","goodbye"));
+		assertEquals(0, stringLengthComparator ("bye","bye"));
+
+		local.sorted = createObject("component","coldspring.util.Collection").init(ArrayNew(1));
+		local.sorted.setCollection(arguments.string);
+
+		local.comparator = createObject("component","coldspring.util.Closure").init(stringLengthComparator);
+
+		local.result = local.sorted.sort(local.comparator ).getCollection();
+
+		assertEquals(ArrayLen(arguments.string), ArrayLen(local.result));
+
+		local.previous = "";
+    </cfscript>
+
+	<cfloop array="#local.result#" index="local.check">
+		<cfscript>
+			if(Len(local.check) < Len(local.previous))
+			{
+				debug(local.result);
+				debug(arguments.string);
+				fail("'#local.check#' is greater than the previous '#local.previous#'");
+			}
+
+			local.previous = local.check;
+        </cfscript>
+    </cfloop>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -51,6 +113,26 @@
 		}
 
 		return false;
+    </cfscript>
+</cffunction>
+
+<cffunction name="stringLengthComparator" hint="" access="private" returntype="numeric" output="false">
+	<cfargument name="str1" hint="" type="string" required="Yes">
+	<cfargument name="str2" hint="" type="string" required="Yes">
+	<cfscript>
+		var len1 = Len(arguments.str1);
+		var len2 = Len(arguments.str2);
+
+		if(len1 > len2)
+		{
+			return 1;
+		}
+		else if(len1 < len2)
+		{
+			return -1;
+		}
+
+		return 0;
     </cfscript>
 </cffunction>
 

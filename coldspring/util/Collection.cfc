@@ -7,7 +7,6 @@
 	<cfargument name="collection" hint="an existing collection - array or struct, defaults to a CF array" type="any" required="no" default="#ArrayNew(1)#">
 	<cfscript>
 		setCollection(arguments.collection);
-		setList(isArray(arguments.collection));
 
 		return this;
 	</cfscript>
@@ -20,7 +19,7 @@
 		var key = 0;
 
 		//give me a copy of exactly the same class we are using already
-		var newCollection = createObject("component", "Collection").init(getCollection().getClass().newInstance());
+		var newCollection = createCollectionOfSameType();
     </cfscript>
 
 	<cfif isList()>
@@ -90,13 +89,115 @@
     </cfscript>
 </cffunction>
 
+c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works on Array Collections, structs will just return themselves. Uses QuickSort for sorting." access="public" returntype="Collection" output="false">
+	<cfargument name="comparator" hint="Closure for comparing items. Will take 2 arguments, should should return less than 0 if argument1 is less than argument 2,
+			return greater than 0 if the argument1 is greater than argument2 and 0 if they are the same."
+			type="Closure" required="Yes">
+	<cfscript>
+		var sortedCollection = 0;
+		var newCollection = 0;
+		if(isList())
+		{
+			sortedCollection = quickSort(getCollection(), arguments.comparator);
+			newCollection = createCollectionOfSameType();
+			newCollection.setCollection(sortedCollection);
+
+			return newCollection;
+		}
+		else
+		{
+			//can't sort most structs. Maybe if you want to sort a TreeMap later we'll do that.
+			return this;
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="setCollection" hint="Directly set the collection to an Array/Struct (or any java Map or List)" access="public" returntype="void" output="false">
+	<cfargument name="collection" type="any" required="true">
+	<cfscript>
+		setList(isArray(arguments.collection));
+		instance.collection = arguments.collection;
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="setCollection" access="private" returntype="void" output="false">
-	<cfargument name="collection" type="any" required="true">
-	<cfset instance.collection = arguments.collection />
+<cffunction name="createCollectionOfSameType" hint="create a new collection, of the same type as this one" access="private" returntype="Collection" output="false">
+	<cfscript>
+		return createObject("component", "Collection").init(getCollection().getClass().newInstance());
+    </cfscript>
+</cffunction>
+
+<!---
+/**
+ * Implementation of Hoare's Quicksort algorithm for sorting arrays of arbitrary items.
+ * Slight mods by RCamden (added var for comparison)
+ * Slight mods by MMandel (Used .addAll() to reprocess arrays, and used else/if which is faster)
+ *
+ * @param arrayToCompare 	 The array to be sorted.
+ * @param sorter 	 The comparison UDF.
+ * @return Returns a sorted array.
+ * @author James Sleeman (james@innovativemedia.co.nz)
+ * @version 1, March 12, 2002
+ */
+ --->
+<cffunction name="quickSort" hint="Implementation of quicksort, with some minor modofications for speed improvement." access="private" returntype="array" output="false">
+	<cfargument name="arrayToCompare" hint="The array to compare" type="array" required="Yes">
+	<cfargument name="comparator" hint="Closure for comparing items. Will take 2 arguments, should should return less than 0 if argument1 is less than argument 2,
+			return greater than 0 if the argument1 is greater than argument2 and 0 if they are the same."
+			type="Closure" required="Yes">
+	<cfscript>
+		var lesserArray  = ArrayNew(1);
+		var greaterArray = ArrayNew(1);
+		var pivotArray   = ArrayNew(1);
+		var examine      = 2;
+		var comparison = 0;
+
+		pivotArray[1]    = arrayToCompare[1];
+
+		if (arrayLen(arrayToCompare) LT 2)
+		{
+			return arrayToCompare;
+		}
+
+		while(examine LTE arrayLen(arrayToCompare))
+		{
+			comparison = arguments.comparator.call(arrayToCompare[examine], pivotArray[1]);
+
+			if(comparison < 0)
+			{
+				arrayAppend(lesserArray, arrayToCompare[examine]);
+			}
+			else if(comparison > 0)
+			{
+				arrayAppend(greaterArray, arrayToCompare[examine]);
+			}
+			else
+			{
+				arrayAppend(pivotArray, arrayToCompare[examine]);
+			}
+			examine = examine + 1;
+		}
+
+		if (arrayLen(lesserArray)) {
+			lesserArray  = quickSort(lesserArray, arguments.comparator);
+		} else {
+			lesserArray = arrayNew(1);
+		}
+
+		if (arrayLen(greaterArray)) {
+			greaterArray = quickSort(greaterArray, arguments.comparator);
+		} else {
+			greaterArray = arrayNew(1);
+		}
+
+		lesserArray.addAll(pivotArray);
+		lesserArray.addAll(greaterArray);
+
+		return lesserArray;
+	</cfscript>
 </cffunction>
 
 <cffunction name="isList" access="private" returntype="boolean" output="false">
