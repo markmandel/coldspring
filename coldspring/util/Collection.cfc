@@ -99,10 +99,7 @@ c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works
 		if(isList())
 		{
 			sortedCollection = quickSort(getCollection(), arguments.comparator);
-			newCollection = createCollectionOfSameType();
-			newCollection.setCollection(sortedCollection);
-
-			return newCollection;
+			return createObject("component", "Collection").init(sortedCollection);
 		}
 		else
 		{
@@ -149,9 +146,10 @@ c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works
 			return greater than 0 if the argument1 is greater than argument2 and 0 if they are the same."
 			type="Closure" required="Yes">
 	<cfscript>
-		var lesserArray  = ArrayNew(1);
-		var greaterArray = ArrayNew(1);
-		var pivotArray   = ArrayNew(1);
+		//changed, so that the List type is maintained
+		var lesserArray  = arguments.arrayToCompare.getClass().newInstance();
+		var greaterArray = duplicate (lesserArray);
+		var pivotArray   = duplicate (lesserArray);
 		var examine      = 2;
 		var comparison = 0;
 
@@ -184,13 +182,13 @@ c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works
 		if (arrayLen(lesserArray)) {
 			lesserArray  = quickSort(lesserArray, arguments.comparator);
 		} else {
-			lesserArray = arrayNew(1);
+			lesserArray = arguments.arrayToCompare.getClass().newInstance();
 		}
 
 		if (arrayLen(greaterArray)) {
 			greaterArray = quickSort(greaterArray, arguments.comparator);
 		} else {
-			greaterArray = arrayNew(1);
+			greaterArray = arguments.arrayToCompare.getClass().newInstance();
 		}
 
 		lesserArray.addAll(pivotArray);
