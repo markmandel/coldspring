@@ -192,8 +192,8 @@
 
 		assertEquals(reverse("hello"), local.value);
 		assertTrue(structIsEmpty(local.before.getArgs()));
-		//not reversed, asit gets fired before the around advice
-		assertEquals("hello", local.after.getReturn());
+		//reversed, asit gets fired after the around advice
+		assertEquals(reverse("hello"), local.after.getReturn());
 
 		local.string = "Gargamel";
 
@@ -201,7 +201,7 @@
 
 		assertEquals(reverse(local.string), local.value);
 		assertEquals(local.string, StructFind(local.before.getArgs(), "1"));
-		assertEquals(local.string, local.after.getReturn());
+		assertEquals(reverse(local.string), local.after.getReturn());
 
 		try
 		{
@@ -219,8 +219,8 @@
 		assertTrue(local.check);
 		assertEquals(local.string, StructFind(local.before.getArgs(), "1"));
 
-		//this should be the same as before, as it never fired.
-		assertEquals("Gargamel", local.after.getReturn());
+		//should be reversed, as it fired first
+		assertEquals(reverse("Gargamel"), local.after.getReturn());
 
 		assertEquals(local.exc.type, local.throws.$getException().type);
 		assertEquals(local.exc.message, local.throws.$getException().message);

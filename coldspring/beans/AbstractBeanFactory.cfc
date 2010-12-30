@@ -146,7 +146,7 @@
 </cffunction>
 
 <cffunction name="getVersion" hint="Retrieves the version of the bean factory you are using" access="public" returntype="string" output="false">
-	<cfreturn "0.5">
+	<cfreturn "0.6">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -217,6 +217,7 @@
 		singleton.createInstance("coldspring.util.Cloneable");
 		singleton.createInstance("coldspring.core.reflect.MethodFactory");
 		singleton.createInstance("coldspring.core.proxy.DynamicProxyFactory");
+		singleton.createInstance("coldspring.core.OrderComparator");
     </cfscript>
 </cffunction>
 

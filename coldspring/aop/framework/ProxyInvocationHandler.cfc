@@ -51,6 +51,7 @@
 		<cfscript>
 			//build method invocation, and pass through the filter chain for AOP
 			local.method = getMethodFactory().createMethod(getTargetClass(), arguments.method);
+
 			local.filterChain = structFind(getMethodAdvice(), arguments.method).iterator();
 
 			local.methodInvocation = createObject("component", "coldspring.aop.MethodInvocation").init(local.method, getTarget(), arguments.proxy, arguments.args, local.filterChain);
@@ -166,7 +167,12 @@
 					interceptor = advice;
 				}
 
-				ArrayAppend(variables.methodAdvice[arguments.func.name], interceptor);
+				/*
+					You have to go backwards down the chain, to ensure that the return values
+					end up in the right order for each advice in the chain.
+					proxy->advice2->advice1->method
+				*/
+				ArrayPrepend(variables.methodAdvice[arguments.func.name], interceptor);
 			}
         </cfscript>
 	</cfloop>

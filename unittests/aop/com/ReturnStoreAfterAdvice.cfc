@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="After advice that stores the returned object" implements="coldspring.aop.AfterReturningAdvice" output="false">
+<cfcomponent hint="After advice that stores the returned object" implements="coldspring.aop.AfterReturningAdvice,coldspring.core.Ordered" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -27,6 +27,8 @@
 	<cfargument name="args" type="struct" required="yes" />
 	<cfargument name="target" type="any" required="yes" />
 	<cfscript>
+		println("Storing: #arguments.returnValue#");
+
 		setReturn(arguments.returnValue);
 		setTarget(arguments.target);
     </cfscript>
@@ -38,6 +40,22 @@
 
 <cffunction name="getTarget" access="public" returntype="any" output="false">
 	<cfreturn instance.target />
+</cffunction>
+
+<cffunction name="getOrder" hint="Returns lowest precedence so it comes last."
+			access="public" returntype="numeric" output="false">
+	<cfscript>
+		var comparator = getComponentMetadata("coldspring.core.OrderComparator").singleton.instance;
+
+		return comparator.getLowestPrecedence();
+    </cfscript>
+</cffunction>
+
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

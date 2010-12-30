@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Interceptor to pass along Menthod Interception to a target object" implements="coldspring.aop.MethodInterceptor" output="false">
+<cfcomponent hint="Interceptor to pass along Method Interception to a target object" implements="coldspring.aop.MethodInterceptor,coldspring.core.Ordered" output="false">
 
 <cfscript>
 	meta = getMetadata(this);
@@ -25,6 +25,8 @@
 		const.AFTER_RETURNING_ADVICE = "afterReturning";
 		const.AROUND_ADVICE = "around";
 		const.THROWS_ADVICE = "throws";
+
+		const.ORDERED_INTERFACE = "coldspring.core.Ordered";
 
 		meta.const = const;
 	}
@@ -89,6 +91,18 @@
 	<cfif structKeyExists(local, "result")>
 		<cfreturn local.result />
 	</cfif>
+</cffunction>
+
+<cffunction name="getOrder" hint="Proxies the Target Order value. If the Advice does not implement coldspring.core.Ordered, then 0 is returned."
+			access="public" returntype="numeric" output="false">
+	<cfscript>
+		if(isInstanceOf(getTarget(), meta.const.ORDERED_INTERFACE))
+		{
+			return getTarget().getOrder();
+		}
+
+		return 0;
+    </cfscript>
 </cffunction>
 
 <cffunction name="getTarget" access="public" returntype="any" output="false">

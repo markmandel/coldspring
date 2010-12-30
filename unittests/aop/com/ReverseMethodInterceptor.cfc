@@ -28,11 +28,20 @@
 
 		if(isSimpleValue(result))
 		{
+			println("reversing: #result#");
+
 			return reverse(result);
 		}
 
 		return result;
     </cfscript>
+</cffunction>
+
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -108,26 +108,18 @@
 
 <cffunction name="initProxyFactory" hint="initialises the proxy factory with all it's required advisors" access="public" returntype="void" output="false">
 	<cfscript>
-		var advisorNames = 0;
-		var advisorName = 0;
-		var advisor = 0;
+		var advisors = findCandidateAdvisors();
+		var orderedComparator = getComponentMetadata("coldspring.core.OrderComparator").singleton.instance;
 
-		setAdvisors(createObject("java", "java.util.ArrayList").init());
 		setCreateProxyCache(StructNew());
 
 		setProxyFactory(createObject("component", "coldspring.aop.framework.ProxyFactory").init());
 
-		advisorNames = findCandidateAdvisors();
+    	//pass the advisorNames into a Collection for sorting
+		advisors = orderedComparator.sort(advisors).getCollection();
+		getProxyFactory().addAdvisors(advisors);
+		setAdvisors(advisors);
     </cfscript>
-	<cfloop array="#advisorNames#" index="advisorName">
-		<cfscript>
-			advisor = getBeanFactory().getBean(advisorName);
-
-			getProxyFactory().addAdvisor(advisor);
-
-			arrayAppend(getAdvisors(), advisor);
-        </cfscript>
-	</cfloop>
 </cffunction>
 
 <cffunction name="checkIsAOPCandidate" hint="Check to see if this bean is an AOP candidate, against the given set of Advisors" access="public" returntype="boolean" output="false">

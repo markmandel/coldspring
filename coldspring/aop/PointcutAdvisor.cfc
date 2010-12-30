@@ -11,7 +11,18 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Base class for Pointcuts that are driven by an advisor" implements="Advisor" output="false">
+<cfcomponent hint="Base class for Pointcuts that are driven by an advisor" implements="Advisor,coldspring.core.Ordered" output="false">
+
+<cfscript>
+	meta = getMetadata(this);
+
+	if(!structKeyExists (meta, "const"))
+	{
+		const = {};
+		const.ORDERED_INTERFACE = "coldspring.core.Ordered";
+		meta.const = const;
+	}
+</cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -30,6 +41,18 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="getOrder" hint="Proxies the Advice Order value. If the Advice does not implement coldspring.core.Ordered, then 0 is returned."
+			access="public" returntype="numeric" output="false">
+	<cfscript>
+		if(isInstanceOf(getAdvice(), meta.const.ORDERED_INTERFACE))
+		{
+			return getAdvice().getOrder();
+		}
+
+		return 0;
+    </cfscript>
+</cffunction>
+
 <cffunction name="getAdvice" access="public" returntype="Advice" output="false">
 	<cfreturn instance.advice />
 </cffunction>
@@ -46,7 +69,6 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
 
 <cffunction name="setPointcut" access="private" returntype="void" output="false">
 	<cfargument name="pointcut" type="pointcut" required="true">

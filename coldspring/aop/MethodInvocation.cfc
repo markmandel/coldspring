@@ -21,7 +21,7 @@
 	<cfargument name="target" hint="the original object" type="any" required="Yes">
 	<cfargument name="proxy" hint="the AOP proxy for the target" type="any" required="Yes">
 	<cfargument name="args" hint="the arguments to go through to the function" type="struct" required="Yes">
-	<cfargument name="filterChain" hint="an iterator set of MethodInterceptors, that constructs the AOP Advice to be called" type="any" required="Yes">
+	<cfargument name="filterChain" hint="an iterator of MethodInterceptors, that constructs the AOP Advice to be called" type="any" required="Yes" colddoc:generic="MethodInterceptor">
 	<cfscript>
 		super.init(arguments.target, arguments.proxy, arguments.args);
 		setMethod(arguments.method);

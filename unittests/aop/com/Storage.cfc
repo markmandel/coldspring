@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="stores the arguments that it used" output="false">
+<cfcomponent hint="stores the arguments that it used" output="false" implements="coldspring.core.Ordered">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -52,6 +52,15 @@
 
 <cffunction name="$getException" access="public" returntype="any" output="false">
 	<cfreturn instance.Exception />
+</cffunction>
+
+<cffunction name="getOrder" hint="Returns lowest precedence so it comes last."
+			access="public" returntype="numeric" output="false">
+	<cfscript>
+		var comparator = getComponentMetadata("coldspring.core.OrderComparator").singleton.instance;
+
+		return comparator.getLowestPrecedence();
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

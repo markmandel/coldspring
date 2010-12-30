@@ -26,7 +26,7 @@
 <cffunction name="configure" hint="Configure method for static configuration" access="public" returntype="void" output="false">
 	<cfscript>
 		var Integer = createObject("java", "java.lang.Integer");
-		var comparator = createObject("component", "coldspring.util.Closure").init(compare);
+		var comparator = createObject("component", "coldspring.util.Closure").init(compareOrdered);
 
 		comparator.bind("getOrder", getOrder);
 
@@ -87,7 +87,7 @@
 </cffunction>
 
 <!--- Closure Functions --->
-<cffunction name="compare" hint="Closure method for comparing Ordered objects" access="private" returntype="numeric" output="false">
+<cffunction name="compareOrdered" hint="Closure method for comparing Ordered objects" access="private" returntype="numeric" output="false">
 	<cfargument name="object1" hint="object one" type="any" required="Yes">
 	<cfargument name="object2" hint="object two" type="any" required="Yes">
 	<cfscript>

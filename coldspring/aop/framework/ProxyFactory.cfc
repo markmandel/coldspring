@@ -46,6 +46,13 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="addAdvisors" hint="adds an array of advisors to the end of the fiter chain.<br/>In ColdSpring, that means a PointcutAdvisors, but leaves us open to other types of advisors" access="public" returntype="void" output="false">
+	<cfargument name="advisors" hint="the array of advisors to add to this proxy factory to be added to all beans being proxied" type="array" required="Yes" colddoc:generic="coldspring.aop.Advisor">
+	<cfscript>
+		getAdvisors().addAll(arguments.advisors);
+    </cfscript>
+</cffunction>
+
 <cffunction name="addAdvice" hint="Add the given AOP Alliance advice to the tail of the advice (interceptor) chain.<br/>
 		This will be wrapped in a DefaultPointcutAdvisor with a pointcut that always applies, and returned from the getAdvisors() method in this wrapped form.<br/>
 		Note that the given advice will apply to all invocations on the proxy!
