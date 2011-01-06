@@ -15,17 +15,28 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="testMethod" hint="test an individual method object" access="public" returntype="void" output="false">
+<cffunction name="setup" hint="setup" access="public" returntype="void" output="false">
+	<cfscript>
+		reflectionService = createObject("component", "coldspring.core.reflect.ReflectionService").init();
+		reflectionService.clearCache();
+    </cfscript>
+</cffunction>
+
+<cffunction name="testDeclaredMethod" hint="test an individual method object" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 		local.hello = createObject("component", "unittests.reflect.com.Hello").init();
 
-		local.meta = getMetadata(local.hello);
-		local.func = getMetadata(local.hello.sayHello);
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
 
-		local.method = createObject("component", "coldspring.core.reflect.Method").init(local.func, local.meta);
+		assertTrue(local.class.hasDeclaredMethod("sayHello"));
+		assertTrue(local.class.hasDeclaredMethod("privateMethod"));
+		assertFalse(local.class.hasDeclaredMethod("sayHelloXXX"));
+		assertFalse(local.class.hasDeclaredMethod("sayGoodbye"));
 
-		AssertEquals("sayHello", local.method.getMethodName());
+		local.method = local.class.getDeclaredMethod("sayHello");
+
+		AssertEquals("sayHello", local.method.getName());
 
 		local.value = local.method.invokeMethod(local.hello);
 
@@ -38,15 +49,23 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testMethodFactorycreateMethod" hint="testing of the method factory creating a method" access="public" returntype="void" output="false">
+<cffunction name="testMethod" hint="testing of some more details of the method" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
-		local.methodFactory = createObject("component", "coldspring.core.reflect.MethodFactory").init();
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
 
-		local.method = local.methodFactory.createMethod("unittests.reflect.com.Hello", "sayHello");
+		debug(local.class.getName());
+    	debug(structKeyArray(local.class.getMethods()));
 
-		AssertEquals("sayHello", local.method.getMethodName());
+		assertTrue(local.class.hasMethod("sayHello"));
+		assertTrue(local.class.hasMethod("sayGoodbye"));
+		assertFalse(local.class.hasMethod("sayHelloXXX"));
+
+		local.method = local.class.getMethod("sayHello");
+
+		AssertEquals("sayHello", local.method.getName());
+		assertTrue(local.method.isConcrete());
 
 		local.hello = createObject("component", "unittests.reflect.com.Hello").init();
 
@@ -59,9 +78,93 @@
 
 		AssertEquals("123", local.value);
 
-		local.method2 = local.methodFactory.createMethod("unittests.reflect.com.Hello", "sayHello");
+		local.method2 = local.class.getMethod("sayHello");
 
 		assertSame(local.method, local.method2);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testPrivateMethods" hint="test private methods" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.core.reflect.exception.MethodNotFoundException">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
+
+		assertTrue(local.class.hasDeclaredMethod("sayHello"));
+		assertTrue(local.class.hasDeclaredMethod("privateMethod"));
+
+		assertTrue(local.class.hasMethod("sayHello"));
+		assertFalse(local.class.hasMethod("privateMethod"));
+
+		local.method = local.class.getDeclaredMethod("privateMethod");
+
+		assertEquals("privateMethod", local.method.getName());
+		assertEquals("private", local.method.getAccess());
+		assertTrue(local.method.isConcrete());
+
+		assertEquals("void", local.method.getReturnType());
+
+		local.params = local.method.getParameters();
+
+		debug(local.params);
+
+		assertEquals(1, structCount(local.params));
+
+		assertEquals("param1", local.params["param1"].getName());
+		assertEquals("array", local.method.getParameter("param1").getType());
+		assertTrue(local.params["param1"].isRequired());
+		assertFalse(local.params["param1"].hasDefault());
+
+		assertTrue(local.method.hasParameter("param1"));
+
+		local.class.getMethod("privateMethod");
+	</cfscript>
+</cffunction>
+
+<cffunction name="testMethodNotFound" hint="test when a method does not exist" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.core.reflect.exception.MethodNotFoundException">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
+		local.method = local.class.getMethod("sayHelloXXX");
+    </cfscript>
+</cffunction>
+
+<cffunction name="testDeclaredMethodNotFound" hint="test when a method does not exist" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.core.reflect.exception.MethodNotFoundException">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
+		local.method = local.class.getDeclaredMethod("sayHelloXXX");
+    </cfscript>
+</cffunction>
+
+<cffunction name="testOnMissingMethod" hint="test whether you can get a method for on missing method" access="public" returntype="any" output="false">
+	<cfscript>
+		var local = {};
+
+		local.methodName = "sayHelloXXXX";
+
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
+
+		assertFalse(local.class.hasMethod(local.methodName));
+		assertFalse(local.class.hasOnMissingMethod());
+
+		local.class = reflectionService.loadClass("unittests.reflect.com.HelloOnMM");
+
+
+		assertTrue(local.class.hasOnMissingMethod());
+
+		assertTrue(local.class.hasMethod(local.methodName));
+
+		local.method = local.class.getMethod(local.methodName);
+
+		assertFalse(local.method.isConcrete());
+
+		assertEquals(local.methodName, local.method.getName());
     </cfscript>
 </cffunction>
 

@@ -37,7 +37,7 @@
 				item = structFind(getCollection(), key);
 				if(arguments.closure.call(item))
 				{
-					add(key, item);
+					newCollection.add(key, item);
 				}
             </cfscript>
 		</cfloop>
@@ -46,7 +46,8 @@
 	<cfreturn newCollection />
 </cffunction>
 
-<cffunction name="add" hint="adds the item to the collection. if an array, expects 1 argument, if a struct, expects a key, then value" access="public" returntype="void" output="false">
+<cffunction name="add" hint="adds the item to the collection. if an array, expects 1 argument if a struct, expects a key, then value"
+	access="public" returntype="void" output="false">
 	<cfscript>
 		if(isList())
 		{
@@ -56,6 +57,21 @@
 		{
 			//may be a java collection, so use put
 			getCollection().put(arguments[1], arguments[2]);
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="addAll" hint="adds all the items that are passed in. expects the same collection type as what is stored, i.e. a struct/array"
+			access="public" returntype="void" output="false">
+	<cfargument name="collection" hint="the struct/array to add" type="any" required="Yes">
+	<cfscript>
+		if(isList())
+		{
+			getCollection().addAll(arguments.collection);
+		}
+		else
+		{
+			StructAppend(getCollection(), arguments.collection, true);
 		}
     </cfscript>
 </cffunction>

@@ -28,7 +28,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testBasicCollection" hint="test basic methods" access="public" returntype="any" output="false">
+<cffunction name="testBasicArrayCollection" hint="test basic methods" access="public" returntype="any" output="false">
 	<cfscript>
 		var local = {};
 
@@ -44,10 +44,50 @@
 		assertEquals(11, local.collection.length());
 
 		assertEquals(11, local.collection.get(11));
+
+		local.array2 = [1,2,3,4];
+
+		local.collection.addAll(local.array2);
+
+		assertEquals(15, local.collection.length());
+
+		assertEquals(4, local.collection.get(15));
     </cfscript>
 </cffunction>
 
-<cffunction name="testSelect" hint="tests the select function of the collection" access="public" returntype="void" output="false">
+<cffunction name="testBasicStructCollection" hint="test basic struct collection" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.struct = {
+			foo = "bar"
+			,bar = "foo"
+		};
+
+		local.collection = createObject("component", "coldspring.util.Collection").init(local.struct);
+
+		assertEquals(2, local.collection.length());
+		assertEquals("bar", local.collection.get('foo'));
+
+		local.collection.add("stuff", "things");
+
+		assertEquals(3, local.collection.length());
+		assertEquals("things", local.collection.get('stuff'));
+
+		local.struct2 = {
+		  yes = "no"
+		  ,no="yes"
+		};
+
+		local.collection.addAll(local.struct2);
+
+		assertEquals(5, local.collection.length());
+		assertEquals("things", local.collection.get('stuff'));
+		assertEquals("no", local.collection.get('yes'));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testSelectArray" hint="tests the select function of the collection" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
@@ -62,6 +102,23 @@
 		assertEquals(local.expected, local.result.getCollection());
     </cfscript>
 </cffunction>
+
+<cffunction name="testSelectStruct" hint="tests the select function of the collection" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.struct = {foo = 1, bar=2, things=3, stuff=4};
+
+		local.closure = createObject("component", "coldspring.util.Closure").init(isEven);
+		local.collection = createObject("component", "coldspring.util.Collection").init(local.struct);
+
+		local.expected = {bar=2, stuff=4};
+		local.result = local.collection.select(local.closure);
+
+		assertEquals(local.expected, local.result.getCollection());
+    </cfscript>
+</cffunction>
+
 
 <cffunction name="testStringLengthSort" hint="test the a series of strings, we want sorted by their length" access="public" returntype="void" output="false"
 			mxunit:dataprovider="strings">

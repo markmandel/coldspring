@@ -40,7 +40,6 @@
 
 		return cache[key];
     </cfscript>
-
 </cffunction>
 
 <cffunction name="configure" hint="Configure method for static configuration" access="public" returntype="void" output="false">

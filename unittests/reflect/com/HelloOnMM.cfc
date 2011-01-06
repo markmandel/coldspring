@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" extends="GoodBye" output="false">
+<cfcomponent hint="say hello" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -26,12 +26,14 @@
 	<cfreturn arguments.str />
 </cffunction>
 
+<cffunction	name="onMissingMethod" access="public" returntype="any" output="false" hint="invoked when a method could not be found">
+	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
+	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
+	<cfreturn "Hello" />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="privateMethod" hint="I am private" access="private" returntype="void" output="false">
-	<cfargument name="param1" hint="" type="array" required="Yes">
-</cffunction>
 
 </cfcomponent>

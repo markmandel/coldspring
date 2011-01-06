@@ -100,12 +100,12 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getMethodAdvice" access="private" returntype="struct" output="false" colddoc:generic="string,MethodInterceptor">
+<cffunction name="getMethodAdvice" access="private" returntype="struct" output="false" colddoc:generic="string,coldspring.aop.MethodInterceptor">
 	<cfreturn instance.methodAdvice />
 </cffunction>
 
 <cffunction name="setMethodAdvice" access="private" returntype="void" output="false">
-	<cfargument name="methodAdvice" type="struct" required="true" colddoc:generic="string,MethodInterceptor">
+	<cfargument name="methodAdvice" type="struct" required="true" colddoc:generic="string,coldspring.aop.MethodInterceptor">
 	<cfset instance.methodAdvice = arguments.methodAdvice />
 </cffunction>
 
