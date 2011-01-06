@@ -20,7 +20,6 @@
 	<cfscript>
 		//don't need to worry about concurency, and don't want to pass by value
 		setDynamicProxyFactory(getComponentMetadata("coldspring.core.proxy.DynamicProxyFactory").singleton.instance);
-		setMethodFactory(getComponentMetadata("coldspring.core.reflect.MethodFactory").singleton.instance);
 		setHandlerCache(structNew());
 		setAdvisors(createObject("java", "java.util.ArrayList").init());
 
@@ -84,7 +83,7 @@
 		if(!structKeyExists(cache, className))
 		{
 			//prep a version in the cache.
-			handler = createObject("component", "ProxyInvocationHandler").init(className, getAdvisors(), getMethodFactory());
+			handler = createObject("component", "ProxyInvocationHandler").init(className, getAdvisors());
 			cache[className] = handler;
 		}
 
@@ -108,15 +107,6 @@
 <cffunction name="setDynamicProxyFactory" access="private" returntype="void" output="false">
 	<cfargument name="dynamicProxyFactory" type="coldspring.core.proxy.DynamicProxyFactory" required="true">
 	<cfset instance.dynamicProxyFactory = arguments.dynamicProxyFactory />
-</cffunction>
-
-<cffunction name="getMethodFactory" access="private" returntype="coldspring.core.reflect.MethodFactory" output="false">
-	<cfreturn instance.methodFactory />
-</cffunction>
-
-<cffunction name="setMethodFactory" access="private" returntype="void" output="false">
-	<cfargument name="methodFactory" type="coldspring.core.reflect.MethodFactory" required="true">
-	<cfset instance.methodFactory = arguments.methodFactory />
 </cffunction>
 
 <cffunction name="getHandlerCache" access="private" returntype="struct" output="false">

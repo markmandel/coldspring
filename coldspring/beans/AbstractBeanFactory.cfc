@@ -208,14 +208,21 @@
 <cffunction name="initSingletons" hint="create the singletons that are used by this framework" access="private" returntype="void" output="false">
 	<cfscript>
 		var singleton = createObject("component", "coldspring.util.Singleton").init();
-
+		var reflectionService = singleton.createInstance("coldspring.core.reflect.ReflectionService");
 		var args = {version=getVersion()};
+
+		/*
+			This needs to cleared on each init, as the class
+			cache is stored in the meta data scope with this
+			singleton, and class data may have changed.
+		*/
+		reflectionService.clearCache();
+
 		singleton.createInstance("coldspring.core.java.JavaLoader", args);
 		singleton.createInstance("coldspring.util.Singleton");
 		singleton.createInstance("coldspring.util.MethodInjector");
 	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
 		singleton.createInstance("coldspring.util.Cloneable");
-		singleton.createInstance("coldspring.core.reflect.MethodFactory");
 		singleton.createInstance("coldspring.core.proxy.DynamicProxyFactory");
 		singleton.createInstance("coldspring.core.OrderComparator");
     </cfscript>

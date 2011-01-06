@@ -19,14 +19,12 @@
 	<cfargument name="className" hint="the class name of the object that is being proxied" type="string" required="Yes">
 	<cfargument name="advisors" hint="array of ordered advisors to use to match against the target's methods" type="array" required="Yes"
 				colddoc:generic="coldspring.aop.Advisor">
-	<cfargument name="methodFactory" hint="the method factory" type="coldspring.core.reflect.MethodFactory" required="Yes">
 	<cfscript>
 		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
 		var pointCutClosure = createObject("component", "coldspring.util.Closure").init(applyPointcutAdvice);
 		var meta = getComponentMetadata(arguments.className);
 
 		setMethodAdvice(StructNew());
-		setMethodFactory(arguments.methodFactory);
 
 		pointCutClosure.bind("advisors", arguments.advisors);
 		pointCutClosure.bind("methodAdvice", getMethodAdvice());
@@ -50,7 +48,7 @@
 	<cfif structKeyExists(getMethodAdvice(), arguments.method)>
 		<cfscript>
 			//build method invocation, and pass through the filter chain for AOP
-			local.method = getMethodFactory().createMethod(getTargetClass(), arguments.method);
+			local.method = getTargetClass().getMethod(arguments.method);
 
 			local.filterChain = structFind(getMethodAdvice(), arguments.method).iterator();
 
@@ -73,8 +71,11 @@
 
 <cffunction name="setTarget" hint="Set the target of the proxy" access="public" returntype="void" output="false">
 	<cfargument name="target" type="any" required="true">
-	<cfset instance.target = arguments.target />
-	<cfset setTargetClass(getMetadata(arguments.target).name)>
+	<cfscript>
+		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+		instance.target = arguments.target;
+		setTargetClass(reflectionService.loadClass(getMetadata(arguments.target).name));
+    </cfscript>
 </cffunction>
 
 <cffunction name="clone" hint="create a clone of this object" access="public" returntype="ProxyInvocationHandler" output="false">
@@ -109,21 +110,12 @@
 	<cfset instance.methodAdvice = arguments.methodAdvice />
 </cffunction>
 
-<cffunction name="getMethodFactory" access="private" returntype="coldspring.core.reflect.MethodFactory" output="false">
-	<cfreturn instance.methodFactory />
-</cffunction>
-
-<cffunction name="setMethodFactory" access="private" returntype="void" output="false">
-	<cfargument name="methodFactory" type="coldspring.core.reflect.MethodFactory" required="true">
-	<cfset instance.methodFactory = arguments.methodFactory />
-</cffunction>
-
-<cffunction name="getTargetClass" access="private" returntype="string" output="false">
+<cffunction name="getTargetClass" access="private" returntype="coldspring.core.reflect.Class" output="false">
 	<cfreturn instance.targetClass />
 </cffunction>
 
 <cffunction name="setTargetClass" access="private" returntype="void" output="false">
-	<cfargument name="targetClass" type="string" required="true">
+	<cfargument name="targetClass" type="coldspring.core.reflect.Class" required="true">
 	<cfset instance.targetClass = arguments.targetClass />
 </cffunction>
 
