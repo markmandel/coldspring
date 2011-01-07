@@ -1,5 +1,5 @@
 ﻿<!---
-   Copyright 2010 Mark Mandel
+   Copyright 2011 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -11,27 +11,22 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" extends="GoodBye" output="false">
+<cfcomponent output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="Hello" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="GoodBye" output="false">
 	<cfscript>
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
-	<cfargument name="str" hint="" type="string" required="no" default="hello">
-	<cfreturn arguments.str />
+<cffunction name="sayGoodbye" hint="say good bye" access="public" returntype="string" output="false">
+	<cfreturn "Goodbye!" />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
-
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="privateMethod" hint="I am private" access="private" returntype="void" output="false">
-	<cfargument name="param1" hint="" type="array" required="Yes">
-</cffunction>
 
 </cfcomponent>

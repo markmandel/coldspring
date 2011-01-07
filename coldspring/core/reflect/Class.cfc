@@ -1,0 +1,367 @@
+﻿<!---
+   Copyright 2011 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --->
+
+<cfcomponent hint="Instances of the class Class represent CFC classes and interfaces in a ColdFusion application." output="false">
+
+<cfscript>
+	meta = getMetaData(this);
+
+	if(!structKeyExists (meta, "const"))
+	{
+		const = {};
+    	const.IS_PUBLIC_CLOSURE = createObject("component", "coldspring.util.Closure").init(checkIsPublic);
+
+    	const.ON_MISSING_METHOD = "onMissingMethod";
+
+    	meta.const = const;
+	}
+</cfscript>
+
+<!------------------------------------------- PUBLIC ------------------------------------------->
+
+<!---
+Determines if the class or interface represented by this Class object is either the same as, or is a superclass or superinterface of, the class or interface represented by the specified Class parameter. It returns true if so; otherwise it returns false. If this Class object represents a primitive type, this method returns true if the specified Class parameter is exactly this Class object; otherwise it returns false.
+
+public boolean isAssignableFrom(Class<?> cls)
+
+Determines if the specified Object is assignment-compatible with the object represented by this Class.
+public boolean isInstance(Object obj)
+ --->
+
+<cffunction name="init" hint="Constructor" access="public" returntype="Class" output="false">
+	<cfargument name="className" hint="the name of the class/interface this object represents" type="string" required="Yes">
+	<cfscript>
+		//have to do this stupid juggling because CF8 'can't find 'setLength() on a Builder'
+		var builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
+		//builder.setLength(builder.lastIndexOf(".")); << CF8 fails on this because it can't resolve Java Methods. Grrr.
+		builder.delete(javacast("int", builder.lastIndexOf(".")), len(arguments.className));
+
+		setPackage(builder.toString());
+		setMeta(getComponentMetadata(arguments.className));
+
+		//determine if we are an interface or not
+		setInterface(getMeta().type eq "interface");
+		setMissingMethods(StructNew());
+
+		//build superclasses
+		buildSuperClasses();
+
+		//build implementing interfaces
+		buildInterfaces();
+
+		//now go and build all the methods
+		buildDeclaredMethods();
+		buildMethods();
+
+		return this;
+	</cfscript>
+</cffunction>
+
+<cffunction name="getName" hint="get the name of this class" access="public" returntype="string" output="false">
+	<cfreturn getMeta().name />
+</cffunction>
+
+<cffunction name="getPath" hint="get the file path to this classs" access="public" returntype="string" output="false">
+	<cfreturn getMeta().path />
+</cffunction>
+
+<cffunction name="getMeta" hint="Get the original metadata for this Class" access="public" returntype="struct" output="false">
+	<cfreturn instance.meta />
+</cffunction>
+
+<cffunction name="getPackage" hint="returns the package this Class belongs to" access="public" returntype="string" output="false">
+	<cfreturn instance.package />
+</cffunction>
+
+<cffunction name="getDeclaredMethods" hint="Returns a struct of Method objects reflecting all the methods declared by the class or interface represented by this Class object.
+			This includes public, package, and private methods, but excludes inherited methods."
+			access="public" returntype="struct" output="false" colddoc:generic="string,Method">
+	<cfreturn getDeclaredMethodsCollection().getCollection() />
+</cffunction>
+
+<cffunction name="getDeclaredMethod" hint="returns a declared method. If the method could not be found, an exception is thrown." access="public" returntype="Method" output="false">
+	<cfargument name="methodName" hint="the name of the method" type="string" required="Yes">
+	<cfscript>
+		if(!hasDeclaredMethod (arguments.methodName))
+		{
+			createObject("component", "coldspring.core.reflect.exception.MethodNotFoundException").init(getName(), arguments.methodName, true);
+		}
+
+		return getDeclaredMethodsCollection().get(arguments.methodName);
+    </cfscript>
+</cffunction>
+
+<cffunction name="hasDeclaredMethod" hint="Whether or not this class has declared this specific method" access="public" returntype="boolean" output="false">
+	<cfargument name="methodName" hint="the name of the method" type="string" required="Yes">
+	<cfscript>
+    	return structKeyExists(getDeclaredMethods(), arguments.methodName);
+    </cfscript>
+</cffunction>
+
+<cffunction name="getMethod" hint="returns a public method that exists on this class or a superclass.
+			<br/>If the method could not be found and this class has an onMissingMethod, a method will be returned with isConcrete:false, otherwise an exception is thrown."
+			access="public" returntype="Method" output="false">
+	<cfargument name="methodName" hint="the name of the method" type="string" required="Yes">
+	<cfscript>
+    	if(!hasMethod(arguments.methodName))
+    	{
+    		createObject("component", "coldspring.core.reflect.exception.MethodNotFoundException").init(getName(), arguments.methodName, false);
+    	}
+
+    	if(hasOnMissingMethod() && !structKeyExists (getMethods(), arguments.methodName))
+    	{
+    		return getMissingMethod(arguments.methodName);
+    	}
+
+		return getMethodsCollection().get(arguments.methodName);
+    </cfscript>
+</cffunction>
+
+<cffunction name="hasMethod" hint="Whether or not this class has this public method on this class or superclass. If an implementation of onMissingMethod exists on this class, then this method will always return true."
+		access="public" returntype="boolean" output="false">
+	<cfargument name="methodName" hint="the name of the method" type="string" required="Yes">
+	<cfscript>
+		if(hasOnMissingMethod())
+		{
+			return true;
+		}
+
+    	return structKeyExists(getMethods(), arguments.methodName);
+    </cfscript>
+</cffunction>
+
+<cffunction name="getDeclaredMethodsCollection" hint="Collection access to the declared methods, for closure support." access="public" returntype="coldspring.util.Collection" output="false">
+	<cfreturn instance.declaredMethodsCollection />
+</cffunction>
+
+<cffunction name="getMethods" hint="Returns a struct containing Method objects reflecting all the public member methods of the class or interface represented by
+	this Class object, including those declared by the class or interface and those inherited from superclasses and superinterfaces."
+	access="public" returntype="struct" output="false" colddoc:generic="string,Method">
+	<cfreturn getMethodsCollection().getCollection() />
+</cffunction>
+
+<cffunction name="getMethodsCollection" hint="Collection interface to the public Methods on this Class" access="public" returntype="coldspring.util.Collection" output="false">
+	<cfreturn instance.methodsCollection />
+</cffunction>
+
+<cffunction name="hasAnnotation" hint="does the given annotation exist on this class" access="public" returntype="boolean" output="false">
+	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
+	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+</cffunction>
+
+<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="boolean" output="false">
+	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
+	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+</cffunction>
+
+<cffunction name="isInterface" access="public" returntype="boolean" output="false">
+	<cfreturn instance.interface />
+</cffunction>
+
+<cffunction name="getSuperClass" hint="Returns the Class representing the superclass of the entity represented by this Class.<br/>
+	If this Class represents an interface then there is no super class. Look at getInterfaces() instead."
+	access="public" returntype="coldspring.core.reflect.Class" output="false">
+	<cfreturn instance.superclass />
+</cffunction>
+
+<cffunction name="hasSuperClass" hint="whether this object has a superClass" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "superClass") />
+</cffunction>
+
+<cffunction name="getInterfaces" hint="Determines the interfaces implemented by the class or interface represented by this object.<br/>
+	If this object represents a class, the return value is an array containing objects representing all interfaces implemented by the class.<br/>
+	If this object represents an interface, the array contains objects representing all interfaces extended by the interface.<br/>
+	If this object represents a class or interface that implements no interfaces, the method returns an array of length 0."
+	access="public" returntype="array" output="false" colddoc:generic="Class">
+	<cfreturn instance.interfaces />
+</cffunction>
+
+<cffunction name="hasOnMissingMethod" hint="convenience method for checking to see if this class has an onMissingMethod implementation"
+			access="public" returntype="boolean" output="false">
+	<cfscript>
+		//don't do this through hasMethod, as otherwise we will get a stack overflow.
+    	return structKeyExists(getMethods(), meta.const.ON_MISSING_METHOD);
+    </cfscript>
+</cffunction>
+
+<!------------------------------------------- PACKAGE ------------------------------------------->
+
+<!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="buildSuperClasses" hint="builds the super class if this is a class, and it has one" access="private" returntype="void" output="false">
+	<cfscript>
+    	var local = {};
+
+    	if(isInterface())
+    	{
+    		return;
+    	}
+
+    	if(structKeyExists(getMeta(), "extends"))
+    	{
+    		local.reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+
+    		setSuperclass(local.reflectionService.loadClass(getMeta().extends.name));
+    	}
+    </cfscript>
+</cffunction>
+
+<cffunction name="buildInterfaces" hint="build all the interfaces this class/interface has" access="private" returntype="void" output="false">
+	<cfscript>
+		var interfaces = [];
+		var key = 0;
+		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+		var meta = getMeta();
+
+		if(isInterface())
+		{
+			if(getName() eq "coldspring.aop.MethodBeforeAdvice")
+			{
+				if(structKeyExists(meta, "extends"))
+		        {
+		        	for(key in meta.extends)
+		        	{
+		        		arrayAppend(interfaces, reflectionService.loadClass(meta.extends[key].name));
+		        	}
+		        }
+			}
+		}
+		else
+		{
+			if(structKeyExists(meta, "implements"))
+	        {
+	        	for(key in meta.implements)
+	        	{
+	        		arrayAppend(interfaces, reflectionService.loadClass(meta.implements[key].name));
+	        	}
+	        }
+		}
+
+    	setInterfaces(interfaces);
+    </cfscript>
+</cffunction>
+
+<cffunction name="buildDeclaredMethods" hint="builds all the declared methods for this Class" access="private" returntype="void" output="false">
+	<cfscript>
+    	var methods = {};
+    	var collection = createObject("component", "coldspring.util.Collection").init(methods);
+    	var meta = getMeta();
+    	var len = 0;
+    	var counter = 1;
+    	var fun = 0;
+    	var method = 0;
+
+		if(StructKeyExists(meta, "functions"))
+		{
+			len = Arraylen(meta.functions);
+			for(; counter <= len; counter++)
+			{
+				method = createObject("component","Method" ).init(meta.functions[counter], this);
+				methods[method.getName()] = method;
+			}
+		}
+
+		setDeclaredMethodsCollection(collection);
+    </cfscript>
+</cffunction>
+
+<cffunction name="buildMethods" hint="builds all the public methods, and add in any parent methods" access="private" returntype="void" output="false">
+	<cfscript>
+		var publicMethods = getDeclaredMethodsCollection().select(meta.const.IS_PUBLIC_CLOSURE);
+		var currentClass = this;
+
+		while(currentClass.hasSuperClass())
+		{
+			currentClass = currentClass.getSuperClass();
+			publicMethods.addAll(currentClass.getMethods());
+		}
+
+		setMethodsCollection(publicMethods);
+    </cfscript>
+</cffunction>
+
+<cffunction name="getMissingMethod" hint="returns a method to represent a missing method implementation" access="private" returntype="Method" output="false">
+	<cfargument name="methodName" hint="the name of the method" type="string" required="Yes">
+	<cfscript>
+		var missingMethods = getMissingMethods();
+		var methodMeta = 0;
+
+		if(!structKeyExists (missingMethods, arguments.methodName))
+		{
+			methodMeta = duplicate(getMethod(meta.const.ON_MISSING_METHOD).getMeta());
+			methodMeta.name = arguments.methodName;
+			methodMeta.parameters = [];
+
+			missingMethods[arguments.methodName] = createObject("component", "Method").init(methodMeta, this, false);
+		}
+
+		return missingMethods[arguments.methodName];
+    </cfscript>
+</cffunction>
+
+<cffunction name="setInterfaces" access="private" returntype="void" output="false">
+	<cfargument name="interfaces" type="array" required="true" colddoc:generic="Class">
+	<cfset instance.interfaces = arguments.interfaces />
+</cffunction>
+
+<cffunction name="setMeta" access="private" returntype="void" output="false">
+	<cfargument name="meta" type="struct" required="true">
+	<cfset instance.meta = arguments.meta />
+</cffunction>
+
+<cffunction name="setPackage" access="private" returntype="void" output="false">
+	<cfargument name="package" type="string" required="true">
+	<cfset instance.package = arguments.package />
+</cffunction>
+
+<cffunction name="setInterface" access="private" returntype="void" output="false">
+	<cfargument name="interface" type="boolean" required="true">
+	<cfset instance.interface = arguments.interface />
+</cffunction>
+
+<cffunction name="setDeclaredMethodsCollection" access="private" returntype="void" output="false">
+	<cfargument name="declaredMethodsCollection" type="coldspring.util.Collection" required="true">
+	<cfset instance.declaredMethodsCollection = arguments.declaredMethodsCollection />
+</cffunction>
+
+<cffunction name="setMethodsCollection" access="private" returntype="void" output="false">
+	<cfargument name="methodsCollection" type="coldspring.util.Collection" required="true">
+	<cfset instance.methodsCollection = arguments.methodsCollection />
+</cffunction>
+
+<cffunction name="setSuperClass" access="private" returntype="void" output="false">
+	<cfargument name="superclass" type="coldspring.core.reflect.Class" required="true">
+	<cfset instance.superclass = arguments.superclass />
+</cffunction>
+
+<cffunction name="getMissingMethods" access="private" returntype="struct" output="false" colddoc:generic="string,Method">
+	<cfreturn instance.missingMethods />
+</cffunction>
+
+<cffunction name="setMissingMethods" access="private" returntype="void" output="false">
+	<cfargument name="missingMethods" type="struct" required="true" colddoc:generic="string,Method">
+	<cfset instance.missingMethods = arguments.missingMethods />
+</cffunction>
+
+<!--- closure methods --->
+
+<cffunction name="checkIsPublic" hint="is this method public?" access="private" returntype="boolean" output="false">
+	<cfargument name="method" hint="the method to check" type="coldspring.core.reflect.Method" required="Yes">
+	<cfscript>
+		return (arguments.method.getAccess() eq "public");
+    </cfscript>
+</cffunction>
+
+<!--- /closure methods --->
+
+</cfcomponent>

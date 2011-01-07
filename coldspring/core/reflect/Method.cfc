@@ -17,14 +17,24 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="Method" output="false">
 	<cfargument name="methodMeta" hint="the meta data for this particular method" type="struct" required="Yes">
-	<cfargument name="classMeta" hint="the meta data for a particular CFC" type="struct" required="Yes">
+	<cfargument name="class" hint="the Class this method belongs to" type="Class" required="Yes">
+	<cfargument name="isConcrete" hint="whether or not this is a concrete method (true), or it is backed by onMissingMethod (false)" type="boolean" required="no" default="true">
 	<cfscript>
-		setMethodName(arguments.methodMeta.name);
+		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+		var parameters = {};
+		var item = 0;
+		var parameter = 0;
+		var counter = 1;
+		var len = 0;
 
 		//do some clean up for convenience
 		if(!structKeyExists(arguments.methodMeta, "returntype"))
 		{
 			arguments.methodMeta.returntype = "any";
+		}
+		else
+		{
+			arguments.methodMeta.returntype = reflectionService.resolveClassName(arguments.methodMeta.returntype, arguments.class.getPackage());
 		}
 
 		if(!structKeyExists(arguments.methodMeta, "access"))
@@ -32,24 +42,26 @@
 			arguments.methodMeta.access = "public";
 		}
 
-		setMethodMeta(arguments.methodMeta);
-		setClassMeta(arguments.classMeta);
+		setMeta(arguments.methodMeta);
+		setClass(arguments.class);
+    	setConcrete(arguments.isConcrete);
+
+		//bit of defensive code, as meta data often returns null.
+		if(structKeyExists(arguments.methodMeta, "parameters"))
+		{
+			len = Arraylen(arguments.methodMeta.parameters);
+			for(; counter <= len; counter++)
+			{
+				item = arguments.methodMeta.parameters[counter];
+				parameter = createObject("component", "Parameter").init(item, this);
+				parameters[parameter.getName()] = parameter;
+			}
+		}
+
+		setParameters(parameters);
 
 		return this;
 	</cfscript>
-</cffunction>
-
-<cffunction name="getMethodName" access="public" returntype="string" output="false">
-	<cfreturn instance.methodName />
-</cffunction>
-
-<cffunction name="getMethodMeta" hint="Returns the meta data for a this particular function<br/>A method meta returned from a Method will always have: returntype and access."
-	access="public" returntype="struct" output="false">
-	<cfreturn instance.methodMeta />
-</cffunction>
-
-<cffunction name="getClassMeta" access="public" returntype="struct" output="false">
-	<cfreturn instance.ClassMeta />
 </cffunction>
 
 <cffunction name="invokeMethod" hint="invoke this method on a given object. (Usually an object of the same class as where this method comes from)" access="public" returntype="any" output="false">
@@ -58,7 +70,7 @@
 	<cfscript>
 		var local = {};
     </cfscript>
-	<cfinvoke component="#arguments.object#" method="#getMethodName()#" argumentcollection="#arguments.args#" returnvariable="local.return">
+	<cfinvoke component="#arguments.object#" method="#getname()#" argumentcollection="#arguments.args#" returnvariable="local.return">
 	<cfscript>
 		if(structKeyExists(local, "return"))
 		{
@@ -67,23 +79,77 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="hasAnnotation" hint="does the given annotation exist on this method" access="public" returntype="boolean" output="false">
+	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
+	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+</cffunction>
+
+<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="boolean" output="false">
+	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
+	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+</cffunction>
+
+<cffunction name="getName" hint="The name of the method" access="public" returntype="string" output="false">
+	<cfreturn getMeta().name />
+</cffunction>
+
+<cffunction name="getMeta" hint="Returns the meta data for a this particular function<br/>A method meta returned from a Method will always have: returntype and access."
+	access="public" returntype="struct" output="false">
+	<cfreturn instance.meta />
+</cffunction>
+
+<cffunction name="getClass" hint="Get the Class that this method belongs to" access="public" returntype="Class" output="false">
+	<cfreturn instance.class />
+</cffunction>
+
+<cffunction name="isConcrete" hint="whether or not this is a concrete method (true), or it is backed by onMissingMethod (false)" access="public" returntype="boolean" output="false">
+	<cfreturn instance.isConcrete />
+</cffunction>
+
+<cffunction name="getAccess" hint="The access level of this method, 'public', 'private', or 'package'" access="public" returntype="string" output="false">
+	<cfreturn getMeta().access />
+</cffunction>
+
+<cffunction name="getReturnType" hint="the return type for this method" access="public" returntype="string" output="false">
+	<cfreturn getMeta().returntype />
+</cffunction>
+
+<cffunction name="getParameters" access="public" returntype="struct" output="false" colddoc:generic="string,Parameter">
+	<cfreturn instance.parameters />
+</cffunction>
+
+<cffunction name="getParameter" hint="get a specific parameter" access="public" returntype="Parameter" output="false">
+	<cfargument name="name" hint="the argument name of the parameter" type="string" required="Yes">
+	<cfreturn structFind(getParameters(), arguments.name)/>
+</cffunction>
+
+<cffunction name="hasParameter" hint="check to see if this argument has a given parameter" access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the argument name of the parameter" type="string" required="Yes">
+	<cfreturn structKeyExists(getParameters(), arguments.name)/>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="setMethodName" access="private" returntype="void" output="false">
-	<cfargument name="methodName" type="string" required="true">
-	<cfset instance.methodName = arguments.methodName />
+<cffunction name="setParameters" access="private" returntype="void" output="false">
+	<cfargument name="parameters" type="struct" required="true" colddoc:generic="string,Parameter">
+	<cfset instance.parameters = arguments.parameters />
 </cffunction>
 
-<cffunction name="setMethodMeta" access="private" returntype="void" output="false">
-	<cfargument name="methodMeta" type="struct" required="true">
-	<cfset instance.methodMeta = arguments.methodMeta />
+<cffunction name="setConcrete" access="private" returntype="void" output="false">
+	<cfargument name="isConcrete" type="boolean" required="true">
+	<cfset instance.isConcrete = arguments.isConcrete />
 </cffunction>
 
-<cffunction name="setClassMeta" access="private" returntype="void" output="false">
-	<cfargument name="ClassMeta" type="struct" required="true">
-	<cfset instance.ClassMeta = arguments.ClassMeta />
+<cffunction name="setMeta" access="private" returntype="void" output="false">
+	<cfargument name="meta" type="struct" required="true">
+	<cfset instance.meta = arguments.meta />
+</cffunction>
+
+<cffunction name="setClass" access="private" returntype="void" output="false">
+	<cfargument name="class" type="Class" required="true">
+	<cfset instance.class = arguments.class />
 </cffunction>
 
 </cfcomponent>

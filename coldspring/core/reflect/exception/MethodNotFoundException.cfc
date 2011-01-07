@@ -18,9 +18,18 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfargument name="methodName" hint="the name of the method that does not exist on this class" type="string" required="Yes">
+	<cfargument name="onlyDeclared" hint="whethere or not the search path only includes declared methods" type="boolean" required="No" default="false">
 	<cfscript>
-		super.init("Method '#arguments.methodName#' could not be found on class '#arguments.className#'"
-			, "The Method '#arguments.methodName#' does not exist on class '#arguments.className#' or any of its parent classes");
+		if(arguments.onlyDeclared)
+		{
+			super.init("Declared method '#arguments.methodName#' could not be found on class '#arguments.className#'"
+			, "The method '#arguments.methodName#' is not declared on class '#arguments.className#', but it may exist on its super classes. You may want to try getMethod().");
+		}
+		else
+		{
+			super.init("Public method '#arguments.methodName#' could not be found on class '#arguments.className#'"
+			, "The public method '#arguments.methodName#' does not exist on class '#arguments.className#' or any of its parent classes");
+		}
 	</cfscript>
 </cffunction>
 

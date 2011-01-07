@@ -12,6 +12,27 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="each" hint="The closure is called for every item in this collection, with the value passed in as an argument." access="public" returntype="void" output="false">
+	<cfargument name="closure" hint="The closure that will be called against each item in this collection." type="Closure" required="Yes">
+	<cfscript>
+		var item = 0;
+		var key = 0;
+    </cfscript>
+
+	<cfif isList()>
+		<cfloop array="#getCollection()#" index="item">
+			<cfset arguments.closure.call(item)>
+		</cfloop>
+	<cfelse>
+		<cfloop collection="#getCollection()#" item="key">
+			<cfscript>
+				item = structFind(getCollection(), key);
+				arguments.closure.call(item);
+            </cfscript>
+		</cfloop>
+    </cfif>
+</cffunction>
+
 <cffunction name="select" hint="return a collection in which all the items that match the predicate are returned" access="public" returntype="Collection" output="false">
 	<cfargument name="closure" hint="the closure that specifies if the item should be included. Needs to return a boolean" type="Closure" required="Yes">
 	<cfscript>
@@ -37,7 +58,7 @@
 				item = structFind(getCollection(), key);
 				if(arguments.closure.call(item))
 				{
-					add(key, item);
+					newCollection.add(key, item);
 				}
             </cfscript>
 		</cfloop>
@@ -46,7 +67,8 @@
 	<cfreturn newCollection />
 </cffunction>
 
-<cffunction name="add" hint="adds the item to the collection. if an array, expects 1 argument, if a struct, expects a key, then value" access="public" returntype="void" output="false">
+<cffunction name="add" hint="adds the item to the collection. if an array, expects 1 argument if a struct, expects a key, then value"
+	access="public" returntype="void" output="false">
 	<cfscript>
 		if(isList())
 		{
@@ -56,6 +78,21 @@
 		{
 			//may be a java collection, so use put
 			getCollection().put(arguments[1], arguments[2]);
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="addAll" hint="adds all the items that are passed in. expects the same collection type as what is stored, i.e. a struct/array"
+			access="public" returntype="void" output="false">
+	<cfargument name="collection" hint="the struct/array to add" type="any" required="Yes">
+	<cfscript>
+		if(isList())
+		{
+			getCollection().addAll(arguments.collection);
+		}
+		else
+		{
+			StructAppend(getCollection(), arguments.collection, true);
 		}
     </cfscript>
 </cffunction>
