@@ -119,7 +119,6 @@
     </cfscript>
 </cffunction>
 
-
 <cffunction name="testStringLengthSort" hint="test the a series of strings, we want sorted by their length" access="public" returntype="void" output="false"
 			mxunit:dataprovider="strings">
 	<cfargument name="string" hint="an array of strings" type="array" required="Yes">
@@ -157,6 +156,47 @@
     </cfloop>
 </cffunction>
 
+<cffunction name="testEachArray" hint="test the each method on an array" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.array = [1,2,3,4];
+
+		local.expected = [1,2,3,4];
+
+		local.collection = createObject("component","coldspring.util.Collection").init(local.array);
+		local.closure = createObject("component", "coldspring.util.Closure" ).init(storeEach);
+
+		local.storage = createObject("java", "java.util.ArrayList").init();
+		local.closure.bind("storage", local.storage);
+
+		local.collection.each(local.closure);
+
+		assertEquals(local.expected, local.storage);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testEachStruct" hint="test the each method on an array" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.struct = {one=1, two=2, three=3, four=4};
+
+		local.expected = [1,2,3,4];
+
+		local.collection = createObject("component","coldspring.util.Collection").init(local.struct);
+		local.closure = createObject("component", "coldspring.util.Closure" ).init(storeEach);
+
+		local.storage = createObject("java", "java.util.ArrayList").init();
+		local.closure.bind("storage", local.storage);
+
+		local.collection.each(local.closure);
+
+		//make sure it's in order
+		arraySort(local.storage, "numeric");
+
+		assertEquals(local.expected, local.storage);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -190,6 +230,13 @@
 		}
 
 		return 0;
+    </cfscript>
+</cffunction>
+
+<cffunction name="storeEach" hint="closure method, stored each of the items in an array" access="private" returntype="void" output="false">
+	<cfargument name="value" hint="the value" type="any" required="Yes">
+	<cfscript>
+		ArrayAppend(storage, arguments.value);
     </cfscript>
 </cffunction>
 

@@ -12,6 +12,27 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="each" hint="The closure is called for every item in this collection, with the value passed in as an argument." access="public" returntype="void" output="false">
+	<cfargument name="closure" hint="The closure that will be called against each item in this collection." type="Closure" required="Yes">
+	<cfscript>
+		var item = 0;
+		var key = 0;
+    </cfscript>
+
+	<cfif isList()>
+		<cfloop array="#getCollection()#" index="item">
+			<cfset arguments.closure.call(item)>
+		</cfloop>
+	<cfelse>
+		<cfloop collection="#getCollection()#" item="key">
+			<cfscript>
+				item = structFind(getCollection(), key);
+				arguments.closure.call(item);
+            </cfscript>
+		</cfloop>
+    </cfif>
+</cffunction>
+
 <cffunction name="select" hint="return a collection in which all the items that match the predicate are returned" access="public" returntype="Collection" output="false">
 	<cfargument name="closure" hint="the closure that specifies if the item should be included. Needs to return a boolean" type="Closure" required="Yes">
 	<cfscript>
