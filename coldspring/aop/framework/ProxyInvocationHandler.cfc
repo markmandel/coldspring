@@ -20,17 +20,16 @@
 	<cfargument name="advisors" hint="array of ordered advisors to use to match against the target's methods" type="array" required="Yes"
 				colddoc:generic="coldspring.aop.Advisor">
 	<cfscript>
-		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
-		var pointCutClosure = createObject("component", "coldspring.util.Closure").init(applyPointcutAdvice);
-		var meta = getComponentMetadata(arguments.className);
+    	var reflectionService = getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance;
+    	var pointCutClosure = createObject("component", "coldspring.util.Closure").init(applyPointcutAdvice);
+    	var class = reflectionService.loadClass(getComponentMetadata(arguments.className).name);
 
 		setMethodAdvice(StructNew());
 
 		pointCutClosure.bind("advisors", arguments.advisors);
 		pointCutClosure.bind("methodAdvice", getMethodAdvice());
-		pointCutClosure.bind("classMetadata", meta);
 
-		cfcMetaUtil.eachMetaFunction(meta, pointCutClosure);
+		class.getMethodsCollection().each(pointCutClosure);
 
 		return this;
 	</cfscript>
@@ -122,7 +121,7 @@
 <!--- closure methods --->
 
 <cffunction name="applyPointcutAdvice" hint="closure methods for applying pointcut advice" access="public" returntype="void" output="false">
-	<cfargument name="func" hint="the function meta data" type="any" required="Yes">
+	<cfargument name="method" hint="the class method" type="coldspring.core.reflect.Method" required="Yes">
 	<cfscript>
 		var advisor = 0;
 		var advice = 0;
@@ -132,11 +131,11 @@
     </cfscript>
 	<cfloop array="#variables.advisors#" index="advisor">
 		<cfscript>
-			if(advisor.getPointcut().matches(arguments.func, variables.classMetadata))
+			if(advisor.getPointcut().matches(arguments.method, arguments.method.getClass()))
 			{
-				if(!structKeyExists(variables.methodAdvice, arguments.func.name))
+				if(!structKeyExists(variables.methodAdvice, arguments.method.getName()))
 				{
-					variables.methodAdvice[arguments.func.name] = [];
+					variables.methodAdvice[arguments.method.getName()] = [];
 				}
 
 				advice = advisor.getAdvice();
@@ -164,7 +163,7 @@
 					end up in the right order for each advice in the chain.
 					proxy->advice2->advice1->method
 				*/
-				ArrayPrepend(variables.methodAdvice[arguments.func.name], interceptor);
+				ArrayPrepend(variables.methodAdvice[arguments.method.getName()], interceptor);
 			}
         </cfscript>
 	</cfloop>

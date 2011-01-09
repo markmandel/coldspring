@@ -21,7 +21,7 @@
 	<cfargument name="isConcrete" hint="whether or not this is a concrete method (true), or it is backed by onMissingMethod (false)" type="boolean" required="no" default="true">
 	<cfscript>
 		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
-		var parameters = {};
+    	var parameters = createObject("java", "java.util.ArrayList").init(); //pass by reference
 		var item = 0;
 		var parameter = 0;
 		var counter = 1;
@@ -54,7 +54,7 @@
 			{
 				item = arguments.methodMeta.parameters[counter];
 				parameter = createObject("component", "Parameter").init(item, this);
-				parameters[parameter.getName()] = parameter;
+				arrayAppend(parameters, parameter);
 			}
 		}
 
@@ -86,7 +86,7 @@
 
 <cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="boolean" output="false">
 	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
-	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+	<cfreturn structFind(getMeta(), arguments.annotation) />
 </cffunction>
 
 <cffunction name="getName" hint="The name of the method" access="public" returntype="string" output="false">
@@ -114,18 +114,17 @@
 	<cfreturn getMeta().returntype />
 </cffunction>
 
-<cffunction name="getParameters" access="public" returntype="struct" output="false" colddoc:generic="string,Parameter">
+<cffunction name="getParameters" access="public" returntype="array" output="false" colddoc:generic="Parameter">
 	<cfreturn instance.parameters />
 </cffunction>
 
-<cffunction name="getParameter" hint="get a specific parameter" access="public" returntype="Parameter" output="false">
-	<cfargument name="name" hint="the argument name of the parameter" type="string" required="Yes">
-	<cfreturn structFind(getParameters(), arguments.name)/>
-</cffunction>
+<cffunction name="getParameter" hint="Convenience function to get a paramter from a specific index" access="public" returntype="Parameter" output="false">
+	<cfargument name="index" hint="the index of the parameter" type="numeric" required="Yes">
+	<cfscript>
+		var parameters = getParameters();
 
-<cffunction name="hasParameter" hint="check to see if this argument has a given parameter" access="public" returntype="boolean" output="false">
-	<cfargument name="name" hint="the argument name of the parameter" type="string" required="Yes">
-	<cfreturn structKeyExists(getParameters(), arguments.name)/>
+		return parameters[arguments.index];
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -133,7 +132,7 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="setParameters" access="private" returntype="void" output="false">
-	<cfargument name="parameters" type="struct" required="true" colddoc:generic="string,Parameter">
+	<cfargument name="parameters" type="array" required="true" colddoc:generic="string,Parameter">
 	<cfset instance.parameters = arguments.parameters />
 </cffunction>
 

@@ -78,6 +78,22 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="Closure" output="false">
+	<cfscript>
+		//do this manually, as Cloneable won't cut it. Too many scopes.
+
+		var clone = createObject("component","Closure").init (__getFunction());
+		var key = 0;
+
+		for(key in variables)
+		{
+			clone.bind(key, variables[key]);
+		}
+
+		return clone;
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -98,6 +114,14 @@
 <cffunction name="__setCurryArguments" access="private" returntype="void" output="false">
 	<cfargument name="curryArguments" type="struct" required="true">
 	<cfset __closure.curryArguments = arguments.curryArguments />
+</cffunction>
+
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		variables.__closure = arguments.instance;
+    </cfscript>
 </cffunction>
 
 </cfcomponent>

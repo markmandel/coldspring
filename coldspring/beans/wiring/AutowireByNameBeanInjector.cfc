@@ -21,7 +21,7 @@
 	<cfscript>
 		super.init(arguments.debugMode);
 
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
+    	setReflectionService(getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance);
 
 		setCalculateDependencyClosure(createObject("component", "coldspring.util.Closure").init(isMethodInjectable));
 
@@ -49,14 +49,18 @@
 	colddoc:generic="struct">
 	<cfargument name="object" hint="the target object" type="any" required="Yes">
 	<cfscript>
-		var args = {};
+		var class = getReflectionService().loadClass(getMetaData(arguments.object).name);
+
+		var closure = getCalculateDependencyClosure().clone();
 
 		//pass by reference please
-		args.injectDetails = createObject("java", "java.util.ArrayList").init();
+		var injectDetails = createObject("java", "java.util.ArrayList").init();
 
-		getCFCMetaUtil().eachMetaFunction(getMetadata(arguments.object), getCalculateDependencyClosure(), args);
+		closure.bind("injectDetails", injectDetails);
 
-		return args.injectDetails;
+		class.getMethodsCollection().each(closure);
+
+		return closure.bound("injectDetails");
     </cfscript>
 </cffunction>
 
@@ -64,29 +68,27 @@
 
 <cffunction name="isMethodInjectable" hint="is this method useful for autowiring?, if it is, adds the details to the injectDetails method"
 			access="private" returntype="void" output="false">
-	<cfargument name="func" hint="the function meta data" type="struct" required="Yes">
-	<cfargument name="injectDetails" hint="the injection details array" type="array" required="Yes" colddoc:generic="struct">
+	<cfargument name="method" hint="The method to test" type="coldspring.core.reflect.Method" required="Yes">
 	<cfscript>
 		var propertyName = 0;
 		var detail = 0;
 
-		if(Lcase(arguments.func.name).startsWith("set") AND arguments.func.access eq "public")
+		if(Lcase(arguments.method.getName()).startsWith("set"))
 		{
-			propertyName = replaceNoCase(arguments.func.name, "set", "");
+			propertyName = replaceNoCase(arguments.method.getName(), "set", "");
 
-			if(variables.beanFactory.containsBean(propertyName) AND variables.beanFactory.isAutowireCandidate(propertyName))
+			if(beanFactory.containsBean(propertyName) AND beanFactory.isAutowireCandidate(propertyName))
 			{
-				if(StructKeyExists(arguments.func, "parameters")
-					AND ArrayLen(arguments.func.parameters) eq 1)
+				if(ArrayLen(arguments.method.getParameters()) eq 1)
 				{
 					detail =
 					{
 						beanName = propertyName
-						,methodName = arguments.func.name
-						,argumentName = arguments.func.parameters[1].name
+						,methodName = arguments.method.getName()
+						,argumentName = arguments.method.getParameter(1).getName()
 					};
 
-					arrayAppend(arguments.injectDetails, detail);
+					arrayAppend(injectDetails, detail);
 				}
 			}
 		}
@@ -95,13 +97,13 @@
 
 <!--- /closure method --->
 
-<cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
-	<cfreturn instance.cfcMetaUtil />
+<cffunction name="getReflectionService" access="private" returntype="coldspring.core.reflect.ReflectionService" output="false">
+	<cfreturn instance.reflectionService />
 </cffunction>
 
-<cffunction name="setCFCMetaUtil" access="private" returntype="void" output="false">
-	<cfargument name="cfcMetaUtil" type="coldspring.util.CFCMetaUtil" required="true">
-	<cfset instance.cfcMetaUtil = arguments.cfcMetaUtil />
+<cffunction name="setReflectionService" access="private" returntype="void" output="false">
+	<cfargument name="reflectionService" type="coldspring.core.reflect.ReflectionService" required="true">
+	<cfset instance.reflectionService = arguments.reflectionService />
 </cffunction>
 
 <cffunction name="getCalculateDependencyClosure" access="private" returntype="coldspring.util.Closure" output="false">

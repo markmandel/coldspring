@@ -16,8 +16,8 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="matches" hint="Does given method, for the given class, match for this pointcut" access="public" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" hint="meta data for the specific method" type="struct" required="Yes">
-	<cfargument name="classMetadata" hint="the class meta data" type="struct" required="Yes">
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

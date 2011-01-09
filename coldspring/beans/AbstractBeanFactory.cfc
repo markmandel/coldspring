@@ -221,7 +221,6 @@
 		singleton.createInstance("coldspring.core.java.JavaLoader", args);
 		singleton.createInstance("coldspring.util.Singleton");
 		singleton.createInstance("coldspring.util.MethodInjector");
-	 	singleton.createInstance("coldspring.util.CFCMetaUtil");
 		singleton.createInstance("coldspring.util.Cloneable");
 		singleton.createInstance("coldspring.core.proxy.DynamicProxyFactory");
 		singleton.createInstance("coldspring.core.OrderComparator");

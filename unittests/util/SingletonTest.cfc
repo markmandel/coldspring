@@ -49,13 +49,13 @@
 	<cfscript>
 		var local = {};
 
-		local.cfcMetaUtil1 = createObject("component", "coldspring.util.CFCMetaUtil").init();
-		local.cfcMetaUtil2 = createObject("component", "coldspring.util.CFCMetaUtil").init();
+		local.cfcMetaUtil1 = createObject("component", "coldspring.core.reflect.ReflectionService").init();
+		local.cfcMetaUtil2 = createObject("component", "coldspring.core.reflect.ReflectionService").init();
 
 		assertSame(local.cfcMetaUtil1, local.cfcMetaUtil2);
 
 		assertSame(local.cfcMetaUtil1, getMetadata(local.cfcMetaUtil1).singleton.instance);
-		assertSame(local.cfcMetaUtil1, getComponentMetaData("coldspring.util.CFCMetaUtil").singleton.instance);
+		assertSame(local.cfcMetaUtil1, getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance);
     </cfscript>
 </cffunction>
 

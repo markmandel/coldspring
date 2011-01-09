@@ -85,6 +85,63 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testAssignableFromSuperClass" hint="tests if it can see assignable from a super class" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("coldspring.beans.AbstractBeanFactory");
+
+		assertTrue(local.class.isAssignableFrom("coldspring.beans.xml.XmlBeanFactory"));
+
+		//do it a 2nd time to test the cache.
+		assertTrue(local.class.isAssignableFrom("coldspring.beans.xml.XmlBeanFactory"));
+
+		local.class = reflectionService.loadClass("coldspring.beans.support.AbstractProperty");
+
+		assertTrue(local.class.isAssignableFrom("coldspring.beans.support.Property"));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testAssignableFromInterface" hint="tests if it can see assignable from an interface" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("coldspring.beans.factory.FactoryBean");
+
+		assertTrue(local.class.isAssignableFrom("coldspring.beans.factory.config.ListFactoryBean"));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotAssignable" hint="tests if it can see assignable from an interface" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("coldspring.beans.factory.FactoryBean");
+
+		assertFalse(local.class.isAssignableFrom("coldspring.beans.support.Property"));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testAssignableFromSubInterface" hint="test if an interface that extends an interface still works" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.class = reflectionService.loadClass("coldspring.beans.factory.config.InstantiationAwareBeanPostProcessor");
+
+		//guard that InstantiationAwareBeanPostProcessor has the BeanPostProcessor in it's interfaces list
+		local.interfaces = local.class.getInterfaces();
+
+		assertEquals(1, ArrayLen(local.interfaces));
+		assertEquals("coldspring.beans.factory.config.BeanPostProcessor", local.interfaces[1].getName());
+
+		assertTrue(local.class.isAssignableFrom("unittests.testBeans.InstantiationMarkerBeanPostProcessor"), "Should be InstantiationAwareBeanPostProcessor");
+
+		local.class = reflectionService.loadClass("coldspring.beans.factory.config.BeanPostProcessor");
+
+		assertTrue(local.class.isAssignableFrom("unittests.testBeans.InstantiationMarkerBeanPostProcessor"), "Should be BeanPostProcessor");
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

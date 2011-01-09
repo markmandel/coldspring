@@ -30,10 +30,6 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <!---
-Determines if the class or interface represented by this Class object is either the same as, or is a superclass or superinterface of, the class or interface represented by the specified Class parameter. It returns true if so; otherwise it returns false. If this Class object represents a primitive type, this method returns true if the specified Class parameter is exactly this Class object; otherwise it returns false.
-
-public boolean isAssignableFrom(Class<?> cls)
-
 Determines if the specified Object is assignment-compatible with the object represented by this Class.
 public boolean isInstance(Object obj)
  --->
@@ -43,8 +39,13 @@ public boolean isInstance(Object obj)
 	<cfscript>
 		//have to do this stupid juggling because CF8 'can't find 'setLength() on a Builder'
 		var builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
+		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+
 		//builder.setLength(builder.lastIndexOf(".")); << CF8 fails on this because it can't resolve Java Methods. Grrr.
 		builder.delete(javacast("int", builder.lastIndexOf(".")), len(arguments.className));
+
+    	setReflectionService(reflectionService);
+    	setAssignableCache(StructNew());
 
 		setPackage(builder.toString());
 		setMeta(getComponentMetadata(arguments.className));
@@ -154,14 +155,30 @@ public boolean isInstance(Object obj)
 	<cfreturn instance.methodsCollection />
 </cffunction>
 
-<cffunction name="hasAnnotation" hint="does the given annotation exist on this class" access="public" returntype="boolean" output="false">
+<cffunction name="hasAnnotation" hint="does the given annotation exist on this class. If it cannot be found on this class, check the superclass if one exists." access="public" returntype="boolean" output="false">
 	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
-	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+	<cfscript>
+		var found = structKeyExists(getMeta(), arguments.annotation);
+
+		if(!found && hasSuperClass())
+		{
+			return getSuperClass().hasAnnotation(arguments.annotation);
+		}
+
+		return found;
+    </cfscript>
 </cffunction>
 
-<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="boolean" output="false">
+<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it. It it can't be found on this class, check the parent." access="public" returntype="boolean" output="false">
 	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
-	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+	<cfscript>
+		if(!structKeyExists(getMeta(), arguments.annotation) && hasSuperClass())
+		{
+			return getSuperClass().getAnnotation(arguments.annotation);
+		}
+
+    	return structFind(getMeta(), arguments.annotation);
+    </cfscript>
 </cffunction>
 
 <cffunction name="isInterface" access="public" returntype="boolean" output="false">
@@ -194,9 +211,95 @@ public boolean isInstance(Object obj)
     </cfscript>
 </cffunction>
 
+<cffunction name="isAssignableFrom" hint="Determines if the class or interface represented by this Class object is either the same as,
+			or is a superclass or superinterface of, the class or interface represented by the specified Class parameter.
+			It returns true if so; otherwise it returns false."
+			access="public" returntype="boolean" output="false">
+	<cfargument name="className" hint="The name of th class to determine if this class is assignable from" type="string" required="Yes">
+	<cfscript>
+		var cache = getAssignableCache();
+
+		if(!structKeyExists (cache, arguments.className))
+		{
+			cache[arguments.className] = buildIsAssignableFrom(arguments.className);
+		}
+
+		return cache[arguments.className];
+    </cfscript>
+</cffunction>
+
+<cffunction name="eachClassInTypeHierarchy" hint="Calls the closure for each class type in inheritence, and also for each interface it implements
+				with the coldspring.core.reflect.Class as the single argument passed in.<br/>
+				If the closure returns 'false', processing is stopped" access="public" returntype="void" output="false">
+	<cfargument name="closure" hint="the closure to fire for each class type found a" type="coldspring.util.Closure" required="Yes">
+	<cfscript>
+		var local = {};
+		var queue = createObject("java", "java.util.ArrayDeque").init();
+		var class = 0;
+		var len = 0;
+		var counter = 0;
+		var interfaces = 0;
+
+		queue.add(this);
+
+		while(!queue.isEmpty())
+		{
+			class = queue.remove();
+
+			local.return = arguments.closure.call(class);
+
+			if(structKeyExists(local, "result") && !local.result)
+			{
+				return;
+			}
+
+			if(class.hasSuperClass())
+			{
+				queue.add(class.getSuperClass());
+			}
+
+			interfaces = class.getInterfaces();
+			len = arraylen(interfaces);
+
+			for(counter = 1; counter <= len; counter++)
+			{
+				queue.add(interfaces[counter]);
+			}
+		}
+    </cfscript>
+</cffunction>
+
+<cffunction name="_equals" hint="equality test with another Class object" access="public" returntype="boolean" output="false">
+	<cfargument name="class" hint="the class to test equality with" type="Class" required="Yes">
+	<cfreturn getName() eq arguments.class.getName() />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="buildIsAssignableFrom" hint="does tha calculation to determine if this class is assignable from to the argument class" access="private" returntype="boolean" output="false">
+	<cfargument name="className" hint="The name of the class to determine if this class is assignable from" type="string" required="Yes">
+	<cfscript>
+		var closure = 0;
+		var class = 0;
+
+		if(!getReflectionService().classExists(arguments.className))
+		{
+			return false;
+		}
+
+		closure = createObject("component", "coldspring.util.Closure").init(classTypeCheck);
+		class = getReflectionService().loadClass(arguments.className);
+
+		closure.bind("result", false);
+		closure.bind("class", this);
+
+		class.eachClassInTypeHierarchy(closure);
+
+		return closure.bound("result");
+    </cfscript>
+</cffunction>
 
 <cffunction name="buildSuperClasses" hint="builds the super class if this is a class, and it has one" access="private" returntype="void" output="false">
 	<cfscript>
@@ -209,9 +312,7 @@ public boolean isInstance(Object obj)
 
     	if(structKeyExists(getMeta(), "extends"))
     	{
-    		local.reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
-
-    		setSuperclass(local.reflectionService.loadClass(getMeta().extends.name));
+    		setSuperclass(getReflectionService().loadClass(getMeta().extends.name));
     	}
     </cfscript>
 </cffunction>
@@ -220,21 +321,17 @@ public boolean isInstance(Object obj)
 	<cfscript>
 		var interfaces = [];
 		var key = 0;
-		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
 		var meta = getMeta();
 
 		if(isInterface())
 		{
-			if(getName() eq "coldspring.aop.MethodBeforeAdvice")
-			{
-				if(structKeyExists(meta, "extends"))
-		        {
-		        	for(key in meta.extends)
-		        	{
-		        		arrayAppend(interfaces, reflectionService.loadClass(meta.extends[key].name));
-		        	}
-		        }
-			}
+			if(structKeyExists(meta, "extends"))
+	        {
+	        	for(key in meta.extends)
+	        	{
+	        		arrayAppend(interfaces, getReflectionService().loadClass(meta.extends[key].name));
+	        	}
+	        }
 		}
 		else
 		{
@@ -242,7 +339,7 @@ public boolean isInstance(Object obj)
 	        {
 	        	for(key in meta.implements)
 	        	{
-	        		arrayAppend(interfaces, reflectionService.loadClass(meta.implements[key].name));
+	        		arrayAppend(interfaces, getReflectionService().loadClass(meta.implements[key].name));
 	        	}
 	        }
 		}
@@ -353,12 +450,43 @@ public boolean isInstance(Object obj)
 	<cfset instance.missingMethods = arguments.missingMethods />
 </cffunction>
 
+<cffunction name="getReflectionService" access="private" returntype="coldspring.core.reflect.ReflectionService" output="false">
+	<cfreturn instance.reflectionService />
+</cffunction>
+
+<cffunction name="setReflectionService" access="private" returntype="void" output="false">
+	<cfargument name="reflectionService" type="coldspring.core.reflect.ReflectionService" required="true">
+	<cfset instance.reflectionService = arguments.reflectionService />
+</cffunction>
+
+<cffunction name="getAssignableCache" access="private" returntype="struct" output="false">
+	<cfreturn instance.assignableCache />
+</cffunction>
+
+<cffunction name="setAssignableCache" access="private" returntype="void" output="false">
+	<cfargument name="assignableCache" type="struct" required="true">
+	<cfset instance.assignableCache = arguments.assignableCache />
+</cffunction>
+
 <!--- closure methods --->
 
 <cffunction name="checkIsPublic" hint="is this method public?" access="private" returntype="boolean" output="false">
 	<cfargument name="method" hint="the method to check" type="coldspring.core.reflect.Method" required="Yes">
 	<cfscript>
 		return (arguments.method.getAccess() eq "public");
+    </cfscript>
+</cffunction>
+
+<cffunction name="classTypeCheck" hint="check to see if the given className is the same as the passed in one" access="private" returntype="boolean" output="false">
+	<cfargument name="class" hint="the class to check" type="Class" required="Yes">
+	<cfscript>
+		if(arguments.class._equals(variables.class))
+		{
+			result = true;
+			return false;
+		}
+
+		return true;
     </cfscript>
 </cffunction>
 

@@ -64,8 +64,12 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getClassMetaData" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
-	<cfreturn getComponentMetadata(getClassName()) />
+<cffunction name="getClass" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
+	<cfscript>
+		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+
+		return reflectionService.loadClass(getClassName());
+    </cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -107,14 +111,11 @@
 
 <cffunction name="autowire" hint="autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
-		var meta = getComponentMetadata(getClassName());
-		var cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
 		var closure = createObject("component", "coldspring.util.Closure").init(autowireByMode);
+		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+		var class = reflectionService.loadClass(getClassName());
 
-		closure.curry("meta", meta);
 		//method bindings
-		closure.bind("getPackage", cfcMetaUtil.getPackage);
-		closure.bind("resolveClassName", cfcMetaUtil.resolveClassName);
 		closure.bind("isBeanNameAutoWireCandidate", isBeanNameAutoWireCandidate);
 
 		//variable bindings
@@ -123,7 +124,8 @@
 		closure.bind("beanDef", this);
 		closure.bind("registry", getBeanDefinitionRegistry());
 
-		cfcMetaUtil.eachMetaFunction(meta, closure);
+		//this was originally done as a closure, in theory this could be moved to a loop.
+		class.getMethodsCollection().each(closure);
     </cfscript>
 </cffunction>
 
@@ -135,21 +137,13 @@
 <!--- Closure Methods --->
 
 <cffunction name="autowireByMode" hint="Closure method for each function to autowire the CFC" access="private" returntype="void" output="false">
-	<cfargument name="func" hint="the function meta data" type="struct" required="Yes">
-	<cfargument name="meta" hint="the original meta data" type="struct" required="Yes">
+	<cfargument name="method" hint="the method that is currently being looked at as a potential autowire point." type="coldspring.core.reflect.Method" required="Yes">
 	<cfscript>
 		var local = {};
-
-		local.package = getPackage(arguments.meta.name);
 
 		/*
 		Constructor autowire metadata
 		*/
-
-		if(NOT structKeyExists(arguments.func, "access"))
-		{
-			arguments.func.access = "public";
-		}
 
 		if(variables.autowireMode eq "byType")
 		{
@@ -157,32 +151,32 @@
 			local.closure.bind("beanRegistry", variables.registry);
 		}
 
-		if(arguments.func.access eq "public"
-			AND arguments.func.name eq "init")
+		if(arguments.method.getName() eq "init")
 		{
-			local.len = arraylen(arguments.func.parameters);
-			for(local.counter = 1; local.counter lte local.len; local.counter++)
+			local.params = arguments.method.getParameters();
+			local.counter = 1;
+			local.len = ArrayLen(local.params);
+			for(; local.counter <= local.len; local.counter++)
 			{
-				local.param = arguments.func.parameters[local.counter];
+				local.param = local.params[local.counter];
 
 				//don't overwrite if we have the constructor arg
-				if(NOT variables.beanDef.hasConstructorArgsByName(local.param.name))
+				if(NOT variables.beanDef.hasConstructorArgsByName(local.param.getName()))
 				{
 					if(variables.autowireMode eq "byName")
 					{
 						//need to make sure we ignore non autowire candidates
-						if(variables.registry.containsBean(local.param.name)
-							AND variables.registry.isAutowireCandidate(local.param.name))
+						if(variables.registry.containsBean(local.param.getName())
+							AND variables.registry.isAutowireCandidate(local.param.getName()))
 						{
-							local.ref = createObject("component", "RefValue").init(local.param.name, variables.registry.getBeanFactory());
-							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.name, local.ref);
+							local.ref = createObject("component", "RefValue").init(local.param.getName(), variables.registry.getBeanFactory());
+							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.getName(), local.ref);
 							variables.beanDef.addConstructorArg(local.constructorArg);
 						}
 					}
-					else if(variables.autowireMode eq "byType" AND structKeyExists(local.param, "type"))
+					else if(variables.autowireMode eq "byType")
 					{
-						local.class = resolveClassName(local.param.type, local.package);
-						local.array = variables.registry.getBeanNamesForTypeIncludingAncestor(local.class);
+						local.array = variables.registry.getBeanNamesForTypeIncludingAncestor(local.param.getType());
 
 						local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
 						local.collection = local.collection.select(local.closure);
@@ -190,12 +184,12 @@
 						if(local.collection.length() eq 1)
 						{
 							local.ref = createObject("component", "RefValue").init(local.collection.get(1), variables.registry.getBeanFactory());
-							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.name, local.ref);
+							local.constructorArg = createObject("component", "ConstructorArg").init(local.param.getName(), local.ref);
 							variables.beanDef.addConstructorArg(local.constructorArg);
 						}
 						else if(ArrayLen(local.array) gt 1)
 						{
-							createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(variables.id, local.param.type);
+							createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(variables.id, local.param.getType());
 						}
 					}
 				}
@@ -208,13 +202,11 @@
 			AND starts with 'set'
 			AND it only has 1 argument
 		*/
-		if(arguments.func.access eq "public"
-			AND JavaCast("string", LCase(arguments.func.name)).startsWith("set")
-			AND StructKeyExists(arguments.func, "parameters")
-			AND ArrayLen(arguments.func.parameters) eq 1
+		if(JavaCast("string", LCase(arguments.method.getName())).startsWith("set")
+			AND ArrayLen(arguments.method.getParameters()) eq 1
 			)
 		{
-			local.name = replaceNoCase(arguments.func.name, "set", "");
+			local.name = replaceNoCase(arguments.method.getName(), "set", "");
 
 			//don't overwrite if we already have the property
 			if(NOT variables.beanDef.hasPropertyByName(local.name))
@@ -229,9 +221,9 @@
 						variables.beanDef.addProperty(local.property);
 					}
 				}
-				else if(variables.autowireMode eq "byType" AND structKeyExists(arguments.func.parameters[1], "type"))
+				else if(variables.autowireMode eq "byType")
 				{
-					local.class = resolveClassName(arguments.func.parameters[1].type, local.package);
+					local.class = arguments.method.getParameter(1).getType();
 
 					local.array = variables.registry.getBeanNamesForTypeIncludingAncestor(local.class);
 
@@ -246,7 +238,7 @@
 					}
 					else if(ArrayLen(local.array) gt 1)
 					{
-						createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(variables.id, arguments.func.parameters[1].type);
+						createObject("component", "coldspring.beans.support.exception.AmbiguousTypeAutowireException").init(variables.id, arguments.method.getParameter(1).getType());
 					}
 				}
 			}

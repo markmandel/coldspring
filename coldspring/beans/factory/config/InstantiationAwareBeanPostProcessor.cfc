@@ -25,8 +25,8 @@
 	The only further processing applied is the BeanPostProcessor.postProcessAfterInitialization(java.lang.Object, java.lang.String) callback from the configured BeanPostProcessors.<br/>
 	This callback will only be applied to bean definitions with a bean class. In particular, it will not be applied to beans with a 'factory-method'."
 	access="public" returntype="any" output="false">
-	<cfargument name="beanMetaData" hint="The class and/or meta data information of the bean about to be instantiated.
-				For CFCs this will be the results of getMetaData(), for Java objects it will be an instance of java.lang.Class"
+	<cfargument name="class" hint="The class meta data information of the bean about to be instantiated.
+				For CFCs this will be a coldspring.core.reflect.Class, for Java objects it will be an instance of java.lang.Class"
 				type="any" required="Yes">
 	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
 </cffunction>
