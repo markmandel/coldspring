@@ -15,6 +15,18 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
+<cfscript>
+	meta = getMetaData(this);
+
+	if(!StructKeyExists(meta, "const"))
+	{
+		const = {};
+		const.ON_MISSING_METHOD = "onMissingMethod";
+
+		meta.const = const;
+	}
+</cfscript>
+
 <cffunction name="init" hint="Constructor" access="public" returntype="ProxyInvocationHandler" output="false">
 	<cfargument name="className" hint="the class name of the object that is being proxied" type="string" required="Yes">
 	<cfargument name="advisors" hint="array of ordered advisors to use to match against the target's methods" type="array" required="Yes"
@@ -22,7 +34,7 @@
 	<cfscript>
     	var reflectionService = getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance;
     	var pointCutClosure = createObject("component", "coldspring.util.Closure").init(applyPointcutAdvice);
-    	var class = reflectionService.loadClass(getComponentMetadata(arguments.className).name);
+    	var class = reflectionService.loadClass(arguments.className);
 
 		setMethodAdvice(StructNew());
 
@@ -50,6 +62,17 @@
 			local.method = getTargetClass().getMethod(arguments.method);
 
 			local.filterChain = structFind(getMethodAdvice(), arguments.method).iterator();
+
+			local.methodInvocation = createObject("component", "coldspring.aop.MethodInvocation").init(local.method, getTarget(), arguments.proxy, arguments.args, local.filterChain);
+
+			return local.methodInvocation.proceed();
+        </cfscript>
+    <cfelseif !StructKeyExists(getTargetClass().getMethods(), arguments.method) && getTargetClass().hasOnMissingMethod() && StructKeyExists(getMethodAdvice(), meta.const.ON_MISSING_METHOD)>
+    	<cfscript>
+			local.method = getTargetClass().getMethod(arguments.method);
+
+			//get the filter chain for onMM
+			local.filterChain = structFind(getMethodAdvice(), meta.const.ON_MISSING_METHOD).iterator();
 
 			local.methodInvocation = createObject("component", "coldspring.aop.MethodInvocation").init(local.method, getTarget(), arguments.proxy, arguments.args, local.filterChain);
 

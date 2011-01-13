@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 <cfcomponent hint="CFC for calling a custom tag, and returning the results.<br/>
-	<strong>Note:<strong> If the custom tag is return a result, it should be named 'result', as this is var'd in this CFC, otherwise execute() won't be thread safe if placed in a shared scope'"
+	<strong>Note:</strong> If the custom tag is return a result, it should be named 'result', as this is var'd in this CFC, otherwise execute() won't be thread safe if placed in a shared scope'"
 	output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
