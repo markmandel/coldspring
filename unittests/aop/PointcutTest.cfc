@@ -17,8 +17,10 @@
 
 <cffunction name="setup" hint="" access="public" returntype="void" output="false">
 	<cfscript>
-		instance.meta = getMetaData(this);
-		instance.funcMeta = getMetaData(this.setup);
+		var reflectionService = getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance;
+
+		instance.class = reflectionService.loadClass(getMetaData(this).name);
+		instance.method = instance.class.getMethod("setup");
     </cfscript>
 </cffunction>
 
@@ -30,7 +32,7 @@
 
 		local.pointcut.setMappedName("*");
 
-		assertTrue(local.pointcut.matches(instance.funcMeta, instance.meta));
+		assertTrue(local.pointcut.matches(instance.method, instance.class));
     </cfscript>
 </cffunction>
 
@@ -42,15 +44,15 @@
 
 		local.pointcut.setMappedNames("setup");
 
-		assertTrue(local.pointcut.matches(instance.funcMeta, instance.meta));
+		assertTrue(local.pointcut.matches(instance.method, instance.class));
 
 		local.pointcut.setMappedNames("foo,setup");
 
-		assertTrue(local.pointcut.matches(instance.funcMeta, instance.meta));
+		assertTrue(local.pointcut.matches(instance.method, instance.class));
 
 		local.pointcut.setMappedNames("barrio");
 
-		assertFalse(local.pointcut.matches(instance.funcMeta, instance.meta));
+		assertFalse(local.pointcut.matches(instance.method, instance.class));
     </cfscript>
 </cffunction>
 

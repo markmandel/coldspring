@@ -75,11 +75,6 @@ component
 	{
 		var lName = lcase(arguments.missingMethodName);
 
-		/*
-		TODO:
-		,split into functions
-		*/
-
 		if(lName.startsWith(meta.const.GET_PREFIX))
 		{
 			return executeGet(arguments.missingMethodName, arguments.missingMethodArguments);

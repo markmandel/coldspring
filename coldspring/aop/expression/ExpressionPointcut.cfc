@@ -26,14 +26,14 @@
 </cffunction>
 
 <cffunction name="matches" hint="Does given method, for the given class, match for this pointcut" access="public" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 	<!---
 	we do this here, as if we build the pointcut in the setExpression property
 	if somethign goes wrong it gets swallowed by setter injection catches.
 	 --->
 	<cfset buildExpressionPointcut()>
-	<cfreturn getExpressionPointcut().matches(arguments.methodMetadata, arguments.classMetadata) />
+	<cfreturn getExpressionPointcut().matches(arguments.method, arguments.class) />
 </cffunction>
 
 <cffunction name="getExpression" hint="get the AOP Expression to define this pointcut" access="public" returntype="string" output="false">

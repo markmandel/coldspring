@@ -11,17 +11,29 @@
    limitations under the License.
  --->
 
-<cfinterface hint="Core ColdSpring pointcut abstraction.">
+<cfcomponent hint="say hello" output="false" dostuff="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="matches" hint="Does given method, for the given class, match for this pointcut" access="public" returntype="boolean" output="false">
-	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
-	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
+<cffunction name="init" hint="Constructor" access="public" returntype="HelloOnMM" output="false">
+	<cfscript>
+		return this;
+	</cfscript>
+</cffunction>
+
+<cffunction name="sayHello" hint="" access="public" returntype="string" output="false">
+	<cfargument name="str" hint="" type="string" required="no" default="hello">
+	<cfreturn arguments.str />
+</cffunction>
+
+<cffunction	name="onMissingMethod" access="public" returntype="any" output="false" hint="invoked when a method could not be found" dostuff="true">
+	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
+	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
+	<cfreturn "Missing!" />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-</cfinterface>
+</cfcomponent>

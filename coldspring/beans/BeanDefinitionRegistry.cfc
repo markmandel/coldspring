@@ -16,18 +16,22 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cfscript>
+	reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+
 	//constants
 	instance.static = {};
 
-	instance.static.REGISTRY_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor";
-	instance.static.BEAN_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanPostProcessor";
-	instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS = "coldspring.beans.factory.config.BeanFactoryPostProcessor";
+	instance.static.REGISTRY_POST_PROCESSOR_CLASS = reflectionService.loadClass("coldspring.beans.factory.config.BeanDefinitionRegistryPostProcessor");
+	instance.static.BEAN_POST_PROCESSOR_CLASS = reflectionService.loadClass("coldspring.beans.factory.config.BeanPostProcessor");
+	instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS = reflectionService.loadClass("coldspring.beans.factory.config.BeanFactoryPostProcessor");
 </cfscript>
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanDefinitionRegistry" output="false">
 	<cfargument name="beanFactory" hint="the containing bean factory" type="coldspring.beans.BeanFactory" required="Yes">
 	<cfargument name="beanCache" hint="The actual bean cache. Needed for BeanDefinitions" type="coldspring.beans.factory.BeanCache" required="true">
 	<cfscript>
+		setReflectionService(getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance);
+
 		setBeanDefinitions(StructNew());
 		setTypeNameCache(StructNew());
 		setBeanCache(arguments.beanCache);
@@ -38,8 +42,6 @@
 		{
 			setParentBeanFactory(getBeanFactory().getParentBeanFactory());
 		}
-
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
 
 		setRegistryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
 		setBeanFactoryPostProcessorObservable(createObject("component", "coldspring.util.Observable").init());
@@ -62,15 +64,18 @@
 	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var typeNameCache = getTypeNameCache();
-		var args = {id = arguments.beanDefinition.getID()};
+		var closure = 0;
 
 		arguments.beanDefinition.configure(this, getBeanCache(), getBeanPostProcessorObservable());
 
 		StructInsert(getBeanDefinitions(), arguments.beanDefinition.getID(), arguments.beanDefinition, true);
 
-		if(arguments.beanDefinition.hasClassName())
+		if(arguments.beanDefinition.hasClassName() && getReflectionService().classExists(arguments.beanDefinition.getClassName()))
 		{
-			getCFCMetaUtil().eachClassInTypeHierarchy(arguments.beanDefinition.getClassName(), getCacheNameAgainstTypeClosure(), args);
+			closure = getCacheNameAgainstTypeClosure().clone();
+			closure.bind("id", arguments.beanDefinition.getID());
+
+			arguments.beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
 		}
     </cfscript>
 </cffunction>
@@ -159,14 +164,16 @@
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
 		var beanDefinition = getBeanDefinition(arguments.name);
-		var args = {id = beanDefinition.getID()};
-		var local = {};
+		var closure = 0;
 
 		structDelete(beanDefs, beanDefinition.getID());
 
-		if(beanDefinition.hasClassName())
+		closure = getRemoveNameAgainstTypeClosure().clone();
+		closure.bind("id", beanDefinition.getID());
+
+		if(beanDefinition.hasClassName() && getReflectionService().classExists(beanDefinition.getClassName()))
 		{
-			getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getRemoveNameAgainstTypeClosure(), args);
+			beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
 		}
     </cfscript>
 </cffunction>
@@ -404,6 +411,7 @@
 		var id = 0;
 		var beanDefinition = 0;
 		var args = 0;
+		var closure = getCacheNameAgainstTypeClosure().clone();
 
 		//reset the type name cache
 		structClear(getTypeNameCache());
@@ -414,8 +422,8 @@
 
 			if(beanDefinition.hasClassName())
 			{
-				args = {id = id};
-				getCFCMetaUtil().eachClassInTypeHierarchy(beanDefinition.getClassName(), getCacheNameAgainstTypeClosure(), args);
+				closure.bind("id", beanDefinition.getID());
+				beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
 			}
 		}
     </cfscript>
@@ -441,7 +449,7 @@
 			//check for special marker classes
 			if(beanDefinition.hasClassName())
 			{
-				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.REGISTRY_POST_PROCESSOR_CLASS))
+				if(instance.static.REGISTRY_POST_PROCESSOR_CLASS.isAssignableFrom(beanDefinition.getClassName()))
 				{
 					getRegistryPostProcessorObservable().addObserver(beanDefinition.getInstance());
 				}
@@ -462,7 +470,7 @@
 			//check for special marker classes
 			if(beanDefinition.hasClassName())
 			{
-				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS))
+				if(instance.static.BEAN_FACTORY_POST_PROCESSOR_CLASS.isAssignableFrom(beanDefinition.getClassName()))
 				{
 					addBeanFactoryPostProcessor(beanDefinition.getInstance());
 				}
@@ -476,6 +484,7 @@
 		var beanDefinitions = getBeanDefinitions();
 		var id = 0;
 		var beanDefinition = 0;
+
 		for (id in beanDefinitions)
 		{
 			beanDefinition = beanDefinitions[id];
@@ -483,7 +492,7 @@
 			//check for special marker classes
 			if(beanDefinition.hasClassName())
 			{
-				if(getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.BEAN_POST_PROCESSOR_CLASS))
+				if(instance.static.BEAN_POST_PROCESSOR_CLASS.isAssignableFrom(beanDefinition.getClassName()))
 				{
 					addBeanPostProcessor(beanDefinition.getInstance());
 				}
@@ -492,30 +501,27 @@
     </cfscript>
 </cffunction>
 
-
 <!--- closure functions --->
 <cffunction name="removeNameAgainstType" hint="closure function for eachInTypeHierarchy that removes the bean name against the class in the type cache" access="private" returntype="void" output="false">
-	<cfargument name="className" hint="the class name" type="string" required="Yes">
-	<cfargument name="id" hint="the bean definition id" type="string" required="Yes">
+	<cfargument name="class" hint="the class name" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
-		if(structKeyExists(typeNameCache, arguments.className))
+		if(structKeyExists(typeNameCache, arguments.class.getName()))
 		{
-			typeNameCache[arguments.className].remove(arguments.id);
+			typeNameCache[arguments.class.getName()].remove(id);
 		}
     </cfscript>
 </cffunction>
 
 <cffunction name="cacheNameAgainstType" hint="closure function for eachInTypeHierarchy that caches the bean name against the class the type cache" access="private" returntype="void" output="false">
-	<cfargument name="className" hint="the class name" type="string" required="Yes">
-	<cfargument name="id" hint="the bean definition id" type="string" required="Yes">
+	<cfargument name="class" hint="the class name" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
-		if(NOT structKeyExists(typeNameCache, arguments.className))
+		if(NOT structKeyExists(typeNameCache, arguments.class.getName()))
 		{
 			//use an array list for speed and pass by reference.
-			structInsert(typeNameCache, arguments.className, createObject("java", "java.util.ArrayList").init());
+			structInsert(typeNameCache, arguments.class.getName(), createObject("java", "java.util.ArrayList").init());
 		}
 
-		ArrayAppend(typeNameCache[className], arguments.id);
+		ArrayAppend(typeNameCache[arguments.class.getName()], id);
 	</cfscript>
 </cffunction>
 <!--- /closure functions --->
@@ -555,15 +561,6 @@
 <cffunction name="setTypeNameCache" access="private" returntype="void" output="false" colddoc:generic="string,string">
 	<cfargument name="typeNameCache" type="struct" required="true">
 	<cfset instance.typeNameCache = arguments.typeNameCache />
-</cffunction>
-
-<cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
-	<cfreturn instance.cfcMetaUtil />
-</cffunction>
-
-<cffunction name="setCFCMetaUtil" access="private" returntype="void" output="false">
-	<cfargument name="cfcMetaUtil" type="coldspring.util.CFCMetaUtil" required="true">
-	<cfset instance.cfcMetaUtil = arguments.cfcMetaUtil />
 </cffunction>
 
 <cffunction name="getRemoveNameAgainstTypeClosure" access="private" returntype="coldspring.util.Closure" output="false">
@@ -622,6 +619,15 @@
 	<cfargument name="parent" type="any" required="Yes"
 	colddoc:generic="BeanFactory">
 	<cfset instance.parent = arguments.parent />
+</cffunction>
+
+<cffunction name="getReflectionService" access="private" returntype="coldspring.core.reflect.ReflectionService" output="false">
+	<cfreturn instance.reflectionService />
+</cffunction>
+
+<cffunction name="setReflectionService" access="private" returntype="void" output="false">
+	<cfargument name="reflectionService" type="coldspring.core.reflect.ReflectionService" required="true">
+	<cfset instance.reflectionService = arguments.reflectionService />
 </cffunction>
 
 </cfcomponent>

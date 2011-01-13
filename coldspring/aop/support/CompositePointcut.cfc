@@ -44,11 +44,11 @@
 </cffunction>
 
 <cffunction name="matches" hint="Does given method, for the given class, match for this pointcut" access="public" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 
 	<cfscript>
-		var finalMatch = getInitialPointcut().matches(arguments.methodMetadata, arguments.classMetadata);
+		var finalMatch = getInitialPointcut().matches(arguments.method, arguments.class);
 		var match = 0;
 		var pointcutCollection = getPointcutCollection();
 		var pointcutData = 0;
@@ -61,7 +61,7 @@
 
 	<cfloop array="#pointcutCollection#" index="pointcutData">
 		<cfscript>
-			match = pointcutData.pointcut.matches(arguments.methodMetadata, arguments.classMetadata);
+			match = pointcutData.pointcut.matches(arguments.method, arguments.class);
 
 			if(pointcutData.negate)
 			{

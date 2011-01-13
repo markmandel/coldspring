@@ -404,6 +404,80 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testOnMissingMethodClassAnnotation" hint="tests a * on a class based pointcut" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();
+
+		local.classAnnotation =
+		{
+			dostuff = "*"
+		};
+
+		local.pointcut.setClassAnnotations(local.classAnnotation);
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.hello = createObject("component", "unittests.aop.com.sub.HelloOnMM").init();
+
+		local.proxy = instance.proxyFactory.getProxy(local.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+
+		//there is no goodbye, so calls onMissingMethod
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals(reverse("Missing!"), local.value);
+    </cfscript>
+</cffunction>
+
+<cffunction name="testOnMissingMethodMethodAnnotation" hint="tests a * on a class based pointcut" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();
+
+		local.methodAnnotation =
+		{
+			dostuff = "true"
+		};
+
+		local.pointcut.setMethodAnnotations(local.methodAnnotation);
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.hello = createObject("component", "unittests.aop.com.sub.HelloOnMM").init();
+
+		local.proxy = instance.proxyFactory.getProxy(local.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals("hello", local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+
+		//there is no goodbye, so calls onMissingMethod
+		local.value = local.proxy.sayGoodbye();
+
+		assertEquals(reverse("Missing!"), local.value);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

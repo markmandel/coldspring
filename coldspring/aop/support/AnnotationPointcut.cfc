@@ -45,22 +45,22 @@
 </cffunction>
 
 <cffunction name="matches" hint="Does given method, for the given class, match for this pointcut" access="public" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
 		var args = {};
 		var cfcMetaUtil = 0;
-		var annotations = getMethodAnnotations();
 		var annotation = 0;
+		var annotations = getMethodAnnotations();
 
-		for(annotation in getMethodAnnotations())
+		for(annotation in annotations)
 		{
-			if(structKeyExists(arguments.methodMetadata, annotation)
+			if(arguments.method.hasAnnotation(annotation)
 				AND
 				(
 					annotations[annotation] == meta.const.WILDCARD
 					||
-					annotations[annotation] == arguments.methodMetadata[annotation]
+					annotations[annotation] == arguments.method.getAnnotation(annotation)
 				)
 			)
 			{
@@ -68,17 +68,25 @@
 			}
 		}
 
-		//result in struct for pass by ref
-		args.result.result = false;
-		args.annotations = getClassAnnotations();
+		annotations = getClassAnnotations();
 
-		//need to define this first, dunno why, cf doesn't like me calling methods on meta data based singletons.
-		cfcMetaUtil = getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance;
-		cfcMetaUtil.eachClassInTypeHierarchy(arguments.classMetadata.name, meta.const.CLASS_MATCHES_CLOSURE, args);
+		for(annotation in annotations)
+		{
+			if(arguments.class.hasAnnotation(annotation)
+				AND
+				(
+					annotations[annotation] == meta.const.WILDCARD
+					||
+					annotations[annotation] == arguments.class.getAnnotation(annotation)
+				)
+			)
+			{
+				return true;
+			}
+		}
 
-		return args.result.result;
+		return false;
     </cfscript>
-
 </cffunction>
 
 <cffunction name="getClassAnnotations"

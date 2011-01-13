@@ -37,28 +37,26 @@
 		setArgumentTypes(createObject("java", "java.util.ArrayList").init());
 		setMatchAnyArguments(true);
 
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
-
 		return this;
 	</cfscript>
 </cffunction>
 
 <cffunction name="matches" hint="Can the current set of metadata match the execution pointcut that has been defined here?" access="public" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 
 	<cfscript>
-		return (matchInstanceType(arguments.methodMetadata, arguments.classMetadata)
+		return (matchInstanceType(arguments.method, arguments.class)
 				AND
-				matchSubPackage(arguments.methodMetadata, arguments.classMetadata)
+				matchSubPackage(arguments.method, arguments.class)
 				AND
-				matchPackage(arguments.methodMetadata, arguments.classMetadata)
+				matchPackage(arguments.method, arguments.class)
 				AND
-				matchMethodName(arguments.methodMetadata, arguments.classMetadata)
+				matchMethodName(arguments.method, arguments.class)
 				AND
-				matchReturnType(arguments.methodMetadata, arguments.classMetadata)
+				matchReturnType(arguments.method, arguments.class)
 				AND
-				matchArguments(arguments.methodMetadata, arguments.classMetadata)
+				matchArguments(arguments.method, arguments.class)
 				);
     </cfscript>
 </cffunction>
@@ -140,8 +138,8 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="matchMethodName" hint="Does the current method match the method name, including regex's" access="private" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 
 	<cfscript>
 		if(getMethodName() == meta.const.NONE)
@@ -154,15 +152,18 @@
 		}
 
 		//use the underlying String object to match the whole string against the regex
-		return arguments.methodMetadata.name.matches(getMethodName());
+		return arguments.method.getName().matches(getMethodName());
     </cfscript>
 </cffunction>
 
 <cffunction name="matchInstanceType" hint="Can the currently class instance type be assigned to the provided class / interface" access="private" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 
 	<cfscript>
+		var reflectionService = 0;
+		var instanceClass = 0;
+
 		if(getInstanceType() == meta.const.NONE)
 		{
 			return false;
@@ -172,13 +173,16 @@
 			return true;
 		}
 
-		return getCFCMetaUtil().isAssignableFrom(arguments.classMetadata.name, getInstanceType());
+		reflectionService = getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance;
+		instanceClass = reflectionService.loadClass(getInstanceType());
+
+		return instanceClass.isAssignableFrom(arguments.class.getName());
     </cfscript>
 </cffunction>
 
 <cffunction name="matchSubPackage" hint="Does the package that the class type must be part of, or of a sub package of match" access="private" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
 		var package = 0;
 		if(getSubPackage() == meta.const.NONE)
@@ -191,16 +195,14 @@
 		}
 		else
 		{
-			package = getCFCMetaUtil().getPackage(arguments.classMetadata.name);
-
-			return Lcase(package).startsWith(getSubPackage());
+			return Lcase(arguments.class.getPackage()).startsWith(getSubPackage());
 		}
     </cfscript>
 </cffunction>
 
 <cffunction name="matchPackage" hint="Does the package that the class type match our set package?" access="private" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
 		var package = 0;
 		if(getPackage() == meta.const.NONE)
@@ -213,16 +215,14 @@
 		}
 		else
 		{
-			package = getCFCMetaUtil().getPackage(arguments.classMetadata.name);
-
-			return package eq getPackage();
+			return arguments.class.getPackage() eq getPackage();
 		}
     </cfscript>
 </cffunction>
 
 <cffunction name="matchReturnType" hint="Does the method data match the return type of the method?" access="private" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
 		var package = 0;
 		if(getReturnType() == meta.const.NONE)
@@ -235,20 +235,14 @@
 		}
 		else
 		{
-			//clean it up
-			if(!StructKeyExists(arguments.methodMetadata, "returntype"))
-			{
-				arguments.methodMetadata.returntype = "any";
-			}
-
-			return getReturnType() eq arguments.methodMetadata.returntype;
+			return getReturnType() eq arguments.method.getReturnType();
 		}
     </cfscript>
 </cffunction>
 
 <cffunction name="matchArguments" hint="Does the current set of arguments on the method match up to the required set in the pointcut" access="private" returntype="boolean" output="false">
-	<cfargument name="methodMetadata" type="struct" required="yes" />
-	<cfargument name="classMetadata" type="struct" required="yes" />
+	<cfargument name="method" hint="The method to match" type="coldspring.core.reflect.Method" required="Yes">
+	<cfargument name="class" hint="The class to match" type="coldspring.core.reflect.Class" required="Yes">
 	<cfscript>
 		var local = {};
 
@@ -260,7 +254,7 @@
 		local.argumentTypes = getArgumentTypes();
 		local.len = arraylen(local.argumentTypes);
 
-		if(local.len != ArrayLen(arguments.methodMetadata.parameters))
+		if(local.len != ArrayLen(arguments.method.getParameters()))
 		{
 			return false;
 		}
@@ -270,16 +264,11 @@
         for(local.counter=1; local.counter <= local.len; local.counter++)
         {
         	local.type = local.argumentTypes[local.counter];
-			local.param = arguments.methodMetadata.parameters[local.counter];
-
-			if(!StructKeyExists(local.param, "type"))
-			{
-				local.param.type = "any";
-			}
+			local.param = arguments.method.getParameter(local.counter);
 
 			if(local.type != meta.const.ANY)
 			{
-				if(local.type != local.param.type)
+				if(local.type != local.param.getType())
 				{
 					return false;
 				}
@@ -288,15 +277,6 @@
 
 		return true;
     </cfscript>
-</cffunction>
-
-<cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
-	<cfreturn instance.cfcMetaUtil />
-</cffunction>
-
-<cffunction name="setCFCMetaUtil" access="private" returntype="void" output="false">
-	<cfargument name="cfcMetaUtil" type="coldspring.util.CFCMetaUtil" required="true">
-	<cfset instance.cfcMetaUtil = arguments.cfcMetaUtil />
 </cffunction>
 
 </cfcomponent>

@@ -109,14 +109,12 @@
 
 		debug(local.params);
 
-		assertEquals(1, structCount(local.params));
+		assertEquals(1, ArrayLen(local.params));
 
-		assertEquals("param1", local.params["param1"].getName());
-		assertEquals("array", local.method.getParameter("param1").getType());
-		assertTrue(local.params["param1"].isRequired());
-		assertFalse(local.params["param1"].hasDefault());
-
-		assertTrue(local.method.hasParameter("param1"));
+		assertEquals("param1", local.params[1].getName());
+		assertEquals("array", local.method.getParameter(1).getType());
+		assertTrue(local.params[1].isRequired());
+		assertFalse(local.params[1].hasDefault());
 
 		local.class.getMethod("privateMethod");
 	</cfscript>

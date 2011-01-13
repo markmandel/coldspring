@@ -16,14 +16,14 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cfscript>
-	instance.static.FACTORYBEAN_CLASS = "coldspring.beans.factory.FactoryBean";
+	reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+
+	instance.static.FACTORYBEAN_CLASS = reflectionService.loadClass("coldspring.beans.factory.FactoryBean");
 </cfscript>
 
 
 <cffunction name="init" hint="Constructor" access="public" returntype="FactoryBeanRegistryPostProcessor" output="false">
 	<cfscript>
-		setCFCMetaUtil(getComponentMetadata("coldspring.util.CFCMetaUtil").singleton.instance);
-
 		return this;
 	</cfscript>
 </cffunction>
@@ -42,7 +42,7 @@
 		<cfscript>
 			beanDefinition = arguments.registry.getBeanDefinition(id);
 
-			if(beanDefinition.hasClassName() AND getCFCMetaUtil().isAssignableFrom(beanDefinition.getClassName(), instance.static.FACTORYBEAN_CLASS))
+			if(beanDefinition.hasClassName() AND instance.static.FACTORYBEAN_CLASS.isAssignableFrom(beanDefinition.getClassName()))
 			{
 				arguments.registry.removeBeanDefinition(id);
 
@@ -77,14 +77,5 @@
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="getCFCMetaUtil" access="private" returntype="coldspring.util.CFCMetaUtil" output="false">
-	<cfreturn instance.cfcMetaUtil />
-</cffunction>
-
-<cffunction name="setCFCMetaUtil" access="private" returntype="void" output="false">
-	<cfargument name="cfcMetaUtil" type="coldspring.util.CFCMetaUtil" required="true">
-	<cfset instance.cfcMetaUtil = arguments.cfcMetaUtil />
-</cffunction>
 
 </cfcomponent>

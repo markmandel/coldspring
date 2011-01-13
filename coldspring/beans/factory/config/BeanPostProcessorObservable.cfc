@@ -48,7 +48,7 @@
 <cffunction name="postProcessBeforeInstantiation" hint="Fires postProcessBeforeInstantiation() on all InstantiationAwareBeanPostProcessors.<br/>
 			If a non-null object is returned by this method, the observer notification process will be stopped." access="public" returntype="any" output="false">
 	<cfargument name="beanMetaData" hint="The class and/or meta data information of the bean about to be instantiated.
-				For CFCs this will be the results of getMetaData(), for Java objects it will be an instance of java.lang.Class"
+				For CFCs this will be coldspring.core.reflect.Class, for Java objects it will be an instance of java.lang.Class"
 				type="any" required="Yes">
 	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
 	<cfreturn getBeforeInstantiationObservable().postProcessBeforeInstantiation(arguments.beanMetaData, arguments.beanName) />

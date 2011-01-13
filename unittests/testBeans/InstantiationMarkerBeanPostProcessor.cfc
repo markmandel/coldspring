@@ -28,10 +28,12 @@ The returned bean object may be a proxy to use instead of the target bean, effec
 If a non-null object is returned by this method, the bean creation process will be short-circuited.<br/>
 The only further processing applied is the BeanPostProcessor.postProcessAfterInitialization(java.lang.Object, java.lang.String) callback from the configured BeanPostProcessors.<br/>
 This callback will only be applied to bean definitions with a bean class. In particular, it will not be applied to beans with a 'factory-method'." access="public" returntype="any" output="false">
-	<cfargument name="beanMetaData" type="any" required="yes" />
+	<cfargument name="class" type="any" required="yes" />
 	<cfargument name="beanName" type="string" required="yes" />
 	<cfscript>
-		arguments.beanMetaData[getKey()& "_BeforeInstantiation"] = 1;
+		var meta = arguments.class.getMeta();
+
+		meta[getKey()& "_BeforeInstantiation"] = 1;
     </cfscript>
 </cffunction>
 
