@@ -47,7 +47,7 @@
 				if(hasClassName())
 				{
 					//specify variabes scope, as otherwise, you get the actual underlying Java class.
-					local.postBean = beanPostProcessorObservable.postProcessBeforeInstantiation(variables.getClass(), getID());
+					local.postBean = beanPostProcessorObservable.postProcessBeforeInstantiation($getClass(), getID());
 				}
 
 				if(StructKeyExists(local, "postBean"))
@@ -407,7 +407,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getClass" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
+<cffunction name="$getClass" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
 	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("getClass", this)>
 </cffunction>
 

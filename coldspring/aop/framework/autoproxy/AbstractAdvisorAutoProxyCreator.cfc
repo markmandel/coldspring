@@ -121,7 +121,7 @@
 	<cfargument name="beanDefinition" hint="the bean definition to check" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var advisors = getAdvisors();
-		var class = arguments.beanDefinition.getClass();
+		var class = arguments.beanDefinition.$getClass();
 		var methods = class.getMethods();
 		var method = 0;
 		var key = 0;

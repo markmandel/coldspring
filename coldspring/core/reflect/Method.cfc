@@ -98,7 +98,7 @@
 	<cfreturn instance.meta />
 </cffunction>
 
-<cffunction name="getClass" hint="Get the Class that this method belongs to" access="public" returntype="Class" output="false">
+<cffunction name="$getClass" hint="Get the Class that this method belongs to" access="public" returntype="Class" output="false">
 	<cfreturn instance.class />
 </cffunction>
 

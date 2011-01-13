@@ -75,7 +75,7 @@
 			closure = getCacheNameAgainstTypeClosure().clone();
 			closure.bind("id", arguments.beanDefinition.getID());
 
-			arguments.beanDefinition.getClass().eachClassInTypeHierarchy(closure);
+			arguments.beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
 		}
     </cfscript>
 </cffunction>
@@ -173,7 +173,7 @@
 
 		if(beanDefinition.hasClassName() && getReflectionService().classExists(beanDefinition.getClassName()))
 		{
-			beanDefinition.getClass().eachClassInTypeHierarchy(closure);
+			beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
 		}
     </cfscript>
 </cffunction>
@@ -423,7 +423,7 @@
 			if(beanDefinition.hasClassName())
 			{
 				closure.bind("id", beanDefinition.getID());
-				beanDefinition.getClass().eachClassInTypeHierarchy(closure);
+				beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
 			}
 		}
     </cfscript>

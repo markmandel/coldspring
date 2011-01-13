@@ -269,11 +269,7 @@ public boolean isInstance(Object obj)
     </cfscript>
 </cffunction>
 
-<!---
-TODO: make this $equals()
- --->
-
-<cffunction name="_equals" hint="equality test with another Class object" access="public" returntype="boolean" output="false">
+<cffunction name="$equals" hint="equality test with another Class object" access="public" returntype="boolean" output="false">
 	<cfargument name="class" hint="the class to test equality with" type="Class" required="Yes">
 	<cfreturn getName() eq arguments.class.getName() />
 </cffunction>
@@ -484,7 +480,7 @@ TODO: make this $equals()
 <cffunction name="classTypeCheck" hint="check to see if the given className is the same as the passed in one" access="private" returntype="boolean" output="false">
 	<cfargument name="class" hint="the class to check" type="Class" required="Yes">
 	<cfscript>
-		if(arguments.class._equals(variables.class))
+		if(arguments.class.$equals(variables.class))
 		{
 			result = true;
 			return false;

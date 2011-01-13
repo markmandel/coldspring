@@ -32,7 +32,7 @@
 		}
 		else
 		{
-			arguments.paramMeta.type = reflectionService.resolveClassName(arguments.paramMeta.type, arguments.method.getClass().getPackage());
+			arguments.paramMeta.type = reflectionService.resolveClassName(arguments.paramMeta.type, arguments.method.$getClass().getPackage());
 		}
 
 		setMeta(arguments.paramMeta);

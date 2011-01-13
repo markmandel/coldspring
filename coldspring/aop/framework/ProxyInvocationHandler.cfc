@@ -154,7 +154,7 @@
     </cfscript>
 	<cfloop array="#variables.advisors#" index="advisor">
 		<cfscript>
-			if(advisor.getPointcut().matches(arguments.method, arguments.method.getClass()))
+			if(advisor.getPointcut().matches(arguments.method, arguments.method.$getClass()))
 			{
 				if(!structKeyExists(variables.methodAdvice, arguments.method.getName()))
 				{

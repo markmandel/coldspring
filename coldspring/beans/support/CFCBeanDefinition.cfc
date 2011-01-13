@@ -64,7 +64,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getClass" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
+<cffunction name="$getClass" hint="retrieves the relevent meta data about the class for the JVM language this bean represents" access="public" returntype="any" output="false">
 	<cfscript>
 		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
 
