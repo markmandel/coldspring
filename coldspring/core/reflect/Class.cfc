@@ -374,7 +374,7 @@ public boolean isInstance(Object obj)
 
 <cffunction name="buildMethods" hint="builds all the public methods, and add in any parent methods" access="private" returntype="void" output="false">
 	<cfscript>
-		var publicMethods = getDeclaredMethodsCollection().select(meta.const.IS_PUBLIC_CLOSURE);
+		var publicMethods = getDeclaredMethodsCollection().findAll(meta.const.IS_PUBLIC_CLOSURE);
 		var currentClass = this;
 
 		while(currentClass.hasSuperClass())

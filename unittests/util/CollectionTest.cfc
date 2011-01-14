@@ -87,7 +87,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testSelectArray" hint="tests the select function of the collection" access="public" returntype="void" output="false">
+<cffunction name="testFindAllArray" hint="tests the findall() function of the collection" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
@@ -97,13 +97,13 @@
 		local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
 
 		local.expected = [2, 4, 6, 8, 10];
-		local.result = local.collection.select(local.closure);
+		local.result = local.collection.findAll(local.closure);
 
 		assertEquals(local.expected, local.result.getCollection());
     </cfscript>
 </cffunction>
 
-<cffunction name="testSelectStruct" hint="tests the select function of the collection" access="public" returntype="void" output="false">
+<cffunction name="testFindAllStruct" hint="tests the select function of the collection" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
@@ -113,7 +113,7 @@
 		local.collection = createObject("component", "coldspring.util.Collection").init(local.struct);
 
 		local.expected = {bar=2, stuff=4};
-		local.result = local.collection.select(local.closure);
+		local.result = local.collection.findAll(local.closure);
 
 		assertEquals(local.expected, local.result.getCollection());
     </cfscript>

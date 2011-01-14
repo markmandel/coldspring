@@ -179,7 +179,7 @@
 						local.array = variables.registry.getBeanNamesForTypeIncludingAncestor(local.param.getType());
 
 						local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
-						local.collection = local.collection.select(local.closure);
+						local.collection = local.collection.findAll(local.closure);
 
 						if(local.collection.length() eq 1)
 						{
@@ -228,7 +228,7 @@
 					local.array = variables.registry.getBeanNamesForTypeIncludingAncestor(local.class);
 
 					local.collection = createObject("component", "coldspring.util.Collection").init(local.array);
-					local.collection = local.collection.select(local.closure);
+					local.collection = local.collection.findAll(local.closure);
 
 					if(local.collection.length() eq 1)
 					{

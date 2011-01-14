@@ -33,11 +33,7 @@
     </cfif>
 </cffunction>
 
-<!---
-TODO: rename this to 'findAll'
- --->
-
-<cffunction name="select" hint="return a collection in which all the items that match the predicate are returned" access="public" returntype="Collection" output="false">
+<cffunction name="findAll" hint="return a collection in which all the items that match the predicate are returned" access="public" returntype="Collection" output="false">
 	<cfargument name="closure" hint="the closure that specifies if the item should be included. Needs to return a boolean" type="Closure" required="Yes">
 	<cfscript>
 		var item = 0;
