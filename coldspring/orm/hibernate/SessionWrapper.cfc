@@ -19,6 +19,8 @@
  * must occur within a transaction block, or an exception will be thrown. This is often useful to ensure that persistence occurs within a transaction block.</p>
  * <p>Default Flush Mode provides you with a way of setting up a different Flush Mode other than 'AUTO' as the default, if you wish.
  * See <a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/FlushMode.html">FlushMode</a> for more details.</p>
+ * <p>The methods delete(),insert(),merge(),save() & update() have the annotation 'orm:persist="true"', for easy interception of ORM persistent events via AOP,
+ * e.g. for Transaction Management</p>
  * <p>Note that multiple SessionWrappers will all work on the same underlying Hibernate Session, as that is how ColdFusion works</p>
  */
 component accessors="true"
@@ -151,6 +153,8 @@ component accessors="true"
      * Inserts or updates data of the object and all related objects to the database.
 	 *
 	 * @entity the entity to insert or update
+	 *
+	 * @orm:persist true
      */
     public void function save(required any entity)
     {
@@ -166,6 +170,8 @@ component accessors="true"
 	 * and returns the identifier.
 	 *
 	 * @entity the entity to insert
+	 *
+	 * @orm:persist true
      */
     public any function insert(required any entity)
     {
@@ -180,6 +186,8 @@ component accessors="true"
      * Specifically updates a persistent object.
 	 *
 	 * @entity the entity to update
+	 *
+	 * @orm:persist true
      */
     public any function update(required any entity)
     {
@@ -194,6 +202,8 @@ component accessors="true"
      * Deletes the given entity
 	 *
 	 * @entity the entity to delete
+	 *
+	 * @orm:persist true
      */
     public void function delete(required any entity)
     {
@@ -208,6 +218,8 @@ component accessors="true"
      * Applies an merges the passed in entity, and returns the resultant merged persistent entity.
 	 *
 	 * @entity the entity to merge.
+	 *
+	 * @orm:persist true
      */
     public any function merge(required any entity)
     {

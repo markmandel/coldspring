@@ -20,6 +20,7 @@ component  extends="unittests.AbstractTestCase" hint="Test case for Hibernate ba
     {
 		super.setup();
 		ormReload();
+		ormClearSession();
 		ormGetSession().beginTransaction();
     }
 

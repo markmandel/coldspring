@@ -367,4 +367,19 @@ component extends="AbstractHibernateTest"
 		assertEquals("Gandalf", local.foo.getInject());
     }
 
+    public void function testPersistAnnotation()
+    {
+    	var reflectionService = new coldspring.core.reflect.ReflectionService();
+
+    	var class = reflectionService.loadClass("coldspring.orm.hibernate.SessionWrapper");
+
+		for(methodName in ["delete", "insert", "merge", "save", "update"])
+		{
+			var method = class.getMethod(methodName);
+
+			assertTrue(method.hasAnnotation("orm:persist"), "Could not find annotation orm:persist on #methodName#()");
+			assertTrue(method.getAnnotation("orm:persist"), "Could orm:persist on #methodName#() is not true");
+		}
+    }
+
 }
