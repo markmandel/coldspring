@@ -200,7 +200,10 @@
          - - - - - - - - - - - - - - - - - -->	
 	<target name="aop-parser" depends="aop-parser-clean">
 		
-		<property name="cp" location="${antlr.lib}/antlr-3.2.jar"/>
+		<property name="cp" location="${antlr.lib}/antlr-3.3-complete.jar"/>
+		
+		<!-- need this, as gunit was foobar'd on the 3.3 release -->
+		<property name="gunit.cp" location="${antlr.lib}/gunit-3.3.1-SNAPSHOT.jar"/>
 		
 		<echo message="Generating Lexer &amp; Parser"/>
 		<java classname="org.antlr.Tool" classpath="${cp}" fork="true" dir="${antlr.src}">
@@ -212,7 +215,7 @@
 		</javac>
 		
 		<echo message="Running gUnit Tests"/>
-		<java classname="org.antlr.gunit.Interp" classpath="${cp};${antlr.src};" fork="true">
+		<java classname="org.antlr.gunit.Interp" classpath="${gunit.cp};${cp};${antlr.src};" fork="true">
 			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.gunit"/>
 		</java>
 		

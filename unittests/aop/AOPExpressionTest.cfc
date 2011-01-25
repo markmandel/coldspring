@@ -1,4 +1,17 @@
-﻿<cfcomponent hint="tests for generating aop proxies" extends="unittests.AbstractTestCase" output="false">
+﻿<!---
+   Copyright 2011 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ --->
+
+<cfcomponent hint="tests for generating aop proxies" extends="unittests.AbstractTestCase" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -436,7 +449,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testBadExpression" hint="test an errornous message" access="public" returntype="void" output="false">
+<cffunction name="testBadExpressionParameter" hint="test an errornous message" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
@@ -455,6 +468,36 @@
 
 			assertEquals("Invalid expression syntax found near 'true')'", exc.message);
 			assertEquals("At line 1, 21 an error occured: mismatched input 'true' expecting set null", exc.detail);
+		}
+
+		if(!local.check)
+		{
+			fail("This bad expression did not throw an error!");
+		}
+	</cfscript>
+</cffunction>
+
+<cffunction name="testBadExpressionTargetType" hint="test an errornous message" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		//we will do this as a check exception, as we want to make sure the right message comes out.
+		local.check = false;
+
+		try
+		{
+			pointcut.setExpression("@annotaion(dostuff='true')");
+			makePublic(pointcut, "buildExpressionPointcut");
+			pointcut.buildExpressionPointcut();
+		}
+		catch(coldspring.aop.expression.exception.InvalidExpressionException exc)
+		{
+			local.check = true;
+
+			debug(exc);
+
+			assertEquals("Invalid expression syntax found near 'on(dostuff='true')'", exc.message);
+			assertEquals("At line 1, 8 an error occured: no viable alternative at input 'on(dostuff='true')'", exc.detail);
 		}
 
 		if(!local.check)

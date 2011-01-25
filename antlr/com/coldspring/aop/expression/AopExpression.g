@@ -1,5 +1,18 @@
 grammar AopExpression;
 
+/*
+   Copyright 2011 Mark Mandel
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 options 
 {
 	output=AST;
@@ -24,7 +37,7 @@ tokens
 	error.put(EXCEPTION_KEY, e);
 	
 	errorList.add(error);
-                
+              
         super.displayRecognitionError(tokenNames, e);
     }
     
@@ -38,6 +51,7 @@ tokens
 	package com.coldspring.aop.expression;
 	
 	//import java.util.*;
+	
 }
 
 @lexer::members 
@@ -121,6 +135,8 @@ CF_TYPE : {expressionStart}?=> ('string' | 'boolean' | 'query' | 'xml' | 'compon
 DESCRIPTOR  
 	: {expressionStart}?=> (('a'..'z'|'A'..'Z'|'_'|'*') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'.'|'*'|':')*)
 	{System.out.println("DESCRIPTOR");}
+	| /* give it another option so it doesn't infinite loop out when the predicate fails */
+	{ System.out.println("Blank!"); input.seek(input.size()); }
       	;
       	
 ANY_ARGUMENT
