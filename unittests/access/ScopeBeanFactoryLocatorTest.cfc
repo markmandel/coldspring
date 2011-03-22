@@ -27,6 +27,23 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testNoBeanFactory" hint="tests before the processor exists, nothing should be there" access="public" returntype="void" output="false">
+	<cfscript>
+		var locator = createObject("component" , "coldspring.beans.factory.access.ScopeBeanFactoryLocator" ).init();
+
+		locator.setBeanFactoryName("coldspring-not-here");
+
+		locator.setBeanFactoryScope("application");
+		assertFalse(locator.hasInstance());
+		locator.setBeanFactoryScope("request");
+		assertFalse(locator.hasInstance());
+		locator.setBeanFactoryScope("session");
+		assertFalse(locator.hasInstance());
+		locator.setBeanFactoryScope("server");
+		assertFalse(locator.hasInstance());
+    </cfscript>
+</cffunction>
+
 <cffunction name="testPostProcessorPutsInScope" hint="test to make sure the post processor is putting the right thing in the right scope"
 			access="public" returntype="void" output="false">
 	<cfscript>
@@ -34,6 +51,11 @@
 		assertTrue(structKeyExists(request, key));
 		assertTrue(structKeyExists(session, key));
 		assertTrue(structKeyExists(server, key));
+
+		assertTrue(factory.getBean("applicationBeanFactoryLocator").hasInstance());
+		assertTrue(factory.getBean("requestBeanFactoryLocator").hasInstance());
+		assertTrue(factory.getBean("sessionBeanFactoryLocator").hasInstance());
+		assertTrue(factory.getBean("serverBeanFactoryLocator").hasInstance());
 
 		assertSame(factory, application[key]);
 		assertSame(factory, session[key]);
