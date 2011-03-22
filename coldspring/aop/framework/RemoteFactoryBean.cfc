@@ -23,6 +23,7 @@
 		super.init();
 		setProxyGenerated(false);
 		setAddMissingMethods(ArrayNew(1));
+		setRemoteMethodNames(ArrayNew(1));
 
 		return this;
 	</cfscript>
@@ -102,7 +103,14 @@
 <cffunction name="setAddMissingMethods" hint="List of non-existent methods that are to be implemented as remote methods on the remote facade"
 			access="public" returntype="void" output="false">
 	<cfargument name="addMissingMethods" hint="List or array of method names" type="any" required="true">
-	<cfset instance.addMissingMethods = arguments.addMissingMethods />
+	<cfscript>
+		if(isSimpleValue(arguments.addMissingMethods))
+		{
+			arguments.addMissingMethods = listToArray(arguments.addMissingMethods);
+		}
+
+		instance.addMissingMethods = arguments.addMissingMethods;
+    </cfscript>
 </cffunction>
 
 <cffunction name="setBeanName" hint="set the bean name as it is stored in the BeanFactory." access="public" returntype="void" output="false">
