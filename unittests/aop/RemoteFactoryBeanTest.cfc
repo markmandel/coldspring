@@ -38,6 +38,30 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testAddOnMissingMethod" hint="test adding onMissingMethod" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMM.cfc?method=doThis&returnFormat=json";
+    </cfscript>
+    <cfhttp url="#local.path#" method="get" result="local.result">
+
+	<cfscript>
+		debug(local.result);
+		assertEquals("Missing!", deserializeJSON(local.result.fileContent));
+    </cfscript>
+
+	<cfscript>
+		var local = {};
+		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMM.cfc?method=doThat&returnFormat=json";
+    </cfscript>
+    <cfhttp url="#local.path#" method="get" result="local.result">
+
+	<cfscript>
+		debug(local.result);
+		assertEquals("Missing!", deserializeJSON(local.result.fileContent));
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
