@@ -14,7 +14,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="BeanFactoryLocator that stores and retrieves a BeanFactory from a shared scope, under a given name" 
+<cfcomponent hint="BeanFactoryLocator that stores and retrieves a BeanFactory from a shared scope, under a given name"
 			 implements="coldspring.beans.factory.config.BeanFactoryPostProcessor,BeanFactoryLocator" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -32,6 +32,13 @@
 	<cfscript>
 		var scope = getScope();
 		return scope[getBeanFactoryName()];
+    </cfscript>
+</cffunction>
+
+<cffunction name="hasInstance" hint="Whether or not an instance of the bean factory exists in the given scope underthe given name" access="public" returntype="boolean" output="false">
+	<cfscript>
+		var scope = getScope();
+		return structKeyExists(scope, getBeanFactoryName());
     </cfscript>
 </cffunction>
 
@@ -68,7 +75,7 @@
 			access="public" returntype="void" output="false">
 	<cfargument name="beanFactory" hint="" type="coldspring.beans.AbstractBeanFactory" required="Yes">
 	<cfscript>
-		setBeanFactory(arguments.beanFactory);    	    
+		setBeanFactory(arguments.beanFactory);
     </cfscript>
 </cffunction>
 

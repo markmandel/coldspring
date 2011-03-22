@@ -127,9 +127,28 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="Method" output="false">
+	<cfscript>
+		var cloneable = getComponentMetadata("coldspring.util.Cloneable").singleton.instance;
+
+		return cloneable.clone(this);
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="setCloneInstanceData" hint="sets the incoming data for this object as a clone" access="private" returntype="void" output="false">
+	<cfargument name="instance" hint="instance data" type="struct" required="Yes">
+	<cfargument name="cloneable" hint="" type="coldspring.util.Cloneable" required="Yes">
+	<cfscript>
+		//usually cloning is to modify something and then pass it elsewhere, so duplicate the meta.
+		arguments.instance.meta = duplicate(arguments.instance.meta);
+
+		variables.instance = arguments.instance;
+    </cfscript>
+</cffunction>
 
 <cffunction name="setParameters" access="private" returntype="void" output="false">
 	<cfargument name="parameters" type="array" required="true" colddoc:generic="string,Parameter">

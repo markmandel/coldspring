@@ -35,6 +35,11 @@
 			arguments.paramMeta.type = reflectionService.resolveClassName(arguments.paramMeta.type, arguments.method.$getClass().getPackage());
 		}
 
+		if(!StructKeyExists(arguments.paramMeta, "hint"))
+		{
+			arguments.paramMeta.hint = "";
+		}
+
 		setMeta(arguments.paramMeta);
 
 		return this;
@@ -68,6 +73,10 @@
 <cffunction name="hasAnnotation" hint="does the given annotation exist on this parameter" access="public" returntype="boolean" output="false">
 	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
 	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
+</cffunction>
+
+<cffunction name="getHint" hint="Get the hint. if none was set, "" is returned." access="public" returntype="string" output="false">
+	<cfreturn getMeta().hint />
 </cffunction>
 
 <cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="boolean" output="false">

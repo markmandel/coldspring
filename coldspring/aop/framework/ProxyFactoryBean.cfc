@@ -132,6 +132,17 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="hasInterceptorNames" hint="whether this object has interceptor names set against it (also returns false on an empty array)" access="public" returntype="boolean" output="false">
+	<cfscript>
+		if(!StructKeyExists(instance, "interceptorNames"))
+		{
+			return false;
+		}
+
+		return !arrayIsEmpty(getInterceptorNames());
+    </cfscript>
+</cffunction>
+
 <cffunction name="setTarget" access="public" returntype="void" output="false">
 	<cfargument name="target" type="any" required="true">
 	<cfset instance.target = arguments.target />

@@ -20,7 +20,7 @@
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
 	<property name="coldspring.sourceforge.server" value="web.sourceforge.net"/>
-	<property name="coldspring.sourceforge.docs" value="/secureweb/projects/coldspring/htdocs/ber/docs"/>
+	<property name="coldspring.sourceforge.docs" value="/home/project-web/coldspring/htdocs/ber/docs"/>
 	<property name="coldspring.localserver" value="cf9"/>
 	<property name="coldspring.localport" value="94"/>
 	<property name="docs" location="./docs"/>

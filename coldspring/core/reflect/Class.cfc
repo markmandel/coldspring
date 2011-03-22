@@ -38,16 +38,24 @@ public boolean isInstance(Object obj)
 	<cfargument name="className" hint="the name of the class/interface this object represents" type="string" required="Yes">
 	<cfscript>
 		//have to do this stupid juggling because CF8 'can't find 'setLength() on a Builder'
-		var builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
+		var builder = 0;
 		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
 
 		//builder.setLength(builder.lastIndexOf(".")); << CF8 fails on this because it can't resolve Java Methods. Grrr.
-		builder.delete(javacast("int", builder.lastIndexOf(".")), len(arguments.className));
+		if(listLen(arguments.className, ".") > 1)
+		{
+			builder = createObject("java", "java.lang.StringBuilder").init(arguments.className);
+			builder.delete(javacast("int", builder.lastIndexOf(".")), len(arguments.className));
+			setPackage(builder.toString());
+		}
+		else
+		{
+			setPackage("");
+		}
 
     	setReflectionService(reflectionService);
     	setAssignableCache(StructNew());
 
-		setPackage(builder.toString());
 		setMeta(getComponentMetadata(arguments.className));
 
 		//determine if we are an interface or not

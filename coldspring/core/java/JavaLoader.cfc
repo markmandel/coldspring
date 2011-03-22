@@ -101,11 +101,11 @@
 	<cfreturn aJars>
 </cffunction>
 
-<cffunction name="getJavaLoader" access="public" returntype="coldspring.util.javaloader.JavaLoader" output="false">
+<cffunction name="getJavaLoader" access="private" returntype="coldspring.util.javaloader.JavaLoader" output="false">
 	<cfreturn StructFind(server, getJavaLoaderKey()) />
 </cffunction>
 
-<cffunction name="setJavaLoader" access="public" returntype="void" output="false">
+<cffunction name="setJavaLoader" access="private" returntype="void" output="false">
 	<cfargument name="javaLoader" type="coldspring.util.javaloader.JavaLoader" required="true">
 	<cfset StructInsert(server, getJavaLoaderKey(), arguments.javaLoader) />
 </cffunction>
