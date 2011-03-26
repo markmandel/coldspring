@@ -36,4 +36,16 @@
 		<property name="beanFactoryName" value="remoteBeanFactory"/>
 	</bean>
 	
+	<bean id="reverseAdvice" class="unittests.aop.com.ReverseMethodInterceptor"/>
+	
+	<bean id="helloProxyOnMMAOP" class="coldspring.aop.framework.RemoteFactoryBean" lazy-init="false">
+		<property name="target" ref="helloOnMM"/>
+		<property name="serviceName" value="HelloProxyOnMMAOP"/>
+		<property name="relativePath" value="/unittests"/>
+		<property name="addMissingMethods" value="doThis,doThat"/>
+		<property name="beanFactoryName" value="remoteBeanFactory"/>
+		<property name="interceptorNames" value="reverseAdvice"/>
+		<property name="remoteMethodNames" value="sayHello"/>
+	</bean>	
+	
 </beans>

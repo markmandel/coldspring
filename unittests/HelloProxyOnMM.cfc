@@ -18,11 +18,11 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="doThis" access="remote" returntype="any" default="arguments.returnType" hint="arguments.hint" output="false">
+<cffunction name="doThis" access="remote" returntype="any" hint="" output="false">
 <cfreturn getTarget().doThis(argumentCollection=arguments) >
 </cffunction>
 
-<cffunction name="doThat" access="remote" returntype="any" default="arguments.returnType" hint="arguments.hint" output="false">
+<cffunction name="doThat" access="remote" returntype="any" hint="" output="false">
 <cfreturn getTarget().doThat(argumentCollection=arguments) >
 </cffunction>
 

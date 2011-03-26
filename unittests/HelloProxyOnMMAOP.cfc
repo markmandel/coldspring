@@ -1,11 +1,11 @@
-<cfcomponent hint="Remote facade for helloProxy">
+<cfcomponent hint="Remote facade for helloProxyOnMMAOP">
 
 <!--- this always trips me up, lets set it up as a default --->
 <cfsetting showdebugoutput="false">
 
 <cfscript>
 	//keep this lightweight, as this cfc will probably get instantiated on each call (as per CF usually does things)
-	beanName = "helloProxy";
+	beanName = "helloProxyOnMMAOP";
 	beanFactoryName = "remoteBeanFactory";
 	beanScope = "application";
 	locator = createObject("component", "coldspring.beans.factory.access.ScopeBeanFactoryLocator").init();
@@ -21,6 +21,14 @@
 <cffunction name="sayHello" access="remote" returntype="string" hint="" output="false">
 <cfargument name="str" type="string" required="no" hint="">
 <cfreturn getTarget().sayHello(argumentCollection=arguments) >
+</cffunction>
+
+<cffunction name="doThis" access="remote" returntype="any" hint="" output="false">
+<cfreturn getTarget().doThis(argumentCollection=arguments) >
+</cffunction>
+
+<cffunction name="doThat" access="remote" returntype="any" hint="" output="false">
+<cfreturn getTarget().doThat(argumentCollection=arguments) >
 </cffunction>
 
 

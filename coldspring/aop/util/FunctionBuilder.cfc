@@ -54,8 +54,7 @@
 		append(' name="#arguments.name#"');
 		append(' access="#arguments.access#"');
 		append(' returntype="#arguments.returnType#"');
-		append(' default="arguments.returnType"');
-		append(' hint="arguments.hint"');
+		append(' hint="#arguments.hint#"');
 		writeLine(' output="false">');
 	</cfscript>
 </cffunction>
@@ -77,7 +76,7 @@
 
 	<cfscript>
 		append('<cfargument name="#arguments.name#"');
-		append(' type="arguments.type"');
+		append(' type="#arguments.type#"');
 		append(' required="#arguments.required#"');
 		append(' hint="#arguments.hint#"');
 
