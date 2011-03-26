@@ -51,7 +51,6 @@
     </cfscript>
 
 	<cfscript>
-		var local = {};
 		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMM.cfc?method=doThat&returnFormat=json";
     </cfscript>
     <cfhttp url="#local.path#" method="get" result="local.result">
@@ -59,6 +58,50 @@
 	<cfscript>
 		debug(local.result);
 		assertEquals("Missing!", deserializeJSON(local.result.fileContent));
+    </cfscript>
+</cffunction>
+
+<cffunction name="testAddingInterceptors" hint="test applying interceptors" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMMAOP.cfc?method=doThis&returnFormat=json";
+    </cfscript>
+    <cfhttp url="#local.path#" method="get" result="local.result">
+
+	<cfscript>
+		debug(local.result);
+		assertEquals(reverse("Missing!"), deserializeJSON(local.result.fileContent));
+    </cfscript>
+
+	<cfscript>
+		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMMAOP.cfc?method=doThat&returnFormat=json";
+    </cfscript>
+    <cfhttp url="#local.path#" method="get" result="local.result">
+
+	<cfscript>
+		debug(local.result);
+		assertEquals(reverse("Missing!"), deserializeJSON(local.result.fileContent));
+    </cfscript>
+
+	<cfscript>
+		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMMAOP.cfc?method=sayHello&returnFormat=json";
+    </cfscript>
+    <cfhttp url="#local.path#" method="get" result="local.result">
+
+	<cfscript>
+		debug(local.result);
+		assertEquals(reverse("hello"), deserializeJSON(local.result.fileContent));
+    </cfscript>
+
+	<cfscript>
+		str = "FooBar!";
+		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT#/unittests/HelloProxyOnMMAOP.cfc?method=sayHello&str=#urlEncodedFormat(str)#&returnFormat=json";
+    </cfscript>
+    <cfhttp url="#local.path#" method="get" result="local.result">
+
+	<cfscript>
+		debug(local.result);
+		assertEquals(reverse(str), deserializeJSON(local.result.fileContent));
     </cfscript>
 </cffunction>
 
