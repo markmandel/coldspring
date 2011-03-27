@@ -416,4 +416,16 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="invalidInnerBeanTest" hint="test an invalid inner bean." access="public" returntype="void" output="false"
+			mxunit:expectedException="coldspring.beans.xml.exception.InvalidInnerBeanException">
+	<cfscript>
+		instance.factory.setConfigLocations(expandPath("/unittests/testBeans/errorXML/invalid-inner-bean.xml"));
+		instance.factory.refresh();
+    </cfscript>
+</cffunction>
+
+<!------------------------------------------- PACKAGE ------------------------------------------->
+
+<!------------------------------------------- PRIVATE ------------------------------------------->
+
 </cfcomponent>

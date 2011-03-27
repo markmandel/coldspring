@@ -519,7 +519,7 @@
 
 		if(!structKeyExists(local, "beanDef") OR !isInstanceOf(local.beanDef, "coldspring.beans.support.BeanDefinition"))
 		{
-			createObject("component", "coldspring.beans.xml.exception.InvalidInnerBeanException").init(arguments.element, arguments.containingBeanDef);
+			createObject("component", "coldspring.beans.xml.exception.InvalidInnerBeanException").init(arguments.element, arguments.beanDefinition);
 		}
 
 		//set the id, as it won't have one as it's an inner bean
