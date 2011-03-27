@@ -109,39 +109,35 @@ type 	:	CF_TYPE | DESCRIPTOR
 
 ANNOTATION_EXPRESSION_TYPE
 	: {!expressionStart}?=>	('@annotation' | '@target')
-	{ expressionStart = true; System.out.println("ANNOTATION_EXPRESSION_TYPE");}
+	{ expressionStart = true;}
 	;
 
 EXECUTION_EXPRESSION_TYPE
-	: {!expressionStart}?=>	'execution'
 	/* we don't expression start here, we allow SCOPE to come first */
-	{System.out.println("EXECUTION_EXPRESSION_TYPE");}
+	: {!expressionStart}?=>	'execution'
 	;
 
 
 EXPRESSION_TYPE
 	: {!expressionStart}?=>	( 'within' | 'target' | 'bean')
-	{ expressionStart = true; System.out.println("EXPRESSION_TYPE");}
+	{ expressionStart = true;}
 	;
 	
 SCOPE	: {!expressionStart}?=>('public' | 'private' | '*')
-	{ expressionStart = true; System.out.println("SCOPE");}
+	{ expressionStart = true;}
 	;
 
 CF_TYPE : {expressionStart}?=> ('string' | 'boolean' | 'query' | 'xml' | 'component' | 'any' | 'struct' | 'array' | 'binary' )
-	{System.out.println("CF_TYPE");}
 	;
 
 DESCRIPTOR  
 	: {expressionStart}?=> (('a'..'z'|'A'..'Z'|'_'|'*') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'.'|'*'|':')*)
-	{System.out.println("DESCRIPTOR");}
 	| /* give it another option so it doesn't infinite loop out when the predicate fails */
-	{ System.out.println("Blank!"); input.seek(input.size()); }
+	{ input.seek(input.size()); }
       	;
       	
 ANY_ARGUMENT
 	:	'..'
-	{System.out.println("ANY_ARGUMENT");}
 	;
 	
 AND	:	'&&' | 'and' | 'AND'
@@ -172,7 +168,6 @@ STRING_DOUBLE_QUOTE
     :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
     {
     	setText(getText().substring(1, getText().length()-1));
-    	System.out.println("STRING_DOUBLE:" + getText());
     }
     ;
     
@@ -180,7 +175,6 @@ STRING_SINGLE_QUOTE
     :  '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\''
     {
    	setText(getText().substring(1, getText().length()-1));
-   	System.out.println("STRING_SINGLE: " + getText());
     }
     ;    
 
