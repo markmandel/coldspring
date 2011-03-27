@@ -42,8 +42,8 @@
 
 		builder = factory.newDocumentBuilder();
 
-		builder.setEntityResolver(getJavaLoader().create("org.coldspringframework.beans.xml.MappedEntityResolver").init(getSchemaMap()));
-		builder.setErrorHandler(getJavaLoader().create("org.coldspringframework.beans.xml.DefaultErrorHandler").init());
+		builder.setEntityResolver(getJavaLoader().create("org.coldspring.beans.xml.MappedEntityResolver").init(getSchemaMap()));
+		builder.setErrorHandler(getJavaLoader().create("org.coldspring.beans.xml.DefaultErrorHandler").init());
 
 		try
 		{
