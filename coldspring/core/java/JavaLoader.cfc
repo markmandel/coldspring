@@ -46,8 +46,9 @@
 					local.args = {};
 					local.args.loadPaths = queryJars();
 
-					local.args.sourceDirectories = [ getDirectoryFromPath(getMetadata(this).path) & "/src/" ];
-					local.args.trustedSource = true; //only need to set this to false during java dev
+					//uncommment during development
+					//local.args.sourceDirectories = [ getDirectoryFromPath(getMetadata(this).path) & "/src/" ];
+					//local.args.trustedSource = true;
 
 					local.javaloader = createObject("component", "coldspring.util.javaloader.JavaLoader").init(argumentCollection=local.args);
 
