@@ -12,6 +12,10 @@
 
  --->
 
+<html>
+
+<body>
+
 <cfscript>
 	exclude = "";
 
@@ -19,15 +23,17 @@
 	{
 		exclude = "cf9";
 	}
+
+	directoryTestSuite = createObject("component", "mxunit.runner.DirectoryTestSuite");
+	result = directoryTestSuite.run(directory="#expandPath('/unittests')#"
+									,componentPath="unittests"
+									,recurse="true"
+									,excludes="#exclude#");
+
 </cfscript>
 
+<cfoutput> #result.getResultsOutput()# </cfoutput>
 
-<cfinvoke component="mxunit.runner.DirectoryTestSuite"
-			method="run"
-			directory="#expandPath('/unittests')#"
-			componentPath="unittests"
-			recurse="true"
-			excludes="#exclude#"
-			returnvariable="results" />
+</body>
 
-<cfoutput> #results.getResultsOutput('extjs')# </cfoutput>
+</html>

@@ -19,6 +19,8 @@
 	this.sessionmanagement = true;
 	this.sessiontimeout = createTimespan(0, 0, 10, 0);
 
+	this.mappings["/coldspring"] = expandPath("/coldspring");
+
 	//orm settings
 	this.datasource = "coldspring";
 	this.ormenabled = true;

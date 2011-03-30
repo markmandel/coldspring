@@ -11,11 +11,11 @@
    limitations under the License.
  --->
 
-<cfcomponent name="JavaLoader" hint="Facade for loading external Java Classes for ColdSpring">
+<cfcomponent name="JavaLoader" hint="Facade for loading external Java Classes for ColdSpring.">
 
 <cfscript>
 	instance = StructNew();
-	instance.static.SCOPE_KEY = "coldspring.41806836-194D-4DAD-9CC541EF14360F26";
+	instance.static.SCOPE_KEY = "coldspring.51807836-194D-4DAD-9CC541EF14360F27";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -46,8 +46,9 @@
 					local.args = {};
 					local.args.loadPaths = queryJars();
 
-					local.args.sourceDirectories = [ getDirectoryFromPath(getMetadata(this).path) & "/src/" ];
-					local.args.trustedSource = true; //only need to set this to false during java dev
+					//uncommment during development
+					//local.args.sourceDirectories = [ getDirectoryFromPath(getMetadata(this).path) & "/src/" ];
+					//local.args.trustedSource = true;
 
 					local.javaloader = createObject("component", "coldspring.util.javaloader.JavaLoader").init(argumentCollection=local.args);
 

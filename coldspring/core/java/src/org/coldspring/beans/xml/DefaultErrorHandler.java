@@ -14,7 +14,7 @@
 /**
  * 
  */
-package org.coldspringframework.beans.xml;
+package org.coldspring.beans.xml;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
