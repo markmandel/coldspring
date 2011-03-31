@@ -21,8 +21,13 @@
 	<property name="coldspring.server.schema" value="/Application/schema"/>
 	<property name="coldspring.sourceforge.server" value="web.sourceforge.net"/>
 	<property name="coldspring.sourceforge.docs" value="/home/project-web/coldspring/htdocs/ber/docs"/>
-	<property name="coldspring.localserver" value="cf9"/>
-	<property name="coldspring.localport" value="94"/>
+	
+	<property name="coldspring.localserver" value="coldspring"/>
+	<property name="coldspring.localport" value="80"/>
+	<property name="coldspring.defaultcontext" value="/cf9"/>
+	
+	<property name="test.results" location="./results"/>
+		
 	<property name="docs" location="./docs"/>
 	<property name="docs.xsddoc" location="${docs}/xsd"/>
 	<property name="docs.api" location="${docs}/api"/>
@@ -32,6 +37,8 @@
 	<property name="antlr.src" location="./antlr"/>
 	<property name="antlr.lib" location="${antlr.src}/lib"/>
 	<property name="antlr.jar" location="${src}/core/java/lib/" />
+	<property name="antlr.cp" location="${antlr.lib}/antlr-3.3-complete.jar"/>
+	
 	<property name="build" location="./build" />
 
 	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${build}/mxunit-ant.jar"/>
@@ -39,12 +46,22 @@
 	<classloader loader="system" classpath="${build}/commons-net-2.0.jar"/>
 	<taskdef name="ftp" classname="org.apache.tools.ant.taskdefs.optional.net.FTP"/>
 	
+		
+	<!-- ================================= 
+          target: deploy-jenkins              
+         ================================= -->
+    <target name="integrate" description="script for continuous integration to run">
+    	<antcall target="aop-parser-test"/>
+        <antcall target="unittest"/>
+    	<echo message="Unit Tests Passes, generating documentation" />
+    	<antcall target="colddoc"/>
+    	<antcall target="xsddoc"/>
+    </target>
+
 	<!-- ================================= 
           target: deploy              
          ================================= -->
     <target name="deploy" depends="" description="Deploy the current build of ColdSpring">
-    	<antcall target="aop-parser" />
-    	<antcall target="unittest" />
     	<antcall target="upload-schemas"/>
     	<antcall target="xsddoc"/>
     	<antcall target="colddoc"/>
@@ -55,14 +72,48 @@
           target: unittest                      
          - - - - - - - - - - - - - - - - - -->
     <target name="unittest">
+    	<delete dir="${test.results}"/>
+    	<mkdir dir="${test.results}"/>
+    	
+    	<antcall target="run-tests">
+    		<param name="test.context" value="/cf9"/>
+    		<param name="test.package" value="tests.cf9"/>
+    	</antcall>
+    	<antcall target="run-tests">
+    		<param name="test.context" value="/cf8"/>
+    		<param name="test.excludes" value="cf9"/>
+    		<param name="test.package" value="tests.cf8"/>
+    	</antcall>
+    </target>
+    
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: run-tests                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="run-tests">
+    	<echo message="Running unit tests for ${test.context}"/>
+    	
+    	<property name="test.results.path" location="${test.results}/${test.context}"/>
+    	<mkdir dir="${test.results.path}"/>
+    	
+    	<property name="test.excludes" value=""/>
+    	
     	<mxunittask server="${coldspring.localserver}" port="${coldspring.localport}"
-    		haltonerror="true"
-    		haltonfailure="true"
-    		defaultrunner="/unittests/HttpAntRunner.cfc"
+    		mxunithome="${test.context}/mxunit"
+    		haltonerror="false"
+    		haltonfailure="false"
+    		defaultrunner="${test.context}/unittests/HttpAntRunner.cfc"
     		verbose="true"
+    		outputdir="${test.results.path}"
     		>
-    		<directory path="/unittests" componentpath="unittests" recurse="true"/>
+    		<directory path="/unittests" componentpath="unittests" recurse="true" excludes="${test.excludes}" packagename="${test.package}"/>
     	</mxunittask>
+    	
+		<junitreport todir="${test.results.path}">
+    		<fileset dir="${test.results.path}">
+    			<include name="*.xml"/>
+    		</fileset>
+    		<report format="frames" todir="${test.results.path}" styledir="${build}/xsl"/>
+		</junitreport>    	
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -91,7 +142,7 @@
           target: colddoc                      
          - - - - - - - - - - - - - - - - - -->
     <target name="colddoc" depends="colddoc-clean">
-    	<get src="http://${coldspring.localserver}:${coldspring.localport}/docs/gen/colddoc/run.cfm" dest="${tmp}/colddoc.html" />
+    	<get src="http://${coldspring.localserver}:${coldspring.localport}${coldspring.defaultcontext}/docs/gen/colddoc/run.cfm" dest="${tmp}/colddoc.html" />
     	<loadfile property="colddoc.return" srcfile="${tmp}/colddoc.html"></loadfile>
     	<echo message="Colddoc: ${colddoc.return}"></echo>
     	<condition property="colddoc.complete">
@@ -198,31 +249,38 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: aop-parser                      
          - - - - - - - - - - - - - - - - - -->	
-	<target name="aop-parser" depends="aop-parser-clean">
-		
-		<property name="cp" location="${antlr.lib}/antlr-3.3-complete.jar"/>
-		
-		<!-- need this, as gunit was foobar'd on the 3.3 release -->
-		<property name="gunit.cp" location="${antlr.lib}/gunit-3.3.1-SNAPSHOT.jar"/>
+	<target name="build-aop-parser" depends="aop-parser-clean">
 		
 		<echo message="Generating Lexer &amp; Parser"/>
-		<java classname="org.antlr.Tool" classpath="${cp}" fork="true" dir="${antlr.src}">
+		<java classname="org.antlr.Tool" classpath="${antlr.cp}" fork="true" dir="${antlr.src}">
 			<arg value="-report"/>
 			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.g"/>
 		</java>
 		
-		<javac classpath="${cp}" srcdir="${antlr.src}" debug="true" debuglevel="lines,vars,source">
+		<javac classpath="${antlr.cp}" srcdir="${antlr.src}" debug="true" debuglevel="lines,vars,source">
 		</javac>
-		
-		<echo message="Running gUnit Tests"/>
-		<java classname="org.antlr.gunit.Interp" classpath="${gunit.cp};${cp};${antlr.src};" fork="true">
-			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.gunit"/>
-		</java>
 		
 		<jar destfile="${antlr.jar}/aop-parser.jar" basedir="${antlr.src}" >
 			<include name="**/*.class"/>
 		</jar>
 	</target>
+	
+	<!-- ================================= 
+          target: aop-parser-test              
+         ================================= -->
+    <target name="aop-parser-test" description="description">
+    	<echo message="Running gUnit Tests"/>
+    	
+		<!-- need this, as gunit was foobar'd on the 3.3 release -->
+		<property name="gunit.cp" location="${antlr.lib}/gunit-3.3.1-SNAPSHOT.jar"/>
+		<property name="aop-parser.cp" location="${src}/core/java/lib/aop-parser.jar"/>
+    	
+    	<echo message="classpath: ${gunit.cp};${antlr.cp};${aop-parser.cp};"></echo>
+    	
+    	<java classname="org.antlr.gunit.Interp" classpath="${gunit.cp};${antlr.cp};${aop-parser.cp};" fork="true">
+			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.gunit"/>
+		</java>
+    </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: aop-parser-clean                      
