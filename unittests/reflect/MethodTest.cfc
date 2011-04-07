@@ -120,6 +120,22 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testOverwrittenMethod" hint="test to make sure that overwritten methods are found correctly" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		//guard
+		local.class = reflectionService.loadClass("unittests.reflect.com.GoodBye");
+		local.method = local.class.getMethod("init");
+		assertEquals("unittests.reflect.com.GoodBye", local.method.getReturnType());
+
+		local.class = reflectionService.loadClass("unittests.reflect.com.Hello");
+
+		local.method = local.class.getMethod("init");
+		assertEquals("unittests.reflect.com.Hello", local.method.getReturnType());
+    </cfscript>
+</cffunction>
+
 <cffunction name="testMethodNotFound" hint="test when a method does not exist" access="public" returntype="void" output="false"
 	mxunit:expectedException="coldspring.core.reflect.exception.MethodNotFoundException">
 	<cfscript>

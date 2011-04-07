@@ -15,7 +15,7 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="GoodBye" output="false">
+<cffunction name="init" hint="Constructor (GoodBye)" access="public" returntype="GoodBye" output="false">
 	<cfscript>
 		return this;
 	</cfscript>
