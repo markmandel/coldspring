@@ -382,13 +382,25 @@ public boolean isInstance(Object obj)
 
 <cffunction name="buildMethods" hint="builds all the public methods, and add in any parent methods" access="private" returntype="void" output="false">
 	<cfscript>
-		var publicMethods = getDeclaredMethodsCollection().findAll(meta.const.IS_PUBLIC_CLOSURE);
+    	var methods = {};
+    	var publicMethods = createObject("component", "coldspring.util.Collection").init(methods);
 		var currentClass = this;
+
+		//setup a queue, so we can go in reverse, down the chain, overwriting methods as we go.
+		var queue = createObject("java", "java.util.ArrayDeque").init();
+
+		queue.add(getDeclaredMethodsCollection().findAll(meta.const.IS_PUBLIC_CLOSURE).getCollection());
 
 		while(currentClass.hasSuperClass())
 		{
 			currentClass = currentClass.getSuperClass();
-			publicMethods.addAll(currentClass.getMethods());
+			queue.add(currentClass.getMethods());
+		}
+
+		//now reverse the queue
+		while(!queue.isEmpty())
+		{
+			publicMethods.addAll(queue.pollLast());
 		}
 
 		setMethodsCollection(publicMethods);
