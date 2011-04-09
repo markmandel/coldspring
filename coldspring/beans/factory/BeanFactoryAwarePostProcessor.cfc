@@ -21,7 +21,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="BeanFactoryAwarePostProcessor" output="false">
-	<cfargument name="beanFactory" hint="the bean factory to inject" type="coldspring.beans.AbstractBeanFactory" required="Yes">
+	<cfargument name="beanFactory" hint="the bean factory to inject" type="coldspring.beans.BeanFactory" required="Yes">
 	<cfscript>
 		setBeanFactory(arguments.beanFactory);
 
@@ -52,12 +52,12 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.AbstractBeanFactory" output="false">
+<cffunction name="getBeanFactory" access="private" returntype="coldspring.beans.BeanFactory" output="false">
 	<cfreturn instance.beanFactory />
 </cffunction>
 
 <cffunction name="setBeanFactory" access="private" returntype="void" output="false">
-	<cfargument name="beanFactory" type="coldspring.beans.AbstractBeanFactory" required="true">
+	<cfargument name="beanFactory" type="coldspring.beans.BeanFactory" required="true">
 	<cfset instance.beanFactory = arguments.beanFactory />
 </cffunction>
 

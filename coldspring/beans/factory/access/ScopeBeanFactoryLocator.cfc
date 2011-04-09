@@ -73,7 +73,7 @@
 
 <cffunction name="postProcessBeanFactory" hint="Take the current beanFactory, and store it in the given scope and name."
 			access="public" returntype="void" output="false">
-	<cfargument name="beanFactory" hint="" type="coldspring.beans.AbstractBeanFactory" required="Yes">
+	<cfargument name="beanFactory" hint="" type="coldspring.beans.BeanFactory" required="Yes">
 	<cfscript>
 		setBeanFactory(arguments.beanFactory);
     </cfscript>
