@@ -12,7 +12,7 @@
 
  --->
 
-<cfcomponent hint="A closure context" output="false">
+<cfcomponent hint="A Closure context.<br/>Credits to Sean Corfield for much of the inspiration behind this class." output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
