@@ -38,7 +38,7 @@
 </cffunction>
 
 <cffunction name="setConfigLocations" access="public" returntype="void" output="false">
-	<cfargument name="configLocations" hint="string path, list path, or array of absolute paths to ColdSpring XML files. Can use setConfigLocations() instead, followed by a call to refresh()"
+	<cfargument name="configLocations" hint="string path, list path, or array of absolute paths to ColdSpring XML files."
 				type="any" required="yes">
 	<cfset getXMLParser().setConfigLocations(argumentCollection=arguments)>
 </cffunction>

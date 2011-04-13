@@ -11,15 +11,16 @@
    limitations under the License.
  --->
 
-<cfinterface extends="Advice" hint="Intercepts calls on an interface on its way to the target. These are nested 'on top' of the target.<br/>
-	The user should implement the invoke(MethodInvocation) method to modify the original behavior.<br/>
-	E.g. the following class implements a tracing interceptor (traces all the calls on the intercepted method(s)): ">
+<cfinterface extends="Advice" hint="Interface to be used when implementing Around Advice.<br/>
+	Intercepts calls on an method on its way to the target. These are nested 'on top' of the target.<br/>
+	The user should implement the invokeMethod(MethodInvocation) method to modify the original behavior.
+	">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
-<cffunction name="invokeMethod" hint="Implement this method to perform extra treatments before and after the invocation.<br/>Polite implementations would certainly like to invoke Joinpoint.proceed()."
+<cffunction name="invokeMethod" hint="Implement this method to perform extra treatments before and after the invocation.<br/>Polite implementations would certainly like to invoke methodInvocation.proceed()."
 	access="public" returntype="any" output="false">
 	<cfargument name="methodInvocation" hint="the method invocation joinpoint" type="coldspring.aop.MethodInvocation" required="Yes">
 </cffunction>
