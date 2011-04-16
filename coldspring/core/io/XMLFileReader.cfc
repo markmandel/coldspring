@@ -31,6 +31,7 @@
 	<cfscript>
 		var factory = createObject("java", "javax.xml.parsers.DocumentBuilderFactory").newInstance();
 		var builder = 0;
+		var document = 0;
 
 		factory.setValidating(true);
 		factory.setNamespaceAware(true);

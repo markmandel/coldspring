@@ -502,7 +502,8 @@ public boolean isInstance(Object obj)
 	<cfscript>
 		if(arguments.class.$equals(variables.class))
 		{
-			result = true;
+			//bound variable from closure.
+			variables.result = true;
 			return false;
 		}
 

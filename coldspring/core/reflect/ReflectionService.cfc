@@ -44,12 +44,12 @@
 					if(NOT StructKeyExists(local.cache, arguments.className))
 					{
 						local.class = createObject("component", "Class").init(arguments.className);
-						cache[arguments.className] = local.class;
+						local.cache[arguments.className] = local.class;
 					}
 				</cfscript>
 			</cflock>
 		</cfif>
-		<cfreturn cache[arguments.className]/>
+		<cfreturn local.cache[arguments.className]/>
 
 	</cflock>
 </cffunction>

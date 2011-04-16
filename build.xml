@@ -39,6 +39,10 @@
 	<property name="antlr.jar" location="${src}/core/java/lib/" />
 	<property name="antlr.cp" location="${antlr.lib}/antlr-3.3-complete.jar"/>
 	
+	<property name="varscoper.results" location="${test.results}/varscoper"/>
+	<property name="varscoper.filePath" value="/home/mark/tomcat6/webapps/cf9/coldspring"/>
+	<property name="varscoper.url" value="${coldspring.localserver}:${coldspring.localport}${coldspring.defaultcontext}/varscoper/varScoper.cfm"/>
+	
 	<property name="build" location="./build" />
 
 	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${build}/mxunit-ant.jar"/>
@@ -51,8 +55,10 @@
           target: deploy-jenkins              
          ================================= -->
     <target name="integrate" description="script for continuous integration to run">
+    	<antcall target="clean-results" />
     	<antcall target="aop-parser-test"/>
         <antcall target="unittest"/>
+    	<antcall target="varscoper"/>
     	<echo message="Unit Tests Passes, generating documentation" />
     	<antcall target="colddoc"/>
     	<antcall target="xsddoc"/>
@@ -67,14 +73,28 @@
     	<antcall target="colddoc"/>
     	<antcall target="upload-documentation"/>
     </target>
+			
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: varscoper       
+	         - - - - - - - - - - - - - - - - - -->
+	<target name="varscoper">
+		<mkdir dir="${test.results}/varscoper" />
+		<get src="http://${varscoper.url}?filePath=${varscoper.filePath}&amp;submitButton=start&amp;displayFormat=screen&amp;recursiveDirectory=true&amp;parseCfscript=true" 
+			dest="${test.results}/varscoper/index.html" />
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: clean-results                      
+	         - - - - - - - - - - - - - - - - - -->
+    <target name="clean-results">
+    	<delete dir="${test.results}"/>
+    	<mkdir dir="${test.results}"/>            
+    </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: unittest                      
          - - - - - - - - - - - - - - - - - -->
     <target name="unittest">
-    	<delete dir="${test.results}"/>
-    	<mkdir dir="${test.results}"/>
-    	
     	<antcall target="run-tests">
     		<param name="test.context" value="/cf9"/>
     		<param name="test.package" value="tests.cf9"/>

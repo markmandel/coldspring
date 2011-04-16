@@ -119,22 +119,30 @@
 
 <cffunction name="checkIsAOPCandidate" hint="Check to see if this bean is an AOP candidate, against the given set of Advisors" access="public" returntype="boolean" output="false">
 	<cfargument name="beanDefinition" hint="the bean definition to check" type="coldspring.beans.support.BeanDefinition" required="Yes">
+
 	<cfscript>
 		var advisors = getAdvisors();
 		var class = arguments.beanDefinition.$getClass();
 		var methods = class.getMethods();
 		var method = 0;
 		var key = 0;
+		var advisor = 0;
+	</cfscript>
 
-		for(key in methods)
-		{
-			method = methods[key];
-			if(advisor.getPointcut().matches(method, class))
-			{
-				return true;
-			}
-		}
+	<cfloop collection="#methods#" item="key">
+		<cfset method = methods[key]>
 
+		<cfloop array="#advisors#" index="advisor">
+			<cfscript>
+	            if(advisor.getPointcut().matches(method, class))
+				{
+					return true;
+				}
+            </cfscript>
+		</cfloop>
+	</cfloop>
+
+	<cfscript>
 		return false;
     </cfscript>
 </cffunction>

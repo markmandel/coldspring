@@ -101,6 +101,7 @@
 	<cfscript>
 		var childNodes = arguments.element.getElementsByTagNameNS(meta.const.AOP_NAMESPACE_URI, meta.const.ADVISOR_ELEMENT);
 		var counter = 0;
+		var child = 0;
 
 		for(;counter lt childNodes.getLength(); counter++)
 		{
@@ -141,6 +142,7 @@
 	<cfscript>
 		var childNodes = arguments.element.getElementsByTagNameNS(meta.const.AOP_NAMESPACE_URI, meta.const.ASPECT_ELEMENT);
 		var counter = 0;
+		var child = 0;
 
 		for(;counter lt childNodes.getLength(); counter++)
 		{
@@ -223,6 +225,7 @@
 	<cfscript>
 		var childNodes = arguments.element.getElementsByTagNameNS(meta.const.AOP_NAMESPACE_URI, meta.const.POINTCUT_ELEMENT);
 		var counter = 0;
+		var child = 0;
 
 		for(;counter lt childNodes.getLength(); counter++)
 		{

@@ -37,6 +37,8 @@
 	<cfscript>
 		var id = arguments.element.getAttribute(instance.static.ID_ATTRIBUTE);
 		var beanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
+		var value = 0;
+		var property = 0;
 
 		//set the singleton to true, if it's a singleton
 		if(NOT arguments.element.hasAttribute(instance.static.SCOPE_ATTRIBUTE)
