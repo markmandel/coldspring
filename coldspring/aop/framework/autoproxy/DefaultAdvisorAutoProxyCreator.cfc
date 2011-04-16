@@ -13,7 +13,9 @@
 	colddoc:generic="coldspring.aop.Advisor">
 	<cfscript>
 		var advisorNames = getBeanFactory().getBeanNamesForTypeIncludingAncestor("coldspring.aop.Advisor");
+		var advisorName = 0;
 		var advisors = createObject("java", "java.util.ArrayList").init(ArrayLen(advisorNames));
+		var advisor = 0;
     </cfscript>
     <cfloop array="#advisorNames#" index="advisorName">
 		<cfscript>
