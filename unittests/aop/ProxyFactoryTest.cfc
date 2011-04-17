@@ -170,16 +170,17 @@
 		local.pointcut = createObject("component", "coldspring.aop.support.NamedMethodPointcut").init();
 		local.pointcut.setMappedName("sayHello");
 
+		local.after = createObject("component", "unittests.aop.com.ReturnStoreAfterAdvice").init();
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.after);
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+
 		local.around = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
 		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.around);
 		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
 
 		local.before = createObject("component", "unittests.aop.com.ArgumentStoreBeforeAdvice").init();
 		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.before);
-		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
-
-		local.after = createObject("component", "unittests.aop.com.ReturnStoreAfterAdvice").init();
-		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.after);
 		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
 
 		local.throws = createObject("component", "unittests.aop.com.ExceptionStoreThrowsAdvice").init();

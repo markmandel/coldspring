@@ -59,7 +59,7 @@
 	<cfscript>
 		var comparator = getComponentMetadata("coldspring.core.OrderComparator").singleton.instance;
 
-		return comparator.getLowestPrecedence();
+		return comparator.getHighestPrecedence();
     </cfscript>
 </cffunction>
 
