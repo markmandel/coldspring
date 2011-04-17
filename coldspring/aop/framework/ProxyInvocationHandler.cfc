@@ -182,11 +182,11 @@
 				}
 
 				/*
-					You have to go backwards down the chain, to ensure that the return values
-					end up in the right order for each advice in the chain.
-					proxy->advice2->advice1->method
+					You have to go forward down the chain.
+					Items that are added first have the highest priority - and should be hit
+					first on the way in, and last on the way out.
 				*/
-				ArrayPrepend(variables.methodAdvice[arguments.method.getName()], interceptor);
+				ArrayAppend(variables.methodAdvice[arguments.method.getName()], interceptor);
 			}
         </cfscript>
 	</cfloop>
