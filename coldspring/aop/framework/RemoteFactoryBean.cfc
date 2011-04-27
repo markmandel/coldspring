@@ -24,6 +24,7 @@
 		setProxyGenerated(false);
 		setAddMissingMethods(ArrayNew(1));
 		setRemoteMethodNames(ArrayNew(1));
+		setTrustedSource(false);
 
 		return this;
 	</cfscript>
@@ -32,7 +33,7 @@
 <cffunction name="getObject" hint="Returns a proxy if there are interceptorNames applied. Otherwise, this returns the target object."
 			access="public" returntype="any" output="false">
 	<cfscript>
-		if(!isProxyGenerated())
+		if(!isProxyGenerated() && !checkTrustedSource())
 		{
 			buildRemoteProxy();
 		}
@@ -118,9 +119,29 @@
 	<cfset instance.beanName = arguments.name />
 </cffunction>
 
+<cffunction name="isTrustedSource" hint="Whether or not the remote proxy should be re-generated if it already exists." access="public" returntype="boolean" output="false">
+	<cfreturn instance.trustedSource />
+</cffunction>
+
+<cffunction name="setTrustedSource" hint="Set whether or not the remote proxy should be re-generated if it already exists. Defaults to false (always regenerate)." access="public" returntype="void" output="false">
+	<cfargument name="trustedSource" type="boolean" required="true">
+	<cfset instance.trustedSource = arguments.trustedSource />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="checkTrustedSource" hint="If the source is trusted, checks to see if the file is there or not" access="public" returntype="boolean" output="false">
+	<cfscript>
+		if(!isTrustedSource())
+		{
+			return false;
+		}
+
+		return fileExists(getAbsolutePath() & "/" & getServiceName() & ".cfc");
+    </cfscript>
+</cffunction>
 
 <cffunction name="buildRemoteProxy" hint="builds the remote proxy and puts it in place" access="public" returntype="void" output="false">
 	<cfscript>
