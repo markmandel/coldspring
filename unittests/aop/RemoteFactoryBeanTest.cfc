@@ -21,7 +21,37 @@
 <cffunction name="setup" hint="setup" access="public" returntype="void" output="false">
 	<cfscript>
 		super.setup();
-		factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-remoteFactoryBean.xml"));
+
+		basicProxyPath = expandPath("/unittests/HelloProxy.cfc");
+		onMMProxyPath = expandPath("/unittests/HelloProxyOnMM.cfc");
+		onMMAOPProxyPath = expandPath("/unittests/HelloProxyOnMMAOP.cfc");
+
+		if(fileExists(basicProxyPath))
+		{
+			fileDelete(basicProxyPath);
+		}
+		if(fileExists(onMMProxyPath))
+		{
+			fileDelete(onMMProxyPath);
+		}
+		if(fileExists(onMMAOPProxyPath))
+		{
+			fileDelete(onMMAOPProxyPath);
+		}
+
+		initFactory();
+    </cfscript>
+</cffunction>
+
+<cffunction name="teardown" hint="teardown" access="public" returntype="any" output="false">
+	<cfscript>
+		var file = createObject("java","java.io.File").init(basicProxyPath);
+
+		file.setWritable(true);
+
+		fileDelete(basicProxyPath);
+		fileDelete(onMMProxyPath);
+		fileDelete(onMMAOPProxyPath);
     </cfscript>
 </cffunction>
 
@@ -105,8 +135,53 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testTrustedSource" hint="test to see if trusted source regenerates the file or not" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.path = expandPath("/unittests/HelloProxy.cfc");
+		local.file = createObject("java","java.io.File").init(basicProxyPath);
+		local.catch = false;
+
+		//gate
+		assertFalse(factory.getBean("&helloProxy").isTrustedSource());
+
+		//set it to be readable only
+		local.file.setWritable(false);
+
+		//create a new factory
+		try
+		{
+			initFactory();
+		}
+		catch(any exc)
+		{
+			local.catch = true;
+			assertTrue(exc.detail contains "The Delete cannot be performed.");
+		}
+
+		assertTrue(local.catch, "Should fail, as the file is read only, and it should attempt to overwrite it.");
+
+		//below should pass, as we don't set the file to read only.
+		initFactory(true);
+		//gate
+		assertTrue(factory.getBean("&helloProxy").isTrustedSource());
+
+		//one more time for kicks.
+		initFactory(true);
+		//gate
+		assertTrue(factory.getBean("&helloProxy").isTrustedSource());
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="initFactory" hint="handy method for init'ing the factory I want." access="public" returntype="void" output="false">
+	<cfargument name="trusted" hint="whether or not it's trusted source" type="boolean" required="no" default="false">
+	<cfscript>
+		factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-remoteFactoryBean.xml"), arguments);
+    </cfscript>
+</cffunction>
 
 </cfcomponent>

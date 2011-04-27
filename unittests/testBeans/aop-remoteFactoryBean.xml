@@ -24,6 +24,7 @@
 		<property name="relativePath" value="/unittests"/>
 		<property name="remoteMethodNames" value="sayHello"/>
 		<property name="beanFactoryName" value="remoteBeanFactory"/>
+		<property name="trustedSource" value="${trusted}" />
 	</bean>
 	
 	<bean id="helloOnMM" class="unittests.aop.com.sub.HelloOnMM"/>
