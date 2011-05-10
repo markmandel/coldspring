@@ -171,9 +171,9 @@
 						else if(isArray(local.beanDefinitions))
 						{
 							local.len = ArrayLen(local.beanDefinitions);
-	                        for(local.counter=1; local.counter lte local.len; local.counter++)
+	                        for(local.bCounter=1; local.bCounter lte local.len; local.bCounter++)
 	                        {
-	                        	local.beanDef = local.beanDefinitions[local.counter];
+	                        	local.beanDef = local.beanDefinitions[local.bCounter];
 								getBeanDefinitionRegistry().registerBeanDefinition(local.beanDef);
 	                        }
 						}
