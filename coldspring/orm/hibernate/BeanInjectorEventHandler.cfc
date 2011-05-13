@@ -105,8 +105,7 @@ component implements="cfide.orm.IEventHandler"
 
 	/**
 	 * Returns the a bean injector.<br/>
-	 * If one has been set via the setBeanInjector, that will be used.
-	 * Otherwise, getBeanFactory().getBean("beanInjector") will be returned.
+	 * This is getBeanFactory().getBean("hibernate-beanInjector").
 	 */
 	private any function getBeanInjector()
     {
@@ -119,7 +118,7 @@ component implements="cfide.orm.IEventHandler"
     }
 
 	/**
-     * returns the bean factory from within the application scope
+     * returns the bean factory from application.coldspring
      */
     public coldspring.beans.BeanFactory function getBeanFactory()
     {

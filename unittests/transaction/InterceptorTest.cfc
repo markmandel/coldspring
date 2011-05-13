@@ -25,11 +25,26 @@
     </cfscript>
     <cfif isCF9>
     	<cfset ormReload()>
-    <cfelse>
-		<cfquery datasource="coldspring">
-			delete from Foo;
+	</cfif>
+	<cftry>
+		<cfquery datasource="#request.datasource#">
+			drop table Bar
 		</cfquery>
-    </cfif>
+		<cfcatch>
+			<!--- do nothing --->
+		</cfcatch>
+	</cftry>
+	<cfquery datasource="#request.datasource#">
+		create table Bar
+		(
+			id VARCHAR(36) PRIMARY KEY,
+			name VARCHAR(255)
+		)
+		<!--- Stupid mysql MyISAM default :P --->
+		<cfif request.dbtype eq "mysql">
+			Engine = InnoDB
+		</cfif>
+	</cfquery>
 </cffunction>
 
 <cffunction name="testSessionWrapper" hint="test applying the transaction interceptor to the session wrapper" access="public" returntype="any" output="false">

@@ -155,14 +155,6 @@
 				]]></xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="arg-names" type="xsd:string">
-			<xsd:annotation>
-				<xsd:documentation><![CDATA[
-	The comma-delimited list of advice method argument (parameter) names 
-	that will be matched from pointcut parameters.
-				]]></xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
 	</xsd:complexType>
 
 	<xsd:complexType name="afterReturningAdviceType">

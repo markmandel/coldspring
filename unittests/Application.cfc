@@ -27,15 +27,26 @@
 	this.ormSettings.cfclocation = expandPath("/unittests/cf9/hibernate/com/");
 	this.ormSettings.dbcreate = "dropcreate";
 	this.ormSettings.sqlscript = expandPath("/unittests/cf9/hibernate/com/import.sql");
-	this.ormSettings.dialect = "MySQLwithInnoDB";
 
 	this.ormSettings.flushatrequestend = false;
 	this.ormSettings.automanageSession = false;
 
 	this.ormsettings.eventhandling = true;
 	this.ormsettings.eventhandler = "coldspring.orm.hibernate.BeanInjectorEventHandler";
+</cfscript>
 
-	//createObject("component", "coldspring.orm.hibernate.BeanInjectorEventHandler").init();
+<cfdbinfo type="version" name="version" datasource="#this.datasource#">
+
+<cfscript>
+	//Some handy request variables, just for convenience.
+	request.dbtype = version.database_productname;
+	request.datasource = this.datasource;
+
+	//otherwise, mySQL gives up myISAM, which doesn't support transactions :P
+	if(request.dbtype eq "mysql")
+	{
+		this.ormSettings.dialect = "MySQLwithInnoDB";
+	}
 </cfscript>
 
 <cffunction name="onRequestStart" returnType="boolean">

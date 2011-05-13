@@ -25,11 +25,14 @@
 
 <cffunction name="$insert" hint="inserts a value, then throws an exeception" access="public" returntype="void" output="false">
 	<cfargument name="value" hint="the vaue to insert" type="string" required="Yes">
-	<cfquery datasource="coldspring">
-		insert into Foo
-		(name)
+	<cfquery datasource="#request.datasource#">
+		insert into Bar
+		(id, name)
 		values
-		( <cfqueryparam value="#arguments.value#" cfsqltype="cf_sql_varchar"> )
+		(
+			<cfqueryparam value="#createUUID()#" cfsqltype="cf_sql_varchar">
+			,<cfqueryparam value="#arguments.value#" cfsqltype="cf_sql_varchar">
+		)
 	</cfquery>
 
 	<cfthrow type="uhoh" >
@@ -38,8 +41,8 @@
 <cffunction name="get" hint="returns a result from the db" access="public" returntype="query" output="false">
 	<cfargument name="value" hint="the vaue to get" type="string" required="Yes">
 	<cfset var query = 0>
-	<cfquery name="query" datasource="coldspring">
-		select * from Foo
+	<cfquery name="query" datasource="#request.datasource#">
+		select * from Bar
 		where
 		name = <cfqueryparam value="#arguments.value#" cfsqltype="cf_sql_varchar">
 	</cfquery>

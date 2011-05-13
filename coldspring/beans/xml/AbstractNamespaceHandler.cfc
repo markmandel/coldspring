@@ -36,10 +36,10 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="getSchemaLocations" hint="abstract function: overwite this function to give ColdSpring a map of remote Schemas to their local absolute paths"
+<cffunction name="getSchemaLocations" hint="Overwite this function to give ColdSpring a map of remote Schemas to their local absolute paths"
 			access="public" returntype="struct" output="false"
 			colddoc:generic="string,string">
-	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("getSchemaLocations", this)>
+	<cfreturn StructNew() />
 </cffunction>
 
 <cffunction name="getNameSpaces" hint="abstract function: overwrite to return a single, list or array of string values that are the namespaces this handler manages the parsing for" access="public" returntype="any" output="false">
