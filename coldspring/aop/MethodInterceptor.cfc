@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfinterface extends="Advice" hint="Interface to be used when implementing Around Advice.<br/>
+<cfinterface extends="coldspring.aop.Advice" hint="Interface to be used when implementing Around Advice.<br/>
 	Intercepts calls on an method on its way to the target. These are nested 'on top' of the target.<br/>
 	The user should implement the invokeMethod(MethodInvocation) method to modify the original behavior.
 	">

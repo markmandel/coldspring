@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfinterface extends="BeanPostProcessor"
+<cfinterface extends="coldspring.beans.factory.config.BeanPostProcessor"
 	hint="Subinterface of BeanPostProcessor that adds a before-instantiation callback, and a callback after instantiation but before explicit properties are set or autowiring occurs.<br/>
 	Typically used to suppress default instantiation for specific target beans, for example to create proxies with special TargetSources (pooling targets, lazily initializing targets, etc),
 	or to implement additional injection strategies such as field injection.<br/>

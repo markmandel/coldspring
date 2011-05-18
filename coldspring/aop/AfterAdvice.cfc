@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfinterface hint="Common marker interface for after advice, such as AfterReturningAdvice and ThrowsAdvice." extends="Advice">
+<cfinterface hint="Common marker interface for after advice, such as AfterReturningAdvice and ThrowsAdvice." extends="coldspring.aop.Advice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
