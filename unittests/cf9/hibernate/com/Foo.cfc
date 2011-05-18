@@ -12,7 +12,7 @@
 */
 component persistent="true"
 {
-	property name="id" type="numeric";
+	property name="id" type="numeric" ormType="integer" generator="native";
 	property name="name" type="string";
 
 	property name="inject" persistent="false";

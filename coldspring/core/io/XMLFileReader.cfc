@@ -52,7 +52,7 @@
 		}
 		catch(org.xml.sax.SAXParseException exc)
 		{
-			createObject("component", "coldspring.core.io.exception.InvalidXMLException").init(getPath(), getContent(), exc.lineNumber, exc.columnNumber, exc.message);
+			createObject("component", "coldspring.core.io.exception.InvalidXMLException").init(getPath(), getContent(), structKeyExists(exc, 'lineNumber') ? exc.lineNumber : -1, structKeyExists(exc, 'columnNumber') ? exc.columnNumber : 0, exc.message);
 		}
 
 		return document;

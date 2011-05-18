@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfinterface hint="Tag interface for throws advice." extends="AfterAdvice">
+<cfinterface hint="Tag interface for throws advice." extends="coldspring.aop.AfterAdvice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

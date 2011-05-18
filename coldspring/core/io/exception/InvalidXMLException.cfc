@@ -25,8 +25,14 @@
 	<cfscript>
 		var lines = xmlContent.split("\n");
 
+		var xmlLine = "-unknown-";
+		if(arguments.lineNumber > 0)
+		{
+			xmlLine = lines[arguments.lineNumber];
+		}
+
 		super.init("Invalid XML found in XML file '#arguments.path#', line #arguments.lineNumber#, column #arguments.column#",
-		"Error found on line: '#lines[arguments.lineNumber]#'.#chr(10)##chr(13)#  #arguments.parseError#"
+		"Error found on line: '#xmlLine#'.#chr(10)##chr(13)#  #arguments.parseError#"
 		);
 
 	</cfscript>
