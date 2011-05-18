@@ -32,6 +32,7 @@
 		var factory = createObject("java", "javax.xml.parsers.DocumentBuilderFactory").newInstance();
 		var builder = 0;
 		var document = 0;
+		var local = {}; //just for error handling.
 
 		factory.setValidating(true);
 		factory.setNamespaceAware(true);
@@ -52,7 +53,23 @@
 		}
 		catch(org.xml.sax.SAXParseException exc)
 		{
-			createObject("component", "coldspring.core.io.exception.InvalidXMLException").init(getPath(), getContent(), structKeyExists(exc, 'lineNumber') ? exc.lineNumber : -1, structKeyExists(exc, 'columnNumber') ? exc.columnNumber : 0, exc.message);
+			local.lineNumber = -1;
+			local.columnNumber = 0;
+
+			if(structKeyExists(exc, 'lineNumber'))
+			{
+				local.lineNumber = exc.lineNumber;
+			}
+			if(structKeyExists(exc, 'columnNumber'))
+			{
+				local.columnNumber = exc.columnNumber;
+			}
+
+			createObject("component", "coldspring.core.io.exception.InvalidXMLException").init(getPath(),
+																								getContent(),
+																								local.lineNumber,
+																								local.columnNumber,
+																								exc.message);
 		}
 
 		return document;
