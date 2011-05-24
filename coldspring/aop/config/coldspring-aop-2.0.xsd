@@ -160,14 +160,6 @@
 	<xsd:complexType name="afterReturningAdviceType">
 		<xsd:complexContent>
 			<xsd:extension base="basicAdviceType">
-				<xsd:attribute name="returning" type="xsd:string">
-					<xsd:annotation>
-						<xsd:documentation><![CDATA[
-	The name of the method parameter to which the return value must
-	be passed.
-						]]></xsd:documentation>
-					</xsd:annotation>
-				</xsd:attribute>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -175,14 +167,6 @@
 	<xsd:complexType name="afterThrowingAdviceType">
 		<xsd:complexContent>
 			<xsd:extension base="basicAdviceType">
-				<xsd:attribute name="throwing" type="xsd:string">
-					<xsd:annotation>
-						<xsd:documentation><![CDATA[
-	The name of the method parameter to which the thrown exception must
-	be passed.	
-						]]></xsd:documentation>
-					</xsd:annotation>
-				</xsd:attribute>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
