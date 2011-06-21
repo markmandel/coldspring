@@ -45,7 +45,7 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="calculateDependencyInjection" hint="abstract method: Needs to overwritten to determine the strategy used to wire the target object" access="private" returntype="array" output="false"
+<cffunction name="calculateDependencyInjection" hint="Calculates the autowiring by name properties" access="private" returntype="array" output="false"
 	colddoc:generic="struct">
 	<cfargument name="object" hint="the target object" type="any" required="Yes">
 	<cfscript>
