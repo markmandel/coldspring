@@ -89,6 +89,8 @@
 		injector.injectMethod(proxy, __$setInvocationHandler, "public");
 		injector.injectMethod(proxy, __$getInvocationHandler, "public");
 
+		//if it's an object that has get and set methods defined by cfproperty, then overwrite them with method injection
+
 		injector.stop(proxy);
 
 		//set the proxy key, so we can check if something is a proxy
@@ -146,6 +148,19 @@
 <cffunction name="__$setinvocationHandler" access="private" returntype="void" output="false">
 	<cfargument name="__$invocationHandler" type="any" required="true" colddoc:generic="InvocationHandler">
 	<cfset instance.__$invocationHandler = arguments.__$invocationHandler />
+</cffunction>
+
+<cffunction name="invokeProxy" hint="replacement method, right now used for replacing cfproperty based methods. Can only be used on cf engines that support getFunctionCalledName()"
+				access="public" returntype="any" output="false">
+	<cfscript>
+		var args = {
+			proxy = this
+			,method = getFunctionCalledName()
+			,args = arguments
+		};
+
+		return __$getInvocationHandler().invokeMethod(argumentCollection=args);
+    </cfscript>
 </cffunction>
 
 <!--- /mixins --->
