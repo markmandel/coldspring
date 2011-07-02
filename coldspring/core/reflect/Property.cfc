@@ -20,6 +20,17 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="Property" output="false">
 	<cfargument name="meta" hint="the meta data for this particular property" type="struct" required="Yes">
 	<cfscript>
+		if(!structKeyExists(arguments.meta, "setter"))
+		{
+			arguments.meta.setter = true;
+		}
+
+		if(!structKeyExists(arguments.meta, "getter"))
+		{
+			arguments.meta.getter = true;
+		}
+
+
 		setMeta(arguments.meta);
 
 		return this;
@@ -33,6 +44,14 @@
 <cffunction name="getMeta" hint="Returns the meta data for a this particular property"
 	access="public" returntype="struct" output="false">
 	<cfreturn instance.meta />
+</cffunction>
+
+<cffunction name="hasGetter" hint="whether or not an generated getter has been requested on this property" access="public" returntype="boolean" output="false">
+	<cfreturn getMeta().getter />
+</cffunction>
+
+<cffunction name="hasSetter" hint="whether or not an generated setter has been requested on this property" access="public" returntype="boolean" output="false">
+	<cfreturn getMeta().setter />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

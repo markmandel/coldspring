@@ -18,6 +18,10 @@ component accessors="true"
 	property name="Foo";
 	property name="Bar" hint="stuff";
 
+	property name="noSetter" setter="false";
+	property name="noGetter" getter="false";
+
+
 	/**
      * Constructor
      */

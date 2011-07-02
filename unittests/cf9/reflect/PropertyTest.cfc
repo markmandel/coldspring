@@ -68,8 +68,8 @@ component  extends="unittests.AbstractTestCase"
 		assertTrue(class.hasDeclaredProperty("bar"));
 		assertTrue(class.hasDeclaredProperty("foo"));
 
-		assertEquals(2, StructCount(class.getProperties()));
-		assertEquals(2, StructCount(class.getDeclaredProperties()));
+		assertEquals(4, StructCount(class.getProperties()));
+		assertEquals(4, StructCount(class.getDeclaredProperties()));
 
 		assertEquals("bar", class.getProperty("bar").getName());
 		assertEquals("foo", class.getDeclaredProperty("foo").getName());
@@ -89,7 +89,7 @@ component  extends="unittests.AbstractTestCase"
     	assertTrue(class.hasDeclaredProperty("Bar"));
     	assertFalse(class.hasDeclaredProperty("Foo"));
 
-		assertEquals(2, StructCount(class.getProperties()));
+		assertEquals(4, StructCount(class.getProperties()));
 		assertEquals(1, StructCount(class.getDeclaredProperties()));
 
 		var property = class.getProperty("Foo");
@@ -115,5 +115,21 @@ component  extends="unittests.AbstractTestCase"
 
     	var class = reflectionService.loadClass("unittests.testBeans.Car");
     	assertFalse(class.isAccessorsEnabled());
+    }
+
+    /**
+     * testGetterAndSetter
+     */
+    public void function testGetterAndSetter()
+    {
+	    var class = reflectionService.loadClass("unittests.cf9.reflect.com.Bar");
+	    assertTrue(class.getProperty("foo").hasSetter());
+	    assertTrue(class.getProperty("foo").hasGetter());
+
+	    assertFalse(class.getProperty("noSetter").hasSetter());
+	    assertTrue(class.getProperty("noSetter").hasGetter());
+
+	    assertTrue(class.getProperty("noGetter").hasSetter());
+	    assertFalse(class.getProperty("noGetter").hasGetter());
     }
 }

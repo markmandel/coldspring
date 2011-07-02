@@ -75,6 +75,12 @@
 		//we don't call init, because we only want an intance we can manipulate
 		var proxy = createObject("component", arguments.className);
 		var injector = getMethodInjector();
+		var reflectionService = getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance;
+
+		var class = reflectionService.loadClass(arguments.className);
+		var property = 0;
+		var properties = 0;
+		var name = 0;
 
 		injector.start(proxy);
 
@@ -89,7 +95,26 @@
 		injector.injectMethod(proxy, __$setInvocationHandler, "public");
 		injector.injectMethod(proxy, __$getInvocationHandler, "public");
 
+		injector.removeMethod(proxy, "clean");
+
 		//if it's an object that has get and set methods defined by cfproperty, then overwrite them with method injection
+		if(class.isAccessorsEnabled())
+		{
+			properties = class.getProperties();
+			for(name in properties)
+			{
+				property = properties[name];
+				if(property.hasGetter())
+				{
+					injector.injectMethod(proxy, invokeProxy, "public", "get" & name);
+				}
+				if(property.hasSetter())
+				{
+					injector.injectMethod(proxy, invokeProxy, "public", "set" & name);
+				}
+			}
+
+		}
 
 		injector.stop(proxy);
 
@@ -151,7 +176,7 @@
 </cffunction>
 
 <cffunction name="invokeProxy" hint="replacement method, right now used for replacing cfproperty based methods. Can only be used on cf engines that support getFunctionCalledName()"
-				access="public" returntype="any" output="false">
+				access="private" returntype="any" output="false">
 	<cfscript>
 		var args = {
 			proxy = this
