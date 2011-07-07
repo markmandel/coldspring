@@ -86,34 +86,31 @@
 	</cfscript>
 
 	<cfloop array="#properties#" index="property">
+		<cfscript>
+			setterName = "set" & property.getName();
 
-		<cfset setterName = "set" & property.getName()>
+			//move this up here, in case something goes wrong in create()
+			args = {};
 
-		<cfif structKeyExists(arguments.bean, setterName)>
+			//let cf work out the argument name
+			args[1] = property.create();
+        </cfscript>
 
-			<cfscript>
-				//move this up here, in case something goes wrong in create()
-				args = {};
-				args[getMetaData(arguments.bean[setterName]).parameters[1].name] = property.create();
-            </cfscript>
+		<cftry>
+			<cfinvoke component="#arguments.bean#" method="#setterName#" argumentcollection="#args#" />
 
-			<cftry>
-				<cfinvoke component="#arguments.bean#" method="#setterName#" argumentcollection="#args#" />
+			<cfcatch>
+				<!--- ignore it, something went wrong with the injection --->
+			</cfcatch>
+		</cftry>
 
-				<cfcatch>
-					<!--- ignore it, something went wrong with the injection --->
-				</cfcatch>
-			</cftry>
-
-		</cfif>
 	</cfloop>
 </cffunction>
 
 <cffunction name="autowire" hint="autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
 		var closure = createObject("component", "coldspring.util.Closure").init(autowireByMode);
-		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
-		var class = reflectionService.loadClass(getClassName());
+		var class = $getClass();
 
 		//method bindings
 		closure.bind("isBeanNameAutoWireCandidate", isBeanNameAutoWireCandidate);

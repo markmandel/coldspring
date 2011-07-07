@@ -41,6 +41,25 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testCFPropertyWithPropertySetFromXML" hint="test out that cfproperty works, also when set from XML" access="public" returntype="void" output="false">
+	<cfscript>
+		var proxy = factory.getBean("helloWithProperty");
+		var storage = factory.getBean("storage");
+
+		//should be nothing in there.
+		assertEquals("Han Solo", proxy.getFoo());
+		assertEquals("Han Solo", proxy.__$getInvocationHandler().getTarget().getFoo());
+		assertEquals("Han Solo", storage.getReturn());
+
+		proxy.setFoo("bar");
+
+		assertEquals("bar", proxy.getFoo());
+		assertEquals("bar", proxy.__$getInvocationHandler().getTarget().getFoo());
+
+		assertEquals("bar", storage.getReturn());
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
