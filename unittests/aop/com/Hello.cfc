@@ -11,7 +11,9 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="say hello" output="false" dostuff="true">
+<cfcomponent hint="say hello" output="false" dostuff="true" accessors="true">
+
+<cfproperty name="Foo">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

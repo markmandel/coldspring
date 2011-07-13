@@ -72,6 +72,10 @@ public boolean isInstance(Object obj)
 		buildDeclaredMethods();
 		buildMethods();
 
+		//properties - more for cf9+
+		buildDeclaredProperties();
+		buildProperties();
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -277,6 +281,73 @@ public boolean isInstance(Object obj)
     </cfscript>
 </cffunction>
 
+<cffunction name="getDeclaredPropertiesCollection" hint="Collection access to the declared proprties, for closure support." access="public" returntype="coldspring.util.Collection" output="false">
+	<cfreturn instance.declaredPropertiesCollection />
+</cffunction>
+
+<cffunction name="getDeclaredProperties" hint="Get access to all properties declared directly on this class. Does not look up inheritence hierarchies." access="public" returntype="struct" output="false">
+	<cfreturn getDeclaredPropertiesCollection().getCollection() />
+</cffunction>
+
+<cffunction name="getPropertiesCollection" hint="Collection access to all proprties, including up the inheritence chain, for closure support." access="public" returntype="coldspring.util.Collection" output="false">
+	<cfreturn instance.propertiesCollection />
+</cffunction>
+
+<cffunction name="hasDeclaredProperty" hint="whether this object has a declared property. Does not Look up the inheritence chain." access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the property to look for" type="string" required="Yes">
+	<cfreturn StructKeyExists(getDeclaredProperties(), arguments.name) />
+</cffunction>
+
+<cffunction name="getDeclaredProperty" hint="gets a declared property by name. Doesn't look up the inheritence chain." access="public" returntype="Property" output="false">
+	<cfargument name="name" hint="the name of the property to look for" type="string" required="Yes">
+	<cfscript>
+    	if(!hasDeclaredProperty(arguments.name))
+    	{
+    		createObject("component", "coldspring.core.reflect.exception.PropertyNotFoundException").init(getName(), arguments.name, true);
+    	}
+
+		return getDeclaredPropertiesCollection().get(arguments.name);
+    </cfscript>
+</cffunction>
+
+<cffunction name="getProperties" hint="Get access to all properties on this classincluding up the inheritence chain." access="public" returntype="struct" output="false">
+	<cfreturn getPropertiesCollection().getCollection() />
+</cffunction>
+
+<cffunction name="getProperty" hint="gets a property by name. Look up the inheritence chain." access="public" returntype="Property" output="false">
+	<cfargument name="name" hint="the name of the property to look for" type="string" required="Yes">
+	<cfscript>
+    	if(!hasProperty(arguments.name))
+    	{
+    		createObject("component", "coldspring.core.reflect.exception.PropertyNotFoundException").init(getName(), arguments.name, false);
+    	}
+
+		return getPropertiesCollection().get(arguments.name);
+    </cfscript>
+</cffunction>
+
+<cffunction name="hasProperty" hint="whether this object has a Property. Looks up inheritence chain." access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="the name of the property to look for" type="string" required="Yes">
+	<cfreturn StructKeyExists(getProperties(), arguments.name) />
+</cffunction>
+
+<cffunction name="isAccessorsEnabled" hint="Whether or not cfproperty tags will create get/set methods on this object" access="public" returntype="boolean" output="false">
+	<cfscript>
+		var meta = getMeta();
+		if(structKeyExists(meta, "accessors"))
+		{
+			return meta.accessors;
+		}
+
+		if(structKeyExists(meta, "persistent"))
+		{
+			return meta.persistent;
+		}
+
+		return false;
+    </cfscript>
+</cffunction>
+
 <cffunction name="$equals" hint="equality test with another Class object" access="public" returntype="boolean" output="false">
 	<cfargument name="class" hint="the class to test equality with" type="Class" required="Yes">
 	<cfreturn getName() eq arguments.class.getName() />
@@ -371,7 +442,7 @@ public boolean isInstance(Object obj)
 			len = Arraylen(meta.functions);
 			for(; counter <= len; counter++)
 			{
-				method = createObject("component","Method" ).init(meta.functions[counter], this);
+				method = createObject("component","coldspring.core.reflect.Method").init(meta.functions[counter], this);
 				methods[method.getName()] = method;
 			}
 		}
@@ -380,10 +451,43 @@ public boolean isInstance(Object obj)
     </cfscript>
 </cffunction>
 
+<cffunction name="buildDeclaredProperties" hint="builds all the declared properties for this Class" access="private" returntype="void" output="false">
+	<cfscript>
+    	var properties = {};
+    	var collection = createObject("component", "coldspring.util.Collection").init(properties);
+    	var meta = getMeta();
+    	var len = 0;
+    	var counter = 1;
+    	var fun = 0;
+    	var property = 0;
+
+		if(StructKeyExists(meta, "properties"))
+		{
+			len = Arraylen(meta.properties);
+			for(; counter <= len; counter++)
+			{
+				property = createObject("component","coldspring.core.reflect.Property").init(meta.properties[counter]);
+				properties[property.getName()] = property;
+			}
+		}
+
+		setDeclaredPropertiesCollection(collection);
+    </cfscript>
+</cffunction>
+
 <cffunction name="buildMethods" hint="builds all the public methods, and add in any parent methods" access="private" returntype="void" output="false">
 	<cfscript>
     	var methods = {};
     	var publicMethods = createObject("component", "coldspring.util.Collection").init(methods);
+
+    	if(hasSuperClass())
+    	{
+    		publicMethods.addAll(getSuperClass().getMethods());
+    	}
+
+    	publicMethods.addAll(getDeclaredMethodsCollection().findAll(meta.const.IS_PUBLIC_CLOSURE).getCollection());
+
+		/*
 		var currentClass = this;
 
 		//setup a queue, so we can go in reverse, down the chain, overwriting methods as we go.
@@ -402,8 +506,25 @@ public boolean isInstance(Object obj)
 		{
 			publicMethods.addAll(queue.pollLast());
 		}
+		*/
 
 		setMethodsCollection(publicMethods);
+    </cfscript>
+</cffunction>
+
+<cffunction name="buildProperties" hint="builds all the proprties, and add in any parent properties" access="private" returntype="void" output="false">
+	<cfscript>
+    	var methods = {};
+    	var properties = createObject("component", "coldspring.util.Collection").init(methods);
+
+		if(hasSuperClass())
+		{
+			properties.addAll(getSuperClass().getProperties());
+		}
+
+		properties.addAll(getDeclaredProperties());
+
+		setPropertiesCollection(properties);
     </cfscript>
 </cffunction>
 
@@ -486,6 +607,16 @@ public boolean isInstance(Object obj)
 <cffunction name="setAssignableCache" access="private" returntype="void" output="false">
 	<cfargument name="assignableCache" type="struct" required="true">
 	<cfset instance.assignableCache = arguments.assignableCache />
+</cffunction>
+
+<cffunction name="setDeclaredPropertiesCollection" access="private" returntype="void" output="false">
+	<cfargument name="declaredPropertiesCollection" type="coldspring.util.Collection" required="true">
+	<cfset instance.declaredPropertiesCollection = arguments.declaredPropertiesCollection />
+</cffunction>
+
+<cffunction name="setPropertiesCollection" access="private" returntype="void" output="false">
+	<cfargument name="propertiesCollection" type="coldspring.util.Collection" required="true">
+	<cfset instance.propertiesCollection = arguments.propertiesCollection />
 </cffunction>
 
 <!--- closure methods --->

@@ -44,4 +44,8 @@
 	
 	<bean id="exceptionStorage" class="unittests.aop.com.ExceptionStoreThrowsAdvice" /> 
 	
+	<bean id="helloWithProperty" class="unittests.aop.com.Hello">
+		<property name="Foo" value="Han Solo"/>
+	</bean>
+	
 </beans>

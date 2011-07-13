@@ -30,8 +30,12 @@
 <cffunction name="storeReturn" hint="Callback after a given method successfully returned. " access="public" returntype="void" output="false">
 	<cfargument name="value" type="any" required="no" />
 	<cfscript>
-		println("Storing return: #arguments.value#");
-		setReturn(arguments.value);
+		//handle null values
+		if(structKeyExists(arguments, "value"))
+		{
+			println("Storing return: #arguments.value#");
+			setReturn(arguments.value);
+		}
     </cfscript>
 </cffunction>
 
