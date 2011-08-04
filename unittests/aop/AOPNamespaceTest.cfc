@@ -66,6 +66,22 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testGetAspectByid" hint="test retrieving aspects by their ID" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+
+		var local = {};
+
+		local.reverseAdvice = factory.getBean("reverseAdvice");
+
+		debug(local.reverseAdvice);
+
+		local.afterReturnStorage = factory.getBean("afterReturnStorage");
+
+		debug(local.afterReturnStorage);
+    </cfscript>
+</cffunction>
+
 <cffunction name="testBeforeAspect" hint="tests the before aspect" access="public" returntype="void" output="false">
 	<cfscript>
 		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));

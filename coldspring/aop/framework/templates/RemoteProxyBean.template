@@ -24,7 +24,7 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="getTarget" hint="returns the target object this proxy wraps" access="public" returntype="any" output="false">
+<cffunction name="getTarget" hint="returns the target object this proxy wraps" access="private" returntype="any" output="false">
 	<cfreturn beanFactory.getBean(beanName) />
 </cffunction>
 

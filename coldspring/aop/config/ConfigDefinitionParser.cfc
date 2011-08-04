@@ -163,6 +163,7 @@
 		var cloneAdvisorBeanDef = 0;
 		var cloneMethodInvokeBeanDef = 0;
 		var node = arguments.parserContext.getDelegate().getNode();
+		var id = 0;
 
 		var templateMethodInvokeBeanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("MethodInvoke-" & createUUID());
 		var value = createObject("component", "coldspring.beans.support.RefValue").init(arguments.element.getAttribute(meta.const.REF_ATTRIBUTE), arguments.parserContext.getBeanFactory());
@@ -184,7 +185,15 @@
 				if(child.getLocalName() != meta.const.POINTCUT_ELEMENT)
 				{
 					cloneAdvisorBeanDef = templateBeanDef.clone();
-					cloneAdvisorBeanDef.setID(templateBeanDef.getID() & "-" & counter);
+					if(child.hasAttribute(meta.const.ID_ATTRIBUTE))
+					{
+						id = child.getAttribute(meta.const.ID_ATTRIBUTE);
+					}
+					else
+					{
+						id = createUUID();
+					}
+					cloneAdvisorBeanDef.setID(id);
 
 					cloneMethodInvokeBeanDef = templateMethodInvokeBeanDef.clone();
 					cloneMethodInvokeBeanDef.setID("MethodInvoke-" & createUUID());

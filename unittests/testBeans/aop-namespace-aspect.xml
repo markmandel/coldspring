@@ -22,14 +22,14 @@
 		
 		<aop:advisor advice-ref="exceptionStorage" pointcut-ref="notSubHello"/>
 		
-		<aop:aspect id="reverseAspect" ref="reverse">
-			<aop:around method="$reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
+		<aop:aspect ref="reverse">
+			<aop:around id="reverseAdvice" method="$reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
 		</aop:aspect>
 		
 		<aop:aspect ref="storage">
 			<aop:pointcut expression="target(unittests.aop.com.Hello) AND @target(dostuff)" id="anotherPointcut"/>
 			<aop:before method="storeArgs" pointcut-ref="notSubHello" />
-			<aop:after-returning method="storeReturn" pointcut-ref="notSubHello" />
+			<aop:after-returning id="afterReturnStorage" method="storeReturn" pointcut-ref="notSubHello" />
 			<aop:after-throwing method="storeException" pointcut-ref="anotherPointcut" />
 		</aop:aspect>
 		

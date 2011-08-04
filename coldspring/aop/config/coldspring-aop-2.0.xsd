@@ -98,13 +98,6 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:choice>
-		<xsd:attribute name="id" type="xsd:ID">
-			<xsd:annotation>
-				<xsd:documentation><![CDATA[
-	The unique identifier for an aspect.
-				]]></xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
 		<xsd:attribute name="ref" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
@@ -134,6 +127,13 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="basicAdviceType">
+		<xsd:attribute name="id" type="xsd:ID">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The unique identifier for an aspect.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>	
 		<xsd:attribute name="pointcut" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
