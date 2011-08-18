@@ -17,6 +17,7 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="Storage" output="false">
 	<cfscript>
+		variables.instance = {};
 		return this;
 	</cfscript>
 </cffunction>
@@ -50,12 +51,24 @@
 	<cfreturn instance.Args />
 </cffunction>
 
+<cffunction name="hasArgs" hint="whether this object has a Args" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "Args") />
+</cffunction>
+
 <cffunction name="getReturn" access="public" returntype="any" output="false">
 	<cfreturn instance.return />
 </cffunction>
 
+<cffunction name="hasReturn" hint="whether this object has a return" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "return") />
+</cffunction>
+
 <cffunction name="$getException" access="public" returntype="any" output="false">
 	<cfreturn instance.Exception />
+</cffunction>
+
+<cffunction name="hasException" hint="whether this object has a Exception" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "Exception") />
 </cffunction>
 
 <cffunction name="getOrder" hint="Returns lowest precedence so it comes last."

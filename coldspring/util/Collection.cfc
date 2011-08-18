@@ -13,7 +13,7 @@
 </cffunction>
 
 <cffunction name="each" hint="The closure is called for every item in this collection, with the value passed in as an argument." access="public" returntype="void" output="false">
-	<cfargument name="closure" hint="The closure that will be called against each item in this collection." type="Closure" required="Yes">
+	<cfargument name="closure" hint="The closure that will be called against each item in this collection." type="coldspring.util.Closure" required="Yes">
 	<cfscript>
 		var item = 0;
 		var key = 0;
@@ -34,7 +34,7 @@
 </cffunction>
 
 <cffunction name="findAll" hint="return a collection in which all the items that match the predicate are returned" access="public" returntype="Collection" output="false">
-	<cfargument name="closure" hint="the closure that specifies if the item should be included. Needs to return a boolean" type="Closure" required="Yes">
+	<cfargument name="closure" hint="the closure that specifies if the item should be included. Needs to return a boolean" type="coldspring.util.Closure" required="Yes">
 	<cfscript>
 		var item = 0;
 		var key = 0;
@@ -129,7 +129,7 @@
 c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works on Array Collections, structs will just return themselves. Uses QuickSort for sorting." access="public" returntype="Collection" output="false">
 	<cfargument name="comparator" hint="Closure for comparing items. Will take 2 arguments, should should return less than 0 if argument1 is less than argument 2,
 			return greater than 0 if the argument1 is greater than argument2 and 0 if they are the same."
-			type="Closure" required="Yes">
+			type="coldspring.util.Closure" required="Yes">
 	<cfscript>
 		var sortedCollection = 0;
 		var newCollection = 0;
@@ -181,7 +181,7 @@ c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works
 	<cfargument name="arrayToCompare" hint="The array to compare" type="array" required="Yes">
 	<cfargument name="comparator" hint="Closure for comparing items. Will take 2 arguments, should should return less than 0 if argument1 is less than argument 2,
 			return greater than 0 if the argument1 is greater than argument2 and 0 if they are the same."
-			type="Closure" required="Yes">
+			type="coldspring.util.Closure" required="Yes">
 	<cfscript>
 		//changed, so that the List type is maintained
 		var lesserArray  = arguments.arrayToCompare.getClass().newInstance();

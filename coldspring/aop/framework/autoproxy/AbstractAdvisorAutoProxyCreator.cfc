@@ -12,7 +12,7 @@
  --->
 
 <cfcomponent hint="Generic auto proxy creator that builds AOP proxies for specific beans based on detected Advisors for each bean.<br/>
-		Subclasses must implement the abstract findCandidateAdvisors() method to return a list of Advisors applying to any object"
+		Subclasses must implement the abstract findEligableAdvisors() method to return a list of Advisors applying to any object"
 		implements="coldspring.beans.factory.BeanFactoryAware,coldspring.beans.factory.config.InstantiationAwareBeanPostProcessor"
 		output="false">
 
@@ -96,14 +96,31 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="findCandidateAdvisors" hint="abstract method: Find all candidate Advisors to use in auto-proxying." access="private" returntype="array" output="false"
+<cffunction name="findCandidateAdvisors" hint="Returns all Advisors in the BeanFactory." access="private" returntype="array" output="false"
 	colddoc:generic="coldspring.aop.Advisor">
-	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init(this, "findCandidateAdvisors")>
+	<cfscript>
+		var advisorNames = getBeanFactory().getBeanNamesForTypeIncludingAncestor("coldspring.aop.Advisor");
+		var advisorName = 0;
+		var advisors = createObject("java", "java.util.ArrayList").init(ArrayLen(advisorNames));
+		var advisor = 0;
+    </cfscript>
+    <cfloop array="#advisorNames#" index="advisorName">
+		<cfscript>
+			advisor = getBeanFactory().getBean(advisorName);
+			ArrayAppend(advisors, advisor);
+        </cfscript>
+	</cfloop>
+	<cfreturn advisors />
+</cffunction>
+
+<cffunction name="findEligableAdvisors" hint="Abstract: overwrite me to determine which Advisors are candidates for auto proxying"
+			access="private" returntype="array" output="false" colddoc:generic="coldspring.aop.Advisor">
+	<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("findEligableAdvisors", this)>
 </cffunction>
 
 <cffunction name="initProxyFactory" hint="initialises the proxy factory with all it's required advisors" access="public" returntype="void" output="false">
 	<cfscript>
-		var advisors = findCandidateAdvisors();
+		var advisors = findEligableAdvisors();
 		var orderedComparator = getComponentMetadata("coldspring.core.OrderComparator").singleton.instance;
 
 		setCreateProxyCache(StructNew());

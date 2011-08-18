@@ -46,6 +46,33 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testReverseAdviceonExtends" hint="test simple reverse advice, on a object that extends another" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		instance.hello = createObject("component", "unittests.aop.com.ExtendsHello").init();
+
+		local.interceptor = createObject("component", "unittests.aop.com.ReverseMethodInterceptor").init();
+		local.pointcut = createObject("component", "coldspring.aop.support.NamedMethodPointcut").init();
+
+		local.pointcut.setMappedName("sayHello");
+
+		local.pointcutAdvisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(local.pointcut, local.interceptor);
+
+		instance.proxyFactory.addAdvisor(local.pointcutAdvisor);
+
+		local.proxy = instance.proxyFactory.getProxy(instance.hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+	</cfscript>
+</cffunction>
+
 <cffunction name="testMultipleAroundAdvice" hint="test reverse and argument change advice" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};

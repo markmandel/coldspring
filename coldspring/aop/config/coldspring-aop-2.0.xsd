@@ -98,13 +98,6 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:choice>
-		<xsd:attribute name="id" type="xsd:ID">
-			<xsd:annotation>
-				<xsd:documentation><![CDATA[
-	The unique identifier for an aspect.
-				]]></xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
 		<xsd:attribute name="ref" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
@@ -134,6 +127,13 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="basicAdviceType">
+		<xsd:attribute name="id" type="xsd:ID">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+	The unique identifier for an aspect.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>	
 		<xsd:attribute name="pointcut" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
@@ -155,6 +155,15 @@
 				]]></xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="autoproxy" type="xsd:boolean" default="true">
+			<xsd:annotation>
+				<xsd:documentation>
+					By default all defined Advisors are matched against all beans in the bean factory, and if they do match
+					the Advice is applied. If you do not want this to happen, e.g. if you are creating advice for a RemoteProxyBeanFactory
+					set this to default, and it won't be eligable for autoproxying.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>		
 	</xsd:complexType>
 
 	<xsd:complexType name="afterReturningAdviceType">
@@ -192,6 +201,15 @@
 				<xsd:documentation><![CDATA[
 	A reference to a pointcut definition.
 				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autoproxy" type="xsd:boolean" default="true">
+			<xsd:annotation>
+				<xsd:documentation>
+					By default all defined Advisors are matched against all beans in the bean factory, and if they do match
+					the Advice is applied. If you do not want this to happen, e.g. if you are creating advice for a RemoteProxyBeanFactory
+					set this to default, and it won't be eligable for autoproxying.
+				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>

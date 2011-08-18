@@ -360,7 +360,7 @@ public boolean isInstance(Object obj)
 <cffunction name="buildIsAssignableFrom" hint="does tha calculation to determine if this class is assignable from to the argument class" access="private" returntype="boolean" output="false">
 	<cfargument name="className" hint="The name of the class to determine if this class is assignable from" type="string" required="Yes">
 	<cfscript>
-		var closure = 0;
+		var typeCheck = 0;
 		var class = 0;
 
 		if(!getReflectionService().classExists(arguments.className))
@@ -368,15 +368,15 @@ public boolean isInstance(Object obj)
 			return false;
 		}
 
-		closure = createObject("component", "coldspring.util.Closure").init(classTypeCheck);
+		typeCheck = createObject("component", "coldspring.util.Closure").init(classTypeCheck);
 		class = getReflectionService().loadClass(arguments.className);
 
-		closure.bind("result", false);
-		closure.bind("class", this);
+		typeCheck.bind("result", false);
+		typeCheck.bind("class", this);
 
-		class.eachClassInTypeHierarchy(closure);
+		class.eachClassInTypeHierarchy(typeCheck);
 
-		return closure.bound("result");
+		return typeCheck.bound("result");
     </cfscript>
 </cffunction>
 

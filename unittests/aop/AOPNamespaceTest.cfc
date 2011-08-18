@@ -66,6 +66,22 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testGetAspectByid" hint="test retrieving aspects by their ID" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+
+		var local = {};
+
+		local.reverseAdvice = factory.getBean("reverseAdvice");
+
+		debug(local.reverseAdvice);
+
+		local.afterReturnStorage = factory.getBean("afterReturnStorage");
+
+		debug(local.afterReturnStorage);
+    </cfscript>
+</cffunction>
+
 <cffunction name="testBeforeAspect" hint="tests the before aspect" access="public" returntype="void" output="false">
 	<cfscript>
 		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
@@ -74,8 +90,11 @@
 		local.proxy = factory.getBean("hello");
 		local.storeArguments = factory.getBean("storage");
 
+		assertFalse(local.storeArguments.hasArgs());
+
 		local.value = local.proxy.sayHello();
 
+		assertTrue(local.storeArguments.hasArgs());
 		assertTrue(structIsEmpty(local.storeArguments.getArgs()));
 
 		local.proxy.sayHello("hello");
@@ -103,12 +122,13 @@
 		local.proxy = factory.getBean("hello");
 		local.storeArguments = factory.getBean("storage");
 
+		assertFalse(local.storeArguments.hasReturn());
+
 		local.value = local.proxy.sayHello();
 
 		assertEquals("hello", local.value);
 
-		local.storeArguments = factory.getBean("storage");
-
+		assertTrue(local.storeArguments.hasReturn());
 		assertEquals("hello", local.storeArguments.getReturn());
 
 		local.value = local.proxy.sayGoodbye();
@@ -126,12 +146,15 @@
 		local.proxy = factory.getBean("hello");
 		local.storage = factory.getBean("storage");
 
+		assertFalse(local.storage.hasException());
+
 		try
 		{
 			local.proxy.sayHello("exceptionFoo");
 		}
 		catch(exceptionFoo exc)
 		{
+			assertTrue(local.storage.hasException());
 			assertEquals(exc.message, local.storage.$getException().message);
 			assertEquals(exc.type, local.storage.$getException().type);
 		}
@@ -158,6 +181,58 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testNotBeforeAspect" hint="tests the before aspect" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+		var local = {};
+
+		local.proxy = factory.getBean("hello");
+		local.storeArguments = factory.getBean("Notstorage");
+
+		assertFalse(local.storeArguments.hasArgs());
+
+		local.proxy.sayHello();
+
+		assertFalse(local.storeArguments.hasArgs());
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotReturnAspect" hint="tests returning aspects" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+		var local = {};
+
+		local.proxy = factory.getBean("hello");
+		local.storeArguments = factory.getBean("notStorage");
+
+		assertFalse(local.storeArguments.hasReturn());
+
+		local.proxy.sayHello();
+
+		assertFalse(local.storeArguments.hasReturn());
+    </cfscript>
+</cffunction>
+
+<cffunction name="testNotExceptionAspect" hint="tests exception aspects" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+		var local = {};
+
+		local.proxy = factory.getBean("hello");
+		local.storage = factory.getBean("notstorage");
+
+		assertFalse(local.storage.hasException());
+
+		try
+		{
+			local.proxy.sayHello("exceptionFoo");
+		}
+		catch(exceptionFoo exc)
+		{
+			assertFalse(local.storage.hasException());
+		}
+    </cfscript>
+</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 

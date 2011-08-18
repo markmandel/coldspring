@@ -63,12 +63,18 @@
 
 		local.map = instance.factory.getBean("myJSONFactoryBean");
 
-		local.array = [1.0,2.0,3.0,4.0]; //weird json conversion
+		local.array = [1,2,3,4]; //weird json conversion
 		local.struct = {foo = "bar"};
 
-		assertEquals(local.array, local.map.array);
 		assertEquals(local.struct, local.map.struct);
 		assertEquals("Frodo Baggins", local.map.string);
+
+		local.len = ArrayLen(local.array);
+        for(local.counter=1; local.counter <= local.len; local.counter++)
+        {
+        	local.number = local.array[local.counter];
+        	assertEquals(local.number, local.map.array[local.counter]);
+        }
 	</cfscript>
 </cffunction>
 

@@ -11,7 +11,8 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Base class for Pointcuts that are driven by an advisor" implements="Advisor,coldspring.core.Ordered" output="false">
+<cfcomponent hint="Base class for Pointcuts that are driven by an advisor"
+				implements="Advisor,coldspring.core.Ordered,coldspring.aop.framework.autoproxy.AutoProxyable" output="false">
 
 <cfscript>
 	meta = getMetadata(this);
@@ -31,6 +32,7 @@
 	<cfargument name="advice" hint="the advice to apply" type="Advice" required="no">
 	<cfscript>
 		setPointcut(arguments.pointcut);
+		setAutoproxyCandidate(true);
 
 		if(structKeyExists(arguments, "advice"))
 		{
@@ -64,6 +66,15 @@
 
 <cffunction name="getPointcut" access="public" returntype="pointcut" output="false">
 	<cfreturn instance.pointcut />
+</cffunction>
+
+<cffunction name="isAutoproxyCandidate" hint="is this a candidate for autoproxying? Defaults to true." access="public" returntype="boolean" output="false">
+	<cfreturn instance.autoproxyCandidate />
+</cffunction>
+
+<cffunction name="setAutoproxyCandidate" access="public" returntype="void" output="false">
+	<cfargument name="autoproxyCandidate" type="boolean" required="true">
+	<cfset instance.autoproxyCandidate = arguments.autoproxyCandidate />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

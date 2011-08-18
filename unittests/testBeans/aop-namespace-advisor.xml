@@ -19,6 +19,7 @@
 	
 	<aop:config>
 		<aop:advisor advice-ref="reverseAdvice" id="reverseAdvisor" pointcut="@annotation(dostuff='true')"/>
+		<aop:advisor advice-ref="reverseAdvice" id="ignoredReverseAdvisor" pointcut="@annotation(dostuff='true')" autoproxy="false"/>
 	</aop:config>
 	
 	<bean id="reverseAdvice" class="unittests.aop.com.ReverseMethodInterceptor"/>

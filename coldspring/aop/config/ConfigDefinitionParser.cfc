@@ -36,6 +36,7 @@
 		const.POINTCUT_ATTRIBUTE = "pointcut";
 		const.POINTCUT_REF_ATTRIBUTE = "pointcut-ref";
 		const.EXPRESSION_ATTRIBUTE = "expression";
+		const.AUTOPROXY_ATTRIBUTE = "autoproxy";
 
 		const.EXPRESSION_POINTCUT_CLASS = "coldspring.aop.expression.ExpressionPointcut";
 		const.ADVISOR_CLASS = "coldspring.aop.PointcutAdvisor";
@@ -159,10 +160,10 @@
 		var counter = 0;
 		var childNodes = arguments.element.getChildNodes();
 		var child = 0;
-		var templateBeanDef = parseAdvisorProperties(arguments.element);
-		var cloneAdvisorBeanDef = 0;
+		var advisorBeanDef = 0;
 		var cloneMethodInvokeBeanDef = 0;
 		var node = arguments.parserContext.getDelegate().getNode();
+		var id = 0;
 
 		var templateMethodInvokeBeanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("MethodInvoke-" & createUUID());
 		var value = createObject("component", "coldspring.beans.support.RefValue").init(arguments.element.getAttribute(meta.const.REF_ATTRIBUTE), arguments.parserContext.getBeanFactory());
@@ -183,8 +184,7 @@
 				//this is for all advice (i.e. non pointcut def)
 				if(child.getLocalName() != meta.const.POINTCUT_ELEMENT)
 				{
-					cloneAdvisorBeanDef = templateBeanDef.clone();
-					cloneAdvisorBeanDef.setID(templateBeanDef.getID() & "-" & counter);
+					advisorBeanDef = parseAdvisorProperties(child);
 
 					cloneMethodInvokeBeanDef = templateMethodInvokeBeanDef.clone();
 					cloneMethodInvokeBeanDef.setID("MethodInvoke-" & createUUID());
@@ -192,7 +192,7 @@
 					value = createObject("component", "coldspring.beans.support.RefValue").init(cloneMethodInvokeBeanDef.getID(), arguments.parserContext.getBeanFactory());
 					constructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("advice", value);
 
-					cloneAdvisorBeanDef.addConstructorArg(constructorArg);
+					advisorBeanDef.addConstructorArg(constructorArg);
 
 					//method
 					value = createObject("component", "coldspring.beans.support.SimpleValue").init(child.getAttribute(meta.const.METHOD_ATTRIBUTE));
@@ -205,9 +205,9 @@
 
 					constructorArg = createObject("component", "coldspring.beans.support.ConstructorArg").init("adviceType", value);
 					cloneMethodInvokeBeanDef.addConstructorArg(constructorArg);
-					parsePointcutAttributes(child, arguments.parserContext, cloneAdvisorBeanDef);
+					parsePointcutAttributes(child, arguments.parserContext, advisorBeanDef);
 
-					arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(cloneAdvisorBeanDef);
+					arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(advisorBeanDef);
 					arguments.parserContext.getBeanDefinitionRegistry().registerBeanDefinition(cloneMethodInvokeBeanDef);
 				}
 				else
@@ -259,6 +259,7 @@
 	<cfscript>
 		var id = 0;
 		var advisorBeanDef = 0;
+		var property = 0;
 
 		if(arguments.element.hasAttribute(meta.const.ID_ATTRIBUTE))
 		{
@@ -272,6 +273,13 @@
 		advisorBeanDef = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init(id);
 		advisorBeanDef.setAutowire("no");
 		advisorBeanDef.setClassName(meta.const.ADVISOR_CLASS);
+
+		if(arguments.element.hasAttribute(meta.const.AUTOPROXY_ATTRIBUTE))
+		{
+			property = createObject("component", "coldspring.beans.support.Property").init("AutoproxyCandidate",
+								createObject("component", "coldspring.beans.support.SimpleValue").init(arguments.element.getAttribute(meta.const.AUTOPROXY_ATTRIBUTE)));
+			advisorBeanDef.addProperty(property);
+		}
 
 		return advisorBeanDef;
     </cfscript>
