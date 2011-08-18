@@ -43,4 +43,18 @@
 			</list>
 		</property>  
 	</bean>
+	
+	<!-- This one should be ignored -->
+	<bean id="ignoreReverseRegexAdvice" class="coldspring.aop.support.RegexMethodPointcutAdvisor">  
+		<property name="autoproxyCandidate" value="false"/>  
+		<property name="advice">  
+			<ref bean="reverseAdvice" />  
+		</property>
+		<property name="patterns">
+			<list>
+				<value>(.*?)Hello</value>
+			</list>
+		</property>
+	</bean>	
+	
 </beans>

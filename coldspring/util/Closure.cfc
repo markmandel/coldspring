@@ -16,7 +16,7 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="Closure" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="coldspring.util.Closure" output="false">
 	<cfargument name="function" hint="the function / the name of the function that will be called in this closure context" type="any" required="No">
 	<cfscript>
 		__setCurryArguments(StructNew());
@@ -78,7 +78,7 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="clone" hint="create a clone of this object" access="public" returntype="Closure" output="false">
+<cffunction name="clone" hint="create a clone of this object" access="public" returntype="coldspring.util.Closure" output="false">
 	<cfscript>
 		//do this manually, as Cloneable won't cut it. Too many scopes.
 

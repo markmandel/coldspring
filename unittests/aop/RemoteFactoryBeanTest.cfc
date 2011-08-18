@@ -177,7 +177,7 @@
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="initFactory" hint="handy method for init'ing the factory I want." access="public" returntype="void" output="false">
+<cffunction name="initFactory" hint="handy method for init'ing the factory I want." access="private" returntype="void" output="false">
 	<cfargument name="trusted" hint="whether or not it's trusted source" type="boolean" required="no" default="false">
 	<cfscript>
 		factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-remoteFactoryBean.xml"), arguments);

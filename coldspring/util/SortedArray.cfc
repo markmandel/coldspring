@@ -25,20 +25,16 @@
 	<cfargument name="comparator" hint="a UDF or a Closure to be used as a comparator." type="any" required="Yes">
 	<cfscript>
 		var System = createObject("java","java.lang.System");
-		var closure = 0;
 
 		setLockName(getMetadata(this).name & ".array." & System.identityHashcode(this));
 		setSortedArray (createObject("java", "java.util.ArrayList").init());
 
 		if(isCustomFunction(arguments.comparator))
 		{
-			closure = createObject("component","Closure").init(arguments.comparator);
-			setComparator(closure);
+			arguments.comparator = createObject("component","Closure").init(arguments.comparator);
 		}
-		else
-		{
-			setComparator(arguments.comparator);
-		}
+
+		setComparator(arguments.comparator);
 
 		return this;
 	</cfscript>

@@ -109,20 +109,20 @@
 
 <cffunction name="autowire" hint="autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
-		var closure = createObject("component", "coldspring.util.Closure").init(autowireByMode);
+		var autowire = createObject("component", "coldspring.util.Closure").init(autowireByMode);
 		var class = $getClass();
 
 		//method bindings
-		closure.bind("isBeanNameAutoWireCandidate", isBeanNameAutoWireCandidate);
+		autowire.bind("isBeanNameAutoWireCandidate", isBeanNameAutoWireCandidate);
 
 		//variable bindings
-		closure.bind("id", getID());
-		closure.bind("autowireMode", getAutowire());
-		closure.bind("beanDef", this);
-		closure.bind("registry", getBeanDefinitionRegistry());
+		autowire.bind("id", getID());
+		autowire.bind("autowireMode", getAutowire());
+		autowire.bind("beanDef", this);
+		autowire.bind("registry", getBeanDefinitionRegistry());
 
 		//this was originally done as a closure, in theory this could be moved to a loop.
-		class.getMethodsCollection().each(closure);
+		class.getMethodsCollection().each(autowire);
     </cfscript>
 </cffunction>
 

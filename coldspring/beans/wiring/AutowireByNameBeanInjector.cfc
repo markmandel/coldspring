@@ -51,16 +51,16 @@
 	<cfscript>
 		var class = getReflectionService().loadClass(getMetaData(arguments.object).name);
 
-		var closure = getCalculateDependencyClosure().clone();
+		var dependencies = getCalculateDependencyClosure().clone();
 
 		//pass by reference please
 		var injectDetails = createObject("java", "java.util.ArrayList").init();
 
-		closure.bind("injectDetails", injectDetails);
+		dependencies.bind("injectDetails", injectDetails);
 
-		class.getMethodsCollection().each(closure);
+		class.getMethodsCollection().each(dependencies);
 
-		return closure.bound("injectDetails");
+		return dependencies.bound("injectDetails");
     </cfscript>
 </cffunction>
 

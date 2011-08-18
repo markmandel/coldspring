@@ -68,12 +68,13 @@
 		local.class = reflectionService.loadClass("coldspring.aop.PointcutAdvisor");
 
 		local.interfaces = local.class.getInterfaces();
-		assertEquals(2, Arraylen(local.interfaces));
+		assertEquals(3, Arraylen(local.interfaces));
 
-		local.interfaceNames = [local.interfaces[1].getName(), local.interfaces[2].getName()];
+		local.interfaceNames = [local.interfaces[1].getName(), local.interfaces[2].getName(), local.interfaces[3].getName()];
 
 		assertTrue(local.interfaceNames.contains("coldspring.aop.Advisor"));
 		assertTrue(local.interfaceNames.contains("coldspring.core.Ordered"));
+		assertTrue(local.interfaceNames.contains("coldspring.aop.framework.autoproxy.AutoProxyable"));
 
 		//move on to interfaces
 		local.class = reflectionService.loadClass("coldspring.aop.MethodBeforeAdvice");

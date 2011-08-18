@@ -3,27 +3,41 @@
 	extends="AbstractAdvisorAutoProxyCreator"
 	output="false">
 
+<cfscript>
+	meta = getMetadata(this);
+	if(!structKeyExists(meta, "const"))
+	{
+		const = {};
+		const.AUTOPROXYABLE_CLASS = "coldspring.aop.framework.autoproxy.AutoProxyable";
+
+		meta.const = const;
+	}
+</cfscript>
+
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="findCandidateAdvisors" hint="Returns all Advisors in the BeanFactory." access="private" returntype="array" output="false"
-	colddoc:generic="coldspring.aop.Advisor">
+<cffunction name="findEligableAdvisors" hint="Abstract: overwrite me to determine which Advisors are candidates for auto proxying"
+			access="private" returntype="array" output="false" colddoc:generic="coldspring.aop.Advisor">
 	<cfscript>
-		var advisorNames = getBeanFactory().getBeanNamesForTypeIncludingAncestor("coldspring.aop.Advisor");
-		var advisorName = 0;
-		var advisors = createObject("java", "java.util.ArrayList").init(ArrayLen(advisorNames));
+		var advisors = findCandidateAdvisors();
 		var advisor = 0;
+
+		var eligableAdvisors = createObject("java", "java.util.ArrayList").init();
     </cfscript>
-    <cfloop array="#advisorNames#" index="advisorName">
+    <cfloop array="#advisors#" index="advisor">
 		<cfscript>
-			advisor = getBeanFactory().getBean(advisorName);
-			ArrayAppend(advisors, advisor);
+			if(isInstanceOf(advisor, meta.const.AUTOPROXYABLE_CLASS) AND advisor.isAutoproxyCandidate())
+			{
+				arrayAppend(eligableAdvisors, advisor);
+			}
         </cfscript>
-	</cfloop>
-	<cfreturn advisors />
+    </cfloop>
+
+    <cfreturn eligableAdvisors />
 </cffunction>
 
 </cfcomponent>

@@ -24,6 +24,7 @@
 		
 		<aop:aspect ref="reverse">
 			<aop:around id="reverseAdvice" method="$reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" />
+			<aop:around id="reverseAdviceNotUsed" method="$reverse" pointcut="@annotation(dostuff='true') AND @within(unittests.aop.com.*)" autoproxy="false"/>
 		</aop:aspect>
 		
 		<aop:aspect ref="storage">
@@ -31,6 +32,13 @@
 			<aop:before method="storeArgs" pointcut-ref="notSubHello" />
 			<aop:after-returning id="afterReturnStorage" method="storeReturn" pointcut-ref="notSubHello" />
 			<aop:after-throwing method="storeException" pointcut-ref="anotherPointcut" />
+		</aop:aspect>
+		
+		<aop:aspect ref="notStorage">
+			<aop:pointcut expression="target(unittests.aop.com.Hello) AND @target(dostuff)" id="notAnotherPointcut"/>
+			<aop:before method="storeArgs" pointcut-ref="notSubHello" autoproxy="false" />
+			<aop:after-returning method="storeReturn" pointcut-ref="notSubHello" autoproxy="false" />
+			<aop:after-throwing method="storeException" pointcut-ref="notAnotherPointcut" autoproxy="false" />
 		</aop:aspect>
 		
 	</aop:config>
@@ -41,10 +49,11 @@
 	<bean id="helloNotWork" class="unittests.aop.com.sub.Hello"/>
 	
 	<bean id="storage" class="unittests.aop.com.Storage"/>
+	<bean id="notStorage" class="unittests.aop.com.Storage"/>
 	
 	<bean id="exceptionStorage" class="unittests.aop.com.ExceptionStoreThrowsAdvice" /> 
 	
-	<bean id="helloWithProperty" class="unittests.aop.com.Hello">
+	<bean id="helloWithProperty" class="unittests.aop.com.Hello" scope="request">
 		<property name="Foo" value="Han Solo"/>
 	</bean>
 	

@@ -64,7 +64,7 @@
 	<cfargument name="beanDefinition" hint="the bean definition to add" type="coldspring.beans.support.BeanDefinition" required="Yes">
 	<cfscript>
 		var typeNameCache = getTypeNameCache();
-		var closure = 0;
+		var cacheNameAgainstType = 0;
 
 		arguments.beanDefinition.configure(this, getBeanCache(), getBeanPostProcessorObservable());
 
@@ -72,10 +72,10 @@
 
 		if(arguments.beanDefinition.hasClassName() && getReflectionService().classExists(arguments.beanDefinition.getClassName()))
 		{
-			closure = getCacheNameAgainstTypeClosure().clone();
-			closure.bind("id", arguments.beanDefinition.getID());
+			cacheNameAgainstType = getCacheNameAgainstTypeClosure().clone();
+			cacheNameAgainstType.bind("id", arguments.beanDefinition.getID());
 
-			arguments.beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
+			arguments.beanDefinition.$getClass().eachClassInTypeHierarchy(cacheNameAgainstType);
 		}
     </cfscript>
 </cffunction>
@@ -164,16 +164,16 @@
 	<cfscript>
 		var beanDefs = getBeanDefinitions();
 		var beanDefinition = getBeanDefinition(arguments.name);
-		var closure = 0;
+		var removeName = 0;
 
 		structDelete(beanDefs, beanDefinition.getID());
 
-		closure = getRemoveNameAgainstTypeClosure().clone();
-		closure.bind("id", beanDefinition.getID());
+		removeName = getRemoveNameAgainstTypeClosure().clone();
+		removeName.bind("id", beanDefinition.getID());
 
 		if(beanDefinition.hasClassName() && getReflectionService().classExists(beanDefinition.getClassName()))
 		{
-			beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
+			beanDefinition.$getClass().eachClassInTypeHierarchy(removeName);
 		}
     </cfscript>
 </cffunction>
@@ -411,7 +411,7 @@
 		var id = 0;
 		var beanDefinition = 0;
 		var args = 0;
-		var closure = getCacheNameAgainstTypeClosure().clone();
+		var cacheNameAgainstType = getCacheNameAgainstTypeClosure().clone();
 
 		//reset the type name cache
 		structClear(getTypeNameCache());
@@ -422,8 +422,8 @@
 
 			if(beanDefinition.hasClassName())
 			{
-				closure.bind("id", beanDefinition.getID());
-				beanDefinition.$getClass().eachClassInTypeHierarchy(closure);
+				cacheNameAgainstType.bind("id", beanDefinition.getID());
+				beanDefinition.$getClass().eachClassInTypeHierarchy(cacheNameAgainstType);
 			}
 		}
     </cfscript>
