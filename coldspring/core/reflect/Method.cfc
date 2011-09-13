@@ -84,7 +84,7 @@
 	<cfreturn structKeyExists(getMeta(), arguments.annotation) />
 </cffunction>
 
-<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="boolean" output="false">
+<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it" access="public" returntype="any" output="false">
 	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
 	<cfreturn structFind(getMeta(), arguments.annotation) />
 </cffunction>
