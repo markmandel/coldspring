@@ -65,6 +65,8 @@
 					childBeanDefinition.setClassName(factoryBean.getObjectType());
 				}
 
+				childBeanDefinition.setLazyInit(beanDefinition.isLazyInit());
+
 				childBeanDefinition.setFactoryMethodName("getObject");
 				childBeanDefinition.setFactoryBeanName(beanDefinition.getID());
 
