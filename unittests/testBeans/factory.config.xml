@@ -14,6 +14,7 @@
 <beans xmlns="http://www.coldspringframework.org/schema/beans" 
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	   xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://www.coldspringframework.org/schema/coldspring-beans-2.0.xsd"
+	   default-lazy-init="false"
 	   >
 	<bean id="myListFactoryBean" class="coldspring.beans.factory.config.ListFactoryBean">
 		<property name="sourceList">

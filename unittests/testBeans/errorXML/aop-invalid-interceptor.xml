@@ -16,7 +16,7 @@
 	   xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd"
 	   >
 	
-	<bean id="hello" class="coldspring.aop.framework.ProxyFactoryBean">
+	<bean id="hello" class="coldspring.aop.framework.ProxyFactoryBean" lazy-init="false">
 		<property name="target" ref="helloTarget"/>
 		<property name="interceptorNames">
 			<list>

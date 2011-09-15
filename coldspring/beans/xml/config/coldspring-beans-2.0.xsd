@@ -59,11 +59,11 @@
 					<xsd:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
 				</xsd:choice>
 			</xsd:sequence>
-			<xsd:attribute name="default-lazy-init" default="false" type="xsd:boolean">
+			<xsd:attribute name="default-lazy-init" default="true" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation><![CDATA[
 	The default 'lazy-init' value; see the documentation for the
-	'lazy-init' attribute of the '<bean>/' element.
+	'lazy-init' attribute of the '<bean>' element.
 					]]></xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>

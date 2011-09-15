@@ -421,7 +421,7 @@
 		setID(arguments.id);
 		setScope("singleton");
 		setAutowire("no");
-		setLazyInit(false);
+		setLazyInit(true);
 		setAutowireComplete(false);
 		setConstructorArgs(StructNew());
 		setProperties(StructNew());
