@@ -181,7 +181,8 @@ public boolean isInstance(Object obj)
     </cfscript>
 </cffunction>
 
-<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it. It it can't be found on this class, check the parent." access="public" returntype="boolean" output="false">
+<cffunction name="getAnnotation" hint="Gets the value of this annotation from the metadata, and returns it. It it can't be found on this class, check the parent."
+			access="public" returntype="any" output="false">
 	<cfargument name="annotation" hint="the name of the annotation" type="string" required="Yes">
 	<cfscript>
 		if(!structKeyExists(getMeta(), arguments.annotation) && hasSuperClass())
