@@ -20,7 +20,11 @@
 	<property name="coldspring.server" value="www.coldspringframework.org"/>
 	<property name="coldspring.server.schema" value="/Application/schema"/>
 	<property name="coldspring.sourceforge.server" value="web.sourceforge.net"/>
-	<property name="coldspring.sourceforge.docs" value="/home/project-web/coldspring/htdocs/ber/docs"/>
+	<property name="coldspring.sourceforge.webroot" value="/home/project-web/coldspring/htdocs" />
+	<property name="coldspring.sourceforge.docs" value="${coldspring.sourceforge.webroot}/ber/docs"/>
+	
+	<property name="coldspring.sourceforge.files" value="frs.sourceforge.net"/>
+	<property name="coldspring.sourceforge.fileroot" value="/home/pfs/project/c/co/coldspring" />
 	
 	<property name="coldspring.localserver" value="coldspring"/>
 	<property name="coldspring.localport" value="80"/>
@@ -314,6 +318,84 @@
     	
     	<delete dir="${antlr.src}/output"/>
     </target>
+    
+	<!-- ================================= 
+          target: release           
+         ================================= -->
+    <target name="release" depends="xsddoc,colddoc" description="description">
+    	<input addproperty="release.user" message="Sourceforge username" />
+    	<input addproperty="release.version" message="Version for release" defaultvalue="${coldspring.version}" />
+    	<input addproperty="release.message" message="Tag message" />
+
+    	<property name="release.sourceforge.docs" value="${coldspring.sourceforge.webroot}/${release.version}"/>
+    	<property name="release.sourceforge.files" value="${coldspring.sourceforge.fileroot}/${release.version}"/>
+    	
+    	<property name="release.dir" location="${tmp}/coldspring-release" />
+    	<property name="release.dir.file" location="${release.dir}/files" />
+    	<property name="release.dir.file.version" location="${release.dir.file}/${release.version}" />
+    	<property name="release.filename" value="coldspring-v${release.version}.zip" />
+    	
+    	<property name="release.dir.docs" location="${release.dir}/docs" />
+    	<property name="release.dir.docs.version" location="${release.dir.docs}/${release.version}" />
+		
+    	<!-- clean it all up -->
+    	<delete dir="${release.dir}" />
+    	
+    	<!-- make directories -->
+		<mkdir dir="${release.dir.file.version}"/>
+		<mkdir dir="${release.dir.docs.version}"/>
+    	
+    	<zip destfile="${release.dir.file.version}/${release.filename}" >
+    		<zipfileset dir="${src}" prefix="coldspring"></zipfileset>
+    	</zip>
+    	
+		<property name="rsync.line1" value="-rv --delete --exclude=/gen ./ ${release.dir.docs.version}/docs"/>
+		<echo message="rsync ${rsync.line1}"/>
+		<exec executable="rsync" dir="${docs}" logerror="true">
+			<arg line="${rsync.line1}"/>
+		</exec>
+    	
+		<echo message="Rsync documents to ${coldspring.sourceforge.server}"/>
+    	
+		<property name="rsync.line3" value="-rv --delete ${release.dir.docs.version}/ ${release.user}@${coldspring.sourceforge.server}:${release.sourceforge.docs}/"/>
+		<echo message="rsync ${rsync.line3}"/>
+		<exec executable="rsync" logerror="true">
+			<arg line="${rsync.line3}"/>
+		</exec>
+
+		<echo message="Rsync files to ${coldspring.sourceforge.files}"/>
+		<property name="rsync.line2" value="-rv --delete ${release.dir.file.version}/ ${release.user}@${coldspring.sourceforge.files}:${release.sourceforge.files}/"/>
+		<echo message="rsync ${rsync.line2}"/>
+		<exec executable="rsync" logerror="true">
+			<arg line="${rsync.line2}"/>
+		</exec>
+
+    	<git command="tag">
+			<args>
+				<arg value="-a" />
+				<arg value="${release.version}" />
+				<arg value="-m ${release.message}" />
+			</args>
+		</git>
+    </target>
+
+
+	<!-- 
+		macro for git.
+		http://tlrobinson.net/blog/2008/11/13/ant-tasks-for-git/
+	 -->
+	<macrodef name = "git">
+	    <attribute name = "command" />
+	    <attribute name = "dir" default = "" />
+	    <element name = "args" optional = "true" />
+	    <sequential>
+	        <echo message = "git @{command}" />
+	        <exec executable = "git" dir = "@{dir}">
+	            <arg value = "@{command}" />
+	            <args/>
+	        </exec>
+	    </sequential>
+	</macrodef>
 
 	
 </project>
