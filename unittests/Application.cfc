@@ -23,6 +23,8 @@
 
 	//orm settings
 	this.datasource = "coldspring";
+
+    /*
 	this.ormenabled = true;
 	this.ormSettings.cfclocation = expandPath("/unittests/cf9/hibernate/com/");
 	this.ormSettings.dbcreate = "dropcreate";
@@ -33,6 +35,7 @@
 
 	this.ormsettings.eventhandling = true;
 	this.ormsettings.eventhandler = "coldspring.orm.hibernate.BeanInjectorEventHandler";
+    */
 </cfscript>
 
 <cfdbinfo type="version" name="version" datasource="#this.datasource#">
@@ -45,7 +48,7 @@
 	//otherwise, mySQL gives up myISAM, which doesn't support transactions :P
 	if(request.dbtype eq "mysql")
 	{
-		this.ormSettings.dialect = "MySQLwithInnoDB";
+		//this.ormSettings.dialect = "MySQLwithInnoDB";
 	}
 </cfscript>
 
