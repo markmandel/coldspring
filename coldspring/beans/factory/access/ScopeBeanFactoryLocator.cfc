@@ -14,7 +14,9 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="BeanFactoryLocator that stores and retrieves a BeanFactory from a shared scope, under a given name"
+<cfcomponent hint="BeanFactoryLocator that stores and retrieves a BeanFactory from a shared scope, under a given name.
+             <br/>Defaults to storing ColdSpring in application.coldspring.
+             <br/>To use this to store Coldspring in a shared scope, add an instance of this bean to your configuration."
 			 implements="coldspring.beans.factory.config.BeanFactoryPostProcessor,BeanFactoryLocator" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -55,7 +57,7 @@
 	<cfreturn instance.beanFactoryName />
 </cffunction>
 
-<cffunction name="setBeanFactoryName" access="public" returntype="void" output="false">
+<cffunction name="setBeanFactoryName" hint="Set the name that coldspring will be set under within the specified shared scope." access="public" returntype="void" output="false">
 	<cfargument name="beanFactoryName" type="string" required="true">
 	<cfset instance.beanFactoryName = arguments.beanFactoryName />
 </cffunction>
@@ -66,7 +68,7 @@
 	<cfreturn instance.beanFactoryScope />
 </cffunction>
 
-<cffunction name="setBeanFactoryScope" access="public" returntype="void" output="false">
+<cffunction name="setBeanFactoryScope" hint="Set the scope you want to store ColdSpring in: application, server, session, request" access="public" returntype="void" output="false">
 	<cfargument name="beanFactoryScope" type="any" required="true">
 	<cfset instance.beanFactoryScope = arguments.beanFactoryScope />
 </cffunction>
