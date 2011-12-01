@@ -63,15 +63,29 @@
 </cffunction>
 
 <cffunction name="parseXMLToBeanDefinitions" hint="Parse a specific XML document into bean definitions, and add them to the registry" access="public" returntype="void" output="false">
-	<cfargument name="path" hint="the absolute path to the XML configuration file" type="string" required="Yes">
+	<cfargument name="configuration" hint="an absolute path to the XML configuration file, or the xml configuration itself." type="string" required="Yes">
 	<cfscript>
-		var xmlFileReader = createObject("component", "coldspring.core.io.XMLFileReader").init(arguments.path, getSchemaMap());
-		var document = xmlFileReader.parseToDocument();
+		var xmlFileReader = 0;
+		var document = 0;
 		var delegate = 0;
 		var parserContext = 0;
-		var readerContext = createObject("component", "ReaderContext").init(document, xmlFileReader, this);
+		var readerContext = 0;
+
+		//If this is a file path, use a FileReader, if it's XML use a StringReader, and all should be well in the world.
+		if(isXML(arguments.configuration))
+		{
+			xmlFileReader = createObject("component", "coldspring.core.io.XMLStringReader").init(arguments.configuration, getSchemaMap());
+		}
+		else
+		{
+			xmlFileReader = createObject("component", "coldspring.core.io.XMLFileReader").init(arguments.configuration, getSchemaMap());
+		}
+
+		document = xmlFileReader.parseToDocument();
 
 		document.normalize();
+
+		readerContext = createObject("component", "ReaderContext").init(document, xmlFileReader, this);
 
 		delegate = createObject("component", "coldspring.beans.xml.BeanDefinitionParserDelegate").init(getBeanDefinitionRegistry(), readerContext);
 		parserContext = createObject("component", "coldspring.beans.xml.ParserContext").init(getBeanDefinitionRegistry(), delegate);
@@ -86,16 +100,31 @@
 </cffunction>
 
 <cffunction name="setConfigLocations" access="public" returntype="void" output="false">
-	<cfargument name="configLocations" hint="string path, list path, or array of absolute paths to ColdSpring XML files. Can use setConfigLocations() instead, followed by a call to refresh()"
+	<cfargument name="configLocations" hint="string path, list path, or array of absolute paths to ColdSpring XML files, or an array of xml strings, or a single xml configuration string."
 				type="any" required="yes">
 	<cfscript>
+		var list = 0;
+
 		if(isSimpleValue(arguments.configLocations))
 		{
-			arguments.configLocations = listToArray(arguments.configLocations);
+			if(isXML(arguments.configLocations))
+			{
+				//arguments.configLocations = [arguments.configLocations];
+				//can't do the above because CF8 has a crappy parser.
+				list = [];
+				arrayAppend(list, arguments.configLocations);
+				arguments.configLocations = list;
+			}
+			else
+			{
+				arguments.configLocations = listToArray(arguments.configLocations);
+			}
 		}
     </cfscript>
 	<cfset instance.configLocations = arguments.configLocations />
 </cffunction>
+
+
 
 <cffunction name="getConfigLocations" access="public" returntype="array" output="false"
 			colddoc:generic="string">

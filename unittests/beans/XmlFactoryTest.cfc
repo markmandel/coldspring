@@ -43,6 +43,20 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testXMLStringConfiguration" hint="test out passing of a xml string as a location" access="public" returntype="void" output="false">
+    <cfscript>
+        var local = {};
+        var path = expandPath("/unittests/testBeans/car-beans.xml");
+        var xml = fileRead(path);
+
+        var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(xml);
+
+        local.car = factory.getBean("car1");
+
+        testCar(local.car);
+    </cfscript>
+</cffunction>
+
 <cffunction name="getManuallyInjectedTest2" hint="test to get just a bean with constructor and property args (nested values)" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};

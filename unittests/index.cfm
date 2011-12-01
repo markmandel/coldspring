@@ -16,23 +16,50 @@
 
 <body>
 
-<cfscript>
-	exclude = "";
+<cfif !structIsEmpty(form)>
+    <cfscript>
+        exclude = "";
 
-	if(server.coldfusion.productName != "ColdFusion Server" OR !server.coldfusion.productVersion.startsWith("9"))
-	{
-		exclude = "cf9";
-	}
+        if(server.coldfusion.productName != "ColdFusion Server" OR !server.coldfusion.productVersion.startsWith("9"))
+        {
+            exclude = "cf9";
+        }
 
-	directoryTestSuite = createObject("component", "mxunit.runner.DirectoryTestSuite");
-	result = directoryTestSuite.run(directory="#expandPath('/unittests')#"
-									,componentPath="unittests"
-									,recurse="true"
-									,excludes="#exclude#");
+        directoryTestSuite = createObject("component", "mxunit.runner.DirectoryTestSuite");
+        result = directoryTestSuite.run(directory="#expandPath('/unittests')#"
+                                        ,componentPath="unittests"
+                                        ,recurse="true"
+                                        ,excludes="#exclude#");
+    </cfscript>
 
-</cfscript>
+    <cfoutput> #result.getResultsOutput()# </cfoutput>
+<cfelse>
 
-<cfoutput> #result.getResultsOutput()# </cfoutput>
+	<form method="post">
+		<input type="hidden" name="runMe" value="please">
+	    <input type="submit" value="Run All Tests">
+	</form>
+
+    <cfdirectory action="list" directory="#expandPath("./")#" filter="*.cfc" name="tests" recurse="true"/>
+<!---  http://coldspring/cf9/unittests/beans/XmlFactoryTest.cfc?method=runtestremote&output=html
+  --->
+	<cfscript>
+		root = getDirectoryFromPath(CGI.CF_TEMPLATE_PATH);
+	</cfscript>
+    <cfoutput>
+	<h4>Run Individual Tests</h4>
+    <ul>
+        <cfloop query="tests">
+	        <cfscript>
+		        path = replaceNoCase(tests.directory, root, '');
+	        </cfscript>
+            <li>
+                <a href="#getDirectoryFromPath(CGI.SCRIPT_NAME)#/#path#/#name#?method=runTestRemote">#path#/#name#</a>
+            </li>
+        </cfloop>
+    </ul>
+    </cfoutput>
+</cfif>
 
 </body>
 

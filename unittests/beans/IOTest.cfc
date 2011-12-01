@@ -60,6 +60,18 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="invalidXMLStringTest" hint="test out an invlid XML string" access="public" returntype="void" output="false"
+	mxunit:expectedException="coldspring.core.io.exception.InvalidXMLException">
+    <cfscript>
+        var local = {};
+        var xml = fileRead(expandPath("/unittests/testBeans/errorXML/brokenBeans.xml"));
+
+        local.reader = createObject("component", "coldspring.core.io.XMLStringReader").init(xml, instance.javaloader);
+
+        local.document = local.reader.parseToDocument();
+   </cfscript>
+</cffunction>
+
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 </cfcomponent>
