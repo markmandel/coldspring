@@ -16,7 +16,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="XMLBeanFactory" output="false">
-	<cfargument name="configLocations" hint="optional string path, list path, or array of absolute paths to ColdSpring XML files. Can use setConfigLocations() instead, followed by a call to refresh()"
+	<cfargument name="configLocations" hint="optional string path, list path, or array of absolute paths to ColdSpring XML files, or an array of xml strings, or a single xml configuration string. Can use setConfigLocations() instead, followed by a call to refresh()"
 				type="any" required="no">
 	<cfargument name="dynamicProperties" hint="A struct of key value pairs, for which the keys will be used to translate '${key}' string values in BeanDefinitions properties into their corresponding values."
 				type="struct" required="no" default="#StructNew()#">
@@ -38,7 +38,7 @@
 </cffunction>
 
 <cffunction name="setConfigLocations" access="public" returntype="void" output="false">
-	<cfargument name="configLocations" hint="string path, list path, or array of absolute paths to ColdSpring XML files."
+	<cfargument name="configLocations" hint="string path, list path, or array of absolute paths to ColdSpring XML files, or an array of xml strings, or a single xml configuration string."
 				type="any" required="yes">
 	<cfset getXMLParser().setConfigLocations(argumentCollection=arguments)>
 </cffunction>

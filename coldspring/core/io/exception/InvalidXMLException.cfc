@@ -17,7 +17,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="path" hint="the file path to the XML config file" type="string" required="Yes">
+	<cfargument name="message" hint="Descriptor message for invalid xml" type="string" required="Yes">
 	<cfargument name="xmlContent" hint="The XML String" type="string" required="Yes">
 	<cfargument name="lineNumber" hint="the line number of the error" type="numeric" required="Yes">
 	<cfargument name="column" hint="the column the error is on" type="numeric" required="Yes">
@@ -31,7 +31,7 @@
 			xmlLine = lines[arguments.lineNumber];
 		}
 
-		super.init("Invalid XML found in XML file '#arguments.path#', line #arguments.lineNumber#, column #arguments.column#",
+		super.init("Invalid XML found '#arguments.message#', line #arguments.lineNumber#, column #arguments.column#",
 		"Error found on line: '#xmlLine#'.#chr(10)##chr(13)#  #arguments.parseError#"
 		);
 

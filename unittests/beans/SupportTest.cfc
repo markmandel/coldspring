@@ -103,7 +103,6 @@
     </cfscript>
 </cffunction>
 
-<!--- TODO: this isn't going to work yet, until we implement caching --->
 <cffunction name="testCFCAutowireCircularReference" hint="test a circular reference with autowiring" access="public" returntype="void" output="false">
 	<cfscript>
 		local.cr1 = createObject("component", "coldspring.beans.support.CFCBeanDefinition").init("circularReference1", instance.factory.getBeanDefinitionRegistry());
