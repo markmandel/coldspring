@@ -36,6 +36,7 @@
 	<cfscript>
 		StructDelete(arguments.CFC, "__injectMethod");
 		StructDelete(arguments.CFC, "__removeMethod");
+		StructDelete(arguments.CFC, "__getInternalUDF"); //may nto be there, but better to be safe
 	</cfscript>
 </cffunction>
 
