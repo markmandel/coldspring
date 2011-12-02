@@ -50,7 +50,7 @@ component  extends="unittests.AbstractTestCase"
      *
      * @mxunit:expectedException coldspring.core.reflect.exception.PropertyNotFoundException
      */
-    public void function testNoDeclaredProperty()
+    public void function testNoDeclaredProperty()   expectedException="coldspring.core.reflect.exception.PropertyNotFoundException"
     {
     	var class = reflectionService.loadClass("unittests.cf9.reflect.com.Foo");
     	class.getDeclaredProperty("foo");
@@ -111,6 +111,9 @@ component  extends="unittests.AbstractTestCase"
     	var class = reflectionService.loadClass("unittests.cf9.reflect.com.Foo");
     	assertTrue(class.isAccessorsEnabled());
     	var class = reflectionService.loadClass("unittests.cf9.hibernate.com.Foo");
+
+	    //writeDump(class.getMeta());abort;
+
     	assertTrue(class.isAccessorsEnabled());
 
     	var class = reflectionService.loadClass("unittests.testBeans.Car");

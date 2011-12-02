@@ -108,6 +108,10 @@
     		<param name="test.excludes" value="cf9"/>
     		<param name="test.package" value="tests.cf8"/>
     	</antcall>
+        <antcall target="run-tests">
+            <param name="test.context" value="/railo"/>
+            <param name="test.package" value="tests.railo"/>
+        </antcall>
     </target>
     
 	<!-- - - - - - - - - - - - - - - - - - 

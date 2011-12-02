@@ -101,8 +101,8 @@
 		AssertEquals("java.util.HashMap", local.map.getClass().getName());
 
 		local.testMap = createObject("java", "java.util.HashMap");
-		local.testMap.put("foo", 1);
-		local.testMap.put("bar", 2);
+		local.testMap.put("foo", javacast("int", 1));
+		local.testMap.put("bar", javacast("int", 2));
 
 		assertEquals(local.testMap, local.map);
 
@@ -121,6 +121,13 @@
 		assertEquals(4, structCount(local.wheels));
 
 		local.array = [1,2,3,4];
+
+		//make it all ints, otherwise railo pukes
+		for(local.counter = 1; local.counter <= arraylen(local.array); local.counter++)
+		{
+			local.array[local.counter] = javacast("string", local.array[local.counter]);
+		}
+
 		assertArrayEqualsNonOrdered(local.array, structKeyArray(local.wheels));
 
 		assertEquals("unittests.testBeans.wheel", getMetadata(local.wheels["1"]).name);

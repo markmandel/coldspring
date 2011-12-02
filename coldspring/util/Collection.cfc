@@ -104,12 +104,14 @@
 <cffunction name="get" hint="get an item from the collection" access="public" returntype="any" output="false">
 	<cfargument name="key" hint="the key or numerical index" type="any" required="Yes">
 	<cfscript>
-		if(isList())
+		var collection = getCollection();
+		if(isSimpleValue(arguments.key))
 		{
-			return getCollection().get(arguments.key - 1);
+			return collection[arguments.key];
 		}
 
-		return getCollection().get(arguments.key);
+		//could be an object key, if it the underlying collection is a java collection.
+		return collection.get(arguments.key);
     </cfscript>
 </cffunction>
 

@@ -34,7 +34,7 @@
 		//handle null values
 		if(structKeyExists(arguments, "value"))
 		{
-			println("Storing return: #arguments.value#");
+			//println("Storing return: #toString(arguments.value)#");
 			setReturn(arguments.value);
 		}
     </cfscript>

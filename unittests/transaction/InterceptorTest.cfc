@@ -17,13 +17,12 @@
 
 <cffunction name="setup" hint="setup" access="public" returntype="void" output="false">
 	<cfscript>
+		engine = createObject("component", "coldspring.util.Engine").init();
 		super.setup();
 		interceptor = createObject("component", "coldspring.transaction.interceptor.TransactionInterceptor").init();
 		proxyFactory = createObject("component", "coldspring.aop.framework.ProxyFactory").init();
-
-		isCF9 = (server.coldfusion.productName == "ColdFusion Server" AND server.coldfusion.productVersion.startsWith("9"));
     </cfscript>
-    <cfif isCF9>
+    <cfif engine.ormEnabled()>
     	<cfset ormReload()>
 	</cfif>
 	<cftry>
@@ -51,9 +50,9 @@
 	<cfscript>
 		var local = {};
 
-		debug("Is CF9: #isCF9#)");
+		debug("ORM ON: #engine.ormEnabled()#");
 
-		if(isCF9)
+		if(engine.ormEnabled())
 		{
 			local.sessionWrapper = createObject("component", "coldspring.orm.hibernate.SessionWrapper").init(strictTransactions=true);
 			local.pointcut = createObject("component", "coldspring.aop.support.AnnotationPointcut").init();

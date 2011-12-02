@@ -75,7 +75,7 @@ component extends="unittests.AbstractTestCase"
      */
     public void function testFailMerge()
     {
-		local.result = sessionWrapper.get("Foo", {name= "Darth Vader"});
+	    local.result = sessionWrapper.get("Foo", {name= "Darth Vader"});
 
 		local.result.setName("Mark Mandel");
 

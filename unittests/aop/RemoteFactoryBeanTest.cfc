@@ -45,14 +45,19 @@
 
 <cffunction name="teardown" hint="teardown" access="public" returntype="any" output="false">
 	<cfscript>
-		var file = createObject("java","java.io.File").init(basicProxyPath);
-
-		file.setWritable(true);
-
-		fileDelete(basicProxyPath);
-		fileDelete(onMMProxyPath);
-		fileDelete(onMMAOPProxyPath);
-    </cfscript>
+		if(fileExists(basicProxyPath))
+		{
+			fileDelete(basicProxyPath);
+		}
+			if(fileExists(onMMProxyPath))
+		{
+			fileDelete(onMMProxyPath);
+		}
+			if(fileExists(onMMAOPProxyPath))
+		{
+			fileDelete(onMMAOPProxyPath);
+		}
+	</cfscript>
 </cffunction>
 
 <cffunction name="testSimpleReturnString" hint="test just returning a string" access="public" returntype="void" output="false">
@@ -114,6 +119,7 @@
     </cfscript>
 
 	<cfscript>
+		println("Saying Hello!");
 		local.path = "http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT##CGI.CONTEXT_PATH#/unittests/HelloProxyOnMMAOP.cfc?method=sayHello&returnFormat=json";
     </cfscript>
     <cfhttp url="#local.path#" method="get" result="local.result">
@@ -135,34 +141,46 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
+</cffunction>
+
 <cffunction name="testTrustedSource" hint="test to see if trusted source regenerates the file or not" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 		local.path = expandPath("/unittests/HelloProxy.cfc");
 		local.file = createObject("java","java.io.File").init(basicProxyPath);
-		local.catch = false;
 
 		//gate
+		assertTrue(local.file.exists());
 		assertFalse(factory.getBean("&helloProxy").isTrustedSource());
 
-		//set it to be readable only
-		local.file.setWritable(false);
+		local.length = local.file.length();
 
-		//create a new factory
-		try
-		{
-			initFactory();
-		}
-		catch(any exc)
-		{
-			local.catch = true;
-			assertTrue(exc.detail contains "The Delete cannot be performed.");
-		}
+		modifyRemoteProxy(local.path);
 
-		assertTrue(local.catch, "Should fail, as the file is read only, and it should attempt to overwrite it.");
+		assertNotEquals(local.length, local.file.length());
+
+		//save the modified file length.
+		local.length = local.file.length();
+
+		//create a new factory, and overwrite
+		initFactory();
+
+		assertNotEquals(local.length, local.file.length(), "Should be different, as the file was reverted back to original");
+
+		modifyRemoteProxy(local.path);
+		local.length = local.file.length();
 
 		//below should pass, as we don't set the file to read only.
 		initFactory(true);
+
+		//should be the same
+		assertEquals(local.length, local.file.length());
+
 		//gate
 		assertTrue(factory.getBean("&helloProxy").isTrustedSource());
 
@@ -182,6 +200,15 @@
 	<cfscript>
 		factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-remoteFactoryBean.xml"), arguments);
     </cfscript>
+</cffunction>
+
+<cffunction name="modifyRemoteProxy" hint="replace the remote proxy file with something fun" access="private" returntype="void" output="false">
+	<cfargument name="path" hint="the path to the file" type="string" required="true">
+	<cfscript>
+		var content = createUUID();
+		content = repeatString(content, randRange(1, 100));
+	</cfscript>
+	<cffile action="write" file="#arguments.path#" output="#content#" />
 </cffunction>
 
 </cfcomponent>

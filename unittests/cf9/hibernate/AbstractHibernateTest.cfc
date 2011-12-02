@@ -21,7 +21,8 @@ component  extends="unittests.AbstractTestCase" hint="Test case for Hibernate ba
 		super.setup();
 		ormReload();
 		ormClearSession();
-		ormGetSession().beginTransaction();
+	    //turn this off, as it mucks up Railo for some reason? We don't need it as we dropcreate anyway.
+		//ormGetSession().beginTransaction();
     }
 
 	/**
@@ -32,8 +33,8 @@ component  extends="unittests.AbstractTestCase" hint="Test case for Hibernate ba
 		if(ormGetSession().getTransaction().isActive())
 		{
 			ormGetSession().getTransaction().rollback();
-			ormClearSession();
 		}
+	    ormClearSession();
     }
 }
 

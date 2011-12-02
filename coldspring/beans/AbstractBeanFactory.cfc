@@ -222,6 +222,7 @@
 		singleton.createInstance("coldspring.util.Singleton");
 		singleton.createInstance("coldspring.util.MethodInjector");
 		singleton.createInstance("coldspring.util.Cloneable");
+		singleton.createInstance("coldspring.util.Engine");
 		singleton.createInstance("coldspring.core.proxy.DynamicProxyFactory");
 		singleton.createInstance("coldspring.core.OrderComparator");
     </cfscript>

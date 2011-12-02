@@ -30,7 +30,7 @@
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <!---
-Determines if the specified Object is assignment-compatible with the object represented by this Class.
+Determines if the specified Object iDus assignment-compatible with the object represented by this Class.
 public boolean isInstance(Object obj)
  --->
 
@@ -335,14 +335,21 @@ public boolean isInstance(Object obj)
 <cffunction name="isAccessorsEnabled" hint="Whether or not cfproperty tags will create get/set methods on this object" access="public" returntype="boolean" output="false">
 	<cfscript>
 		var meta = getMeta();
-		if(structKeyExists(meta, "accessors"))
+
+		//railo defaults this option, so do a double check. Also a good idea, in case people do both.
+		if(structKeyExists(meta, "persistent") AND structKeyExists(meta, "accessors"))
 		{
-			return meta.accessors;
+			return meta.persistent OR meta.accessors;
 		}
 
 		if(structKeyExists(meta, "persistent"))
 		{
 			return meta.persistent;
+		}
+
+		if(structKeyExists(meta, "accessors"))
+		{
+			return meta.accessors;
 		}
 
 		return false;

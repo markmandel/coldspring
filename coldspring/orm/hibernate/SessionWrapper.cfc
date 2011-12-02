@@ -93,6 +93,14 @@ component accessors="true"
 		setRequestKey(meta.const.REQUEST_KEY & createUUID());
 
 		setStrictTransactions(arguments.strictTransactions);
+
+	    //determine which isJDBCTransaction to use.
+		var engine = getComponentMetadata("coldspring.util.Engine").singleton.instance;
+
+	    if(!engine.hasJavaClass("coldfusion.tagext.sql.TransactionTag"))
+	    {
+			variables.inJDBCTransaction = variables.isJDBCTransaction_railo;
+	    }
     }
 
 	/**
@@ -399,15 +407,8 @@ component accessors="true"
     {
 		if(getStrictTransactions())
 		{
-			/*
-				Wish we didn't have to do it this way, but no better way.
-				I would save the instance of TransactionTag, but if on a locked down shared host, any creation
-				of this would make the whole sessionWrapper fail.
-			*/
-			var transactionTag = createObject("java", "coldfusion.tagext.sql.TransactionTag").getCurrent();
-
 			var inHibernateTransaction = !isNull(ormGetSession().getTransaction()) AND ormGetSession().getTransaction().isActive();
-			var inJDBCTranasction = !isNull(transactionTag);
+			var inJDBCTranasction = inJDBCTransaction();
 
 			if(!(inHibernateTransaction OR inJDBCTranasction))
 			{
@@ -415,6 +416,31 @@ component accessors="true"
 			}
 		}
     }
+
+	/**
+	 * is in a JDBC transaction. Default implementation, only work on Adobe CF
+	 */
+	private boolean function inJDBCTransaction()
+	{
+		/*
+			Wish we didn't have to do it this way, but no better way.
+			I would save the instance of TransactionTag, but if on a locked down shared host, any creation
+			of this would make the whole sessionWrapper fail.
+
+			Could possibly lazy load this?
+		*/
+		var transactionTag = createObject("java", "coldfusion.tagext.sql.TransactionTag").getCurrent();
+		return !isNull(transactionTag);
+	}
+
+	/**
+	 * is in a JDBC transaction. Implementation for Railo
+	 */
+	private boolean function isJDBCTransaction_railo()
+	{
+		//railo.runtime.db.DatasourceManagerImpl
+		return !getPageContext().getDataSourceManager().isAutocommit();
+	}
 
 	/**
      * Tracks if the default flush mode has yet to be set, and if not, sets it.
