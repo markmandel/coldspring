@@ -190,6 +190,11 @@ c<cffunction name="sort" hint="Returns a sorted Collection. Currently only works
 		var examine      = 2;
 		var comparison = 0;
 
+		if(arrayIsEmpty(arguments.arrayToCompare))
+		{
+			return lesserArray;
+		}
+
 		pivotArray[1]    = arrayToCompare[1];
 
 		if (arrayLen(arrayToCompare) LT 2)
