@@ -197,6 +197,23 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testSortEmptyArray" hint="Should be able to sort an empty array" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.array = createObject("java", "java.util.ArrayList").init();
+
+		local.collection = createObject("component","coldspring.util.Collection").init(local.array);
+		local.closure = createObject("component", "coldspring.util.Closure" ).init(stringLengthComparator);
+
+		local.sorted = local.collection.sort(local.closure);
+
+		assertTrue(arrayIsEmpty(local.sorted.getCollection()));
+
+		assertNotSame(local.collection, local.sorted);
+		assertNotSame(local.collection.getCollection(), local.sorted.getCollection());
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
