@@ -10,7 +10,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- --> 
+ -->
 <xsd:schema xmlns="http://www.coldspringframework.org/schema/aop"
 		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 		targetNamespace="http://www.coldspringframework.org/schema/aop"
@@ -59,6 +59,130 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+
+    <xsd:element name="remote">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+    Configuration of a generated CFC that exposes a given set of methods froma specific bean, as remote,
+    to be consumed as a SOAP / AJAX WebService, or as Flash Remoting.
+            ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="remote-methods" type="methods" maxOccurs="1" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation><![CDATA[
+            List of the method names you want to expose as remote. '*' can be used as a special case wildcard
+            meaning that all methods on the target bean will be exposed as remote.
+            You can also use the attribute "remote-methods" to define this as well.
+                        ]]></xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="missing-methods" type="methods" maxOccurs="1" minOccurs="0">
+                    <xsd:annotation>
+                       <xsd:documentation><![CDATA[
+           List of of non-existent methods that are to be implemented as remote methods on the remote facade.
+           You can also use the attribute "missing-methods" to define this as well.
+                       ]]></xsd:documentation>
+                   </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="interceptors" maxOccurs="1" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                List of Advice/Advisor bean names to be applied to the target components.
+                You can also use the attribute "interceptor-names" to define this as well.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="interceptor" maxOccurs="unbounded" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:attribute name="ref" type="xsd:string" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                    The id of the advice/advisor bean to apply.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+
+            <xsd:attribute name="id" type="xsd:ID" use="required">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+            The unique identifier for the underlying RemoteFactoryBean.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="target-ref" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        The name of the bean that will have it's methods exposed as being remote.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="trusted-source" type="xsd:string" use="optional" default="false">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        Whether or not the generated code is trusted. If true, the remoting component will not be regenerated if it already exists.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="service-name" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        The name of the ColdFusion Component that is generated as the remote access to the underlying target component.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="relative-path" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        The relative path to the directory in which the generated component will be generated.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+
+            <xsd:attribute name="bean-factory-name" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+            Set the bame of the bean factory to be used in the application scope
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+
+            <xsd:attribute name="remote-methods" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        Comma delimeted list of the method names you want to expose as remote. '*' can be used as a special case wildcard
+        meaning that all methods on the target bean will be exposed as remote.
+        You can also use the <aop:remote-methods /> element to define this as well.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="missing-methods" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        Comma delimeted list of non-existent methods that are to be implemented as remote methods on the remote facade.
+        You can also use the <aop:missing-methods> element to define this as well.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="interceptor-refs" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+        Comma delimeted list of Advice/Advisor bean ids to be applied to the target components.
+        You can also use the <aop:interceptors> elements to define this as well.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+
+        </xsd:complexType>
+    </xsd:element>
 
 	<xsd:complexType name="aspectType">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -179,6 +303,34 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
+
+    <xsd:complexType name="methods">
+        <xsd:annotation>
+            <xsd:documentation>
+    List of method names
+            </xsd:documentation>
+        </xsd:annotation>
+            <xsd:sequence>
+                <xsd:sequence>
+                    <xsd:element name="method" maxOccurs="unbounded" minOccurs="1">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                    Define the method you want
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:complexType>
+                            <xsd:attribute name="name" use="required">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                            The name of the method.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:sequence>
+    </xsd:complexType>
 
 	<xsd:complexType name="advisorType">
 		<xsd:attribute name="id" type="xsd:ID"/>
