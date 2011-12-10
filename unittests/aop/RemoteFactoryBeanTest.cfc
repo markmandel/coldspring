@@ -49,9 +49,18 @@
 
 		file.setWritable(true);
 
-		fileDelete(basicProxyPath);
-		fileDelete(onMMProxyPath);
-		fileDelete(onMMAOPProxyPath);
+		if(fileExists(basicProxyPath))
+		{
+			fileDelete(basicProxyPath);
+		}
+		if(fileExists(onMMProxyPath))
+		{
+			fileDelete(onMMProxyPath);
+		}
+		if(fileExists(onMMAOPProxyPath))
+		{
+			fileDelete(onMMAOPProxyPath);
+		}
     </cfscript>
 </cffunction>
 

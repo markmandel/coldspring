@@ -19,6 +19,7 @@
 		super.init();
 
 		registerBeanDefinitionParser("config", createObject("component", "ConfigDefinitionParser").init());
+		registerBeanDefinitionParser("remote", createObject("component", "RemoteDefinitionParser").init());
 
 		return this;
 	</cfscript>
