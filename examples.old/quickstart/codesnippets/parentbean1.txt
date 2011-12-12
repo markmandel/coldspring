@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.coldspringframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd">
+		   
+	<bean id="userGateway" class="coldspring.examples.quickstart.components.UserGateway">
+		<property name="configBean">
+			<ref bean="configBean" />
+		</property>
+	</bean>
+	
+	<bean id="invoiceGateway" class="coldspring.examples.quickstart.components.InvoiceGateway">
+		<property name="configBean">
+			<ref bean="configBean" />
+		</property>
+	</bean>
+	
+	<bean id="productGateway" class="coldspring.examples.quickstart.components.ProductGateway">
+		<property name="configBean">
+			<ref bean="configBean" />
+		</property>
+	</bean>
+	
+	<bean id="configBean" class="coldspring.examples.quickstart.components.ConfigBean" />
+	
+</beans>
