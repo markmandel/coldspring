@@ -109,8 +109,17 @@
 
 <cffunction name="autowire" hint="autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
 	<cfscript>
-		var autowire = createObject("component", "coldspring.util.Closure").init(autowireByMode);
-		var class = $getClass();
+		var autowire = 0;
+		var class = 0;
+
+		//if we don't have a class, we can't autowire.
+		if(!hasClassName())
+		{
+			return;
+		}
+
+		autowire = createObject("component", "coldspring.util.Closure").init(autowireByMode);
+		class = $getClass();
 
 		//method bindings
 		autowire.bind("isBeanNameAutoWireCandidate", isBeanNameAutoWireCandidate);

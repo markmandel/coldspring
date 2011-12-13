@@ -438,6 +438,20 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testFactoryWithAutoWireByname" hint="I think there is a bug with factory methods and autowiring" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/factory-with-autowire.xml"));
+
+		local.engineChild = local.factory.getBean("engineChild");
+
+		local.expected = [1,2,3];
+
+		assertEquals(local.expected, local.engineChild.getGears());
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
