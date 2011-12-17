@@ -26,7 +26,7 @@
 	<cfscript>
 		var args = arguments.methodInvocation.getArguments();
 
-		if(isSimpleValue(args[1]))
+		if(structKeyExists(args, "1") && isSimpleValue(args[1]))
 		{
 			args[1] = "_" & args[1];
 		}

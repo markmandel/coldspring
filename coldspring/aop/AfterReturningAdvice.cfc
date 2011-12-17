@@ -13,7 +13,7 @@
 
 <cfinterface hint="After returning advice is invoked only on normal method return, not if an exception is thrown.
 	<br/>Such advice can see the return value, but cannot change it."
-	extends="AfterAdvice">
+	extends="coldspring.aop.AfterAdvice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

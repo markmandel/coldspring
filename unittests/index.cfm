@@ -19,8 +19,9 @@
 <cfif !structIsEmpty(form)>
     <cfscript>
         exclude = "";
+	    engine = createObject("component", "coldspring.util.Engine").init();
 
-        if(server.coldfusion.productName != "ColdFusion Server" OR !server.coldfusion.productVersion.startsWith("9"))
+        if(engine.getMajorVersion() != 9)
         {
             exclude = "cf9";
         }
@@ -40,7 +41,7 @@
 	    <input type="submit" value="Run All Tests">
 	</form>
 
-    <cfdirectory action="list" directory="#expandPath("./")#" filter="*.cfc" name="tests" recurse="true"/>
+    <cfdirectory action="list" directory="#expandPath("./")#" filter="*Test.cfc" name="tests" recurse="true"/>
 <!---  http://coldspring/cf9/unittests/beans/XmlFactoryTest.cfc?method=runtestremote&output=html
   --->
 	<cfscript>

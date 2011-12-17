@@ -13,7 +13,7 @@
 
 <cfinterface hint="Common marker interface for before advice, such as MethodBeforeAdvice.
 	<br/>Spring supports only method before advice. Although this is unlikely to change, this API is designed to allow field advice in future if desired."
-	extends="Advice">
+	extends="coldspring.aop.Advice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

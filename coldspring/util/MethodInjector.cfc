@@ -37,6 +37,7 @@
 		StructDelete(arguments.CFC, "__injectMethod");
 		StructDelete(arguments.CFC, "__removeMethod");
 		StructDelete(arguments.CFC, "__getInternalUDF"); //may nto be there, but better to be safe
+		StructDelete(arguments.CFC, "__include");
 	</cfscript>
 </cffunction>
 
@@ -67,7 +68,10 @@
 	<cfscript>
 		var udf = 0;
 
-		injectMethod(arguments.cfc, __getInternalUDF, "public");
+		if(!structKeyExists(arguments.cfc, "__getInternalUDF"))
+		{
+			injectMethod(arguments.cfc, __getInternalUDF, "public");
+		}
 
 		udf = arguments.cfc.__getInternalUDF(arguments.udfName);
 
@@ -75,6 +79,19 @@
 
 		injectMethod(arguments.cfc, udf, arguments.overwriteAccess);
     </cfscript>
+</cffunction>
+
+<cffunction name="includeFile" hint="include a file into the given CFC" access="public" returntype="void" output="false">
+	<cfargument name="CFC" hint="The cfc to inject the method into" type="any" required="Yes">
+	<cfargument name="include" hint="The path to the include" type="string" required="true">
+	<cfscript>
+		if(!structKeyExists(arguments.cfc, "__include"))
+		{
+			injectMethod(arguments.cfc, __include, "public");
+		}
+
+		arguments.cfc.__include(arguments.include);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -127,6 +144,12 @@
 		return variables[arguments.udfName];
     </cfscript>
 </cffunction>
+
+<cffunction name="__include" hint="mixin: cfinclude a specific file" access="private" returntype="void" output="false">
+	<cfargument name="include" hint="path of the file to include" type="string" required="true">
+	<cfinclude template="#arguments.include#" />
+</cffunction>
+
 <!--- /mixins --->
 
 </cfcomponent>

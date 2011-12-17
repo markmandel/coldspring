@@ -162,8 +162,8 @@
 		assertTrue(isStruct(local.map), "Should be an struct");
 
 		local.testMap = createObject("java", "java.util.HashMap");
-		local.testMap.put("foo", 1);
-		local.testMap.put("bar", 2);
+		local.testMap.put("foo", javacast("int", 1));
+		local.testMap.put("bar", javacast("int", 2));
 
 		assertEquals(local.testMap, local.map);
 

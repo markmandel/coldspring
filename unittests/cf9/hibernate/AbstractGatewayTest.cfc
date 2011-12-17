@@ -22,6 +22,7 @@ component  extends="AbstractHibernateTest"
     public void function setup()
     {
 		super.setup();
+	    engine = new coldspring.util.Engine();
 		instance.gateway = new coldspring.orm.hibernate.AbstractGateway();
     }
 
@@ -154,6 +155,12 @@ component  extends="AbstractHibernateTest"
      */
     public void function testEnableFilter()
     {
+	    //railo doesn't support manual mappings
+	    if(engine.getName() eq "Railo")
+	    {
+		    return;
+	    }
+
 		local.result = instance.gateway.listFoo();
 		assertEquals(3, Arraylen(local.result));
 
@@ -173,6 +180,12 @@ component  extends="AbstractHibernateTest"
      */
     public void function testDisableFilter()
     {
+		//railo doesn't support manual mappings
+	    if(engine.getName() eq "Railo")
+	    {
+		    return;
+	    }
+
 		instance.gateway.enableFilterName(name="Darth Vader");
 
 		local.result = instance.gateway.listFoo();

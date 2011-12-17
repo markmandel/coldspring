@@ -18,7 +18,7 @@
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
 	<cfargument name="message" hint="the message to throw" type="string" required="Yes">
 	<cfargument name="detail" hint="the detail in which to throw" type="string" required="Yes">
-
+	
 	<cfthrow type="#getMetaData(this).name#" message="#arguments.message#" detail="#detail#">
 </cffunction>
 

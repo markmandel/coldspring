@@ -30,9 +30,13 @@
 
 <cffunction name="configure" hint="configure method for singleton" access="public" returntype="void" output="false">
 	<cfscript>
+		var engine = getComponentMetadata("coldspring.util.Engine").singleton.instance;
+
 		setProxyPrototypeCache(StructNew());
 
 		setMethodInjector(getComponentMetadata("coldspring.util.MethodInjector").singleton.instance);
+
+		setEngine(engine);
     </cfscript>
 </cffunction>
 
@@ -76,11 +80,7 @@
 		var proxy = createObject("component", arguments.className);
 		var injector = getMethodInjector();
 		var reflectionService = getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance;
-
 		var class = reflectionService.loadClass(arguments.className);
-		var property = 0;
-		var properties = 0;
-		var name = 0;
 
 		injector.start(proxy);
 
@@ -97,23 +97,10 @@
 
 		injector.removeMethod(proxy, "clean");
 
-		//if it's an object that has get and set methods defined by cfproperty, then overwrite them with method injection
-		if(class.isAccessorsEnabled())
+		//ColdFusion doesn't let you StructDelete() get/set functions, but Railo does.
+		if(class.isAccessorsEnabled() && getEngine().getName() eq "ColdFusion")
 		{
-			properties = class.getProperties();
-			for(name in properties)
-			{
-				property = properties[name];
-				if(property.hasGetter())
-				{
-					injector.injectMethod(proxy, invokeProxy, "public", "get" & name);
-				}
-				if(property.hasSetter())
-				{
-					injector.injectMethod(proxy, invokeProxy, "public", "set" & name);
-				}
-			}
-
+			applyInvokeProxyMixins(proxy, class);
 		}
 
 		injector.stop(proxy);
@@ -126,6 +113,31 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="applyInvokeProxyMixins" hint="apply the invokeProperty mixins, if getFunctionCalledName() works" access="private" returntype="void" output="false">
+	<cfargument name="proxy" hint="the proxy object we're working on" type="any" required="true">
+	<cfargument name="class" hint="The class object for the target object" type="coldspring.core.reflect.Class" required="true">
+
+	<cfscript>
+		var name = 0;
+		var properties = arguments.class.getProperties();
+		var prop = 0;
+		var injector = getMethodInjector();
+
+		for(name in properties)
+		{
+			prop = properties[name];
+			if(prop.hasGetter())
+			{
+				injector.injectMethod(arguments.proxy, invokeProxy, "public", "get" & name);
+			}
+			if(prop.hasSetter())
+			{
+				injector.injectMethod(arguments.proxy, invokeProxy, "public", "set" & name);
+			}
+		}
+	</cfscript>
+</cffunction>
+		
 <!--- mixins --->
 
 <cffunction	name="onMissingMethod" access="private" returntype="any" output="false" hint="Mixin: used to provide the method interception on the proxy">
@@ -178,13 +190,7 @@
 <cffunction name="invokeProxy" hint="replacement method, right now used for replacing cfproperty based methods. Can only be used on cf engines that support getFunctionCalledName()"
 				access="private" returntype="any" output="false">
 	<cfscript>
-		var args = {
-			proxy = this
-			,method = getFunctionCalledName()
-			,args = arguments
-		};
-
-		return __$getInvocationHandler().invokeMethod(argumentCollection=args);
+		return __$getInvocationHandler().invokeMethod(this, getFunctionCalledName(), arguments);
     </cfscript>
 </cffunction>
 
@@ -206,6 +212,15 @@
 <cffunction name="setMethodInjector" access="private" returntype="void" output="false">
 	<cfargument name="methodInjector" type="coldspring.util.MethodInjector" required="true">
 	<cfset instance.methodInjector = arguments.methodInjector />
+</cffunction>
+
+<cffunction name="getEngine" access="private" returntype="coldspring.util.Engine" output="false">
+	<cfreturn instance.engine />
+</cffunction>
+
+<cffunction name="setEngine" access="private" returntype="void" output="false">
+	<cfargument name="engine" type="coldspring.util.Engine" required="true">
+	<cfset instance.engine = arguments.engine />
 </cffunction>
 
 </cfcomponent>

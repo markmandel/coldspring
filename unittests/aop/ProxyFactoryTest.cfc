@@ -180,13 +180,13 @@
 		catch(exceptionFoo exc)
 		{
 			check = true;
-			local.exc = exc;
+			local.exception = exc;
 		}
 
 		assertTrue(check, "ExceptionFoo should have been thrown");
 
-		assertEquals(local.exc.type, local.advice.$getException().type);
-		assertEquals(local.exc.message, local.advice.$getException().message);
+		assertEquals(local.exception.type, local.advice.$getException().type);
+		assertEquals(local.exception.message, local.advice.$getException().message);
     </cfscript>
 </cffunction>
 
@@ -241,7 +241,7 @@
 		catch(ExceptionFoo exc)
 		{
 			local.check = true;
-			local.exc = exc;
+			local.exception = exc;
 		}
 
 		assertTrue(local.check);
@@ -250,8 +250,8 @@
 		//should be reversed, as it fired first
 		assertEquals(reverse("Gargamel"), local.after.getReturn());
 
-		assertEquals(local.exc.type, local.throws.$getException().type);
-		assertEquals(local.exc.message, local.throws.$getException().message);
+		assertEquals(local.exception.type, local.throws.$getException().type);
+		assertEquals(local.exception.message, local.throws.$getException().message);
     </cfscript>
 </cffunction>
 

@@ -23,8 +23,9 @@
 
 	//orm settings
 	this.datasource = "coldspring";
+
 	this.ormenabled = true;
-	this.ormSettings.cfclocation = expandPath("/unittests/cf9/hibernate/com/");
+	this.ormSettings.cfclocation = "/unittests/cf9/hibernate/com/";
 	this.ormSettings.dbcreate = "dropcreate";
 	this.ormSettings.sqlscript = expandPath("/unittests/cf9/hibernate/com/import.sql");
 

@@ -41,6 +41,7 @@
 <cffunction name="testSubclass" hint="testing of subclasses" access="public" returntype="void" output="false">
 	<cfscript>
 		var class = reflectionService.loadClass("coldspring.aop.Invocation");
+		var engine = createObject("component", "coldspring.util.Engine").init();
 
 		assertTrue(class.hasSuperClass());
 		assertEquals("coldspring.aop.Joinpoint", class.getSuperClass().getName());
@@ -48,7 +49,18 @@
 		class = class.getSuperClass();
 
 		assertTrue(class.hasSuperClass());
-		assertEquals("WEB-INF.cftags.component", class.getSuperClass().getName());
+
+		switch(engine.getName())
+		{
+			case "ColdFusion":
+				assertEquals("WEB-INF.cftags.component", class.getSuperClass().getName());
+			break;
+			case "Railo":
+				assertEquals("railo-context.component", class.getSuperClass().getName());
+			break;
+			default:
+				fail("What server am I on? - #engine.getName()#");
+		}
 
 		class = class.getSuperClass();
 		assertFalse(class.hasSuperClass());
@@ -77,6 +89,7 @@
 		assertTrue(local.interfaceNames.contains("coldspring.aop.framework.autoproxy.AutoProxyable"));
 
 		//move on to interfaces
+		request.dump = true;
 		local.class = reflectionService.loadClass("coldspring.aop.MethodBeforeAdvice");
 
 		local.interfaces = local.class.getInterfaces();

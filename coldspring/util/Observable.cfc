@@ -86,7 +86,15 @@
 				//don't abstract, as we want speed
 				if(structKeyExists(variables, "notifyCallback"))
 				{
-					local.continue = notifyCallback(arguments.missingMethodName, arguments.missingMethodArguments, observer, local.get("return"));
+					//not pretty, but fast.
+					if(structKeyExists(local, "return"))
+					{
+						local.continue = notifyCallback(arguments.missingMethodName, arguments.missingMethodArguments, observer, local.return);
+					}
+					else
+					{
+						local.continue = notifyCallback(arguments.missingMethodName, arguments.missingMethodArguments, observer);
+					}
 
 					if(NOT local.continue)
 					{

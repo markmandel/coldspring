@@ -12,7 +12,7 @@
  --->
 
 <cfinterface hint="Advice invoked before a method is invoked. Such advices cannot prevent the method call proceeding, unless they throw a Throwable."
-	extends="BeforeAdvice">
+	extends="coldspring.aop.BeforeAdvice">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

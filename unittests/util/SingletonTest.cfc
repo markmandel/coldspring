@@ -29,6 +29,9 @@
 
 		assertSame(local.engine1, local.engine2);
 
+        debug(getMetadata(local.engine1));
+        debug(getComponentMetadata("unittests.testBeans.Engine"));
+
 		assertSame(local.engine1, getMetadata(local.engine1).singleton.instance);
 		assertSame(local.engine1, getComponentMetaData("unittests.testBeans.Engine").singleton.instance);
 
