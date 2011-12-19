@@ -100,6 +100,21 @@ component extends="AbstractHibernateTest"
     }
 
 	/**
+	 * test passing through an option to list() for offset, cachename etc
+	 */
+	public void function testOptionedList()
+	{
+		var result1 = sessionWrapper.list("Foo");
+
+		var count = (arraylen(result1) - 1);
+
+		var options = {maxResults = count};
+		var result2 = sessionWrapper.list(entityname="Foo", options=options);
+
+		assertEquals(count, arraylen(result2));
+	}
+
+	/**
      * test delete
      */
     public void function testDelete()
