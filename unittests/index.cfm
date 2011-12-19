@@ -18,12 +18,12 @@
 
 <cfif !structIsEmpty(form)>
     <cfscript>
-        exclude = "";
-	    engine = createObject("component", "coldspring.util.Engine").init();
+		exclude = "cf9";
+		engine = createObject("component", "coldspring.util.Engine").init();
 
-        if(engine.getMajorVersion() != 9)
+        if(engine.getMajorVersion() >= 9 || engine.getName() == "Railo")
         {
-            exclude = "cf9";
+			exclude = "";
         }
 
         directoryTestSuite = createObject("component", "mxunit.runner.DirectoryTestSuite");

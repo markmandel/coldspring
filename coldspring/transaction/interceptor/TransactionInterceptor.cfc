@@ -11,13 +11,25 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="MethodInterceptor for declarative transaction management using &lt;cftransaction&gt;. <br/>Also allows for nested AOP based transactions in CF8." implements="coldspring.aop.MethodInterceptor" output="false">
+<cfcomponent hint="MethodInterceptor for declarative transaction management using &lt;cftransaction&gt;. <br/>Also allows for nested AOP based transactions in CF8.
+			 This advice has been ordered with the Highest precedence, so that it comes first, but it can be overwritten by constructor and property setters."
+			 implements="coldspring.aop.MethodInterceptor,coldspring.core.Ordered" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="TransactionInterceptor" output="false">
+	<cfargument name="order" hint="The order value for this interceptor" type="numeric" required="false">
 	<cfscript>
+		var orderComparator = 0;
 		setTransactionLocal(createObject("java", "java.lang.ThreadLocal").init());
+
+		if(!structKeyExists(arguments, "order"))
+		{
+			orderComparator = getComponentMetadata("coldspring.core.OrderComparator").singleton.instance;
+			arguments.order = orderComparator.getHighestPrecedence();
+		}
+
+		setOrder(arguments.order);
 
 		return this;
 	</cfscript>
@@ -85,6 +97,17 @@
 
 <cffunction name="hasIsolation" hint="whether this object has a isolation value" access="public" returntype="boolean" output="false">
 	<cfreturn StructKeyExists(instance, "isolation") />
+</cffunction>
+
+<cffunction name="getOrder" hint="Return the order value of this object, with a higher value meaning greater in terms of sorting.<br/>
+			Higher values can be interpreted as lower priority. As a consequence, the object with the lowest value has highest priority."
+			access="public" returntype="numeric" output="false">
+	<cfreturn instance.order />
+</cffunction>
+
+<cffunction name="setOrder" access="public" returntype="void" output="false">
+	<cfargument name="order" type="numeric" required="true">
+	<cfset instance.order = arguments.order />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

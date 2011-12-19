@@ -59,11 +59,11 @@
 	<cfreturn instance.comparator />
 </cffunction>
 
-<cffunction name="getHighestPrecedence" hint="Useful constant for the highest precedence value.<br/>Also see java.lang.Integer.MIN_VALUE" access="public" returntype="numeric" output="false">
+<cffunction name="getHighestPrecedence" hint="Useful constant for the highest precedence value (i.e. it comes first).<br/>Also see java.lang.Integer.MIN_VALUE" access="public" returntype="numeric" output="false">
 	<cfreturn instance.highestPrecedence />
 </cffunction>
 
-<cffunction name="getLowestPrecedence" hint="Useful constant for the lowest precedence value.<br/>Also see java.lang.Integer.MAX_VALUE" access="public" returntype="numeric" output="false">
+<cffunction name="getLowestPrecedence" hint="Useful constant for the lowest precedence value (i.e. it comes last).<br/>Also see java.lang.Integer.MAX_VALUE" access="public" returntype="numeric" output="false">
 	<cfreturn instance.lowestPrecedence />
 </cffunction>
 
