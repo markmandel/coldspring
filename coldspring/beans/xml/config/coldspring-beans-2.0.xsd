@@ -13,7 +13,8 @@
  --> 
 <xsd:schema xmlns="http://www.coldspringframework.org/schema/beans" 
 		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-		targetNamespace="http://www.coldspringframework.org/schema/beans" 
+		targetNamespace="http://www.coldspringframework.org/schema/beans"
+        elementFormDefault="qualified"
 		>
 	<xsd:annotation>
 	<xsd:documentation>
@@ -639,7 +640,7 @@
 	to be coded explicitly in the XML bean definition file, but rather the
 	Spring container works out dependencies.
 
-	There are 5 modes:
+	There are 3 modes:
 
 	1. "no"
 	The traditional Spring default. No automagical wiring. Bean references
@@ -666,7 +667,7 @@
 				]]></xsd:documentation>
 			</xsd:annotation>
 			<xsd:simpleType>
-				<xsd:restriction base="xsd:NMTOKEN">
+					<xsd:restriction base="xsd:NMTOKEN">
 					<xsd:enumeration value="default"/>
 					<xsd:enumeration value="no"/>
 					<xsd:enumeration value="byName"/>

@@ -62,9 +62,9 @@
 
     <xsd:element name="remote">
         <xsd:annotation>
-            <xsd:documentation><![CDATA[
+            <xsd:documentation source="cfc:coldspring.aop.framework.RemoteFactoryBean"><![CDATA[
     Configuration of a generated CFC that exposes a given set of methods froma specific bean, as remote,
-    to be consumed as a SOAP / AJAX WebService, or as Flash Remoting.
+    to be consumed as a SOAP / REST WebService, or as Flash Remoting.
             ]]></xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
