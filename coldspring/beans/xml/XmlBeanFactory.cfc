@@ -56,7 +56,7 @@
 </cffunction>
 
 <cffunction name="addNamespaceHandler" hint="adds a handler for a given namespace" access="public" returntype="void" output="false">
-	<cfargument name="handler" hint="the handler for a given set of namespace" type="coldspring.beans.xml.AbstractNamespaceHandler" required="Yes">
+	<cfargument name="handler" hint="the handler for a given set of namespace" type="coldspring.beans.xml.NamespaceHandler" required="Yes">
 	<cfscript>
 		getXMLParser().addNamespaceHandler(argumentCollection=arguments);
     </cfscript>

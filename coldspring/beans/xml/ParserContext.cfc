@@ -27,12 +27,12 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="getNamespaceHandler" hint="The current namespace handler" access="public" returntype="coldspring.beans.xml.AbstractNamespaceHandler" output="false">
+<cffunction name="getNamespaceHandler" hint="The current namespace handler" access="public" returntype="coldspring.beans.xml.NamespaceHandler" output="false">
 	<cfreturn instance.namespaceHandler />
 </cffunction>
 
 <cffunction name="setNamespaceHandler" access="public" returntype="void" output="false">
-	<cfargument name="namespaceHandler" type="coldspring.beans.xml.AbstractNamespaceHandler" required="true">
+	<cfargument name="namespaceHandler" type="coldspring.beans.xml.NamespaceHandler" required="true">
 	<cfset instance.namespaceHandler = arguments.namespaceHandler />
 </cffunction>
 

@@ -29,7 +29,7 @@
 </cffunction>
 
 <cffunction name="addNamespaceHandler" hint="adds a handler for a given namespace" access="public" returntype="void" output="false">
-	<cfargument name="handler" hint="the handler for a given set of namespace" type="coldspring.beans.xml.AbstractNamespaceHandler" required="Yes">
+	<cfargument name="handler" hint="the handler for a given set of namespace" type="coldspring.beans.xml.NamespaceHandler" required="Yes">
 	<cfscript>
 		var namespaces = arguments.handler.getNamespaces();
 		var namespace = 0;
@@ -131,7 +131,7 @@
 	<cfreturn instance.configLocations />
 </cffunction>
 
-<cffunction name="getNamespaceHandler" hint="get the namespace handler for a given namespace" access="public" returntype="coldspring.beans.xml.AbstractNamespaceHandler" output="false">
+<cffunction name="getNamespaceHandler" hint="get the namespace handler for a given namespace" access="public" returntype="coldspring.beans.xml.NamespaceHandler" output="false">
 	<cfargument name="namespace" hint="the namespace to look for" type="string" required="Yes">
 	<cfreturn StructFind(getNamespaceHandlers(), arguments.namespace) />
 </cffunction>
@@ -142,7 +142,7 @@
 </cffunction>
 
 <cffunction name="getNamespaceHandlers" access="public" hint="Return all the namespace handlers for all namespaces" returntype="struct" output="false"
-			colddoc:generic="string,AbstractNamespaceHandler">
+			colddoc:generic="string,NamespaceHandler">
 	<cfreturn instance.namespaceHandlers />
 </cffunction>
 
@@ -214,7 +214,7 @@
 </cffunction>
 
 <cffunction name="setNamespaceHandlers" access="private" returntype="void" output="false">
-	<cfargument name="namespaceHandlers" type="struct" required="true" colddoc:generic="string,AbstractNamespaceHandler">
+	<cfargument name="namespaceHandlers" type="struct" required="true" colddoc:generic="string,NamespaceHandler">
 	<cfset instance.namespaceHandlers = arguments.namespaceHandlers />
 </cffunction>
 

@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="abstract base class for Namespace handling" output="false"
+<cfcomponent hint="abstract base class for Namespace handling" implements="coldspring.beans.xml.NamespaceHandler" output="false"
 			 colddoc:abstract="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
