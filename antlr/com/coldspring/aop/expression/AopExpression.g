@@ -131,7 +131,7 @@ CF_TYPE : {expressionStart}?=> ('string' | 'boolean' | 'query' | 'xml' | 'compon
 	;
 
 DESCRIPTOR  
-	: {expressionStart}?=> (('a'..'z'|'A'..'Z'|'_'|'*') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'.'|'*'|':')*)
+	: {expressionStart}?=> (('a'..'z'|'A'..'Z'|'_'|'*'|'$') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'.'|'*'|':'|'$')*)
 	| /* give it another option so it doesn't infinite loop out when the predicate fails */
 	{ input.seek(input.size()); }
       	;

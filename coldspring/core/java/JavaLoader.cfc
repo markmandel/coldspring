@@ -15,7 +15,7 @@
 
 <cfscript>
 	instance = StructNew();
-	instance.static.SCOPE_KEY = "coldspring.51807836-194D-4DAD-9CC541EF14360F27";
+	instance.static.SCOPE_KEY = "coldspring.51807A36-1941-4DAD-9CC541EF14360F27";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -122,6 +122,10 @@
 <cffunction name="setJavaLoaderKey" access="private" returntype="void" output="false">
 	<cfargument name="JavaLoaderKey" type="string" required="true">
 	<cfset instance.javaLoaderKey = arguments.javaLoaderKey />
+</cffunction>
+
+<cffunction name="dummy" hint="does nothing except reset meta data" access="private" returntype="void" output="false">
+
 </cffunction>
 
 </cfcomponent>

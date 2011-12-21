@@ -24,6 +24,10 @@ prog:
 
 "execution(* set*(..))"  -> (execution * set* (ARGUMENTS ..))
 
+"execution(* $set*(..))"  -> (execution * $set* (ARGUMENTS ..))
+
+"execution(* com.xyz.service.AccountService.foo(..))"  -> (execution * com.xyz.service.AccountService.foo (ARGUMENTS ..))
+
 "execution(* com.xyz.service.AccountService.*(..))"  -> (execution * com.xyz.service.AccountService.* (ARGUMENTS ..))
 
 "execution(* com.xyz.service.*.*(..))"  -> (execution * com.xyz.service.*.* (ARGUMENTS ..))

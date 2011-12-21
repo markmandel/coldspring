@@ -273,11 +273,12 @@
 			<arg line="${rsync.line}"/>
 		</exec>
 	</target>
-	
-	<!-- - - - - - - - - - - - - - - - - - 
+
+
+	<!-- - - - - - - - - - - - - - - - - -
           target: aop-parser                      
          - - - - - - - - - - - - - - - - - -->	
-	<target name="build-aop-parser" depends="aop-parser-clean">
+	<target name="build-aop-parser" depends="aop-parser-clean" description="Build the AOP Parser.">
 		
 		<echo message="Generating Lexer &amp; Parser"/>
 		<java classname="org.antlr.Tool" classpath="${antlr.cp}" fork="true" dir="${antlr.src}">

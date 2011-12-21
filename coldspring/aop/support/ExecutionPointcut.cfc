@@ -94,8 +94,13 @@
 
 <cffunction name="setMethodName" hint="set the method name that the method must match to. Allows the use of '*' as a wildcard in strings." access="public" returntype="void" output="false">
 	<cfargument name="methodName" type="string" required="true">
-	<!--- replace it with the regex for the wildcard --->
-	<cfset instance.methodName = replace(arguments.methodName, "*", "(.*?)") />
+	<cfscript>
+		//dolla' dolla!
+		arguments.methodName = replace(arguments.methodName, "$", "\$");
+
+		//replace it with the regex for the wildcard
+		instance.methodName = replace(arguments.methodName, "*", "(.*?)");
+	</cfscript>
 </cffunction>
 
 <cffunction name="getReturnType" access="public" returntype="string" output="false">

@@ -657,6 +657,31 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testSingleMethod" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public sayHello(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+	</cfscript>
+</cffunction>
+
 <cffunction name="testClassWithMethodWithWildcard" hint="test a target expression" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
@@ -682,7 +707,57 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="testNotMethod" hint="test a target expression" access="public" returntype="void" output="false">
+<cffunction name="testClassWithMethod" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public unittests.aop.com.Hello.sayHello(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+	</cfscript>
+</cffunction>
+
+<cffunction name="testClassWithMethodWithAnyReturnType" hint="test a target expression" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		pointcut.setExpression("execution(public * unittests.aop.com.Hello.sayHello(..))");
+
+		local.advisor = createObject("component", "coldspring.aop.PointcutAdvisor").init(pointcut, interceptor);
+
+		proxyFactory.addAdvisor(local.advisor);
+
+		//hello
+		local.proxy = proxyFactory.getProxy(hello);
+
+		local.value = local.proxy.sayHello();
+
+		assertEquals(reverse("hello"), local.value);
+
+		assertEquals("Goodbye", local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(reverse(local.string), local.proxy.sayHello(local.string));
+	</cfscript>
+</cffunction>
+
+<cffunction name="testNotMethodWithWildCard" hint="test a target expression" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
 
