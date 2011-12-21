@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="abstract class to help doing util bean parsing" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false" colddoc:abstract="true">
+<cfcomponent hint="abstract class to help doing util bean parsing" implements="coldspring.beans.xml.BeanDefinitionParser" output="false" colddoc:abstract="true">
 
 <cfscript>
 	instance.static.ID_ATTRIBUTE = "id";
@@ -26,9 +26,6 @@
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="private" returntype="void" output="false">
-	<cfscript>
-		super.init();
-	</cfscript>
 </cffunction>
 
 <cffunction name="parse" hint="Do generic parsing, and return the basic BeanDefinition to be used for the util collections" access="public" returntype="any" output="false">

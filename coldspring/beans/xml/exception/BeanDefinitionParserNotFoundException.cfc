@@ -19,7 +19,7 @@
 	<cfargument name="namespace" hint="the namespace that is in the current context" type="string" required="Yes">
 	<cfargument name="name" hint="the name of the element we are looking at" type="string" required="Yes">
 	<cfscript>
-		super.init("A BeanDefinitionParser could not be found.", "A BeanDefinitionParser could not found for element '#arguments.name#' in namespace '#arguments.namespace#'");
+		super.init("A BeanDefinitionParser.cfc could not be found.", "A BeanDefinitionParser.cfc could not found for element '#arguments.name#' in namespace '#arguments.namespace#'");
 	</cfscript>
 </cffunction>
 

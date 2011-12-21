@@ -14,7 +14,7 @@
 	limitations under the License.
 --->
 
-<cfcomponent hint="The definition parser for the <aop:remote> element" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+<cfcomponent hint="The definition parser for the <aop:remote> element" implements="coldspring.beans.xml.BeanDefinitionParser" output="false">
 
 <cfscript>
 	meta = getMetadata(this);
@@ -52,8 +52,6 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="RemoteDefinitionParser" output="false">
 	<cfscript>
-		super.init();
-
 		return this;
 	</cfscript>
 </cffunction>

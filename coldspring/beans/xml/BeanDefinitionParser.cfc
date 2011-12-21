@@ -1,5 +1,5 @@
 <!---
-   Copyright 2010 Mark Mandel
+   Copyright 2011 Mark Mandel
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -11,8 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Abstract class for bean definition parsing" output="false"
-			 colddoc:abstract="true">
+<cfinterface hint="Abstract class for bean definition parsing">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -24,14 +23,11 @@
 			access="public" returntype="any" output="false">
 	<cfargument name="element" hint="a instance of org.w3c.dom.Element that represent the XML Element" type="any" required="Yes">
 	<cfargument name="parserContext" hint="the current parser context" type="coldspring.beans.xml.ParserContext" required="Yes">
-			<cfset createObject("component", "coldspring.exception.AbstractMethodException").init("parse", this)>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="private" returntype="void" output="false">
-</cffunction>
 
-</cfcomponent>
+</cfinterface>

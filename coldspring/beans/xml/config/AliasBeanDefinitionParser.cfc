@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Parser for managing <alias> tags" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+<cfcomponent hint="Parser for managing <alias> tags" implements="coldspring.beans.xml.BeanDefinitionParser" output="false">
 
 <cfscript>
 	instance.static = {};
@@ -23,8 +23,6 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="AliasBeanDefinitionParser" output="false">
 	<cfscript>
-		super.init();
-
 		return this;
 	</cfscript>
 </cffunction>

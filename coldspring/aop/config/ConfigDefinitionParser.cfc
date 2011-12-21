@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="The definition parser for the <aop:config> element" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+<cfcomponent hint="The definition parser for the <aop:config> element" implements="coldspring.beans.xml.BeanDefinitionParser" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -56,8 +56,6 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ConfigDefinitionParser" output="false">
 	<cfscript>
-		super.init();
-
 		return this;
 	</cfscript>
 </cffunction>

@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Parser for <include> elements" extends="coldspring.beans.xml.AbstractBeanDefinitionParser" output="false">
+<cfcomponent hint="Parser for <include> elements" implements="coldspring.beans.xml.BeanDefinitionParser" output="false">
 
 <cfscript>
 	instance.static = {};
@@ -22,8 +22,6 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="ImportDefinitionParser" output="false">
 	<cfscript>
-		super.init();
-
 		return this;
 	</cfscript>
 </cffunction>

@@ -15,7 +15,7 @@
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getBeanDefinitionParser" hint="get the bean definition parser for a given element" access="public" returntype="AbstractBeanDefinitionParser" output="false">
+<cffunction name="getBeanDefinitionParser" hint="get the bean definition parser for a given element" access="public" returntype="BeanDefinitionParser" output="false">
 	<cfargument name="element" hint="the org.w3c.dom.Element for which you need a parser" type="any" required="Yes">
 </cffunction>
 
