@@ -15,7 +15,7 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.coldspringframework.org/schema/aop"
 	   xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd
-	   http://www.coldspringframework.org/schema/aop ../../coldspring/aop/config/coldspring-aop-2.0.xsd
+	   http://www.coldspringframework.org/schema/aop http://www.coldspringframework.org/schema/coldspring-aop-2.0.xsd
 	   "
 	   >
 

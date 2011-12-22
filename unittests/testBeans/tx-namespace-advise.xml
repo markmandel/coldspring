@@ -18,7 +18,7 @@
 	xmlns:tx="http://www.coldspringframework.org/schema/tx"
 	xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd
 	http://www.coldspringframework.org/schema/aop http://www.coldspringframework.org/schema/coldspring-aop-2.0.xsd
-	http://www.coldspringframework.org/schema/tx ../../coldspring/transaction/config/coldspring-tx-2.0.xsd">
+	http://www.coldspringframework.org/schema/tx http://www.coldspringframework.org/schema/coldspring-tx-2.0.xsd">
 
 	<aop:config>
 		<aop:advisor advice-ref="transaction" pointcut="execution(public * unittests.transaction.com.Gateway.$insert(..))" />
