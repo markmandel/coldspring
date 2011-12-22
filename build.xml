@@ -162,6 +162,7 @@
 			<fileset file="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
 			<fileset file="${src}/beans/xml/config/coldspring-util-${coldspring.version}.xsd"/>
 			<fileset file="${src}/aop/config/coldspring-aop-${coldspring.version}.xsd"/>
+			<fileset file="${src}/transaction/config/coldspring-tx-${coldspring.version}.xsd"/>
 		</ftp>
     </target>	
 	<target name="upload-schemas-N"/>
@@ -246,7 +247,8 @@
 			<arg value="http://${coldspring.server}/schema/coldspring-beans-${coldspring.version}.xsd"/>
 			<arg value="http://${coldspring.server}/schema/coldspring-util-${coldspring.version}.xsd"/>
 			<arg value="http://${coldspring.server}/schema/coldspring-aop-${coldspring.version}.xsd"/>
-		</java>    	
+			<arg value="http://${coldspring.server}/schema/coldspring-tx-${coldspring.version}.xsd"/>
+		</java>
     	
     </target>	
 	
