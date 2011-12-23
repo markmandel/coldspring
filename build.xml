@@ -42,20 +42,28 @@
 	<property name="antlr.lib" location="${antlr.src}/lib"/>
 	<property name="antlr.jar" location="${src}/core/java/lib/" />
 	<property name="antlr.cp" location="${antlr.lib}/antlr-3.3-complete.jar"/>
+	<property name="antlr.results" location="${test.results}/antlr" />
 	
 	<property name="varscoper.results" location="${test.results}/varscoper"/>
-	<property name="varscoper.filePath" value="/home/mark/tomcat6/webapps/cf9/coldspring"/>
+	<property name="varscoper.filePath" value="${src}/coldspring"/>
 	<property name="varscoper.url" value="${coldspring.localserver}:${coldspring.localport}${coldspring.defaultcontext}/varscoper/varScoper.cfm"/>
 	
 	<property name="build" location="./build" />
+	
+	<property name="uuid.file" location="./build.uuid" />
 
 	<taskdef name="mxunittask" classname="org.mxunit.ant.MXUnitAntTask" classpath="${build}/mxunit-ant.jar"/>
 	<taskdef resource="net/jtools/classloadertask/antlib.xml" classpath="${build}/ant-classloadertask.jar"/>
 	<classloader loader="system" classpath="${build}/commons-net-2.0.jar"/>
 	<taskdef name="ftp" classname="org.apache.tools.ant.taskdefs.optional.net.FTP"/>
-	
-		
-	<!-- ================================= 
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	  <classpath>
+		<pathelement location="${build}/ant-contrib-1.0b3.jar"/>
+	  </classpath>
+	</taskdef>
+
+	<!-- =================================
           target: deploy-jenkins              
          ================================= -->
     <target name="integrate" description="script for continuous integration to run">
@@ -94,7 +102,13 @@
     	<delete dir="${test.results}"/>
     	<mkdir dir="${test.results}"/>            
     </target>
-	
+
+
+	<target name="generate-build-guid" description="Generates a Guid for this build, which Jenkins can fingerprint.">
+		<generateguid property="guid" />
+		<echo message="${guid}" file="${uuid.file}"/>
+	</target>
+
 	<!-- - - - - - - - - - - - - - - - - - 
           target: unittest                      
          - - - - - - - - - - - - - - - - - -->
@@ -120,11 +134,17 @@
     <target name="run-tests">
     	<echo message="Running unit tests for ${test.context}"/>
     	
-    	<property name="test.results.path" location="${test.results}/${test.context}"/>
+    	<property name="test.results.path" location="${test.results}/tests"/>
     	<mkdir dir="${test.results.path}"/>
     	
     	<property name="test.excludes" value=""/>
-    	
+		<property name="test.componentPath" value="unittests"/>
+		<propertyregex input="${test.componentPath}" property="test.directory" regexp="\." replace="/" global="true"
+					   defaultvalue="${test.componentPath}"/>
+		<propertyregex input="${test.context}" property="test.package" regexp="/" replace="" />
+
+		<echo message="replaced: ${test.package}" />
+
     	<mxunittask server="${coldspring.localserver}" port="${coldspring.localport}"
     		mxunithome="${test.context}/mxunit"
     		haltonerror="false"
@@ -133,7 +153,7 @@
     		verbose="true"
     		outputdir="${test.results.path}"
     		>
-    		<directory path="/unittests" componentpath="unittests" recurse="true" excludes="${test.excludes}" packagename="${test.package}"/>
+    		<directory path="/${test.directory}" componentpath="${test.componentPath}" recurse="true" excludes="${test.excludes}" packagename="${test.package}"/>
     	</mxunittask>
     	
 		<junitreport todir="${test.results.path}">
@@ -141,7 +161,7 @@
     			<include name="*.xml"/>
     		</fileset>
     		<report format="frames" todir="${test.results.path}" styledir="${build}/xsl"/>
-		</junitreport>    	
+		</junitreport>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -299,7 +319,8 @@
 	<!-- ================================= 
           target: aop-parser-test              
          ================================= -->
-    <target name="aop-parser-test" description="description">
+    <target name="aop-parser-test" description="Run the AOP Parser tests">
+		<mkdir dir="${antlr.results}" />
     	<echo message="Running gUnit Tests"/>
     	
 		<!-- need this, as gunit was foobar'd on the 3.3 release -->
@@ -308,9 +329,21 @@
     	
     	<echo message="classpath: ${gunit.cp};${antlr.cp};${aop-parser.cp};"></echo>
     	
-    	<java classname="org.antlr.gunit.Interp" classpath="${gunit.cp};${antlr.cp};${aop-parser.cp};" fork="true">
+    	<java classname="org.antlr.gunit.Interp" classpath="${gunit.cp};${antlr.cp};${aop-parser.cp};" fork="true" outputproperty="gunit.output">
 			<arg value="${antlr.src}/com/coldspring/aop/expression/AopExpression.gunit"/>
 		</java>
+		
+		<echo message="${gunit.output}" />
+		<echo message="&lt;pre&gt;${gunit.output}&lt;/pre&gt;" file="${antlr.results}/index.html" />
+
+		<if description="fail if there is failures in the ">
+			<not>
+				<contains string="${gunit.output}" substring="Failures: 0" />
+			</not>
+			<then>
+				<fail message="AOP Parser failed." />
+			</then>
+		</if>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -404,5 +437,15 @@
 	    </sequential>
 	</macrodef>
 
-	
+
+	<scriptdef name="generateguid" language="javascript">
+		<attribute name="property" />
+		<![CDATA[
+			importClass( java.util.UUID );
+			var uuid = UUID.randomUUID();
+
+			project.setProperty( attributes.get( "property" ), uuid );
+		]]>
+	</scriptdef>
+
 </project>
