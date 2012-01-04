@@ -12,7 +12,7 @@
  --->
 
 <cfcomponent hint="Base class for Pointcuts that are driven by an advisor"
-				implements="Advisor,coldspring.core.Ordered,coldspring.aop.framework.autoproxy.AutoProxyable" output="false">
+				implements="coldspring.aop.Advisor,coldspring.core.Ordered,coldspring.aop.framework.autoproxy.AutoProxyable" output="false">
 
 <cfscript>
 	meta = getMetadata(this);

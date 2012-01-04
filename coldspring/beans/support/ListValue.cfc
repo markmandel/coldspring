@@ -12,7 +12,7 @@
  --->
 
 <cfcomponent hint="An array of abstractValues, use getValue() to modify. Uses an ArrayList, so it will pass by reference"
-			 extends="AbstractValue" output="false">
+			 extends="coldspring.beans.support.AbstractValue" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

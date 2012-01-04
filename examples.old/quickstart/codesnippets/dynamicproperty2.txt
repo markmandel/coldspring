@@ -1,7 +1,0 @@
-<cfscript>
-    import coldspring.beans.xml.XmlBeanFactory;
-	coldspringConfig = '/coldspring/examples/quickstart/config/coldspring.xml';
-	properties = {};
-	properties.dsnName = "myDSN";
-    beanFactory = new XmlBeanFactory(configLocations=coldspringConfig, defaultProperties=properties);		
-</cfscript>

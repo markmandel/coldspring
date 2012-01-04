@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Is a simple value, such as a string, or a number" extends="AbstractValue" output="false">
+<cfcomponent hint="Is a simple value, such as a string, or a number" extends="coldspring.beans.support.AbstractValue" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

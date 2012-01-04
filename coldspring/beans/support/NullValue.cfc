@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="Value that returns Java null always" extends="AbstractValue" output="false">
+<cfcomponent hint="Value that returns Java null always" extends="coldspring.beans.support.AbstractValue" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

@@ -1,4 +1,0 @@
-<cfscript>
-    import coldspring.beans.xml.XmlBeanFactory;
-    beanFactory = new XmlBeanFactory('/coldspring/examples/quickstart/config/coldspring.xml');		
-</cfscript>
