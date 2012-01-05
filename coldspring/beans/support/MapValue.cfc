@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="I represent a struct of AbstractValues, use getValue() to modify" extends="AbstractValue" output="false">
+<cfcomponent hint="I represent a struct of AbstractValues, use getValue() to modify" extends="coldspring.beans.support.AbstractValue" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 

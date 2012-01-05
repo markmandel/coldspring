@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="A reference to another BeanDefinition" extends="AbstractValue" output="false">
+<cfcomponent hint="A reference to another BeanDefinition" extends="coldspring.beans.support.AbstractValue" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
