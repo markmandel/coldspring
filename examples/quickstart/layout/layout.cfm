@@ -17,7 +17,7 @@ http://creativecommons.org/licenses/GPL/2.0/
 <title>ColdSpring 2 Examples</title>
 
 <cfoutput>
-	<base href="http://#CGI.SERVER_NAME#:#CGI.SERVER_POST##CGI.CONTEXT_PATH#/examples/quickstart/">
+	<base href="http://#CGI.SERVER_NAME#:#CGI.SERVER_PORT##CGI.CONTEXT_PATH#/examples/quickstart/">
 </cfoutput>
 
 <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
