@@ -40,6 +40,7 @@ public boolean isInstance(Object obj)
 		//have to do this stupid juggling because CF8 'can't find 'setLength() on a Builder'
 		var builder = 0;
 		var reflectionService = getComponentMetaData("coldspring.core.reflect.ReflectionService").singleton.instance;
+		var meta = getComponentMetadata(arguments.className);
 
 		//builder.setLength(builder.lastIndexOf(".")); << CF8 fails on this because it can't resolve Java Methods. Grrr.
 		if(listLen(arguments.className, ".") > 1)
@@ -56,7 +57,13 @@ public boolean isInstance(Object obj)
     	setReflectionService(reflectionService);
     	setAssignableCache(StructNew());
 
-		setMeta(getComponentMetadata(arguments.className));
+		//sometimes CF totally messes up the name, so let's fix it.
+		if(meta.name != arguments.className);
+		{
+			meta.name = arguments.className;
+		}
+
+		setMeta(meta);
 
 		//determine if we are an interface or not
 		setInterface(getMeta().type eq "interface");
@@ -409,6 +416,7 @@ public boolean isInstance(Object obj)
 		var interfaces = [];
 		var key = 0;
 		var meta = getMeta();
+		var name = 0;
 
 		if(isInterface())
 		{
@@ -416,7 +424,14 @@ public boolean isInstance(Object obj)
 	        {
 	        	for(key in meta.extends)
 	        	{
-	        		arrayAppend(interfaces, getReflectionService().loadClass(meta.extends[key].name));
+					//this is because CF can't work this stuff out 100% all the time.
+					name = key;
+					if(Len(name) < Len(meta.extends[key].name))
+					{
+						name = meta.extends[key].name;
+					}
+
+	        		arrayAppend(interfaces, getReflectionService().loadClass(name));
 	        	}
 	        }
 		}
@@ -426,7 +441,14 @@ public boolean isInstance(Object obj)
 	        {
 	        	for(key in meta.implements)
 	        	{
-	        		arrayAppend(interfaces, getReflectionService().loadClass(meta.implements[key].name));
+					//this is because CF can't work this stuff out 100% all the time.
+					name = key;
+					if(Len(name) < Len(meta.implements[key].name))
+					{
+						name = meta.implements[key].name;
+					}
+
+					arrayAppend(interfaces, getReflectionService().loadClass(name));
 	        	}
 	        }
 		}

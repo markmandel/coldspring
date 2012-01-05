@@ -83,7 +83,7 @@
 		if(!structKeyExists(cache, className))
 		{
 			//prep a version in the cache.
-			handler = createObject("component", "ProxyInvocationHandler").init(className, getAdvisors());
+			handler = createObject("component", "coldspring.aop.framework.ProxyInvocationHandler").init(className, getAdvisors());
 			cache[className] = handler;
 		}
 

@@ -11,7 +11,7 @@
    limitations under the License.
  --->
 
-<cfcomponent hint="An abstract bean factory" implements="BeanFactory" output="false"
+<cfcomponent hint="An abstract bean factory" implements="coldspring.beans.BeanFactory" output="false"
 			 colddoc:abstract="true">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
