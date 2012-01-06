@@ -5,7 +5,7 @@ Thanks for taking the time to look at ColdSpring!
 
 The ColdSpring home page can be found at [http://www.coldspringframework.org][1]
 
-Documentation for ColdSpring can be found on the [Trac site hosted on Sourceforge][2].
+Documentation and Issue Tracker for ColdSpring can be found on the [Trac site hosted on Sourceforge][2].
 
 The main Git repository and downloads can be found on the [ColdSpring Sourceforge page][3].
 
