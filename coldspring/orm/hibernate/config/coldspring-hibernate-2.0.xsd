@@ -11,9 +11,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
-<xsd:schema xmlns="http://www.coldspringframework.org/schema/tx"
+<xsd:schema xmlns="http://www.coldspringframework.org/schema/hibernate"
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-			targetNamespace="http://www.coldspringframework.org/schema/tx"
+			targetNamespace="http://www.coldspringframework.org/schema/hibernate"
 			xmlns:beans="http://www.coldspringframework.org/schema/beans"
 			elementFormDefault="qualified"
 			attributeFormDefault="unqualified"
@@ -24,43 +24,29 @@
 
 	<xsd:annotation>
 		<xsd:documentation><![CDATA[
-        Credits to the Spring Transaction Schema, version 3.0, on which this is based.
-
-        Defines the configuration elements for the ColdSpring Framework's Transaction support.
+	Configuration for wiring up the ORM configuration classes that are available with ColdSpring.
     ]]></xsd:documentation>
 	</xsd:annotation>
 
-	<xsd:element name="advice">
+	<xsd:element name="config">
 		<xsd:complexType>
 			<xsd:annotation>
-				<xsd:documentation source="cfc:coldspring.transaction.interceptor.TransactionInterceptor"><![CDATA[
-			Creates an TransactionInterceptor, to be used to apply AOP based Transaction advice.
-				]]></xsd:documentation>
+				<xsd:documentation source="cfc:coldspring.orm.hibernate.SessionWrapper"><![CDATA[
+			Provides a SessionWrapper under the id specified, with the strictTransaction mode, flush mode specified.
+			Defining a autowire setting, will configure the appropriate BeanInjector, give it the appropriate id for a BeanInjectorEventHandler (usually hibernate-beanInjector)
+			and pass it into the SessionWrapper as the BeanInjector to use on new().
+			Defining an autowire session will also add a ScopeBeanFactoryLocator to set the current BeanFactory into the application scope.
+			To overwrite the default application name, use the factory-name attribute.
+			]]></xsd:documentation>
 			</xsd:annotation>
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
-					<xsd:attribute name="order" type="xsd:integer" use="optional">
+					<xsd:attribute name="strictTransaction" type="xsd:boolean" default="false">
 						<xsd:annotation>
 							<xsd:documentation><![CDATA[
-								Return the order value of this object, with a higher value meaning greater in terms of sorting.
-								Higher values can be interpreted as lower priority. As a consequence, the object with the lowest value has highest priority.
+							Enable strict transactions on the underlying SessionWrapper.
 							]]></xsd:documentation>
 						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="isolation" use="optional">
-						<xsd:simpleType>
-							<xsd:annotation>
-								<xsd:documentation>
-						The transaction isolation level.
-								</xsd:documentation>
-							</xsd:annotation>
-							<xsd:restriction base="xsd:NMTOKEN">
-								<xsd:enumeration value="read_uncommitted" />
-								<xsd:enumeration value="read_committed" />
-								<xsd:enumeration value="repeatable_read" />
-								<xsd:enumeration value="serializable" />
-							</xsd:restriction>
-						</xsd:simpleType>
 					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
