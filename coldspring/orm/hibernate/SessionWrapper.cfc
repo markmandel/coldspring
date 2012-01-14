@@ -18,7 +18,7 @@
  * <p>This provides functionality for 'strictTransactions', in which when set to true, delete(), insert(), merge(), save(), update(), and INSERT, UPDATE and DELETE HQL statements
  * must occur within a transaction block, or an exception will be thrown. This is often useful to ensure that persistence occurs within a transaction block.</p>
  * <p>Default Flush Mode provides you with a way of setting up a different Flush Mode other than 'AUTO' as the default, if you wish.
- * See <a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/FlushMode.html">FlushMode</a> for more details.</p>
+ * See <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/FlushMode.html">FlushMode</a> for more details.</p>
  * <p>The methods delete(),insert(),merge(),save() & update() have the annotation 'orm:persist="true"', for easy interception of ORM persistent events via AOP,
  * e.g. for Transaction Management</p>
  * <p>Note that multiple SessionWrappers will all work on the same underlying Hibernate Session, as that is how ColdFusion works</p>

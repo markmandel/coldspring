@@ -48,6 +48,44 @@
 							]]></xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
+					<xsd:attribute name="flushmode" default="AUTO">
+						<xsd:simpleType>
+							<xsd:annotation>
+								<xsd:documentation>
+							The default flush mode provided to the SessionWrapper. Defaults to AUTO (Just like the SessionWrapper).
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:restriction base="xsd:NMTOKEN">
+								<xsd:enumeration value="AUTO" />
+								<xsd:enumeration value="ALWAYS" />
+								<xsd:enumeration value="COMMIT" />
+								<xsd:enumeration value="MANUAL" />
+								<xsd:enumeration value="NEVER" />
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="autowire" default="none">
+						<xsd:simpleType>
+							<xsd:annotation>
+								<xsd:documentation>
+							Whether or not to autowire. Implements the autowire option specified within the ORM SessionWrapper, and provides the neccessary
+							BeanInjector for the BeanInjectorEventHandler
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:restriction base="xsd:NMTOKEN">
+								<xsd:enumeration value="none" />
+								<xsd:enumeration value="byName" />
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="factory-name" type="xsd:string" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>
+						If autowire is a value other than "none", then if this value is provided, set the BeanFactory in the application scope under this key.
+						If this is not set, then use the defaults as they are set in the ScopeBeanFactoryLocator (which is the key 'coldspring').
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
