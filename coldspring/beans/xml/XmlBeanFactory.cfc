@@ -72,6 +72,7 @@
 		addNamespaceHandler(createObject("component", "coldspring.beans.xml.config.UtilNamespaceHandler").init());
 		addNamespaceHandler(createObject("component", "coldspring.aop.config.AOPNamespaceHandler").init());
 		addNamespaceHandler(createObject("component", "coldspring.transaction.config.TxNamespaceHandler").init());
+		addNamespaceHandler(createObject("component", "coldspring.orm.hibernate.config.HibernateNamespaceHandler").init());
     </cfscript>
 </cffunction>
 

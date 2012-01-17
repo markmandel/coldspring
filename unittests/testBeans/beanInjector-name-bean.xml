@@ -12,19 +12,27 @@
    limitations under the License.
 -->
 <beans xmlns="http://www.coldspringframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.coldspringframework.org/schema/util"
-	xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd 
-	http://www.coldspringframework.org/schema/util http://coldspringframework.org/schema/coldspring-util-2.0.xsd ">
-	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.coldspringframework.org/schema/util"
+	xmlns:hibernate="http://www.coldspringframework.org/schema/hibernate"
+	xsi:schemaLocation="http://www.coldspringframework.org/schema/beans http://coldspringframework.org/schema/coldspring-beans-2.0.xsd
+	http://www.coldspringframework.org/schema/util http://coldspringframework.org/schema/coldspring-util-2.0.xsd
+	http://www.coldspringframework.org/schema/hibernate http://coldspringframework.org/schema/coldspring-hibernate-2.0.xsd">
+
 	<util:json id="inject">
 		<![CDATA[
 			"Gandalf"
 		]]>
 	</util:json>
-	
+
+	<hibernate:config id="sessionWrapper" autowire="byName" flushmode="COMMIT" strictTransaction="true" factory-name="coldspring2" />
+	<alias name="hibernate-beanInjector" alias="beanInjector" />
+
+	<!--
 	<alias name="beanInjector" alias="hibernate-beanInjector"/>
 	<bean id="beanInjector" class="coldspring.beans.wiring.AutowireByNameBeanInjector">
 		<property name="debugMode" value="true"/>
 	</bean>
-	   
+	-->
+
 </beans>
