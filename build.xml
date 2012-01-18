@@ -178,11 +178,12 @@
 		<input addproperty="upload.schema.password" message="What is the FTP Password?"></input>
 		
 		<ftp server="${coldspring.server}" userid="${upload.schema.user}" password="${upload.schema.password}" 
-			 remotedir="${coldspring.server.schema}">
+			 remotedir="${coldspring.server.schema}" verbose="true">
 			<fileset file="${src}/beans/xml/config/coldspring-beans-${coldspring.version}.xsd"/>
 			<fileset file="${src}/beans/xml/config/coldspring-util-${coldspring.version}.xsd"/>
 			<fileset file="${src}/aop/config/coldspring-aop-${coldspring.version}.xsd"/>
 			<fileset file="${src}/transaction/config/coldspring-tx-${coldspring.version}.xsd"/>
+			<fileset file="${src}/orm/hibernate/config/coldspring-hibernate-${coldspring.version}.xsd"/>
 		</ftp>
     </target>	
 	<target name="upload-schemas-N"/>
@@ -268,6 +269,7 @@
 			<arg value="http://${coldspring.server}/schema/coldspring-util-${coldspring.version}.xsd"/>
 			<arg value="http://${coldspring.server}/schema/coldspring-aop-${coldspring.version}.xsd"/>
 			<arg value="http://${coldspring.server}/schema/coldspring-tx-${coldspring.version}.xsd"/>
+			<arg value="http://${coldspring.server}/schema/coldspring-hibernate-${coldspring.version}.xsd"/>
 		</java>
     	
     </target>	
