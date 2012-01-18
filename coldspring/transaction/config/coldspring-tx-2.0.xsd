@@ -11,7 +11,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
-<xsd:schema xmlns="http://www.coldspringframework.org/schema/aop"
+<xsd:schema xmlns="http://www.coldspringframework.org/schema/tx"
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 			targetNamespace="http://www.coldspringframework.org/schema/tx"
 			xmlns:beans="http://www.coldspringframework.org/schema/beans"
