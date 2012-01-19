@@ -45,7 +45,7 @@
 	<property name="antlr.results" location="${test.results}/antlr" />
 	
 	<property name="varscoper.results" location="${test.results}/varscoper"/>
-	<property name="varscoper.filePath" value="${src}/coldspring"/>
+	<property name="varscoper.filePath" value="${src}"/>
 	<property name="varscoper.url" value="${coldspring.localserver}:${coldspring.localport}${coldspring.defaultcontext}/varscoper/varScoper.cfm"/>
 	
 	<property name="build" location="./build" />
