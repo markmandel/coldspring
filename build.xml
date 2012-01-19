@@ -112,22 +112,62 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: unittest                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="unittest">
-    	<antcall target="run-tests">
-    		<param name="test.context" value="/cf9"/>
-    		<param name="test.package" value="tests.cf9"/>
-    	</antcall>
-    	<antcall target="run-tests">
-    		<param name="test.context" value="/cf8"/>
-    		<param name="test.excludes" value="cf9"/>
-    		<param name="test.package" value="tests.cf8"/>
-    	</antcall>
-        <antcall target="run-tests">
-            <param name="test.context" value="/railo"/>
-            <param name="test.package" value="tests.railo"/>
-        </antcall>
+    <target name="unittest-async">
+		<antcall target="unittest-async-${suite.name}" />
     </target>
-    
+
+	<target name="unittest-async-cf9">
+		<antcall target="run-tests">
+			<param name="test.context" value="/cf9"/>
+			<param name="test.excludes" value="serial"/>
+			<param name="test.package" value="tests.cf9"/>
+		</antcall>
+	</target>
+
+	<target name="unittest-async-cf8">
+		<antcall target="run-tests">
+			<param name="test.context" value="/cf8"/>
+			<param name="test.excludes" value="cf9,serial"/>
+			<param name="test.package" value="tests.cf8"/>
+		</antcall>
+	</target>
+
+	<target name="unittest-async-railo">
+		<antcall target="run-tests">
+			<param name="test.context" value="/railo"/>
+			<param name="test.excludes" value="serial"/>
+			<param name="test.package" value="tests.railo"/>
+		</antcall>
+	</target>
+
+	<target name="unittest-sync">
+		<antcall target="unittest-sync-${suite.name}" />
+	</target>
+
+	<target name="unittest-sync-cf9">
+		<antcall target="run-tests">
+			<param name="test.context" value="/cf9"/>
+			<param name="test.componentPath" value="unittests.serial"/>
+			<param name="test.package" value="tests.cf9"/>
+		</antcall>
+	</target>
+
+	<target name="unittest-sync-cf8">
+		<antcall target="run-tests">
+			<param name="test.context" value="/cf8"/>
+			<param name="test.componentPath" value="unittests.serial"/>
+			<param name="test.package" value="tests.cf8"/>
+		</antcall>
+	</target>
+
+	<target name="unittest-sync-railo">
+		<antcall target="run-tests">
+			<param name="test.context" value="/railo"/>
+			<param name="test.componentPath" value="unittests.serial"/>
+			<param name="test.package" value="tests.railo"/>
+		</antcall>
+	</target>
+
 	<!-- - - - - - - - - - - - - - - - - - 
           target: run-tests                      
          - - - - - - - - - - - - - - - - - -->
