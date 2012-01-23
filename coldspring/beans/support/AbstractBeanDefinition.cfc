@@ -207,6 +207,12 @@
 
 <cffunction name="validate" hint="Validates the structure of this bean, throws an exception if it is invalid" access="public" returntype="void" output="false">
 	<cfscript>
+		if(isAbstract())
+		{
+			//if it's abstract, it's totally cool man.
+			return;
+		}
+
 		//if has factory-method, or factory-bean, must have the other
 		if(hasFactoryBeanName() neq hasFactoryMethodName())
 		{

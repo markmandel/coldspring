@@ -257,4 +257,17 @@
 	<!-- test lazy init's -->
 	<bean id="nameToRequest1" class="unittests.testBeans.BeanNameToRequest" init-method="configure"/>
 	<bean id="nameToRequest2" class="unittests.testBeans.BeanNameToRequest" init-method="configure" lazy-init="false"/>
+
+	<!-- test abstract item without a class -->
+	<bean id="abstractEngine" abstract="true">
+		<property name="gears">
+			<list>
+				<value>1</value>
+				<value>2</value>
+				<value>3</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="implementedEngine" parent="abstractEngine" class="unittests.testBeans.Engine" />
+
 </beans>

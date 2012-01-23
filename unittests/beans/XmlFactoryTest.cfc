@@ -386,6 +386,18 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testParentEngineWithNoClass" hint="Test an abstract parent with no class defined" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+		local.engine = instance.factory.getBean("implementedEngine");
+
+		assertEquals("Default engine", local.engine.getType());
+
+		local.gears = [1, 2, 3];
+		assertEquals(local.gears, local.engine.getGears());
+	</cfscript>
+</cffunction>
+
 <cffunction name="importTest" hint="test the <import> element" access="public" returntype="void" output="false">
 	<cfscript>
 		var local = {};
