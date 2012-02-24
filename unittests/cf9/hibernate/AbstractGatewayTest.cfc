@@ -80,6 +80,17 @@ component  extends="AbstractHibernateTest"
     }
 
 	/**
+     * test param ordered list
+     */
+    public void function testParamOrderedList()
+    {
+		local.result = instance.gateway.listFooOrdered("Name");
+
+		assertEquals("Darth Vader", local.result[1].getName());
+    }
+
+
+	/**
      * test filtered list
      */
     public void function testFilteredList()
@@ -91,11 +102,55 @@ component  extends="AbstractHibernateTest"
     }
 
 	/**
+     * test param filtered list
+     */
+    public void function testParamFilteredList()
+    {
+		local.result = instance.gateway.listFooFiltered({Name="Darth Vader"});
+
+		assertEquals(1, ArrayLen(local.result));
+		assertEquals("Darth Vader", local.result[1].getName());
+    }
+
+	/**
      * test filtered, ordered list
      */
     public void function testFilteredOrderedList()
     {
 		local.result = instance.gateway.listFooFilterByNameOrderByID("Darth Vader");
+
+		assertEquals(1, ArrayLen(local.result));
+		assertEquals("Darth Vader", local.result[1].getName());
+    } 
+
+	/**
+     * test filtered, param ordered list
+     */
+    public void function testFilteredParamOrderedList()
+    {
+		local.result = instance.gateway.listFooFilterByNameOrdered("Darth Vader", "ID");
+
+		assertEquals(1, ArrayLen(local.result));
+		assertEquals("Darth Vader", local.result[1].getName());
+    }
+
+	/**
+     * test param filtered, ordered list
+     */
+    public void function testParamFilteredOrderedList()
+    {
+		local.result = instance.gateway.listFooFilteredOrderByID({Name="Darth Vader"});
+
+		assertEquals(1, ArrayLen(local.result));
+		assertEquals("Darth Vader", local.result[1].getName());
+    }
+
+	/**
+     * test param filtered, param ordered list
+     */
+    public void function testParamFilteredParamOrderedList()
+    {
+		local.result = instance.gateway.listFooFilteredOrdered({Name="Darth Vader"}, "ID");
 
 		assertEquals(1, ArrayLen(local.result));
 		assertEquals("Darth Vader", local.result[1].getName());
