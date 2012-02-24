@@ -244,7 +244,7 @@ component
 		}
 		
 		if (local.tokens[local.ORDERBY_GROUP] == "OrderBy") {
-			local.orderBy = local.tokens[local.ORDERBY_GROUP];
+			local.orderBy = local.tokens[local.ORDERFIELD_GROUP];
 			if (local.orderBy NEQ "") {
 				// support listXXXOrderByField_ASC and listXXXOrderByField_DESC
 				local.params.sortOrder = replaceNoCase(local.orderBy, "_", " ", "all");
