@@ -65,8 +65,11 @@ component
 	 *	<li> newXXX(): returns a new instance of Entity XXX</li>
 	 *	<li> saveXXX(object): calls EntitySave() on the object argument</li>
 	 *	<li> deleteXXX(object): calls EntityDelete() on the object argument</li>
-	 *  <li> listXXX[FilterByYYY][OrderByZZZ](): returns a list of the XXX entity.
-	 *		<br/>Optionally filters by YYY, for which you need to pass in a value. Optionally orders by property ZZZ
+	 *  <li> listXXX[FilterByYYY|Filtered][OrderByZZZ|Ordered](): returns a list of the XXX entity.
+	 *		<br/>Optionally filters by a single property YYY, for which you need to pass in a value
+     *		<br/>To filter by multiple properties, specify Filtered and pass a struct containing filterCriteria
+     * 		<br/>Optionally orders by a single property ZZZ. Specify order by ZZZ_ASC or ZZZ_DESC
+     *		<br/>To order by multiple properties, specified Ordered and pass in a sortOrder string in the format "property1 ASC,property2 DESC"
 	 *  </li>
 	 *  <li> enableFilterXXX(params): enables the filter XXX and returns it. The param struct argument passed in keys-values are set as parameters on the filter.</li>
 	 * </ul>
