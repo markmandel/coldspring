@@ -269,7 +269,7 @@
 		var constructorArgs = getConstructorArgsAsArray();
 		var arg = 0;
 		var initArgs = {};
-		var factoryBean = getBeanDefinitionRegistry().getBeanDefinition(getFactoryBeanName()).getInstance();
+		var factoryBean = getBeanDefinitionRegistry().getBeanDefinitionIncludingAncestor(getFactoryBeanName()).getInstance();
 		var object = 0;
 	</cfscript>
 
