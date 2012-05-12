@@ -65,8 +65,11 @@ component
 	 *	<li> newXXX(): returns a new instance of Entity XXX</li>
 	 *	<li> saveXXX(object): calls EntitySave() on the object argument</li>
 	 *	<li> deleteXXX(object): calls EntityDelete() on the object argument</li>
-	 *  <li> listXXX[FilterByYYY][OrderByZZZ](): returns a list of the XXX entity.
-	 *		<br/>Optionally filters by YYY, for which you need to pass in a value. Optionally orders by property ZZZ
+	 *  <li> listXXX[FilterByYYY|Filtered][OrderByZZZ|Ordered](): returns a list of the XXX entity.
+	 *		<br/>Optionally filters by a single property YYY, for which you need to pass in a value
+     *		<br/>To filter by multiple properties, specify Filtered and pass a struct containing filterCriteria
+     * 		<br/>Optionally orders by a single property ZZZ. Specify order by ZZZ_ASC or ZZZ_DESC
+     *		<br/>To order by multiple properties, specified Ordered and pass in a sortOrder string in the format "property1 ASC,property2 DESC"
 	 *  </li>
 	 *  <li> enableFilterXXX(params): enables the filter XXX and returns it. The param struct argument passed in keys-values are set as parameters on the filter.</li>
 	 * </ul>
@@ -196,45 +199,121 @@ component
      */
     private array function executeList(required string missingMethodName, required struct missingMethodArguments)
     {
-		local.class = replaceNoCase(arguments.missingMethodName, meta.const.LIST_PREFIX, "");
-
-	    local.filter = {};
-	    local.sortorder = "";
-
-	    //filterby comes first
-	    if(FindNoCase("filterby", local.class))
-	    {
-	        local.split = local.class.split("(?i)filterby");
-	        local.class = local.split[1];
-	        local.filterBy = local.split[2];
-
-	        if(FindNoCase("orderby", local.filterBy))
-	        {
-	            local.split = local.filterBy.split("(?i)orderby");
-				local.filterBy = local.split[1];
-	            local.orderBy = local.split[2];
-	        }
-	    }
-	    else if(FindNoCase("orderby", local.class))
-	    {
-	        local.split = local.class.split("(?i)orderby");
-	        local.class = local.split[1];
-	        local.orderBy = local.split[2];
-	    }
-
-	    if(StructKeyExists(local, "filterBy"))
-	    {
-	        local.filter[local.filterBy] = arguments.missingMethodArguments[1];
-	    }
-
-	    if(StructKeyExists(local, "orderBy"))
-	    {
-	        local.sortorder = replaceNoCase(local.orderBy, "_", " ", "all");
-	    }
-
-	    return getSessionWrapper().list(local.class, local.filter, local.sortorder);
+		local.listParameters = replaceNoCase(arguments.missingMethodName, meta.const.LIST_PREFIX, "");
+		local.params = extractListParameters(local.listParameters, missingMethodArguments);
+ 
+	    return getSessionWrapper().list(local.params.class, local.params.filterCriteria, local.params.sortOrder);       
     }
 
+	/**
+	 * extract the class, filterCriteria and sortOrder as specified by the listParameters.  Matches based on the pattern
+	 *	class(FilterByXXX|Filtered)(OrderByZZZ|Ordered)
+	 */
+	private struct function extractListParameters(required string listParameters, required struct missingMethodArguments) {
+	
+		local.listParametersRegEx = "^(.+?)(?:(filterby)(.+?)|(filtered))?(?:(orderby)(.+?)|(ordered))?$";
+		
+		// Position of interesting subgroups in regular expression
+		local.CLASS_GROUP = 2;
+		local.FILTERBY_GROUP = 3;
+		local.FILTERFIELD_GROUP = 4;
+		local.FILTERED_GROUP = 5;
+		local.ORDERBY_GROUP = 6;
+		local.ORDERFIELD_GROUP = 7;
+		local.ORDERED_GROUP = 8;
+	
+		local.tokens = customREMatchGroupsNoCase(local.listParametersRegEx, arguments.listParameters);
+		
+		if (arrayLen(local.tokens) < local.CLASS_GROUP) {
+			return {};
+		}
+		
+		local.params = {
+        	class = local.tokens[local.CLASS_GROUP],
+            filterCriteria = {},
+            sortOrder = ""
+        };
+	
+	    local.argumentsIndex = 1;
+	
+		if (local.tokens[local.FILTERBY_GROUP] == "FilterBy") {
+			local.filterBy = local.tokens[local.FILTERFIELD_GROUP];
+			if (local.filterBy NEQ "") {
+				local.params.filterCriteria[local.filterBy] = arguments.missingMethodArguments[local.argumentsIndex++];
+			}			
+		}
+		else if (local.tokens[local.FILTERED_GROUP] == "Filtered") {
+			local.params.filterCriteria = arguments.missingMethodArguments[local.argumentsIndex++];
+		}
+		
+		if (local.tokens[local.ORDERBY_GROUP] == "OrderBy") {
+			local.orderBy = local.tokens[local.ORDERFIELD_GROUP];
+			if (local.orderBy NEQ "") {
+				// support listXXXOrderByField_ASC and listXXXOrderByField_DESC
+				local.params.sortOrder = replaceNoCase(local.orderBy, "_", " ", "all");
+			}
+		}
+		else if (local.tokens[local.ORDERED_GROUP] == "Ordered") {
+			local.params.sortOrder = arguments.missingMethodArguments[local.argumentsIndex++];
+		}
+	
+		return local.params;
+    }
+
+	/**
+	 * Extended version of REMatchNoCase that returns subgroups matched within the regExpression
+	 *
+	 * Parameters
+	 *	regExpression - Regular expression to execution
+	 *	search - String to search
+	 *	position - The position to start searching from (defaults to 1)
+	 *	scope - Indicates if the regExpression should be matched multiple times
+	 *				"one" - Matches only the first occurence in search (default)
+	 *				"all" - Matches all occurences 
+	 *	omitEmptyGroups - Where an optional subgroup is not matched, do not include in the returned array, otherwise return it as an empty string (default false).  
+	 *					  Note that when true, the position of the returned subgroups in the array is not predictable 
+	 *
+	 * Returns: Array - contents are dependant on scope setting
+	 *	scope == "one" - An array of strings, one string for each pattern matched in the search string
+	 *	scope == "all" - An array of arrays as returned for scope == "one"
+	 */    
+ 	private array function customREMatchGroupsNoCase(required string regExpression, required string search, numeric position=1, string scope="one", boolean omitEmptyGroups=false) {
+	
+		local.position = arguments.position;
+		local.matches = [];
+		
+		local.tokens = reFindNoCase(arguments.regExpression, arguments.search, position, true);
+		while (local.tokens.pos[1] != 0 && local.tokens.len[1] != 0) {
+			local.theseMatches = [];
+			
+			for(local.index=1; local.index<=ArrayLen(local.tokens.pos); local.index++) {
+				local.thisMatch = "";
+				
+				if(local.tokens.pos[local.index] != 0 && local.tokens.len[local.index] != 0) {
+					local.thisMatch = Mid(arguments.search, local.tokens.pos[local.index], local.tokens.len[local.index]);
+				}
+				
+				if (local.thisMatch != "" || !arguments.omitEmptyGroups) {
+					arrayAppend(local.theseMatches, local.thisMatch);
+				}
+			}
+	
+			if (arguments.scope == "one") {
+				// Where scope == "one" just make an early exit and return only the first match
+				return local.theseMatches;
+			}
+			
+			arrayAppend(local.matches, local.theseMatches);
+			
+			// Continue on to find the next match
+			local.position += local.tokens.len[1];
+			local.tokens = reFindNoCase(arguments.regExpression, arguments.search, local.position, true);
+		}
+		
+		return local.matches;
+	}
+    
+    
 	/**
      * executes disabeling a filter
      */
