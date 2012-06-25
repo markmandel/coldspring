@@ -56,5 +56,9 @@
 	<bean id="helloWithProperty" class="unittests.aop.com.Hello" scope="request">
 		<property name="Foo" value="Han Solo"/>
 	</bean>
-	
+
+	<bean id="helloFactory" class="unittests.aop.com.HelloFactory" />
+
+	<bean id="hello-from-factory" factory-bean="helloFactory" factory-method="create" />
+
 </beans>

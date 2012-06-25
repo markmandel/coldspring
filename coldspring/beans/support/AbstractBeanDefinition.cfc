@@ -44,11 +44,7 @@
 					processing for InstantiationAwareBeanPostProcessor.
 					if it returns a bean, use that instead.
 				*/
-				if(hasClassName())
-				{
-					//specify variabes scope, as otherwise, you get the actual underlying Java class.
-					local.postBean = beanPostProcessorObservable.postProcessBeforeInstantiation($getClass(), getID());
-				}
+				local.postBean = firePostProcessBeforeInstantiation();
 
 				if(StructKeyExists(local, "postBean"))
 				{
@@ -484,6 +480,16 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="firePostProcessBeforeInstantiation" hint="extension point for extending beans, that want to alter how the call to postProcessBeforeInstantiation() is called for this bean def"
+			access="private" returntype="any" output="false">
+	<cfscript>
+		if(hasClassName())
+		{
+			return getBeanPostProcessorObservable().postProcessBeforeInstantiation($getClass(), getID());
+		}
+	</cfscript>
+</cffunction>
+
 <!--- abstract methods --->
 
 <cffunction name="autowire" hint="abstract method: autowires the given beanReference type with it's dependencies, depending on the autowire type" access="private" returntype="void" output="false">
@@ -505,7 +511,8 @@
 <!--- mixins --->
 
 <cffunction name="getInstance_Abstract" hint="Mixin: method to be used to switch with getInstance, if isAbstract is set to true, on notifyComplete()"
-			access="private" returntype="any" output="false">
+			access="public" returntype="any" output="false">
+	<!--- this has to be public, so that CF10 doesn't complain about it not matching the interface --->
 	<cfscript>
 		createObject("component", "coldspring.beans.support.exception.AbstractBeanCannotBeInstantiatedException").init(this);
     </cfscript>
