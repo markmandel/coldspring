@@ -75,6 +75,16 @@
 	</cfscript>
 </cffunction>
 
+<cffunction name="testChildFactoryMentod" hint="Call to a factory method from a parent factory bean" access="public" returntype="void" output="false">
+	<cfscript>
+		var local = {};
+
+		local.engine = instance.factory.getBean("child-factory-engine");
+		local.expected = [4,5,6];
+		assertEquals(local.expected, local.engine.getGearS());
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

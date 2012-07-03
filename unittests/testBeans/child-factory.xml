@@ -66,5 +66,15 @@
 			</map>
 		</property>		
 	</bean>
+
+	<bean id="child-factory-engine" factory-bean="carFactory" factory-method="getEngine">
+		<constructor-arg name="gears">
+			<list>
+				<value>4</value>
+				<value>5</value>
+				<value>6</value>
+			</list>
+		</constructor-arg>
+	</bean>
 	   
 </beans>

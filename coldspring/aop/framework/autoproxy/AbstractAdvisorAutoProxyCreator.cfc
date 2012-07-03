@@ -20,6 +20,12 @@
 
 <cffunction name="init" hint="Constructor" access="public" returntype="DefaultAdvisorAutoProxyCreator" output="false">
 	<cfscript>
+		setCreateProxyCache(StructNew());
+		setEarlyProxyCache(StructNew());
+		setWrapInstantiatedProxyCache(StructNew());
+
+		setReflectionService(getComponentMetadata("coldspring.core.reflect.ReflectionService").singleton.instance);
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -31,27 +37,14 @@
 				type="any" required="Yes">
 	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
 	<cfscript>
-    	var createProxyCache = getCreateProxyCache();
 		var beanDef = getBeanFactory().getBeanDefinition(arguments.beanName);
-		var className = beanDef.getClassName();
-    </cfscript>
 
-	<cfif !StructKeyExists(createProxyCache, className)>
-    	<cflock name="coldspring.aop.framework.autoproxy.AdvisorAutoProxy.postProcessAfterInstantiation.#className#" throwontimeout="true" timeout="60">
-    	<cfscript>
-    		if(!StructKeyExists(createProxyCache, className))
-    		{
-				//if not done cache lookup, do it now
-				createProxyCache[className] = checkIsAOPCandidate(beanDef);
-    		}
-    	</cfscript>
-    	</cflock>
-    </cfif>
+		structInsert(getEarlyProxyCache(), arguments.beanName, true, true);
 
-	<cfscript>
 		//if matches an AOP Advice, return a proxy
-		if(createProxyCache[className])
+		if(checkIsAOPCandidate(beanDef.$getClass()))
 		{
+			//yes this is ugly, but it saves us creating a whole new 'var'
 			return getProxyFactory().getProxy(beanDef.create());
 		}
     </cfscript>
@@ -77,7 +70,23 @@
 			access="public" returntype="any" output="false">
 	<cfargument name="bean" hint="the new bean instance" type="any" required="Yes">
 	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
-	<cfreturn arguments.bean />
+	<cfscript>
+		var local = {};
+		var earlyProxyCache = getEarlyProxyCache();
+
+		if(!structKeyExists(earlyProxyCache, arguments.beanName))
+		{
+			local.class = getReflectionService().loadClass(getMetadata(arguments.bean).name);
+
+			//if matches an AOP Advice, return a proxy
+			if(checkIsAOPCandidate(local.class))
+			{
+				return getProxyFactory().getProxy(arguments.bean);
+			}
+		}
+
+		return arguments.bean;
+	</cfscript>
 </cffunction>
 
 <cffunction name="setBeanFactory" access="public" hint="Callback that supplies the owning factory to a bean instance.
@@ -134,12 +143,35 @@
     </cfscript>
 </cffunction>
 
-<cffunction name="checkIsAOPCandidate" hint="Check to see if this bean is an AOP candidate, against the given set of Advisors" access="public" returntype="boolean" output="false">
-	<cfargument name="beanDefinition" hint="the bean definition to check" type="coldspring.beans.support.BeanDefinition" required="Yes">
+<cffunction name="checkIsAOPCandidate" hint="Check to see if this bean is an AOP candidate, against the given set of Advisors" access="public" returntype="any" output="false">
+	<cfargument name="class" hint="the class of the bean" type="coldspring.core.reflect.Class" required="Yes">
+	<cfscript>
+		var createProxyCache = getCreateProxyCache();
+		var className = arguments.class.getName();
+	</cfscript>
+
+	<cfif !StructKeyExists(createProxyCache, className)>
+		<cflock name="coldspring.aop.framework.autoproxy.AdvisorAutoProxy.postProcessBeforeInstantiation.#className#" throwontimeout="true" timeout="60">
+			<cfscript>
+				if(!StructKeyExists(createProxyCache, className))
+				{
+					//if not done cache lookup, do it now
+					createProxyCache[className] = checkClassMatchAdvisors(arguments.class);
+				}
+			</cfscript>
+		</cflock>
+	</cfif>
+
+	<cfscript>
+		return createProxyCache[className];
+	</cfscript>
+</cffunction>
+
+<cffunction name="checkClassMatchAdvisors" hint="Check to see if this class is an AOP candidate, against the given set of Advisors" access="public" returntype="boolean" output="false">
+	<cfargument name="class" hint="the class to check" type="coldspring.core.reflect.Class" required="Yes">
 
 	<cfscript>
 		var advisors = getAdvisors();
-		var class = arguments.beanDefinition.$getClass();
 		var methods = class.getMethods();
 		var method = 0;
 		var key = 0;
@@ -151,7 +183,7 @@
 
 		<cfloop array="#advisors#" index="advisor">
 			<cfscript>
-	            if(advisor.getPointcut().matches(method, class))
+	            if(advisor.getPointcut().matches(method, arguments.class))
 				{
 					return true;
 				}
@@ -192,6 +224,33 @@
 <cffunction name="setCreateProxyCache" access="private" returntype="void" output="false">
 	<cfargument name="createProxyCache" type="struct" required="true" colddoc:generic="string,string">
 	<cfset instance.createProxyCache = arguments.createProxyCache />
+</cffunction>
+
+<cffunction name="getEarlyProxyCache" access="private" returntype="struct" output="false">
+	<cfreturn instance.earlyProxyCache />
+</cffunction>
+
+<cffunction name="setEarlyProxyCache" access="private" returntype="void" output="false">
+	<cfargument name="earlyProxyCache" type="struct" required="true">
+	<cfset instance.earlyProxyCache = arguments.earlyProxyCache />
+</cffunction>
+
+<cffunction name="getWrapInstantiatedProxyCache" access="private" returntype="struct" output="false">
+	<cfreturn instance.wrapInstantiatedProxyCache />
+</cffunction>
+
+<cffunction name="setWrapInstantiatedProxyCache" access="private" returntype="void" output="false">
+	<cfargument name="wrapInstantiatedProxyCache" type="struct" required="true">
+	<cfset instance.wrapInstantiatedProxyCache = arguments.wrapInstantiatedProxyCache />
+</cffunction>
+
+<cffunction name="getReflectionService" access="private" returntype="coldspring.core.reflect.ReflectionService" output="false">
+	<cfreturn instance.reflectionService />
+</cffunction>
+
+<cffunction name="setReflectionService" access="private" returntype="void" output="false">
+	<cfargument name="reflectionService" type="coldspring.core.reflect.ReflectionService" required="true">
+	<cfset instance.reflectionService = arguments.reflectionService />
 </cffunction>
 
 </cfcomponent>

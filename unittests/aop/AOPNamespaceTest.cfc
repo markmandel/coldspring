@@ -234,6 +234,25 @@
     </cfscript>
 </cffunction>
 
+<cffunction name="testReverseFromFactoryAspect" hint="test simple reverse advice with an Aspect" access="public" returntype="void" output="false">
+	<cfscript>
+		var factory = createObject("component", "coldspring.beans.xml.XmlBeanFactory").init(expandPath("/unittests/testBeans/aop-namespace-aspect.xml"));
+
+		var local = {};
+
+		local.proxy = factory.getBean("hello-from-factory");
+
+		local.value = local.proxy.sayHello();
+		assertEquals("hello", local.value);
+
+		assertEquals(reverse("Goodbye"), local.proxy.sayGoodbye());
+
+		local.string = "Gobble, Gobble";
+
+		assertEquals(local.string, local.proxy.sayHello(local.string));
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
