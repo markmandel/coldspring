@@ -140,6 +140,14 @@
 		</antcall>
 	</target>
 
+	<target name="unittest-async-cf10">
+		<antcall target="run-tests">
+			<param name="test.context" value="/cf10"/>
+			<param name="test.excludes" value="serial"/>
+			<param name="test.package" value="tests.cf10"/>
+		</antcall>
+	</target>
+
 	<target name="unittest-sync">
 		<antcall target="unittest-sync-${suite.name}" />
 	</target>
@@ -165,6 +173,14 @@
 			<param name="test.context" value="/railo"/>
 			<param name="test.componentPath" value="unittests.serial"/>
 			<param name="test.package" value="tests.railo"/>
+		</antcall>
+	</target>
+
+	<target name="unittest-sync-cf10">
+		<antcall target="run-tests">
+			<param name="test.context" value="/cf10"/>
+			<param name="test.componentPath" value="unittests.serial"/>
+			<param name="test.package" value="tests.cf10"/>
 		</antcall>
 	</target>
 
