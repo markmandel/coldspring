@@ -1,0 +1,11 @@
+body {
+	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+div.container article {
+	padding-top: 20px;
+}
+
+article section.comments {
+	padding-bottom: 15px;
+}
