@@ -1,3 +1,3 @@
-insert into Foo(name) VALUES ('Han Solo');
-insert into Foo(name) VALUES ('Luke Skywalker');
-insert into Foo(name) VALUES ('Darth Vader');
+insert into Foo(name,id) VALUES ('Han Solo',1);
+insert into Foo(name,id) VALUES ('Luke Skywalker',2);
+insert into Foo(name,id) VALUES ('Darth Vader',3);
