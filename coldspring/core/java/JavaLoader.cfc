@@ -89,11 +89,11 @@
 
 	<cfloop query="qJars">
 		<cfscript>
-			libName = ListGetAt(name, 1, "-");
+			libName = ListGetAt(qJars.name, 1, "-");
 			//let's not use the lib's that have the same name, but a lower datestamp
 			if(NOT ListFind(jarList, libName))
 			{
-				ArrayAppend(aJars, directory & "/" & name);
+				ArrayAppend(aJars, qJars.directory & "/" & qJars.name);
 				jarList = ListAppend(jarList, libName);
 			}
 		</cfscript>
