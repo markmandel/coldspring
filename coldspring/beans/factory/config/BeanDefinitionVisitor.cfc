@@ -160,9 +160,15 @@
 
 		local.newContent = {};
 		local.modified = false;
+		//no idea what type of map it is, so this is safest.
+		local.keys = createObject("java", "java.util.ArrayList").init(arguments.map.keySet());
+		local.len = ArrayLen(local.keys);
+		local.counter = 1;
 
-		for(local.key in arguments.map)
+		for(; local.counter <= local.len; local.counter++)
 		{
+			local.key = local.keys[local.counter];
+
 			local.resolvedKey = resolveValue(local.key);
 
 			local.item = arguments.map.get(local.key);
