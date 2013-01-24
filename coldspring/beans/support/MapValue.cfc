@@ -49,6 +49,13 @@
 		var valueMap = getValueMap();
 		var key = 0;
 
+		/*
+			Railo doesn't like doing for(key in valueMap), and returns back a string value, so let's do it this way instead.
+		*/
+		var keys = createObject("java", "java.util.ArrayList").init(valueMap.keySet());
+		var len = ArrayLen(keys);
+		var counter = 1;
+
 		if(getUseConcurrentHashMap())
 		{
 			struct = createObject("java", "java.util.concurrent.ConcurrentHashMap").init(structCount(getValueMap()));
@@ -58,8 +65,9 @@
 			struct = {};
 		}
 
-		for(key in valueMap)
+		for(; counter <= len; counter++)
 		{
+			key = keys[counter];
 			/*
 				we have to use the java native methods, as we may/may not be
 				dealing an native Java Map, and/or have Objects as keys

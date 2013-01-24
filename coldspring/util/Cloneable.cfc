@@ -90,6 +90,11 @@
 		var cloneValue = 0;
 		var cloneKey = 0;
 
+		//we don't know what sort of Map it is, so let's do it this way, as it's safest.
+		var keys = createObject("java", "java.util.ArrayList").init(arguments.struct.keySet());
+		var counter = 1;
+		var len = ArrayLen(keys);
+
 		if(structKeyExists(arguments, "structClass"))
 		{
 			cloneStruct = createObject("java", arguments.structClass).init();
@@ -99,8 +104,10 @@
 			cloneStruct = {};
 		}
 
-		for(key in arguments.struct)
+		for(; counter <= len; counter++)
 		{
+			key = keys[counter];
+
 			/* use put() and get() as not sure if we are coming from native java */
 			if(arguments.cloneKeys)
 			{

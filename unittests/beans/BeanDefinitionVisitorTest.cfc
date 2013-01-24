@@ -95,8 +95,12 @@
 		local.mapValue = local.props[local.key].getValue().getValueMap();
 		local.copyMapValue = local.copyProps[reverse(local.key)].getValue().getValueMap();
 
-		for(local.key in local.mapValue)
+		local.iterator = local.mapValue.keySet().iterator();
+
+		while(local.iterator.hasNext())
 		{
+			local.key = local.iterator.next();
+
 			local.copyKey = findReverseKey(local.key, local.copyMapValue);
 
 			assertTrue(StructKeyExists(local, "copyKey"), "Couldn't find a reverse for #local.key.getValue()#");
@@ -157,9 +161,12 @@
 	<cfscript>
 		var local = {};
 		local.search = reverse(arguments.key.getValue());
+		local.iterator = arguments.map.keySet().iterator();
 
-		for(local.item in arguments.map)
+		while(local.iterator.hasNext())
 		{
+			local.item = local.iterator.next();
+
 			if(local.item.getValue() eq local.search)
 			{
 				return local.item;
