@@ -45,7 +45,8 @@
 <cffunction name="buildDocument" hint="Abstract: Builder the org.w3c.dom.Document from the factory" access="private" returntype="any" output="false">
     <cfargument name="builder" hint="The javax.xml.parsers.DocumentBuilder object" type="any" required="true">
     <cfscript>
-        return arguments.builder.parse(getPath());
+        var f = createobject("java", "java.io.File").init(getPath());
+        return arguments.builder.parse(f);
     </cfscript>
 </cffunction>
 
