@@ -40,7 +40,7 @@
 <cffunction name="compile" hint="compiles Java to bytecode, and returns a JAR" access="public" returntype="any" output="false">
 	<cfargument name="directoryArray" hint="array of directories to compile" type="array" required="Yes">
 	<cfargument name="classLoader" hint="a optional URLClassloader to use as the parent for compilation" type="any" required="false">
-    <cfargument name="jarName" hint="The name of the jar file. Defaults to a UUID" type="string" required="false" default="#createUUID()#.jar">
+    <cfargument name="jarName" hint="The name of the jar file. Defaults to a UUID" type="string" required="false" default="#createUUID()#.jar">	
 	<cfscript>
 		//setup file manager with default exception handler, default locale, and default character set
 		var fileManager = getCompiler().getStandardFileManager(JavaCast("null", ""), JavaCast("null", ""), JavaCast("null", ""));
