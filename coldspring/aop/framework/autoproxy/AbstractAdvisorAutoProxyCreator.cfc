@@ -72,19 +72,17 @@
 	<cfargument name="beanName" hint="the name of the bean" type="string" required="Yes">
 	<cfscript>
 		var local = {};
-		var earlyProxyCache = getEarlyProxyCache();
-
-		if(!structKeyExists(earlyProxyCache, arguments.beanName))
-		{
-			local.class = getReflectionService().loadClass(getMetadata(arguments.bean).name);
-
-			//if matches an AOP Advice, return a proxy
-			if(checkIsAOPCandidate(local.class))
-			{
-				return getProxyFactory().getProxy(arguments.bean);
+		var meta = getMetadata(arguments.bean);		
+		if(structKeyExists(meta, 'type') && meta.type == 'component') {
+			var earlyProxyCache = getEarlyProxyCache();
+			if(!structKeyExists(earlyProxyCache, arguments.beanName)) {
+				local.class = getReflectionService().loadClass(meta.name);
+				//if matches an AOP Advice, return a proxy
+				if(checkIsAOPCandidate(local.class)) {
+					return getProxyFactory().getProxy(arguments.bean);
+				}
 			}
 		}
-
 		return arguments.bean;
 	</cfscript>
 </cffunction>
