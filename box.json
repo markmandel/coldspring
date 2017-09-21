@@ -1,0 +1,33 @@
+{
+    "name":"Coldspring",
+    "slug":"coldspring",
+    "version":"2",
+    "location":"d1rtym0nk3y/coldspring#develop",
+    "createPackageDirectory":true,
+    "packageDirectory":"coldspring",
+    "keywords":[
+        "coldspring",
+    ],
+    "private":"false",
+    "engines":[
+        {
+            "type":"lucee",
+            "version":">=4.5.x"
+        },
+        {
+            "type":"adobe",
+            "version":">=10.0.x"
+        }
+    ],
+    "License":[
+        {
+            "type":"Apache 2.0",
+            "URL":"http://www.apache.org/licenses/LICENSE-2.0"
+        }
+    ],
+    "Contributors":[
+    ],
+    "ignore":[
+
+    ]
+}
